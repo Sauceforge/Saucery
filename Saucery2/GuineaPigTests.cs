@@ -8,7 +8,16 @@ using Saucery2.ValueSources;
 
 //
 // Saucery2 can be downloaded from http://nuget.org/packages/Saucery2
-// An activation key is available from http://fullcirclesolutions.com.au
+// 30-day trial and enterprise-wide activation keys are available from http://fullcirclesolutions.com.au
+//
+
+//
+// This is a simple class library C# file.
+// Class is subclassed from SauceryBase (other options are SauceryAndroidBase and SauceryIOSBase for Appium testing)
+// One of the parameters to each test needs to be the ValueSource calling GetPlatforms.
+// This platform parameter needs to be passed to the Setup method 
+// Other than this there is nothing else required to use Saucery
+// More How To at http://fullcirclesolutions.com.au/howto.html
 //
 namespace Saucery2Tests {
     /// <summary>tests for the sauce labs guinea pig page</summary>

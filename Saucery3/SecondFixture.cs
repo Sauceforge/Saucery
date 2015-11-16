@@ -8,9 +8,18 @@ using Saucery3.Tests;
 
 //
 // Saucery3 can be downloaded from http://nuget.org/packages/Saucery3
-// An activation key is available from http://fullcirclesolutions.com.au
+// 30-day trial and enterprise-wide activation keys are available from http://fullcirclesolutions.com.au
+//
+
+//
+// This is a simple class library C# file.
+// Class is subclassed from SauceryBase (other options are SauceryAndroidBase and SauceryIOSBase for Appium testing)
+// Class requires constructor as shown below
+// Other than this there is nothing else required to use Saucery!
+// More How To at http://fullcirclesolutions.com.au/howto.html
 //
 namespace Saucery3Tests {
+	/// <summary>tests for the sauce labs guinea pig page</summary>
     public class SecondFixture : SauceryBase {
         public SecondFixture(SaucePlatform platform) : base(platform) {
         }
