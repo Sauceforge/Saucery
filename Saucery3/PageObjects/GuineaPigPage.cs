@@ -5,7 +5,7 @@ using System.Globalization;
 using Saucery2.Driver;
 using Saucery2.PageObjects;
 
-namespace Saucery2Tests.PageObjects {
+namespace Saucery3Tests.PageObjects {
     public class GuineaPigPage : PageObjectBase {
         public GuineaPigPage(SauceryRemoteWebDriver driver, string urlRoot)
             : base(driver, urlRoot + "test/guinea-pig", "GuineaPig", "I am a page title - Sauce Labs") {

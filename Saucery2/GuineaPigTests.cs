@@ -5,6 +5,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using Saucery2.Tests;
 using Saucery2.ValueSources;
+using Saucery2Tests.PageObjects;
 
 //
 // Saucery2 can be downloaded from http://nuget.org/packages/Saucery2

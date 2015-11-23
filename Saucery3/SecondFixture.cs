@@ -5,6 +5,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using Saucery3.OnDemand;
 using Saucery3.Tests;
+using Saucery3Tests.PageObjects;
 
 //
 // Saucery3 can be downloaded from http://nuget.org/packages/Saucery3
