@@ -30,6 +30,7 @@ namespace Saucery3Tests {
         [TestCase(5)]
         [TestCase(4)]
         public void PageTitle(int data) {
+			//Saucery supports NUnit data-driven tests 
             Console.WriteLine(@"My data is: " + data);
             var guineaPigPage = new GuineaPigPage(Driver, "https://saucelabs.com/");
             

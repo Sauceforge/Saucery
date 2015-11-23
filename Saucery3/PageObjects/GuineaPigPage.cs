@@ -16,11 +16,11 @@ namespace Saucery2Tests.PageObjects {
 
         public GuineaPigPage ClickLink() {
             //Could also use a "Selectors" class here.
-			var link = Driver.FindElement(By.Id("i am a link"));
+            var link = Driver.FindElement(By.Id("i am a link"));
             link.Click();
             var wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(30));
             wait.Until(d => d.Url.Contains("guinea-pig2"));
-			return this;
+            return this;
         }
 		
         public String GetUserAgent() {

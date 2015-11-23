@@ -27,7 +27,7 @@ namespace Saucery2Tests {
         [Test]
         public void PageTitle([ValueSource(typeof(PlatformTestData), "GetPlatforms")] PlatformTestData platform) {
             Setup(platform);
-			var guineaPigPage = new GuineaPigPage(Driver, "https://saucelabs.com/");
+            var guineaPigPage = new GuineaPigPage(Driver, "https://saucelabs.com/");
             
             // verify the page title is correct - this is actually checked as part of the constructor above.
             Driver.Title.ShouldContain("I am a page title - Sauce Labs");
