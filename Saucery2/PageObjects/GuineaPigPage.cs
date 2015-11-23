@@ -23,10 +23,10 @@ namespace Saucery2Tests.PageObjects {
 			return this;
         }
 		
-		public String GetUserAgent() {
-			//Could also use a "Selectors" class here.
-			return Driver.FindElement(By.Id("useragent")).Text;
-		}
+        public String GetUserAgent() {
+            //Could also use a "Selectors" class here.
+            return Driver.FindElement(By.Id("useragent")).Text;
+        }
 
         public GuineaPigPage TypeField(IWebElement field, string data) {
             field.Clear();

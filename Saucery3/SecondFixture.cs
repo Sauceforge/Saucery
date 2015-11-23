@@ -28,7 +28,7 @@ namespace Saucery3Tests {
         [MethodImpl(MethodImplOptions.Synchronized)]
         [Test]
         public void Test1() {
-            Driver.Navigate().GoToUrl("https://saucelabs.com/test/guinea-pig");
+            var guineaPigPage = new GuineaPigPage(Driver, "https://saucelabs.com/");
 
             // verify the page title is correct
             Assert.IsTrue(Driver.Title.Contains("I am a page title - Sauce Labs"));
@@ -37,14 +37,9 @@ namespace Saucery3Tests {
         [MethodImpl(MethodImplOptions.Synchronized)]
         [Test]
         public void Test2() {
-            Driver.Navigate().GoToUrl("https://saucelabs.com/test/guinea-pig");
+            var guineaPigPage = new GuineaPigPage(Driver, "https://saucelabs.com/");
             // find and click the link on the page
-            var link = Driver.FindElement(By.Id("i am a link"));
-            link.Click();
-
-            // wait for the page to change
-            var wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(30));
-            wait.Until(d => d.Url.Contains("guinea-pig2"));
+            guineaPigPage.ClickLink();
 
             // verify the browser was navigated to the correct page
             Assert.IsTrue(Driver.Url.Contains("saucelabs.com/test-guinea-pig2.html"));
@@ -53,10 +48,10 @@ namespace Saucery3Tests {
         [MethodImpl(MethodImplOptions.Synchronized)]
         [Test]
         public void Test3() {
-            Driver.Navigate().GoToUrl("https://saucelabs.com/test/guinea-pig");
+            var guineaPigPage = new GuineaPigPage(Driver, "https://saucelabs.com/");
 
             // read the useragent string off the page
-            var useragent = Driver.FindElement(By.Id("useragent")).Text;
+            var useragent = guineaPigPage.GetUserAgent();
 
             Assert.IsNotNull(useragent);
         }
