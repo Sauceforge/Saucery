@@ -1,9 +1,9 @@
-﻿using OpenQA.Selenium;
+﻿using System;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Support.PageObjects;
 using OpenQA.Selenium.Support.UI;
-using System.Globalization;
-using Saucery2.Driver;
-using Saucery2.PageObjects;
+using Saucery3.Driver;
+using Saucery3.PageObjects;
 
 namespace Saucery3Tests.PageObjects {
     public class GuineaPigPage : PageObjectBase {

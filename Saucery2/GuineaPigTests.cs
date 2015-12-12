@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 using NUnit.Framework;
 using Saucery2.OnDemand;
 using Saucery2.Tests;
-using Saucery2Tester.PageObjects;
+using Saucery2Tests.PageObjects;
 using Shouldly;
 
 //

@@ -1,11 +1,9 @@
-﻿using System;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using NUnit.Framework;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Support.UI;
 using Saucery3.OnDemand;
 using Saucery3.Tests;
 using Saucery3Tests.PageObjects;
+using Shouldly;
 
 //
 // Saucery3 can be downloaded from http://nuget.org/packages/Saucery3
@@ -32,7 +30,7 @@ namespace Saucery3Tests {
             var guineaPigPage = new GuineaPigPage(Driver, "https://saucelabs.com/");
 
             // verify the page title is correct
-            Assert.IsTrue(Driver.Title.Contains("I am a page title - Sauce Labs"));
+            Driver.Title.ShouldContain("I am a page title - Sauce Labs");
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -43,7 +41,7 @@ namespace Saucery3Tests {
             guineaPigPage.ClickLink();
 
             // verify the browser was navigated to the correct page
-            Assert.IsTrue(Driver.Url.Contains("saucelabs.com/test-guinea-pig2.html"));
+            Driver.Url.ShouldContain("saucelabs.com/test-guinea-pig2.html");
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -54,7 +52,7 @@ namespace Saucery3Tests {
             // read the useragent string off the page
             var useragent = guineaPigPage.GetUserAgent();
 
-            Assert.IsNotNull(useragent);
+            useragent.ShouldNotBeNull();
         }
 
         #endregion
