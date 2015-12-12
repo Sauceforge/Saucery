@@ -1,11 +1,9 @@
-using System;
 using System.Runtime.CompilerServices;
 using NUnit.Framework;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Support.UI;
+using Saucery2.OnDemand;
 using Saucery2.Tests;
-using Saucery2.ValueSources;
-using Saucery2Tests.PageObjects;
+using Saucery2Tester.PageObjects;
+using Shouldly;
 
 //
 // Saucery2 can be downloaded from http://nuget.org/packages/Saucery2
