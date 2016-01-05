@@ -5,7 +5,7 @@ using OpenQA.Selenium.Support.UI;
 using Saucery2.Driver;
 using Saucery2.PageObjects;
 
-namespace Saucery2Tests.PageObjects {
+namespace Saucery2Tester.PageObjects {
     public class GuineaPigPage : PageObjectBase {
         public GuineaPigPage(SauceryRemoteWebDriver driver, string urlRoot)
             : base(driver, urlRoot + "test/guinea-pig", "GuineaPig", "I am a page title - Sauce Labs") {
@@ -22,8 +22,8 @@ namespace Saucery2Tests.PageObjects {
             wait.Until(d => d.Url.Contains("guinea-pig2"));
             return this;
         }
-		
-        public String GetUserAgent() {
+
+        public string GetUserAgent() {
             //Could also use a "Selectors" class here.
             return Driver.FindElement(By.Id("useragent")).Text;
         }
