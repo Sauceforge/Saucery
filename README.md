@@ -14,6 +14,8 @@ Note that if you choose to start from scratch (i.e. add the Saucery3 NuGet packa
 ## Saucery 2 (for NUnit 2)
 [NuGet](http://www.nuget.org/packages/saucery2)
 
+If Saucery2.lic is not found in the same directory as the .sln file the Activation Dialog will appear when the solution is opened.
+
 In a windows batch command execute your test project like this:
 
     "C:\Program Files (x86)\NUnit 2.6.4\bin\nunit-console.exe" <workspace\relative\path\to\my\test.dll> /xml=nunit-selenium-testsuite.xml
@@ -24,7 +26,7 @@ Publish test results in Jenkins with a Post Build Publish NUnit test result repo
 ## Saucery 3 (for NUnit 3)
 [NuGet](http://www.nuget.org/packages/saucery3)
 
-If Saucery3.lic is not found in the same directory as the .sln file the Activation Dialog will appear.
+If Saucery3.lic is not found in the same directory as the .sln file the Activation Dialog will appear when the solution is opened.
 
 In a Jenkins job, execute your test project in a Windows Batch Command step like this:
 
