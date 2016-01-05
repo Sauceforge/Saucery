@@ -2,40 +2,31 @@
 using NUnit.Framework;
 using Saucery3.OnDemand;
 using Saucery3.Tests;
-using Saucery3Tests.PageObjects;
+using Saucery3Tester.PageObjects;
 using Shouldly;
 
-//
-// Saucery3 can be downloaded from http://nuget.org/packages/Saucery3
-// 30-day trial and enterprise-wide activation keys are available from http://fullcirclesolutions.com.au
-//
-
-//
-// This is a simple class library C# file.
-// Class is subclassed from SauceryBase (other options are SauceryAndroidBase and SauceryIOSBase for Appium testing)
-// Class requires constructor as shown below
-// Other than this there is nothing else required to use Saucery!
-// More How To at http://fullcirclesolutions.com.au/howto.html
-//
-namespace Saucery3Tests {
-	/// <summary>tests for the sauce labs guinea pig page</summary>
-    public class SecondFixture : SauceryBase {
-        public SecondFixture(SaucePlatform platform) : base(platform) {
+namespace Saucery3Tester.Tests {
+    public class GuineaPigFixture2 : SauceryBase {
+        public GuineaPigFixture2(SaucePlatform platform) : base(platform) {
+            //Console.WriteLine("In GuineaPigFixture2 constructor");
         }
 
-        #region Tests
         [MethodImpl(MethodImplOptions.Synchronized)]
         [Test]
-        public void Test1() {
+        public void DoSomethingOnAWebPageWithSelenium2() {
+            //Console.WriteLine("In DoSomethingOnAWebPageWithSelenium2");
+            //Console.WriteLine(Driver == null ? "Driver is null" : "Driver good");
             var guineaPigPage = new GuineaPigPage(Driver, "https://saucelabs.com/");
 
-            // verify the page title is correct
+            // verify the page title is correct - this is actually checked as part of the constructor above.
             Driver.Title.ShouldContain("I am a page title - Sauce Labs");
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
         [Test]
-        public void Test2() {
+        public void DoSomethingElseOnAWebPageWithSelenium2() {
+            //Console.WriteLine("In DoSomethingElseOnAWebPageWithSelenium2");
+            //Console.WriteLine(Driver == null ? "Driver is null" : "Driver good");
             var guineaPigPage = new GuineaPigPage(Driver, "https://saucelabs.com/");
             // find and click the link on the page
             guineaPigPage.ClickLink();
@@ -46,7 +37,9 @@ namespace Saucery3Tests {
 
         [MethodImpl(MethodImplOptions.Synchronized)]
         [Test]
-        public void Test3() {
+        public void DoSomethingElseAgainOnAWebPageWithSelenium2() {
+            //Console.WriteLine("In DoSomethingElseAgainOnAWebPageWithSelenium2");
+            //Console.WriteLine(Driver == null ? "Driver is null" : "Driver good");
             var guineaPigPage = new GuineaPigPage(Driver, "https://saucelabs.com/");
 
             // read the useragent string off the page
@@ -54,7 +47,5 @@ namespace Saucery3Tests {
 
             useragent.ShouldNotBeNull();
         }
-
-        #endregion
     }
 }
