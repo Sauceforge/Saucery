@@ -55,7 +55,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Saucery2, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Saucery2.2.0.82\lib\net45\Saucery2.dll</HintPath>
+      <HintPath>..\packages\Saucery2.2.0.84\lib\net45\Saucery2.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Shouldly">
