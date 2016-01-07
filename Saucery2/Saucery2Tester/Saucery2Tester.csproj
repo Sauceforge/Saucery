@@ -34,8 +34,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="appium-dotnet-driver">
-      <HintPath>..\packages\Appium.WebDriver.1.4.1.1\lib\net40\appium-dotnet-driver.dll</HintPath>
+    <Reference Include="appium-dotnet-driver, Version=1.5.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Appium.WebDriver.1.5.0.1\lib\net40\appium-dotnet-driver.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Castle.Core">
@@ -55,7 +55,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Saucery2, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Saucery2.2.0.86\lib\net45\Saucery2.dll</HintPath>
+      <HintPath>..\packages\Saucery2.2.0.87\lib\net45\Saucery2.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Shouldly">
