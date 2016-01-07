@@ -54,8 +54,8 @@
       <HintPath>..\packages\RestSharp.105.2.3\lib\net451\RestSharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Saucery2">
-      <HintPath>..\packages\Saucery2.2.0.81\lib\net45\Saucery2.dll</HintPath>
+    <Reference Include="Saucery2, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Saucery2.2.0.82\lib\net45\Saucery2.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Shouldly">
