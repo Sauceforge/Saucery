@@ -25,8 +25,6 @@ Publish test results in Jenkins with a Post Build Publish NUnit test result repo
 ## Saucery 3 (for NUnit 3)
 [NuGet](http://www.nuget.org/packages/saucery3)
 
-If Saucery3.lic is not found in the same directory as the .sln file the Activation Dialog will appear when the solution is opened.
-
 In a Jenkins job, execute your test project in a Windows Batch Command step like this:
 
     "C:\Program Files (x86)\NUnit.org\nunit-console\nunit3-console.exe" <workspace\relative\path\to\my\test.dll> --result:nunit-selenium-testsuite.xml;format=nunit2
@@ -34,4 +32,4 @@ In a Jenkins job, execute your test project in a Windows Batch Command step like
 
 Publish test results in Jenkins with a Post Build Publish NUnit test result report step specifying nunit-selenium-testsuite.xml (or whatever you specified in the command above).
 
-SauceryForJUnit is for JUnit 4.12
+SauceryForJUnit is for JUnit 4.12 and is currently available on request.  If there is sufficient demand it will be released on http://bintray.com
