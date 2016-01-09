@@ -4,6 +4,8 @@ Documentation and examples for Saucery2 and Saucery3 NuGet packages and JUnit 4 
 ## General Notes:
 On initially cloning this repository and opening either of the solutions, the Activation Dialog should open.  If not, you may need to open the Package Manager Console window under (View > Other Windows > Package Manager Console).  Licence keys can be obtained from http://fullcirclesolutions.com.au
 
+Saucery is compatible with any CI server that the [SauceOnDemand](https://github.com/jenkinsci/sauce-ondemand-plugin) plugin supports. As of January 2016 this is [Jenkins](http://jenkins-ci.org) and [Bamboo](https://www.atlassian.com/software/bamboo)
+
 If you have Resharper installed the Saucery classes will appear in red.  However the solution will still build perfectly well.  This is a Resharper bug over which we have no control.
 
 Note that if you choose to start from scratch (i.e. add Saucery3 OR Saucery3 NuGet package to an empty class library) the following steps will probably be required to make the Activation Dialog appear so you can generate your licence file:
@@ -14,7 +16,7 @@ Note that if you choose to start from scratch (i.e. add Saucery3 OR Saucery3 NuG
 
 ## [Saucery 2](http://www.nuget.org/packages/saucery2) (for NUnit 2)
 
-In a windows batch command execute your test project like this:
+In a Jenkins job, execute your test project in a Windows Batch Command step like this:
 
     "C:\Program Files (x86)\NUnit 2.6.4\bin\nunit-console.exe" <workspace\relative\path\to\my\test.dll> /xml=nunit-selenium-testsuite.xml
     exit %%ERRORLEVEL%%
