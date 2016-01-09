@@ -12,8 +12,7 @@ Note that if you choose to start from scratch (i.e. add Saucery3 OR Saucery3 NuG
 2. Close and reopen your solution
 3. Open the Package Manager Console if it is not already.
 
-## Saucery 2 (for NUnit 2)
-[NuGet](http://www.nuget.org/packages/saucery2)
+## [Saucery 2](http://www.nuget.org/packages/saucery2) (for NUnit 2)
 
 In a windows batch command execute your test project like this:
 
@@ -22,8 +21,7 @@ In a windows batch command execute your test project like this:
 
 Publish test results in Jenkins with a Post Build Publish NUnit test result report step specifying nunit-selenium-testsuite.xml
 
-## Saucery 3 (for NUnit 3)
-[NuGet](http://www.nuget.org/packages/saucery3)
+## [Saucery 3](http://www.nuget.org/packages/saucery3) (for NUnit 3)
 
 In a Jenkins job, execute your test project in a Windows Batch Command step like this:
 
