@@ -2,6 +2,7 @@
 Documentation and examples for Saucery2 and Saucery3 NuGet packages and JUnit 4 implementation.
 
 ## General Notes:
+On initially cloning this repository and opening the either of the solutions, the Activation Dialog should open.  If not, you may need to open the Package Manager Console window under (View > Other Windows > Package Manager Console).  Licence keys can be obtained from http://fullcirclesolutions.com.au
 
 If you have resharper installed the Saucery classes will appear in red.  However the solution will still build perfectly well.  This is a Resharper bug over which we have no control.
 
@@ -13,8 +14,6 @@ Note that if you choose to start from scratch (i.e. add the Saucery3 NuGet packa
 
 ## Saucery 2 (for NUnit 2)
 [NuGet](http://www.nuget.org/packages/saucery2)
-
-If Saucery2.lic is not found in the same directory as the .sln file the Activation Dialog will appear when the solution is opened.
 
 In a windows batch command execute your test project like this:
 
