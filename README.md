@@ -14,11 +14,13 @@ Note that if you choose to start from scratch (i.e. add Saucery3 OR Saucery3 NuG
 2. Close and reopen your solution
 3. Open the Package Manager Console if it is not already.
 
-| Platform you wish to target | Base class you should use |
-| --------------------------- | ------------------------- | 
-| Selenium (Desktop Browser)  | SauceryBase               |
-| Appium (Android device)     | SauceryAndroidBase        |
-| Appium (IOS device)         | SauceryIOSBase            |
+
+
+| Platform you wish to target | Write your tests with | Base class you should use |
+| --------------------------- | --------------------- | ------------------------- | 
+| Desktop browser             | Selenium              | SauceryBase               |
+| Android device              | Appium                | SauceryAndroidBase        |
+| IOS device                  | Appium                | SauceryIOSBase            |
 
 ## [Saucery 2](http://www.nuget.org/packages/saucery2) (for NUnit 2)
 
