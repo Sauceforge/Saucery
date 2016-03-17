@@ -45,8 +45,8 @@
       <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="nunit.framework, Version=3.0.5813.39031, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
-      <HintPath>..\packages\Saucery3.3.1.18\lib\net45\nunit.framework.dll</HintPath>
+    <Reference Include="nunit.framework, Version=3.2.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\Saucery3.3.2.0\lib\net45\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="RestSharp">
@@ -54,7 +54,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Saucery3, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Saucery3.3.1.18\lib\net45\Saucery3.dll</HintPath>
+      <HintPath>..\packages\Saucery3.3.2.0\lib\net45\Saucery3.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Shouldly">
