@@ -23,7 +23,7 @@ namespace Saucery3Tester.PageObjects {
             return this;
         }
 
-        public string GetUserAgent() {
+        public static string GetUserAgent() {
             //Could also use a "Selectors" class here.
             return Driver.FindElement(By.Id("useragent")).Text;
         }

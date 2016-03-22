@@ -18,7 +18,7 @@ namespace Saucery3Tester.Tests {
         [TestCase(4)]
         public void DoSomethingOnAWebPageWithSelenium(int data) {
             //Console.WriteLine("In DoSomethingOnAWebPageWithSelenium");
-            //Saucery supports NUnit data-driven tests 
+            //Saucery supports NUnit data-driven tests
             Console.WriteLine(@"My data is: " + data);
             //Console.WriteLine(Driver== null? "Driver is null": "Driver good");
             var guineaPigPage = new GuineaPigPage(Driver, "https://saucelabs.com/");
@@ -48,7 +48,7 @@ namespace Saucery3Tester.Tests {
             var guineaPigPage = new GuineaPigPage(Driver, "https://saucelabs.com/");
 
             // read the useragent string off the page
-            var useragent = guineaPigPage.GetUserAgent();
+            var useragent = GuineaPigPage.GetUserAgent();
 
             useragent.ShouldNotBeNull();
         }
