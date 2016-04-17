@@ -43,7 +43,7 @@ namespace Saucery3Tester.Tests {
             var guineaPigPage = new GuineaPigPage(Driver, "https://saucelabs.com/");
 
             // read the useragent string off the page
-            var useragent = GuineaPigPage.GetUserAgent();
+            var useragent = guineaPigPage.GetUserAgent();
 
             useragent.ShouldNotBeNull();
         }
