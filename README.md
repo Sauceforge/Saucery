@@ -15,7 +15,6 @@ Note that if you choose to start from scratch (i.e. add Saucery3 OR Saucery3 NuG
 3. Open the Package Manager Console if it is not already.
 
 
-
 | Platform you wish to target | Write your tests with | Base class you should use |
 | --------------------------- | --------------------- | ------------------------- | 
 | Desktop browser             | Selenium              | SauceryBase               |
