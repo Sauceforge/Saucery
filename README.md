@@ -34,9 +34,9 @@ Publish test results in Jenkins with a Post Build Publish NUnit test result repo
 
 In a Jenkins job, execute your test project in a Windows Batch Command step like this:
 
-    "C:\Program Files (x86)\NUnit.org\nunit-console\nunit3-console.exe" <workspace\relative\path\to\my\test.dll> --result:nunit-selenium-testsuite.xml;format=nunit2
+    "C:\Program Files (x86)\NUnit.org\nunit-console\nunit3-console.exe" <workspace\relative\path\to\my\test.dll> --result:junit-selenium-testsuite.xml;transform=nunit3-junit.xslt
     exit %%ERRORLEVEL%%
 
-Publish test results in Jenkins with a Post Build Publish NUnit test result report step specifying nunit-selenium-testsuite.xml (or whatever filename you specified in the command above).
+Publish test results in Jenkins with a Post Build "Publish JUnit test result report" step specifying junit-*-testsuite.xml (or whatever filename you specified in the command above).  Adding the "Embed Sauce Labs reports" additional test report feature and the "Run Sauce Labs Test Publisher" Post build step is also recommended.
 
 SauceryForJUnit is for JUnit 4.12 and is currently available on request.  If there is sufficient demand it will be released on http://bintray.com
