@@ -37,6 +37,9 @@ In a Jenkins job, execute your test project in a Windows Batch Command step like
     "C:\Program Files (x86)\NUnit.org\nunit-console\nunit3-console.exe" <workspace\relative\path\to\my\test.dll> --result:junit-selenium-testsuite.xml;transform=nunit3-junit.xslt
     exit %%ERRORLEVEL%%
 
+
+nunit3-junit.xslt can be acquired from [here](https://github.com/nunit/nunit-transforms/tree/master/nunit3-junit).
+	
 Publish test results in Jenkins with a Post Build "Publish JUnit test result report" step specifying junit-*-testsuite.xml (or whatever filename you specified in the command above).  Adding the "Embed Sauce Labs reports" additional test report feature and the "Run Sauce Labs Test Publisher" Post build step is also recommended.
 
 SauceryForJUnit is for JUnit 4.12 and is currently available on request.  If there is sufficient demand it will be released on http://bintray.com
