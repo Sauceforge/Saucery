@@ -1,11 +1,11 @@
-## Saucery:
+# Saucery
 Everything you need to integrate [Jenkins](https://jenkins-ci.org) with [SauceLabs](https://saucelabs.com).
 
 Implementation for [NUnit 2.6.3](http://nunit.org), [NUnit 3](http://nunit.org) and [JUnit 4](http://junit.org).  
 
 Experimental implementations for MbUnit and XUnit.
 
-## General Notes:
+## General Notes
 Saucery is compatible with any CI server that the [SauceOnDemand](https://github.com/jenkinsci/sauce-ondemand-plugin) plugin supports.
 
 If you have Resharper installed the Saucery classes will appear in red.  However the solution will still build perfectly well.  This is a Resharper bug over which we have no control.
