@@ -1,0 +1,58 @@
+﻿<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Saucery2</id>
+    <version>2.4.3</version>
+    <title>Saucery 2</title>
+    <authors>Full Circle Solutions</authors>
+    <owners>Andrew Gray</owners>
+    <description>Sourcery for SauceLabs - Unlocking SauceLabs capability (Commercial product from fullcirclesolutions.com.au.  Only $99.)</description>
+    <releaseNotes>
+      Change Log:
+      v2.0.90:
+       - Update Selenium dependencies to v2.51.0.
+      v2.0.92:
+       - Update Selenium dependencies to v2.52.0.
+      v2.0.93:
+       - Update various dependencies.
+      v2.1.0:
+       - Update to .NET 4.6.1
+       - Update Shouldly to 2.7.0
+      v2.2.0:
+       - Update Shouldly to 2.8.0
+      v2.3.0:
+       - Update Selenium and JSON.NET nuget packages
+      v2.3.1:
+       - Update Shouldly and Appium nuget packages
+      v2.3.2:
+       - Implement new method on Appium interface.
+      v2.4.0:
+       - Upgrade NuGet packages. Robust support for RestAPI limits.
+      v2.4.3:
+       - Fix licence generation.  Saucery.lic licence file will be in the same directory as your .sln file.
+    </releaseNotes>
+    <summary>Sourcery for SauceLabs - Unlocking SauceLabs capability</summary>
+    <projectUrl>http://fullcirclesolutions.com.au</projectUrl>
+    <iconUrl>http://fullcirclesolutions.com.au/images/SauceryNUnit2.png</iconUrl>
+    <licenseUrl>http://www.binpress.com/license/view/l/7a067570068c77e3aa7e6c1ad6efa746</licenseUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <copyright>Copyright Andrew Gray 2014-2016</copyright>
+    <tags>nunit saucelabs test testing tdd framework assert</tags>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System.Core" targetFramework="net452" />
+      <frameworkAssembly assemblyName="System.Xml" targetFramework="net452" />
+    </frameworkAssemblies>
+    <dependencies>
+      <dependency id="Newtonsoft.Json" version="9.0.1" />
+      <dependency id="RestSharp" version="105.2.3" />
+      <dependency id="NUnit" version="2.6.4" />
+      <dependency id="Selenium.WebDriver" version="3.0.1" />
+      <dependency id="Selenium.Support" version="3.0.1" />
+      <dependency id="Appium.WebDriver" version="2.0.1.1" />
+      <dependency id="Shouldly" version="2.8.2" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\Release\Confused\Saucery2.dll" target="lib\net461\" />
+    <file src="bin\Release\init.ps1" target="tools\" />
+  </files>
+</package>

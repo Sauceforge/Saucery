@@ -1,0 +1,35 @@
+﻿<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Saucery</id>
+    <version>1.0.0</version>
+    <title>Saucery for MbUnit</title>
+    <authors>Full Circle Solutions</authors>
+    <owners>Andrew Gray</owners>
+    <description>Sourcery for SauceLabs - Unlocking SauceLabs capability (Commercial product from fullcirclesolutions.com.au.  Only $99.)</description>
+    <summary>Sourcery for SauceLabs - Unlocking SauceLabs capability</summary>
+    <projectUrl>http://fullcirclesolutions.com.au</projectUrl>
+    <iconUrl>http://fullcirclesolutions.com.au/images/SauceryMbUnit.png</iconUrl>
+    <licenseUrl>http://www.binpress.com/license/view/l/7a067570068c77e3aa7e6c1ad6efa746</licenseUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <releaseNotes>http://fullcirclesolutions.com.au/changelog.html</releaseNotes>
+    <copyright>Copyright Andrew Gray 2015</copyright>
+    <tags>MbUnit SauceLabs Automated Testing</tags>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System.Core" targetFramework="net45" />
+      <frameworkAssembly assemblyName="System.Xml" targetFramework="net45" />
+    </frameworkAssemblies>
+    <dependencies>
+      <dependency id="Newtonsoft.Json" version="7.0.1" />
+      <dependency id="RestSharp" version="105.1.0" />
+      <dependency id="mbunit" version="3.4.14" />
+      <dependency id="Selenium.WebDriver" version="2.46.0" />
+      <dependency id="Selenium.Support" version="2.46.0" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\Release\Confused\Saucery.dll" target="lib\net45\" />
+    <!--<file src="bin\Release\nunit.framework.dll" target="lib\net45\" /> --><!--Got to do this to make it work-->
+    <file src="bin\Release\init.ps1" target="tools\" />
+    <file src="NuGetTransforms\GlobalSetup.cs.pp" target="content\Tests\" />
+  </files>
+</package>
