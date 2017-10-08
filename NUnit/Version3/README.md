@@ -4,7 +4,7 @@ Previously released NuGet packages are held in a private repository.  This versi
 
 As Saucery is highly dependent on NUnit3, bugs in NUnit3 can impact Saucery.  
 
-Saucery NuGet packages will only be released when Selenium testing against SauceLsbs show that Saucery is functioning as expected.
+Saucery NuGet packages will only be released when Selenium testing against SauceLabs show that Saucery is functioning as expected.
 
 In a Jenkins job, execute your test project in a Windows Batch Command step like this:
 
