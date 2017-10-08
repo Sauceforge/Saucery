@@ -2,7 +2,7 @@
 
 Previously released NuGet packages are held in a private repository.  This version is driving forward to integrate with NUnit 3.8.1 and later.
 
-As Saucery is highly dependent on NUnit, bugs in NUnit can impact Saucery.  
+As Saucery is highly dependent on NUnit3, bugs in NUnit3 can impact Saucery.  
 
 Saucery NuGet packages will only be released when Selenium testing against SauceLsbs show that Saucery is functioning as expected.
 
