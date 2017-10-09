@@ -2,13 +2,13 @@ pipeline {
 	stages {
         stage('Clean') {
             steps {
-				bat "\"${tool 'MSBuild'}\" NUnit\Version3\Saucery3.sln /t:Clean /p:Configuration=Release"
+				bat "\"${tool 'MSBuild'}\" NUnit\\Version3\\Saucery3.sln /t:Clean /p:Configuration=Release"
             }
         }
 		stage('Rebuild') {
             steps {
-				bat 'nuget restore NUnit\Version3\Saucery3.sln'
-				bat "\"${tool 'MSBuild'}\" NUnit\Version3\Saucery3.sln /t:Rebuild /p:Configuration=Release"
+				bat 'nuget restore NUnit\\Version3\\Saucery3.sln'
+				bat "\"${tool 'MSBuild'}\" NUnit\\Version3\\Saucery3.sln /t:Rebuild /p:Configuration=Release"
             }
         }
 		stage('UnitTest') {
