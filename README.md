@@ -3,7 +3,7 @@ Everything you need to integrate [Jenkins](https://jenkins-ci.org) with [SauceLa
 
 Implementation for [NUnit 2.6.3](http://nunit.org), [NUnit 3](http://nunit.org) and [JUnit 4](http://junit.org).  
 
-Experimental implementations for MbUnit and XUnit.
+Experimental implementation against XUnit.
 
 ## General Notes
 Saucery is compatible with any CI server that the [SauceOnDemand](https://github.com/jenkinsci/sauce-ondemand-plugin) plugin supports.
