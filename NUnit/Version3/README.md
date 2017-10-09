@@ -13,4 +13,6 @@ In a Jenkins job, execute your test project in a Windows Batch Command step like
 
 nunit3-junit.xslt can be acquired from <a href="https://github.com/nunit/nunit-transforms/tree/master/nunit3-junit" target="_blank">here</a>.
 	
-Publish test results in Jenkins with a Post Build "Publish JUnit test result report" step specifying junit-*-testsuite.xml (or whatever filename you specified in the command above).  Adding the "Embed Sauce Labs reports" additional test report feature and the "Run Sauce Labs Test Publisher" Post build step is also recommended.
+Publish test results in Jenkins with a Post Build "Publish JUnit test result report" step specifying junit-*-testsuite.xml (or whatever filename you specified in the command above).  
+
+Adding the "Embed Sauce Labs reports" additional test report feature and the "Run Sauce Labs Test Publisher" Post build step is also recommended.

@@ -4,6 +4,7 @@
 [Bb]in/
 [Oo]bj/
 dist/
+.vs/
 
 # mstest test results
 TestResults
