@@ -19,7 +19,9 @@ pipeline {
         }
 		
 		stage("PublishUnitTestReport"){
-			junit testResultsPattern: 'junit-unittests-testsuite.xml'
+			steps {
+				junit testResultsPattern: 'junit-unittests-testsuite.xml'
+			}
 		}
 		
 		stage('SauceTest') {
