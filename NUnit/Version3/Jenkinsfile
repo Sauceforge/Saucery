@@ -17,10 +17,15 @@ pipeline {
 				bat '"C:\\Program Files (x86)\\NUnit.org\\nunit-console\\nunit3-console.exe" "NUnit\\Version3\\UnitTests\\bin\\Release\\UnitTests.dll" --result:junit-unittests-testsuite.xml;transform=nunit3-junit.xslt --trace=Verbose'
             }
         }
+		
+		stage("PublishUnitTestReport"){
+			junit testResultsPattern: 'junit-unittests-testsuite.xml'
+		}
+		
 		stage('SauceTest') {
             steps {
 				bat '"C:\\Program Files (x86)\\NUnit.org\\nunit-console\\nunit3-console.exe" "NUnit\\Version3\\Saucery3Tester\\bin\\Release\\Saucery3Tester.dll" --result:junit-selenium-testsuite.xml;transform=nunit3-junit.xslt --trace=Verbose'
             }
-        }	
+        }		
     }
 }
