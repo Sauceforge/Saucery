@@ -1,0 +1,12 @@
+language: java
+sudo: false
+
+jdk:
+  - oraclejdk8
+
+script:
+  - cd JUnit
+  - mvn clean test
+
+#after_success:
+#- mvn clean cobertura:cobertura coveralls:report -Ptravis-cobertura
