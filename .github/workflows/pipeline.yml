@@ -6,26 +6,21 @@ on:
       - master
 
 env:
-  SOLN_FILE: Saucery3.sln               # set this to your application's name
+  SOLN_FILE: Saucery.sln               # set this to your application's name
   CONFIG: Release
   APP_PACKAGE_PATH: 'published'        # set this to the path to your web app project, defaults to the repository root
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v1
+      uses: actions/checkout@v2
 
-    - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v1.0.3
-
-    - name: Setup NuGet
-      uses: NuGet/setup-nuget@v1
-      
-    - name: Restore NuGet Packages
-      run: nuget restore ${{ env.SOLN_FILE }}
-
-    - name: Build App
-      run: msbuild ${{ env.SOLN_FILE }} /p:Configuration=${{ env.CONFIG }}
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '5.0.401' # Check for latest at link at .NET 5 download page (https://dotnet.microsoft.com/download/dotnet/5.0)
+    - run: dotnet build
+    - run: dotnet test
