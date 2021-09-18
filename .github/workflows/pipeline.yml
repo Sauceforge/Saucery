@@ -1,0 +1,31 @@
+name: Build Pipeline
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  SOLN_FILE: Saucery3.sln               # set this to your application's name
+  CONFIG: Release
+  APP_PACKAGE_PATH: 'published'        # set this to the path to your web app project, defaults to the repository root
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v1
+
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v1.0.3
+
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1
+      
+    - name: Restore NuGet Packages
+      run: nuget restore ${{ env.SOLN_FILE }}
+
+    - name: Build App
+      run: msbuild ${{ env.SOLN_FILE }} /p:Configuration=${{ env.CONFIG }}
