@@ -6,7 +6,9 @@ on:
       - master
 
 env:
-  SOLN_FILE: Saucery.sln               # set this to your application's name
+  SOLN_FILE: Saucery.sln               # full path to your solution file
+  UT_PROJECT: UnitTests\UnitTests.csproj  # full path to your unit test project file
+
   CONFIG: Release
   APP_PACKAGE_PATH: 'published'        # set this to the path to your web app project, defaults to the repository root
 
@@ -23,4 +25,10 @@ jobs:
       with:
         dotnet-version: '5.0.401' # Check for latest at link at .NET 5 download page (https://dotnet.microsoft.com/download/dotnet/5.0)
     - run: dotnet build
-    - run: dotnet test
+    - run: dotnet test $env.UT_PROJECT
+    #uses: b3b00/coverlet-action@1.1.1
+    #with:
+    #  testProject: $env.UT_PROJECT
+    #  output: 'opencover.info'
+    #  outputFormat: 'opencover'
+    #  excludes: '[program]*,[UnitTests]Tests.*,[Merlin]*'
