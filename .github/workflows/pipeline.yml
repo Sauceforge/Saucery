@@ -7,7 +7,7 @@ on:
 
 env:
   SOLN_FILE: Saucery.sln               # full path to your solution file
-  UT_PROJECT: UnitTests\UnitTests.csproj  # full path to your unit test project file
+  UT_PROJECT: UnitTests\\UnitTests.csproj  # full path to your unit test project file
 
   CONFIG: Release
   APP_PACKAGE_PATH: 'published'        # set this to the path to your web app project, defaults to the repository root
