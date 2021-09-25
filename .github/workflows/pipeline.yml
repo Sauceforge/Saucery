@@ -31,6 +31,6 @@ jobs:
       uses: b3b00/coverlet-action@1.1.1
       with:
         testProject: ${{ env.UT_PROJECT }}
-        output: 'opencover.info'
+        output: 'Coverage/'
         outputFormat: 'opencover'
         excludes: '[program]*,[UnitTests]Tests.*,[Merlin]*'
