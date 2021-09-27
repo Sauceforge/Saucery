@@ -29,9 +29,10 @@ jobs:
     - run: dotnet build
     #- run: dotnet test ${{ env.UT_PROJECT }}
     - name: Run Unit Tests
-      uses: b3b00/coverlet-action@1.1.1
+      uses: b3b00/coverlet-action@1.1.2.2
       with:
         testProject: ${{ env.UT_PROJECT }}
         output: 'opencover.info'
         outputFormat: 'opencover'
+        threshold: '80'
         excludes: '[program]*,[UnitTests]Tests.*,[Merlin]*'
