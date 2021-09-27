@@ -7,7 +7,7 @@ on:
 
 env:
   SOLN_FILE: Saucery.sln                          # full path to your solution file
-  UT_PROJECT: UnitTests\\UnitTests.csproj         # full path to your unit test project file
+  UT_PROJECT: UnitTests/UnitTests.csproj          # full path to your unit test project file
   UT_PROJECTDIR: UnitTests\\                      # unit test directory
   SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
   SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
@@ -32,7 +32,7 @@ jobs:
     - name: Run Unit Tests
       uses: b3b00/coverlet-action@1.1.1
       with:
-        testProject: ${{ env.UT_PROJECTDIR }}
+        testProject: ${{ env.UT_PROJECT }}
         output: 'opencover.info'
         outputFormat: 'opencover'
         excludes: '[program]*,[UnitTests]Tests.*,[Merlin]*'
