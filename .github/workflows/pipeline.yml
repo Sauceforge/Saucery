@@ -34,5 +34,5 @@ jobs:
         testProject: ${{ env.UT_PROJECT }}
         output: 'opencover.info'
         outputFormat: 'opencover'
-        threshold: '80'
+        threshold: '20'
         excludes: '[program]*,[UnitTests]Tests.*,[Merlin]*'
