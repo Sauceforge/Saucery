@@ -7,11 +7,15 @@ on:
 
 env:
   SOLN_FILE: Saucery.sln                          # full path to your solution file
-  UT_PROJECT: UnitTests/UnitTests.csproj          # full path to your unit test project file
+  UT_DIR: UnitTests
+  UT_PROJECT: ${{ env.UT_DIR }}/UnitTests.csproj  # full path to your unit test project file
   SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
   SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
   CONFIG: Release
   APP_PACKAGE_PATH: 'published'                   # set this to the path to your web app project, defaults to the repository root
+  COVERAGE_FORMAT: opencover
+  COVERAGE_FILENAME: opencover.xml
+  COVERAGE_THRESHOLD: 20
 
 jobs:
   build:
@@ -41,15 +45,15 @@ jobs:
       uses: b3b00/coverlet-action@1.1.3
       with:
         testProject: ${{ env.UT_PROJECT }}
-        output: 'opencover.xml'
-        outputFormat: 'opencover'
-        threshold: '20'
+        output: ${{ env.COVERAGE_FILENAME }}
+        outputFormat: ${{ env.COVERAGE_FORMAT }}
+        threshold: ${{ env.COVERAGE_THRESHOLD }}
         excludes: '[program]*,[UnitTests]Tests.*,[Merlin]*'
 
     - name: ReportGenerator
       uses: danielpalme/ReportGenerator-GitHub-Action@4.8.12
       with:
-        reports: 'opencover.xml' # REQUIRED # The coverage reports that should be parsed (separated by semicolon). Globbing is supported.
+        reports: ${{ env.UT_DIR }}/${{ env.COVERAGE_FILENAME }} # REQUIRED # The coverage reports that should be parsed (separated by semicolon). Globbing is supported.
         targetdir: 'coveragereport' # REQUIRED # The directory where the generated report should be saved.
         reporttypes: 'HtmlInline;Cobertura' # The output formats and scope (separated by semicolon) Values: Badges, Clover, Cobertura, CsvSummary, Html, HtmlChart, HtmlInline, HtmlInline_AzurePipelines, HtmlInline_AzurePipelines_Dark, HtmlSummary, JsonSummary, Latex, LatexSummary, lcov, MarkdownSummary, MHtml, PngChart, SonarQube, TeamCitySummary, TextSummary, Xml, XmlSummary
 
