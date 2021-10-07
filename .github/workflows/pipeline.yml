@@ -1,9 +1,11 @@
 name: Build Pipeline
 
-on:
-  push:
-    branches:
-      - master
+on: [push, pull_request]
+
+#on:
+#  push:
+#    branches:
+#      - master
 
 env:
   SOLN_FILE: Saucery.sln                          # full path to your solution file
@@ -48,7 +50,7 @@ jobs:
         output: ${{ env.COVERAGE_FILENAME }}
         outputFormat: ${{ env.COVERAGE_FORMAT }}
         threshold: ${{ env.COVERAGE_THRESHOLD }}
-        excludes: '[program]*,[UnitTests]Tests.*,[Merlin]*'
+        excludes: '[program]*,[UnitTests]Tests.*,[Merlin]*,[Saucery]Selenium.*'
 
     - name: ReportGenerator
       uses: danielpalme/ReportGenerator-GitHub-Action@4.8.12
@@ -62,6 +64,8 @@ jobs:
       with:
         name: CoverageReport # Artifact name        
         path: coveragereport # Directory containing files to upload
+      # Use always() to always run this step to publish test results when there are test failures
+      if: ${{ always() }}
 
 
     - name: Bump version and push tag
