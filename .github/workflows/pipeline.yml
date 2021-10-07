@@ -50,7 +50,7 @@ jobs:
         output: ${{ env.COVERAGE_FILENAME }}
         outputFormat: ${{ env.COVERAGE_FORMAT }}
         threshold: ${{ env.COVERAGE_THRESHOLD }}
-        excludes: '[program]*,[UnitTests]Tests.*,[Merlin]*,[Saucery.*]Selenium.*'
+        excludes: '[program]*,[UnitTests]Tests.*,[Merlin]*,[Saucery]Saucery.Selenium.*'
 
     - name: ReportGenerator
       uses: danielpalme/ReportGenerator-GitHub-Action@4.8.12
