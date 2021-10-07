@@ -62,3 +62,12 @@ jobs:
       with:
         name: CoverageReport # Artifact name        
         path: coveragereport # Directory containing files to upload
+
+
+    - name: Bump version and push tag
+      if: {{ github.ref == 'ref/head/master' }}
+      id: tag_version
+      uses: mathieudutour/github-tag-action@v5.6
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        
