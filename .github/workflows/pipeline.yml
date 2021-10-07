@@ -67,7 +67,6 @@ jobs:
       # Use always() to always run this step to publish test results when there are test failures
       if: ${{ always() }}
 
-
     - name: Bump version and push tag
       if: ${{ github.ref == 'ref/head/develop' && success() }}
       id: tag_version
