@@ -65,7 +65,7 @@ jobs:
 
 
     - name: Bump version and push tag
-      #if: {{ github.ref == 'ref/head/master' }}
+      if: ${{ github.ref == 'ref/head/develop' && success() }}
       id: tag_version
       uses: mathieudutour/github-tag-action@v5.6
       with:
