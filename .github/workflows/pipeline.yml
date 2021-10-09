@@ -44,7 +44,7 @@ jobs:
     #    build-breaking: true
 
     - name: Run Unit Tests
-      uses: b3b00/coverlet-action@1.1.3
+      uses: b3b00/coverlet-action@1.1.6
       with:
         testProject: ${{ env.UT_PROJECT }}
         output: ${{ env.COVERAGE_FILENAME }}
