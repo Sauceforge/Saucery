@@ -1,59 +1,55 @@
-﻿using System.Net;
-using System.Threading;
-using RestSharp;
+﻿using RestSharp;
+using RestSharp.Authenticators;
 using Saucery.Util;
+using System.Threading;
 
 //Hello from January 2020 :)
 //Donald Trump is the President of the United States.
 //I sure hope I meet my wife and have a family before I die.
 
-namespace Saucery.RestAPI {
+namespace Saucery.RestAPI
+{
     public abstract class RestBase {
         internal static string UserName = Enviro.SauceUserName;
         internal static string AccessKey = Enviro.SauceApiKey;
         internal static RestClient Client;
+        internal static RestRequest Request;
         internal static RestAPILimitsChecker LimitChecker;
 
         static RestBase() {
-            Client = new RestClient(SauceryConstants.SAUCE_REST_BASE);
+            Client = new RestClient(SauceryConstants.SAUCE_REST_BASE)
+            {
+                Authenticator = new HttpBasicAuthenticator(UserName, AccessKey)
+            };
             LimitChecker = new RestAPILimitsChecker();
         }
 
-        protected RestRequest BuildRequest(string request, Method method) {
-            return new RestRequest(request, method) {
-                Credentials = new NetworkCredential(UserName, AccessKey)
-            };
+        protected static RestRequest BuildRequest(string request, Method method, string username = null) {
+            if (username != null)
+            {
+                request = string.Format(request, username);
+            }
+            Request = new RestRequest(request, method);
+            Request.AddHeader("Content-Type", SauceryConstants.JSON_CONTENT_TYPE);
+            Request.RequestFormat = DataFormat.Json;
+            return Request;
         }
 
-        protected string GetJsonResponse(string requestProforma) {
-            var request = BuildRequest(requestProforma, Method.GET);
-            request.OnBeforeDeserialization = resp => { resp.ContentType = SauceryConstants.JSON_CONTENT_TYPE; };
-
+        protected string GetJsonResponse(string requestProforma, string username = null) {
+            var request = BuildRequest(requestProforma, Method.Get, username);
             var response = GetResponse(request);
             return response.Content;
         }
 
-        protected string GetJsonResponseForUser(string requestProforma) {
-            var request = BuildRequest(string.Format(requestProforma, UserName), Method.GET);
-            request.OnBeforeDeserialization = resp => { resp.ContentType = SauceryConstants.JSON_CONTENT_TYPE; };
-
-            var response = GetResponse(request);
-            //Console.WriteLine("GetJsonResponseForUser response Content: " + response.Content);
-            //Console.Out.Flush();
-            //Console.WriteLine("GetJsonResponseForUser response remaining: " + response.Headers[2].Value.ToString());
-            //Console.WriteLine("GetJsonResponseForUser reset remaining: " + response.Headers[5].Value.ToString());
-            return response.Content;
-        }
-
-        private IRestResponse GetResponse(RestRequest request) {
-            var response = Client.Execute(request);
+        private RestResponse GetResponse(RestRequest request) {
+            var response = Client.ExecuteAsync(request).Result ;
             LimitChecker.Update(response);
 
             while (LimitChecker.IsLimitExceeded())
             {
                 OnceOnlyMessages.RestApiLimitExceeded();
                 Thread.Sleep(LimitChecker.GetReset());
-                response = Client.Execute(request);
+                response = Client.ExecuteAsync(request).Result;
                 LimitChecker.Update(response);
             }
 
@@ -62,13 +58,13 @@ namespace Saucery.RestAPI {
 
         internal void EnsureExecution(RestRequest request)
         {
-            var response = Client.Execute(request);
+            var response = Client.ExecuteAsync(request).Result;
             LimitChecker.Update(response);
 
             while (LimitChecker.IsLimitExceeded())
             {
                 Thread.Sleep(LimitChecker.GetReset());
-                response = Client.Execute(request);
+                response = Client.ExecuteAsync(request).Result;
                 LimitChecker.Update(response);
             }
         }

@@ -9,11 +9,11 @@ namespace UnitTests {
         static RestTests() {
             //Console.WriteLine(@"In RestTests static");
             Environment.SetEnvironmentVariable(SauceryConstants.SAUCE_USER_NAME, SauceryConstants.MY_USERNAME_LOWER);
-            Environment.SetEnvironmentVariable(SauceryConstants.SAUCE_API_KEY, "");
+            Environment.SetEnvironmentVariable(SauceryConstants.SAUCE_API_KEY, "d3647b97-3069-4841-ab62-d5cda150cd35");
         }
 
         [Test]
-        [Ignore("Need OpenSauce")]
+        //[Ignore("Need OpenSauce")]
         public void FlowControlTest() {
             var flowController = new SauceLabsFlowController();
             //Console.WriteLine(@"RESTTests: About to call ControlFlow()");

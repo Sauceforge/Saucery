@@ -4,14 +4,14 @@ using RestSharp;
 namespace UnitTests.RestAPI
 {
     internal class RestAPILimitsChecker {
-        private IRestResponse Response;
+        private RestResponse Response;
         private Dictionary<string, string> Headers;
 
         public RestAPILimitsChecker() {
             Headers = new Dictionary<string, string>();
         }
 
-        public void Update(IRestResponse response) {
+        public void Update(RestResponse response) {
             Response = response;
 
             foreach (var p in response.Headers)

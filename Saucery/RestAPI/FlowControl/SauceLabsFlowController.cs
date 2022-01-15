@@ -1,10 +1,11 @@
-﻿using System;
-using System.Threading;
-using RestSharp;
-using Saucery.RestAPI.FlowControl.Base;
+﻿using Saucery.RestAPI.FlowControl.Base;
 using Saucery.Util;
+using System;
+using System.Text.Json;
+using System.Threading;
 
-namespace Saucery.RestAPI.FlowControl {
+namespace Saucery.RestAPI.FlowControl
+{
     internal class SauceLabsFlowController : FlowController {
         public override void ControlFlow() {
             while(TooManyTests()) {
@@ -14,19 +15,12 @@ namespace Saucery.RestAPI.FlowControl {
 
         protected override bool TooManyTests() {
             //int maxParallelMacSessionsAllowed;  //Possible future use.
-            var json = GetJsonResponseForUser(SauceryConstants.ACCOUNT_CONCURRENCY_REQUEST);
-            //Console.WriteLine("Concurrency JSON: " + json);
-            var jsonStartIndex = json.IndexOf("\"remaining", StringComparison.Ordinal);
+            var json = GetJsonResponse(SauceryConstants.ACCOUNT_CONCURRENCY_REQUEST, UserName);
 
-            while(jsonStartIndex < 0)
-            {
-                json = GetJsonResponseForUser(SauceryConstants.ACCOUNT_CONCURRENCY_REQUEST);
-                jsonStartIndex = json.IndexOf("\"remaining", StringComparison.Ordinal);
-            }
-
-            var jsonEndIndex = json.Length - 3;
-            var remainingSection = ExtractJsonSegment(json, jsonStartIndex, jsonEndIndex);
-            var flowControl = SimpleJson.DeserializeObject<FlowControl>(remainingSection);
+            //Console.WriteLine(@"Debug: {0}", json);
+            var remainingSection = ExtractJsonSegment(json, json.IndexOf("\"remaining", StringComparison.Ordinal), json.Length - 3);
+            //Console.WriteLine(@"Debug: remainingsection = {0}", remainingSection);
+            var flowControl = JsonSerializer.Deserialize<FlowControl>(remainingSection);
 
             return flowControl.remaining.overall <= 0;
         }
