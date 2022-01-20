@@ -5,7 +5,7 @@ using OpenQA.Selenium.Remote;
 using Saucery.Util;
 
 namespace Saucery.Driver {
-    public class SauceryAndroidDriver : AndroidDriver<IWebElement> {
+    public class SauceryAndroidDriver : AndroidDriver {
         public SauceryAndroidDriver(DriverOptions options)
             : base(new Uri(SauceryConstants.SAUCELABS_HUB), options) {
         }

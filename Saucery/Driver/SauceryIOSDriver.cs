@@ -5,7 +5,7 @@ using OpenQA.Selenium.Remote;
 using Saucery.Util;
 
 namespace Saucery.Driver {
-    public class SauceryIOSDriver : IOSDriver<IOSElement> {
+    public class SauceryIOSDriver : IOSDriver {
         public SauceryIOSDriver(DriverOptions options)
             : base(new Uri(SauceryConstants.SAUCELABS_HUB), options, TimeSpan.FromSeconds(400))
         {
