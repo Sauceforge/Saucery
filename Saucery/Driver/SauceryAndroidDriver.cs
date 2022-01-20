@@ -18,10 +18,10 @@ namespace Saucery.Driver {
             return SessionId.ToString();
         }
 
-        protected override RemoteWebElementFactory CreateElementFactory()
-        {
-            throw new NotImplementedException();
-        }
+        //protected override RemoteWebElementFactory CreateElementFactory()
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         //public override void Swipe(int startx, int starty, int endx, int endy, int duration) {
         //    throw new NotImplementedException();
