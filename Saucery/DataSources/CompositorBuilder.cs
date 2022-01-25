@@ -7,7 +7,6 @@ namespace Saucery.DataSources
     {
         public Compositor Build()
         {
-            //return Enviro.SauceOnDemandBrowsers != null ? new EnvCompositor() : new BuiltInCompositor();
             if(Enviro.SauceOnDemandBrowsers != null) {
                 DebugMessages.UsingEnvCompositor();
                 return new EnvCompositor();

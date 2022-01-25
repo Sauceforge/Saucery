@@ -31,7 +31,10 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         # Check for latest at link at .NET 5 download page (https://dotnet.microsoft.com/download/dotnet/5.0)
-        dotnet-version: '5.0.401'
+        # dotnet-version: '5.0.401'
+        dotnet-version: | 
+          3.1.x  # SDK Version to use; x will use the latest version of the 3.1 channel
+          5.0.x  # SDK Version to use; x will use the latest version of the 5.0 channel
     
     - name: Compile solution
       run: dotnet build -c ${{ env.CONFIG }}
