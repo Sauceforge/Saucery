@@ -1,15 +1,19 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using Saucery.DataSources.Base;
 using Saucery.OnDemand;
 using Saucery.Util;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace Saucery.DataSources {
+namespace Saucery.DataSources
+{
 
     public class PlatformTestData : IEnumerable {
         #region Attributes
         internal static List<SaucePlatform> Platforms { get; set; }
+        internal static Compositor Compositor { get; set; }
+        internal static CompositorBuilder Builder { get; set; }
 
         internal string Os { get; set; }
         internal string Platform { get; set; }
@@ -34,16 +38,21 @@ namespace Saucery.DataSources {
         {
             //Console.WriteLine("Start static PlatformTestData()");
             //Console.WriteLine(@"After CheckActivation in PlatformTestData");
+
+            Builder = new CompositorBuilder();
+            Compositor = Builder.Build();
+            Compositor.Compose();
             Platforms = JsonConvert.DeserializeObject<List<SaucePlatform>>(Enviro.SauceOnDemandBrowsers);
+
             //OnceOnlyMessages.TestingOn(Platforms);
             //OnceOnlyMessages.OnDemand();
         }
 
         public IEnumerator GetEnumerator() {
             return Platforms?.Select(platform => new SaucePlatform(Sanitiser.SanitisePlatformField(platform.Os),
-                        Sanitiser.SanitisePlatformField(platform.Platform),
                         Sanitiser.SanitisePlatformField(platform.Browser),
                         Sanitiser.SanitisePlatformField(platform.BrowserVersion),
+                        Sanitiser.SanitisePlatformField(platform.Platform),
                         Sanitiser.SanitisePlatformField(platform.LongName),
                         Sanitiser.SanitisePlatformField(platform.LongVersion),
                         Sanitiser.SanitisePlatformField(platform.Url),

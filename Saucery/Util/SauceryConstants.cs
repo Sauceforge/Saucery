@@ -26,8 +26,8 @@
         //CAPABILITIES
         //internal const string RESOLUTION_CAPABILITY = "resolution";
         //internal const string SCREENRESOLUTION_CAPABILITY = "screen-resolution";
-        //internal const string SAUCE_APPIUM_VERSION_CAPABILITY = "appiumVersion";
-        //internal const string APPIUM_VERSION = "1.4.13";
+        internal const string SAUCE_APPIUM_VERSION_CAPABILITY = "appiumVersion";
+        internal const string LATEST_APPIUM_VERSION = "1.20.2";
         internal const string SELENIUM_VERSION_CAPABILITY = "seleniumVersion";
         internal const string LATEST_SELENIUM_VERSION = "3.141.0";  //"latest" does not work.
         internal const double APPIUM_IOS_MINIMUM_VERSION = 6.1;
@@ -39,10 +39,14 @@
         internal const string SAUCE_BROWSER_NAME_CAPABILITY = "browserName";
         internal const string SAUCE_PLATFORM_CAPABILITY = "platform";
         internal const string SAUCE_PLATFORM_NAME_CAPABILITY = "platformName";
-        internal const string SAUCE_PLATFORM_VERSION_CAPABILITY = "platformVersion";
+        //internal const string SAUCE_PLATFORM_VERSION_CAPABILITY = "platformVersion";
+        internal const string SAUCE_PLATFORM_VERSION_CAPABILITY = "PlatformVersion";
+        internal const string SAUCE_APPIUM_PLATFORM_VERSION_CAPABILITY = "appium:platformVersion";
         internal const string SAUCE_VERSION_CAPABILITY = "version";
         internal const string SAUCE_DEVICE_CAPABILITY = "device";
-        internal const string SAUCE_DEVICE_NAME_CAPABILITY = "deviceName";
+        //internal const string SAUCE_DEVICE_NAME_CAPABILITY = "deviceName";
+        internal const string SAUCE_DEVICE_NAME_CAPABILITY = "DeviceName";
+        internal const string SAUCE_APPIUM_DEVICE_NAME_CAPABILITY = "appium:deviceName";
         internal const string SAUCE_DEVICE_ORIENTATION_CAPABILITY = "deviceOrientation";
         internal const string SAUCE_NATIVE_APP_CAPABILITY = "app";
         internal const string SAUCE_VUOP_CAPABILITY = "videoUploadOnPass";

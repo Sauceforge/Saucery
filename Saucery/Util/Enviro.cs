@@ -46,6 +46,14 @@ namespace Saucery.Util {
             return envVar == null ? null : Environment.GetEnvironmentVariable(envVar);
         }
 
+        //internal static void SetStringVar(string envVar, string value)
+        //{
+        //    if(envVar != null && value != null)
+        //    {
+        //        Environment.SetEnvironmentVariable(envVar, value);
+        //    }
+        //}
+
         private static bool GetBoolVar(string envVar) {
             var v = GetStringVar(envVar);
             return v != null && Convert.ToBoolean(v);

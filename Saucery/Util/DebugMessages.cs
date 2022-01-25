@@ -86,6 +86,24 @@ namespace Saucery.Util {
                               SauceryConstants.SAUCE_PLATFORM_VERSION_CAPABILITY, sanitisedLongVersion,
                               SauceryConstants.SAUCE_PLATFORM_NAME_CAPABILITY, SauceryConstants.ANDROID);
         }
+
+        internal static void UsingEnvCompositor()
+        {
+            if (UserChecker.ItIsMe())
+            {
+                Console.WriteLine("DEBUG MESSAGE: Building platforms from environment variable.");
+                Console.Out.Flush();
+            }
+        }
+
+        internal static void UsingBuiltInCompositor()
+        {
+            if (UserChecker.ItIsMe())
+            {
+                Console.WriteLine("DEBUG MESSAGE: Building platforms from Built In Compile Time set.");
+                Console.Out.Flush();
+            }
+        }
     }
 }
 
