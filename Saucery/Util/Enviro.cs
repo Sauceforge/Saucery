@@ -4,15 +4,16 @@ namespace Saucery.Util {
     public static class Enviro {
         internal static string SauceNativeApp => GetStringVar(SauceryConstants.SAUCE_NATIVE_APP);
 
-        internal static string SauceUserName => GetStringVar(SauceryConstants.SAUCE_USER_NAME);
+        public static string SauceUserName => GetStringVar(SauceryConstants.SAUCE_USER_NAME);
 
-        internal static string SauceApiKey => GetStringVar(SauceryConstants.SAUCE_API_KEY);
+        public static string SauceApiKey => GetStringVar(SauceryConstants.SAUCE_API_KEY);
 
         public static string SauceOnDemandBrowsers => GetStringVar(SauceryConstants.SAUCE_ONDEMAND_BROWSERS);
 
         internal static bool SauceUseChromeOnAndroid => GetBoolVar(SauceryConstants.SAUCE_USE_CHROME_ON_ANDROID);
 
-        internal static string BuildName => string.Format("Desktop_{0}", GetStringVar(SauceryConstants.BUILD_NUMBER));
+        //TODO: Guid needs to be a singleton
+        internal static string BuildName => string.Format("Desktop_{0}", GetStringVar(SauceryConstants.BUILD_NUMBER) ?? IDGenerator.Instance.Id);
 
         internal static string BuildNumber
         {

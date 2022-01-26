@@ -1,10 +1,12 @@
-﻿using System;
-using NUnit.Framework;
+﻿using NUnit.Framework;
+using Saucery.RestAPI.FlowControl;
+using Saucery.RestAPI.RecommendedAppiumVersion;
+using Saucery.Util;
 using Shouldly;
-using UnitTests.RestAPI.FlowControl;
-using UnitTests.RestAPI.RecommendedAppiumVersion;
+using System;
 
-namespace UnitTests {
+namespace UnitTests
+{
     public class RestTests {
         static RestTests() {
             //Console.WriteLine(@"In RestTests static");

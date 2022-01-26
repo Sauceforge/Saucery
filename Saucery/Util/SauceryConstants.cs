@@ -2,7 +2,7 @@
     public class SauceryConstants {
         //ACTIVATION DETAILS
         internal const string MY_USERNAME = "saucefauge";
-        internal static readonly string MY_USERNAME_LOWER = MY_USERNAME.ToLower();
+        public static readonly string MY_USERNAME_LOWER = MY_USERNAME.ToLower();
         internal const string COMPANYNAME = "SauceForge";
         internal const string EDITION = "Enterprise";
         internal const string KEYNAME = "SauceryKey";
@@ -53,8 +53,8 @@
         internal const string SAUCE_OPTIONS_CAPABILITY = "sauce:options";
 
         //SAUCE ENVIRONMENT VARIABLES
-        internal const string SAUCE_USER_NAME = "SAUCE_USER_NAME";
-        internal const string SAUCE_API_KEY = "SAUCE_API_KEY";
+        public const string SAUCE_USER_NAME = "SAUCE_USER_NAME";
+        public const string SAUCE_API_KEY = "SAUCE_API_KEY";
         internal const string SAUCE_ONDEMAND_BROWSERS = "SAUCE_ONDEMAND_BROWSERS";
         internal const string SAUCE_NATIVE_APP = "SAUCE_NATIVE_APP";
         internal const string SAUCE_USE_CHROME_ON_ANDROID = "SAUCE_USE_CHROME_ON_ANDROID";
@@ -105,7 +105,7 @@
         internal const string PASSED = "passed";
         internal const string FAILED = "failed";
         internal const string NULL_STRING = "null";
-        internal const string DOT = ".";
+        public const string DOT = ".";
         internal const string SPACE = " ";
         internal const string TWO_SPACES = "  ";
         internal const string ASTERIX = "*";

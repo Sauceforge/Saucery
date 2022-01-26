@@ -1,5 +1,5 @@
 ﻿namespace Saucery.RestAPI.FlowControl.Base {
-    internal abstract class FlowController : RestBase {
+    public abstract class FlowController : RestBase {
         protected abstract bool TooManyTests();
         public abstract void ControlFlow();
     }
