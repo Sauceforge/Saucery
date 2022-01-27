@@ -2,7 +2,6 @@
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Remote;
 using Saucery.DataSources;
 using Saucery.Driver;
 using Saucery.OnDemand;

@@ -23,6 +23,7 @@ namespace Saucery.Options.Base
                 //Improve performance on SauceLabs
                 { SauceryConstants.SAUCE_VUOP_CAPABILITY, false }
             };
+
             //SauceOptions.Add(Constants.VISIBILITY_KEY, Constants.VISIBILITY_TEAM);
         }
 
@@ -33,6 +34,8 @@ namespace Saucery.Options.Base
         }
 
         public DriverOptions GetOpts() {
+            Opts.AddAdditionalOption(SauceryConstants.SAUCE_USERNAME_CAPABILITY, Enviro.SauceUserName);
+            Opts.AddAdditionalOption(SauceryConstants.SAUCE_ACCESSKEY_CAPABILITY, Enviro.SauceApiKey);
             return Opts;
         }
 

@@ -34,11 +34,11 @@ namespace Saucery.RestAPI
         }
 
         private bool NoRemaining() {
-            return int.Parse(Headers["X-Ratelimit-Remaining"]) <= 0;
+            return int.Parse(Headers["x-ratelimit-remaining"]) <= 0;
         }
 
         internal int GetReset() {
-            return int.Parse(Headers["X-Ratelimit-Reset"]);
+            return int.Parse(Headers["x-ratelimit-reset"]);
         }
     }
 }

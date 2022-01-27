@@ -6,6 +6,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
 using Saucery.Driver;
+using Saucery.Tests;
 using Saucery.Util;
 
 namespace Saucery.PageObjects {
@@ -16,7 +17,8 @@ namespace Saucery.PageObjects {
         internal string Name;
         internal string Title;
 
-        public PageObjectBase(SauceryRemoteWebDriver driver, string url, string name, string title) {
+        public PageObjectBase(SauceryRemoteWebDriver driver, string url, string name, string title)
+        {
             Driver = driver;
             PageUrl = url;
             Name = name;
