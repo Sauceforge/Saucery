@@ -17,6 +17,9 @@ namespace Saucery.RestAPI
             foreach(var p in response.Headers) {
                 if (!Headers.ContainsKey(p.Name)) {
                     Headers.Add(p.Name, p.Value.ToString());
+                } else {
+                    Headers.Remove(p.Name);
+                    Headers.Add(p.Name, p.Value.ToString());
                 }
             }
         }

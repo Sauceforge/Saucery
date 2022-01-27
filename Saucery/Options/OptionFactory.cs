@@ -15,6 +15,9 @@ namespace Saucery.Options
         }
 
         public DriverOptions CreateOptions(string testName) {
+
+            //TODO: Determine platform type upfront with an enum attribute on the platform.
+
             if (Platform.IsADesktopPlatform()) {
                 DebugMessages.PrintHaveDesktopPlatform();
                 return GetDesktopOptions(Platform, testName);
