@@ -150,10 +150,17 @@
         internal const string VISIBILITY_PRIVATE = "private";
 
         //OPTIONS BROWSER SUPPORT
-        internal const int SAFARI_SUPPORTED_VERSION = 11;
-        internal const int FIREFOX_SUPPORTED_VERSION = 53;
-        internal const int CHROME_SUPPORTED_VERSION = 61;
-        internal const int IE_SUPPORTED_VERSION = 11;
+        internal const int MAX_SAFARI_SUPPORTED_VERSION = 15;
+        internal const int MAX_FIREFOX_SUPPORTED_VERSION = 96;
+        internal const int MAX_CHROME_SUPPORTED_VERSION = 97;
+        internal const int MAX_EDGE_SUPPORTED_VERSION = 97;
+        internal const int MAX_IE_SUPPORTED_VERSION = 11;
+
+        internal const int MIN_SAFARI_SUPPORTED_VERSION = 8;
+        internal const int MIN_FIREFOX_SUPPORTED_VERSION = 4;
+        internal const int MIN_CHROME_SUPPORTED_VERSION = 26;
+        internal const int MIN_EDGE_SUPPORTED_VERSION = 13;
+        internal const int MIN_IE_SUPPORTED_VERSION = 9;
         internal const string NOT_SUPPORTED_MESSAGE = "Browser version not supported by DriverOptions. Please see: https://wiki.saucelabs.com/display/DOCS/2018/03/27/Introducing+Selenium+WebDriver+W3C+Protocol+Beta.";
     }
 }

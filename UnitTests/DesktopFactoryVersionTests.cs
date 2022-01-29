@@ -28,6 +28,7 @@ namespace UnitTests
         [Test, TestCaseSource(typeof(DesktopDataClass), "SupportedTestCases")]
         public void DesktopOptionTest(SaucePlatform saucePlatform)
         {
+            saucePlatform = PlatformClassifer.Classify(saucePlatform);
             var factory = new OptionFactory(saucePlatform);
             var opts = factory.CreateOptions("DesktopOptionTest");
             opts.ShouldNotBeNull();
@@ -55,10 +56,13 @@ namespace UnitTests
         {
             get
             {
-                yield return new TestCaseData(new SaucePlatform("Windows 10", "chrome", "60", "", "", "", "", "", ""));
-                yield return new TestCaseData(new SaucePlatform("Windows 10", "firefox", "52", "", "", "", "", "", ""));
-                yield return new TestCaseData(new SaucePlatform("Windows 10", "safari", "10", "", "", "", "", "", ""));
-                yield return new TestCaseData(new SaucePlatform("Windows 10", "internet explorer", "10", "", "", "", "", "", ""));
+                yield return new TestCaseData(new SaucePlatform("Windows 10", "chrome", "9999", "", "", "", "", "", ""));
+                yield return new TestCaseData(new SaucePlatform("Windows 10", "chrome", "25", "", "", "", "", "", ""));
+                yield return new TestCaseData(new SaucePlatform("Windows 10", "firefox", "3", "", "", "", "", "", ""));
+                yield return new TestCaseData(new SaucePlatform("Windows 10", "firefox", "9999", "", "", "", "", "", ""));
+                yield return new TestCaseData(new SaucePlatform("Windows 10", "safari", "7", "", "", "", "", "", ""));
+                yield return new TestCaseData(new SaucePlatform("Windows 10", "internet explorer", "8", "", "", "", "", "", ""));
+                yield return new TestCaseData(new SaucePlatform("Windows 10", "internet explorer", "9999", "", "", "", "", "", ""));
             }
         }
     }

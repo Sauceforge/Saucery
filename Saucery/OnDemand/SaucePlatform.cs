@@ -26,6 +26,10 @@ namespace Saucery.OnDemand {
         [JsonProperty(PropertyName = "device-orientation")]
         public string DeviceOrientation { get; set; }
 
+        public PlatformType PlatformType { get; set; }
+
+        public string TestName { get; set; }
+
         #endregion
 
         #region Constructors
@@ -51,8 +55,8 @@ namespace Saucery.OnDemand {
 
         #region Methods
 
-        internal double ParseBrowserVersion() {
-            return double.Parse(BrowserVersion);
+        internal int ParseBrowserVersion() {
+            return int.Parse(BrowserVersion);
         }
 
         #endregion

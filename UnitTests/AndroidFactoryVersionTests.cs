@@ -12,6 +12,7 @@ namespace UnitTests
         [Test, TestCaseSource(typeof(AndroidDataClass), "SupportedTestCases")]
         public void IsSupportedPlatformTest(SaucePlatform saucePlatform)
         {
+            saucePlatform = PlatformClassifer.Classify(saucePlatform);
             var factory = new OptionFactory(saucePlatform);
             var result = factory.IsSupportedPlatform();
             result.ShouldBeTrue();
@@ -28,6 +29,7 @@ namespace UnitTests
         [Test, TestCaseSource(typeof(AndroidDataClass), "SupportedTestCases")]
         public void AppiumAndroidOptionTest(SaucePlatform saucePlatform)
         {
+            saucePlatform = PlatformClassifer.Classify(saucePlatform);
             var factory = new OptionFactory(saucePlatform);
             var opts = factory.CreateOptions("AppiumAndroidOptionTest");
             opts.ShouldNotBeNull();
@@ -39,7 +41,7 @@ namespace UnitTests
         {
             get
             {
-                yield return new TestCaseData(new SaucePlatform("android", "chrome", "62.0", "android", "Google Pixel 3 GoogleAPI Emulator", "10.0.", "", "android", "landscape"));
+                yield return new TestCaseData(new SaucePlatform("", "", "latest", "android", "Google Pixel 3 GoogleAPI Emulator", "10.0.", "", "android", "landscape"));
             }
         }
 
@@ -47,7 +49,7 @@ namespace UnitTests
         //{
         //    get
         //    {
-        //        yield return new TestCaseData(new SaucePlatform("android", "android", "android", "10.0", "Google Pixel 3 GoogleAPI Emulator", "10.0.", "", "android", "landscape"));
+        //        yield return new TestCaseData(new SaucePlatform("android", "android", "android", "10", "Google Pixel 3 GoogleAPI Emulator", "10.0.", "", "android", "landscape"));
         //    }
         //}
     }

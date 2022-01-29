@@ -43,6 +43,7 @@ namespace Saucery.DataSources
             Compositor = Builder.Build();
             Compositor.Compose();
             Platforms = JsonConvert.DeserializeObject<List<SaucePlatform>>(Enviro.SauceOnDemandBrowsers);
+            Platforms.ClassifyAll();
 
             //OnceOnlyMessages.TestingOn(Platforms);
             //OnceOnlyMessages.OnDemand();

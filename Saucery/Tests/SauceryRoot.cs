@@ -37,7 +37,8 @@ namespace Saucery.Tests
         [SetUp]
         public void Setup() {
             //Console.WriteLine("In Setup");
-            TestName = Platform.GetTestName(TestContext.CurrentContext.Test.Name);
+            Platform.SetTestName(TestContext.CurrentContext.Test.Name);
+            TestName = Platform.TestName;
 
             //DebugMessages.PrintPlatformDetails(platform);
             // set up the desired capabilities
