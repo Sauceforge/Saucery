@@ -12,6 +12,7 @@ namespace UnitTests
         [Test, TestCaseSource(typeof(DesktopDataClass), "SupportedTestCases")]
         public void IsSupportedPlatformTest(SaucePlatform saucePlatform)
         {
+            saucePlatform = PlatformClassifer.Classify(saucePlatform);
             var factory = new OptionFactory(saucePlatform);
             var result = factory.IsSupportedPlatform();
             result.ShouldBeTrue();
@@ -20,6 +21,7 @@ namespace UnitTests
         [Test, TestCaseSource(typeof(DesktopDataClass), "NotSupportedTestCases")]
         public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform)
         {
+            saucePlatform = PlatformClassifer.Classify(saucePlatform);
             var factory = new OptionFactory(saucePlatform);
             var result = factory.IsSupportedPlatform();
             result.ShouldBeFalse();
