@@ -2,7 +2,7 @@
 
 namespace UnitTests.Issue1118 {
     [TestFixture]
-    //[Parallelizable(ParallelScope.Fixtures)]
+    [Parallelizable(ParallelScope.All)]
     public abstract class Issue1118_Root {
         protected readonly string Browser;
 

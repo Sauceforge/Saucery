@@ -1,28 +1,18 @@
 ﻿<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>Saucery3</id>
-    <version>3.13.0</version>
-    <title>Saucery 3</title>
+    <id>Saucery</id>
+    <version>4.0.0</version>
+    <title>Saucery</title>
     <authors>SauceForge</authors>
     <owners>Andrew Gray</owners>
     <description>Sourcery for SauceLabs - Unlocking SauceLabs capability</description>
     <releaseNotes>
       ChangeLog:
-      v3.10.1
-      - Upgrade to NUnit 3.10.1
-      v3.10.2
-      - Upgrade to Selenium 3.12.1
-      v3.10.3
-      - Upgrade NuGet packages
-      v3.10.4
-      - Upgrade to Selenium 3.13.1
-      v3.11.0
-      - Upgrade to NUnit 3.11
-      v3.13.0
-      - Upgrade to NUnit 3.13
+      v4.0.0
+      - Initial Release
     </releaseNotes>
     <summary>Sourcery for SauceLabs - Unlocking SauceLabs capability</summary>
-    <projectUrl>https://github.com/Sauceforge/Saucery3</projectUrl>
+    <projectUrl>https://github.com/Sauceforge/Saucery</projectUrl>
     <iconUrl>http://sauceforge.github.io/Images/SauceryNUnit3_New.png</iconUrl>
     <copyright>Copyright Andrew Gray 2014-2022</copyright>
     <tags>nunit saucelabs test testing tdd framework assert</tags>
@@ -31,15 +21,16 @@
       <frameworkAssembly assemblyName="System.Xml" targetFramework="net452" />
     </frameworkAssemblies>
     <dependencies>
-      <dependency id="Newtonsoft.Json" version="13.0.1" />
-      <dependency id="RestSharp" version="106.12.0" />
-      <dependency id="NUnit" version="3.13.2" />
-      <!--<dependency id="NUnit.Console" version="3.6.0" />-->
-      <dependency id="Selenium.WebDriver" version="3.13.1" />
-      <dependency id="Selenium.Support" version="3.13.1" />
-      <dependency id="Appium.WebDriver" version="3.0.0.2" />
+      <dependency id="Appium.WebDriver" version="5.0.0-beta01" />
       <dependency id="Castle.Core" version="4.4.1" />
-      <dependency id="Shouldly" version="3.0.2" />
+      <dependency id="DotNetSeleniumExtras.WaitHelpers" version="3.11.0" />
+      <dependency id="Microsoft.NET.Test.Sdk" version="17.1.0" />
+      <dependency id="Newtonsoft.Json" version="13.0.1" />
+      <dependency id="NUnit" version="3.13.2" />
+      <dependency id="RestSharp" version="107.0.3" />
+      <dependency id="Selenium.Support" version="4.1.0" />
+      <dependency id="Selenium.WebDriver" version="4.1.0" />
+      <!--<dependency id="Shouldly" version="4.0.3" />-->
       <!--<dependency id="NuGet.Core" version="2.14.0" />-->
     </dependencies>
   </metadata>

@@ -6,7 +6,6 @@ using Merlin.PageObjects;
 using Shouldly;
 
 namespace Merlin.Tests {
-    //[Parallelizable(ParallelScope.Children)]
     public class OpenSauceFixture : SauceryBase {
         public OpenSauceFixture(SaucePlatform platform) : base(platform) {
             //Console.WriteLine("In GuineaPigFixture constructor");

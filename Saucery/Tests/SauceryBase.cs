@@ -1,15 +1,15 @@
-﻿using System;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using OpenQA.Selenium;
 using Saucery.DataSources;
 using Saucery.Driver;
 using Saucery.OnDemand;
 using Saucery.Util;
+using System;
 
-namespace Saucery.Tests {
+namespace Saucery.Tests
+{
     [TestFixtureSource(typeof(PlatformTestData))]
-    //[Parallelizable(ParallelScope.All)]
     public class SauceryBase : SauceryRoot {
         protected SauceryRemoteWebDriver Driver;
 
@@ -22,6 +22,8 @@ namespace Saucery.Tests {
             try {
                 //Console.WriteLine("About to create Driver");
                 Driver = new SauceryRemoteWebDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts);
+                //var wait = new WebDriverWait(Driver, new TimeSpan(0, 0, 30));
+                //var element = wait.Until(ExpectedConditions.ElementIsVisible(By.Id("content-section")));
                 //Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(waitSecs);
             } catch(Exception ex) {
                 Console.WriteLine(ex.Message);
