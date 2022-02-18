@@ -36,7 +36,7 @@ namespace Merlin.Tests {
             //Console.WriteLine(Driver == null ? "Driver is null" : "Driver good");
             var guineaPigPage = new GuineaPigPage(Driver, "https://saucelabs.com/");
             // find and click the link on the page
-            guineaPigPage.ClickLink();
+            guineaPigPage.ClickLink(Driver);
 
             // verify the browser was navigated to the correct page
             Driver.Url.ShouldContain("saucelabs.com/test-guinea-pig2.html");
@@ -51,7 +51,7 @@ namespace Merlin.Tests {
             var guineaPigPage = new GuineaPigPage(Driver, "https://saucelabs.com/");
 
             // read the useragent string off the page
-            var useragent = guineaPigPage.GetUserAgent();
+            var useragent = guineaPigPage.GetUserAgent(Driver);
 
             useragent.ShouldNotBeNull();
         }

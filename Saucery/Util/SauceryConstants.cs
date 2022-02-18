@@ -41,12 +41,12 @@
         internal const string SAUCE_PLATFORM_NAME_CAPABILITY = "platformName";
         //internal const string SAUCE_PLATFORM_VERSION_CAPABILITY = "platformVersion";
         internal const string SAUCE_PLATFORM_VERSION_CAPABILITY = "PlatformVersion";
-        internal const string SAUCE_APPIUM_PLATFORM_VERSION_CAPABILITY = "appium:platformVersion";
+        internal const string SAUCE_APPIUM_PLATFORM_VERSION_CAPABILITY = "platformVersion";
         internal const string SAUCE_VERSION_CAPABILITY = "version";
         internal const string SAUCE_DEVICE_CAPABILITY = "device";
         //internal const string SAUCE_DEVICE_NAME_CAPABILITY = "deviceName";
         internal const string SAUCE_DEVICE_NAME_CAPABILITY = "DeviceName";
-        internal const string SAUCE_APPIUM_DEVICE_NAME_CAPABILITY = "appium:deviceName";
+        internal const string SAUCE_APPIUM_DEVICE_NAME_CAPABILITY = "deviceName";
         internal const string SAUCE_DEVICE_ORIENTATION_CAPABILITY = "deviceOrientation";
         internal const string SAUCE_NATIVE_APP_CAPABILITY = "app";
         internal const string SAUCE_VUOP_CAPABILITY = "videoUploadOnPass";

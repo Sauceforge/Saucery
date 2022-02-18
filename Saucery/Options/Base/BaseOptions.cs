@@ -1,5 +1,6 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
+using Saucery.OnDemand;
 using Saucery.Util;
 using System.Collections.Generic;
 
@@ -8,17 +9,15 @@ namespace Saucery.Options.Base
     internal abstract class BaseOptions {
         protected DriverOptions Opts = null;
         protected Dictionary<string, object> SauceOptions = null;
-        private readonly string _testName;
 
         protected BaseOptions(string testName) {
-            _testName = testName;
             SauceOptions = new Dictionary<string, object>
             {
                 { SauceryConstants.SAUCE_USERNAME_CAPABILITY, Enviro.SauceUserName },
                 { SauceryConstants.SAUCE_ACCESSKEY_CAPABILITY, Enviro.SauceApiKey },
-                { SauceryConstants.SELENIUM_VERSION_CAPABILITY, SauceryConstants.LATEST_SELENIUM_VERSION },
+                //{ SauceryConstants.SELENIUM_VERSION_CAPABILITY, SauceryConstants.LATEST_SELENIUM_VERSION },
                 //This sets the Session column
-                { SauceryConstants.SAUCE_SESSIONNAME_CAPABILITY, _testName },
+                { SauceryConstants.SAUCE_SESSIONNAME_CAPABILITY, testName },
                 //This sets the Build column
                 { SauceryConstants.SAUCE_BUILDNAME_CAPABILITY, Enviro.BuildName },
                 //Improve performance on SauceLabs
@@ -35,16 +34,16 @@ namespace Saucery.Options.Base
         }
 
         public DriverOptions GetOpts(OnDemand.PlatformType type) {
-            if ((int)type == (int)PlatformType.Android)
+            if (type.IsMobile())
             {
                 ((AppiumOptions)Opts).AddAdditionalAppiumOption(SauceryConstants.SAUCE_USERNAME_CAPABILITY, Enviro.SauceUserName);
                 ((AppiumOptions)Opts).AddAdditionalAppiumOption(SauceryConstants.SAUCE_ACCESSKEY_CAPABILITY, Enviro.SauceApiKey);
             }
-            else
-            {
-                Opts.AddAdditionalOption(SauceryConstants.SAUCE_USERNAME_CAPABILITY, Enviro.SauceUserName);
-                Opts.AddAdditionalOption(SauceryConstants.SAUCE_ACCESSKEY_CAPABILITY, Enviro.SauceApiKey);
-            }
+            //else
+            //{
+            //    Opts.AddAdditionalOption(SauceryConstants.SAUCE_USERNAME_CAPABILITY, Enviro.SauceUserName);
+            //    Opts.AddAdditionalOption(SauceryConstants.SAUCE_ACCESSKEY_CAPABILITY, Enviro.SauceApiKey);
+            //}
             return Opts;
         }
 

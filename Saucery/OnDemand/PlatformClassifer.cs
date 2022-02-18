@@ -20,15 +20,18 @@ namespace Saucery.OnDemand
             if (platform.IsAnAndroidDevice())
             {
                 platform.PlatformType = PlatformType.Android;
+                return platform;
             }
             else
             {
                 if (platform.IsAnAppleDevice())
                 {
                     platform.PlatformType = PlatformType.Apple;
+                    return platform;
                 }
             }
 
+            //Desktop
             switch (platform.Browser.ToLower())
             {
                 case "chrome":

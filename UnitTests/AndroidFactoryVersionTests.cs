@@ -42,7 +42,7 @@ namespace UnitTests
         {
             get
             {
-                yield return new TestCaseData(new SaucePlatform("", "", "latest", "android", "Google Pixel 3 GoogleAPI Emulator", "10.0.", "", "android", "landscape"));
+                yield return new TestCaseData(new SaucePlatform("", "", "latest", "android", "Google Pixel 3 GoogleAPI Emulator", "10.0.", "", "android", "1.22.1", "landscape"));
             }
         }
 
@@ -50,7 +50,7 @@ namespace UnitTests
         //{
         //    get
         //    {
-        //        yield return new TestCaseData(new SaucePlatform("android", "android", "android", "10", "Google Pixel 3 GoogleAPI Emulator", "10.0.", "", "android", "landscape"));
+        //        yield return new TestCaseData(new SaucePlatform("android", "android", "android", "10", "Google Pixel 3 GoogleAPI Emulator", "10.0.", "", "android", "1.22.1", "landscape"));
         //    }
         //}
     }

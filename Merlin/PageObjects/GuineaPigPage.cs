@@ -8,24 +8,24 @@ using SeleniumExtras.PageObjects;
 namespace Merlin.PageObjects {
     public class GuineaPigPage : PageObjectBase {
         public GuineaPigPage(SauceryRemoteWebDriver driver, string urlRoot)
-            : base(driver, urlRoot + "test/guinea-pig", "GuineaPig", "I am a page title - Sauce Labs") {
-            GetPage();
-            CheckTitle();
-            PageFactory.InitElements(Driver, this);
+            : base(urlRoot + "test/guinea-pig", "GuineaPig", "I am a page title - Sauce Labs") {
+            GetPage(driver);
+            CheckTitle(driver);
+            PageFactory.InitElements(driver, this);
         }
 
-        public GuineaPigPage ClickLink() {
+        public GuineaPigPage ClickLink(SauceryRemoteWebDriver driver) {
             //Could also use a "Selectors" class here.
-            var link = Driver.FindElement(By.Id("i am a link"));
+            var link = driver.FindElement(By.Id("i am a link"));
             link.Click();
-            var wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(30));
+            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
             wait.Until(d => d.Url.Contains("guinea-pig2"));
             return this;
         }
 
-        public string GetUserAgent() {
+        public string GetUserAgent(SauceryRemoteWebDriver driver) {
             //Could also use a "Selectors" class here.
-            return Driver.FindElement(By.Id("useragent")).Text;
+            return driver.FindElement(By.Id("useragent")).Text;
         }
 
         public GuineaPigPage TypeField(IWebElement field, string data) {

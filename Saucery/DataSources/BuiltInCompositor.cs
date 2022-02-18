@@ -13,18 +13,18 @@ namespace Saucery.DataSources
             var platforms =  new List<SaucePlatform>
             {
                 //Desktop Platforms
-                new SaucePlatform("Windows 10", "chrome", "latest", "", "", "", "", "", ""),
-                new SaucePlatform("Windows 10", "chrome", "88", "", "", "", "", "", ""),
-                new SaucePlatform("Windows 10", "chrome", "75", "", "", "", "", "", ""),
-                new SaucePlatform("Windows 10", "firefox", "87", "", "", "", "", "", ""),
-                new SaucePlatform("Windows 10", "firefox", "86", "", "", "", "", "", ""),
-                new SaucePlatform("macOS 10.15", "safari", "13.1", "", "", "", "", "", ""),
-                new SaucePlatform("Windows 10", "internet explorer", "11.285", "", "", "", "", "", ""),
-                new SaucePlatform("Windows 10", "microsoftedge", "89.0", "", "", "", "", "", ""),
+                new SaucePlatform("Windows 10", "chrome", "latest", "", "", "", "", "", "", ""),
+                new SaucePlatform("Windows 10", "chrome", "88", "", "", "", "", "", "", ""),
+                new SaucePlatform("Windows 10", "chrome", "75", "", "", "", "", "", "", ""),
+                new SaucePlatform("Windows 10", "firefox", "87", "", "", "", "", "", "", ""),
+                new SaucePlatform("Windows 10", "firefox", "86", "", "", "", "", "", "", ""),
+                new SaucePlatform("macOS 10.15", "safari", "13", "", "", "", "", "", "", ""),
+                new SaucePlatform("Windows 10", "internet explorer", "11", "", "", "", "", "", "", ""),
+                new SaucePlatform("Windows 10", "microsoftedge", "98", "", "", "", "", "", "", ""),
 
                 //Mobile Platforms
-                new SaucePlatform("android", "android", "chrome", "89.0", "Google Pixel 3 GoogleAPI Emulator", "11.0.", "", "android", "portrait"),
-                new SaucePlatform("", "", "Safari", "14.3", "iPhone 12 Pro Simulator", "14.3", "", "iphone", "portrait")
+                new SaucePlatform("Android", "Chrome", "89", "Android", "Google Pixel 3 GoogleAPI Emulator", "12.0", "", "Android", "1.22.1", "portrait"),
+                //new SaucePlatform("iOS", "Safari", "13", "iOS", "iPhone 12 Pro Simulator", "14.3", "", "iphone", "1.21.0", "portrait")
         };
 
             var json = JsonConvert.SerializeObject(platforms);

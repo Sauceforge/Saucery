@@ -8,8 +8,8 @@ using Saucery.OnDemand;
 using Saucery.Util;
 
 namespace Saucery.Tests {
-    //[Parallelizable(ParallelScope.Children)]
     [TestFixtureSource(typeof(PlatformTestData))]
+    //[Parallelizable(ParallelScope.All)]
     public class SauceryBase : SauceryRoot {
         protected SauceryRemoteWebDriver Driver;
 
@@ -22,7 +22,7 @@ namespace Saucery.Tests {
             try {
                 //Console.WriteLine("About to create Driver");
                 Driver = new SauceryRemoteWebDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts);
-                Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(waitSecs);
+                //Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(waitSecs);
             } catch(Exception ex) {
                 Console.WriteLine(ex.Message);
             }

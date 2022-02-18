@@ -10,4 +10,12 @@
         Apple = 6,
         Android = 7
     }
+
+    public static class Extensions
+    {
+        public static bool IsMobile(this PlatformType type)
+        {
+            return (int)type == (int)PlatformType.Android || (int)type == (int)PlatformType.Apple;
+        }
+    }
 }

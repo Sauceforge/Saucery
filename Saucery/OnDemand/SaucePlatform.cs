@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Saucery.Util;
 
 namespace Saucery.OnDemand {
     public class SaucePlatform {
@@ -28,6 +29,8 @@ namespace Saucery.OnDemand {
 
         public PlatformType PlatformType { get; set; }
 
+        public string AppiumVersion { get; set; }
+
         public string TestName { get; set; }
 
         #endregion
@@ -39,16 +42,18 @@ namespace Saucery.OnDemand {
         //}
 
         public SaucePlatform(string desktopPlatformName, string browser, string browserVersion, string platform, string longName,
-            string longVersion, string url, string device, string deviceOrientation) {
-            Os = desktopPlatformName;
-            Browser = browser;
-            BrowserVersion = browserVersion;
-            Platform = platform;
-            LongName = longName;
-            LongVersion = longVersion;
-            Url = url;
-            Device = device;
-            DeviceOrientation = deviceOrientation;
+            string longVersion, string url, string device, string appiumVersion, string deviceOrientation) {
+            Os = Sanitiser.SanitisePlatformField(desktopPlatformName);
+            Browser = Sanitiser.SanitisePlatformField(browser);
+            BrowserVersion = Sanitiser.SanitisePlatformField(browserVersion);
+            Platform = Sanitiser.SanitisePlatformField(platform);
+            LongName = Sanitiser.SanitisePlatformField(longName);
+            LongVersion = Sanitiser.SanitisePlatformField(longVersion);
+            Url = Sanitiser.SanitisePlatformField(url);
+            Device = device ?? SauceryConstants.NULL_STRING;
+            AppiumVersion = Sanitiser.SanitisePlatformField(appiumVersion);
+            DeviceOrientation = deviceOrientation ?? SauceryConstants.NULL_STRING;
+            //PlatformType = platformType;
         }
 
         #endregion

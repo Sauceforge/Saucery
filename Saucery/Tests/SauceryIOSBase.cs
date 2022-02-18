@@ -2,7 +2,6 @@
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Remote;
 using Saucery.DataSources;
 using Saucery.Driver;
 using Saucery.OnDemand;
@@ -19,7 +18,7 @@ namespace Saucery.Tests {
         public override void InitialiseDriver(DriverOptions options, int waitSecs) {
             try {
                 Driver = new SauceryIOSDriver(options);
-                Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(waitSecs);
+                //Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(waitSecs);
             } catch(Exception ex) {
                 Console.WriteLine(ex.Message);
             }

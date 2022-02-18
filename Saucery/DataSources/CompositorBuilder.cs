@@ -5,7 +5,7 @@ namespace Saucery.DataSources
 {
     internal class CompositorBuilder
     {
-        public Compositor Build()
+        public static Compositor Build()
         {
             if(Enviro.SauceOnDemandBrowsers != null) {
                 DebugMessages.UsingEnvCompositor();

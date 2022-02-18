@@ -1,6 +1,11 @@
 ﻿namespace Saucery.Util {
     internal class Sanitiser {
         public static string SanitisePlatformField(string field) {
+            if (field == null)
+            {
+                return "";
+            }
+
             return field.Equals(SauceryConstants.NULL_STRING) ? null : field;
         }
 

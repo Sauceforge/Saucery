@@ -42,7 +42,7 @@ namespace UnitTests
         {
             get
             {
-                yield return new SaucePlatform("", "", "latest", "", "iPhone XS Max Simulator", "13.0", "", "iPhone XS Max Simulator", "portrait");
+                yield return new SaucePlatform("", "", "latest", "", "iPhone XS Max Simulator", "13.0", "", "iPhone XS Max Simulator", "1.21.0", "portrait");
             }
         }
 

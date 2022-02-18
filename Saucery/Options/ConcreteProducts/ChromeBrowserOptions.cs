@@ -15,12 +15,13 @@ namespace Saucery.Options.ConcreteProducts {
             Console.WriteLine("Creating Chrome Options");
             var o = new ChromeOptions
             {
-                UseSpecCompliantProtocol = true,
+                BrowserVersion = platform.BrowserVersion,
                 PlatformName = platform.Os,
-                BrowserVersion = platform.BrowserVersion
+                UseSpecCompliantProtocol = true
             };
             //o.AddAdditionalCapability(SauceryConstants.SAUCE_OPTIONS_CAPABILITY, SauceOptions, true);
-            o.AddAdditionalChromeOption(SauceryConstants.SAUCE_OPTIONS_CAPABILITY, SauceOptions);
+            o.AddAdditionalOption(SauceryConstants.SAUCE_OPTIONS_CAPABILITY, SauceOptions);
+            //o.AddAdditionalChromeOption(SauceryConstants.SAUCE_OPTIONS_CAPABILITY, SauceOptions);
             Opts = o;
         }
     }
