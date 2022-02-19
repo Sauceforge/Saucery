@@ -19,14 +19,14 @@ namespace UnitTests
             result.ShouldBeTrue();
         }
 
-        //[Test, TestCaseSource(typeof(AndroidDataClass), "NotSupportedTestCases")]
-        //public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform)
-        //{
-        //    saucePlatform = PlatformClassifer.Classify(saucePlatform);
-        //    var factory = new OptionFactory(saucePlatform);
-        //    var result = factory.IsSupportedPlatform();
-        //    result.ShouldBeFalse();
-        //}
+        [Test, TestCaseSource(typeof(IOSDataClass), "NotSupportedTestCases")]
+        public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform)
+        {
+            saucePlatform = PlatformClassifer.Classify(saucePlatform);
+            var factory = new OptionFactory(saucePlatform);
+            var result = factory.IsSupportedPlatform();
+            result.ShouldBeFalse();
+        }
 
         [Test, TestCaseSource(typeof(IOSDataClass), "SupportedTestCases")]
         public void AppiumIOSOptionTest(SaucePlatform saucePlatform)
@@ -47,12 +47,12 @@ namespace UnitTests
             }
         }
 
-        //public static IEnumerable NotSupportedTestCases
-        //{
-        //    get
-        //    {
-        //        yield return new TestCaseData(new SaucePlatform("android", "android", "android", "10.0", "Google Pixel 3 GoogleAPI Emulator", "10.0.", "", "android", "landscape"));
-        //    }
-        //}
+        public static IEnumerable NotSupportedTestCases
+        {
+            get
+            {
+                yield return new SaucePlatform("", "", "wrong", "", "NonExistent", "13.0", "", "NonExistent", "1.21.0", "portrait");
+            }
+        }
     }
 }
