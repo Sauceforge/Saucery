@@ -32,9 +32,10 @@ jobs:
       with:
         # Check for latest at link at .NET 5 download page (https://dotnet.microsoft.com/download/dotnet/5.0)
         # dotnet-version: '5.0.401'
-        dotnet-version: | 
-          3.1.x
-          5.0.x
+        dotnet-version: 5.0.x
+        #dotnet-version: | 
+        #  3.1.x
+        #  5.0.x
     - name: Compile solution
       run: dotnet build -c ${{ env.CONFIG }}
 

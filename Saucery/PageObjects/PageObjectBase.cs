@@ -1,14 +1,15 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
 using Saucery.Driver;
 using Saucery.Util;
+using System;
+using System.Linq;
+using System.Threading;
 
-namespace Saucery.PageObjects {
+namespace Saucery.PageObjects
+{
     public class PageObjectBase {
         internal string PageUrl;
         internal string Name;

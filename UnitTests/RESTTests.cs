@@ -3,17 +3,10 @@ using Saucery.RestAPI.FlowControl;
 using Saucery.RestAPI.RecommendedAppiumVersion;
 using Saucery.Util;
 using Shouldly;
-using System;
 
 namespace UnitTests
 {
     public class RestTests {
-        static RestTests() {
-            //Console.WriteLine(@"In RestTests static");
-            //Environment.SetEnvironmentVariable(SauceryConstants.SAUCE_USER_NAME, SauceryConstants.MY_USERNAME_LOWER);
-            //Environment.SetEnvironmentVariable(SauceryConstants.SAUCE_API_KEY, "POPULATEME");
-        }
-
         [Test]
         //[Ignore("Need OpenSauce")]
         public void FlowControlTest() {
