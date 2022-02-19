@@ -18,15 +18,6 @@ namespace UnitTests
             result.ShouldBeTrue();
         }
 
-        //[Test, TestCaseSource(typeof(AndroidDataClass), "NotSupportedTestCases")]
-        //public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform)
-        //{
-        //    saucePlatform = PlatformClassifer.Classify(saucePlatform);
-        //    var factory = new OptionFactory(saucePlatform);
-        //    var result = factory.IsSupportedPlatform();
-        //    result.ShouldBeFalse();
-        //}
-
         [Test, TestCaseSource(typeof(AndroidDataClass), "SupportedTestCases")]
         public void AppiumAndroidOptionTest(SaucePlatform saucePlatform)
         {

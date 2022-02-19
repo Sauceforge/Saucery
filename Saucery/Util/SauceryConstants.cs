@@ -26,8 +26,8 @@
         //CAPABILITIES
         //internal const string RESOLUTION_CAPABILITY = "resolution";
         //internal const string SCREENRESOLUTION_CAPABILITY = "screen-resolution";
+        public const string LATEST_APPIUM_VERSION = "1.22.0";
         internal const string SAUCE_APPIUM_VERSION_CAPABILITY = "appiumVersion";
-        internal const string LATEST_APPIUM_VERSION = "1.20.2";
         internal const string SELENIUM_VERSION_CAPABILITY = "seleniumVersion";
         internal const string LATEST_SELENIUM_VERSION = "3.141.0";  //"latest" does not work.
         internal const double APPIUM_IOS_MINIMUM_VERSION = 6.1;

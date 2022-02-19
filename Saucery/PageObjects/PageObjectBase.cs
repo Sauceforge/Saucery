@@ -28,11 +28,6 @@ namespace Saucery.PageObjects {
             driver.Navigate().GoToUrl(PageUrl);
             WaitForPageLoad(driver, 10);
         }
-        
-        //public void GetPage(SauceryRemoteWebDriver driver, int secondsToWait) {
-        //    driver.Navigate().GoToUrl(PageUrl);
-        //    WaitForPageLoad(driver, secondsToWait);
-        //}
 
         public void CheckTitle(SauceryRemoteWebDriver driver) {
             while(driver.Title.Equals(SauceryConstants.APPLE_TITLE)) {
@@ -40,18 +35,6 @@ namespace Saucery.PageObjects {
             }
             Assert.AreEqual(Title, driver.Title);
         }
-
-        //public static int GetSelectedCount(SauceryRemoteWebDriver driver) {
-        //    return new WebControl(By.CssSelector("selected")).FindAll(driver).Count;
-        //}
-
-        //public static void CheckTitle(SauceryRemoteWebDriver driver, string title1, string title2, string title3) {
-        //    Assert.IsTrue(string.IsNullOrEmpty(driver.Title) || //Apple Devices have an empty Title on the PDF Page
-        //                  //Driver.Title.Contains(Constants.TEST_URL) || 
-        //                  driver.Title.Contains(title1) || 
-        //                  driver.Title.Contains(title2) || 
-        //                  driver.Title.Contains(title3));
-        //}
 
         protected static void ScrollIntoView(SauceryRemoteWebDriver driver, IWebElement element) {
             ((IJavaScriptExecutor)driver).ExecuteScript("arguments[0].scrollIntoView(true);", element);

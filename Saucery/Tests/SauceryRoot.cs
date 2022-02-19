@@ -13,7 +13,7 @@ using System.Collections.Generic;
 namespace Saucery.Tests
 {
     [TestFixture]
-    [Parallelizable(ParallelScope.All)]
+    //[Parallelizable(ParallelScope.All)]
     public abstract class SauceryRoot {
         protected string TestName;
         protected readonly SaucePlatform Platform;

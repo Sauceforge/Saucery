@@ -27,11 +27,15 @@ namespace UnitTests
         public void AppiumRecommendTest() {
             var statusNotifier = new SauceLabsAppiumRecommender();
             var version = statusNotifier.RecommendAppium();
-            var components = version.Split('.');
+            var components = version.Split(SauceryConstants.DOT);
             components.Length.ShouldBe(3);
-            components[0].ShouldBeGreaterThanOrEqualTo("1");
-            components[1].ShouldBeGreaterThanOrEqualTo("22");
-            components[2].ShouldBeGreaterThanOrEqualTo("0");
+
+            var latestAppiumComponents = SauceryConstants.LATEST_APPIUM_VERSION.Split(SauceryConstants.DOT);
+            latestAppiumComponents.Length.ShouldBe(3);
+
+            components[0].ShouldBeGreaterThanOrEqualTo(latestAppiumComponents[0]);
+            components[1].ShouldBeGreaterThanOrEqualTo(latestAppiumComponents[1]);
+            components[2].ShouldBeGreaterThanOrEqualTo(latestAppiumComponents[2]);
         }
     }
 }
