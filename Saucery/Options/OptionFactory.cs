@@ -76,7 +76,7 @@ namespace Saucery.Options
                 case "internet explorer":
                     return Platform.IEVersionIsSupported();
                 case "microsoftedge":
-                    return true;
+                    return Platform.EdgeVersionIsSupported();
                 case "chrome":
                     return Platform.ChromeVersionIsSupported();
                 case "safari":
