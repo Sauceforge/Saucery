@@ -36,31 +36,13 @@ namespace Saucery.DataSources
 
         static PlatformTestData()
         {
-            //Console.WriteLine("Start static PlatformTestData()");
-            //Console.WriteLine(@"After CheckActivation in PlatformTestData");
-
             Builder = new CompositorBuilder();
             Compositor = CompositorBuilder.Build();
             Compositor.Compose();
             Platforms = JsonConvert.DeserializeObject<List<SaucePlatform>>(Enviro.SauceOnDemandBrowsers);
-            //Platforms.ClassifyAll();
-
-            //OnceOnlyMessages.TestingOn(Platforms);
-            //OnceOnlyMessages.OnDemand();
         }
 
         public IEnumerator GetEnumerator() {
-            //return Platforms?.Select(platform => new SaucePlatform(Sanitiser.SanitisePlatformField(platform.Os),
-            //            Sanitiser.SanitisePlatformField(platform.Browser),
-            //            Sanitiser.SanitisePlatformField(platform.BrowserVersion),
-            //            Sanitiser.SanitisePlatformField(platform.Platform),
-            //            Sanitiser.SanitisePlatformField(platform.LongName),
-            //            Sanitiser.SanitisePlatformField(platform.LongVersion),
-            //            Sanitiser.SanitisePlatformField(platform.Url),
-            //            platform.Device ?? SauceryConstants.NULL_STRING,
-            //            Sanitiser.SanitisePlatformField(platform.AppiumVersion),
-            //            platform.DeviceOrientation ?? SauceryConstants.NULL_STRING)).GetEnumerator();
-
             return Platforms?.Select(platform => new SaucePlatform(platform.Os,
                                                                    platform.Browser,
                                                                    platform.BrowserVersion,

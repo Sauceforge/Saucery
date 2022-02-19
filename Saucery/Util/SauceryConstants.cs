@@ -13,6 +13,15 @@
         internal const int FREE_TRIAL_PERIOD = 30;
         internal const int PAID_LICENCE_PERIOD = 366;
 
+        internal const string PRODUCTNAME = "Saucery";
+        internal const string VERSION = "4.0.0.0";
+        internal const string SAUCERY_LICENCE_FILE = @"\Saucery.lic"; //need the backslash here!
+        internal const string LICENCE_PRODUCTCODE = "N3";
+        internal const string TRIAL_PRODUCTCODE = "3T";
+        internal static readonly int[] NUNIT3POSARRAY = { 3, 6, 9, 12, 15, 18, 21, 24, 27, 30 };
+        internal const string SAUCERY_ASSEMBLY = "<Reference Include=\"Saucery";
+        internal const string SAUCERYTESTER_ASSEMBLY = "<ProjectReference Include=\"..\\Saucery\\Saucery.csproj\">";
+
         internal const string SOLUTION_MASK = ASTERIX + ".sln";
         internal const string PROJECT_EXTENSION = ".csproj";
         internal const string PROJECT_MASK = ASTERIX + PROJECT_EXTENSION;

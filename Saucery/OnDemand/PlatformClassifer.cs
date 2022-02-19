@@ -1,20 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace Saucery.OnDemand
+﻿namespace Saucery.OnDemand
 {
     public static class PlatformClassifer
     {
-        public static List<SaucePlatform> ClassifyAll(this List<SaucePlatform> platforms)
-        {
-            var result = new List<SaucePlatform>();
-            foreach(var p in platforms)
-            {
-                result.Add(Classify(p));
-            }
-
-            return result;
-        }
-
         public static SaucePlatform Classify(this SaucePlatform platform)
         {
             if (platform.IsAnAndroidDevice())

@@ -17,7 +17,6 @@ namespace Saucery.Tests {
         public override void InitialiseDriver(DriverOptions options, int waitSecs) {
             try {
                 Driver = new SauceryAndroidDriver(options);
-                //Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(waitSecs);
             } catch(Exception ex) {
                 Console.WriteLine(ex.Message);
             }
@@ -44,8 +43,7 @@ namespace Saucery.Tests {
             }
         }
 
-        public override void InitialiseDriver(ICapabilities driver, int waitSecs)
-        {
+        public override void InitialiseDriver(ICapabilities driver, int waitSecs) {
             throw new NotImplementedException();
         }
     }

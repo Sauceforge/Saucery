@@ -8,10 +8,6 @@ namespace Saucery.Driver {
             : base(remoteAddress, options) {
         }
 
-        public SauceryRemoteWebDriver(Uri remoteAddress, ICapabilities desiredCapabilities)
-            : base(remoteAddress, desiredCapabilities, TimeSpan.FromSeconds(400)) {
-        }
-
         public string GetSessionId() {
             return SessionId.ToString();
         } 
