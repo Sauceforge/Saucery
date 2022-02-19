@@ -10,13 +10,10 @@ using Saucery.Util;
 
 namespace Saucery.PageObjects {
     public class PageObjectBase {
-        //public SauceryRemoteWebDriver Driver;
-        //internal TouchCapableRemoteWebDriver TouchCapableDriver;
         internal string PageUrl;
         internal string Name;
         internal string Title;
 
-        //public PageObjectBase(SauceryRemoteWebDriver driver, string url, string name, string title)
         public PageObjectBase(string url, string name, string title)
         {
             PageUrl = url;
