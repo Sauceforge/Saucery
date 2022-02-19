@@ -2,7 +2,7 @@
 using Saucery.Options.Base;
 using Saucery.OnDemand;
 using Saucery.Util;
-using OpenQA.Selenium.Safari;
+using OpenQA.Selenium.Appium;
 
 namespace Saucery.Options.ConcreteProducts {
     internal class AppiumIOSOptions : BaseOptions {
@@ -13,16 +13,18 @@ namespace Saucery.Options.ConcreteProducts {
             DebugMessages.PrintiOSOptionValues(platform);
 
             Console.WriteLine("Creating iOS Options");
-            Opts = new SafariOptions()
+
+            var options = new AppiumOptions()
             {
-                BrowserVersion = platform.BrowserVersion,
-                PlatformName = "iOS"
+                PlatformName = SauceryConstants.IOS_PLATFORM,
+                BrowserName = SauceryConstants.SAFARI_BROWSER,
+                DeviceName = platform.LongName,
+                PlatformVersion = platform.SanitisedLongVersion()
             };
-            SauceOptions.Add(SauceryConstants.SAUCE_DEVICE_NAME_CAPABILITY, platform.Device);
-            SauceOptions.Add(SauceryConstants.SAUCE_PLATFORM_VERSION_CAPABILITY, platform.SanitisedLongVersion());
-            SauceOptions.Add(SauceryConstants.SAUCE_DEVICE_ORIENTATION_CAPABILITY, platform.DeviceOrientation);
-            
-            Opts.AddAdditionalCapability(SauceryConstants.SAUCE_OPTIONS_CAPABILITY, SauceOptions);
+
+            SauceOptions.Add(SauceryConstants.SAUCE_APPIUM_VERSION_CAPABILITY, platform.AppiumVersion);
+            options.AddAdditionalAppiumOption(SauceryConstants.SAUCE_OPTIONS_CAPABILITY, SauceOptions);
+            Opts = options;
         }
     }
 }

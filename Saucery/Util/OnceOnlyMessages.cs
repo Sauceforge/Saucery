@@ -7,7 +7,7 @@ using Saucery.OnDemand;
 namespace Saucery.Util {
     internal class OnceOnlyMessages {
         public static void CopyrightBanner() {
-            OnceOnlyWriter.WriteLine(SauceryConstants.CONSOLE_RUNNER, Saucery3Constants.PRODUCTNAME/*, NuGetHelper.GetInstalledVersion()*/);
+            OnceOnlyWriter.WriteLine(SauceryConstants.CONSOLE_RUNNER, SauceryConstants.PRODUCTNAME/*, NuGetHelper.GetInstalledVersion()*/);
             OnceOnlyWriter.WriteLine(SauceryConstants.COPYRIGHT_NOTICE, GetCurrentYear());
             //NewVersionAvailable();
             OnceOnlyWriter.WriteLine(SauceryConstants.SPACE);
@@ -34,11 +34,11 @@ namespace Saucery.Util {
         //}
 
         public static void UsingLicenced() {
-            OnceOnlyWriter.WriteLine(SauceryConstants.LICENCED_VERSION, Saucery3Constants.PRODUCTNAME);
+            OnceOnlyWriter.WriteLine(SauceryConstants.LICENCED_VERSION, SauceryConstants.PRODUCTNAME);
         }
 
         public static void UsingTrial() {
-            OnceOnlyWriter.WriteLine(SauceryConstants.TRIAL_VERSION, Saucery3Constants.PRODUCTNAME);
+            OnceOnlyWriter.WriteLine(SauceryConstants.TRIAL_VERSION, SauceryConstants.PRODUCTNAME);
         }
 
         public static void DaysRemaining(double remaining) {

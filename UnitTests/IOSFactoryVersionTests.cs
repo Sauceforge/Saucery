@@ -7,11 +7,13 @@ using System.Collections;
 namespace UnitTests
 {
     [TestFixture]
+    [Order(5)]
     public class IOSFactoryVersionTests
     {
         [Test, TestCaseSource(typeof(IOSDataClass), "SupportedTestCases")]
         public void IsSupportedPlatformTest(SaucePlatform saucePlatform)
         {
+            saucePlatform = PlatformClassifer.Classify(saucePlatform);
             var factory = new OptionFactory(saucePlatform);
             var result = factory.IsSupportedPlatform();
             result.ShouldBeTrue();
@@ -20,6 +22,7 @@ namespace UnitTests
         //[Test, TestCaseSource(typeof(AndroidDataClass), "NotSupportedTestCases")]
         //public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform)
         //{
+        //    saucePlatform = PlatformClassifer.Classify(saucePlatform);
         //    var factory = new OptionFactory(saucePlatform);
         //    var result = factory.IsSupportedPlatform();
         //    result.ShouldBeFalse();
@@ -28,6 +31,7 @@ namespace UnitTests
         [Test, TestCaseSource(typeof(IOSDataClass), "SupportedTestCases")]
         public void AppiumIOSOptionTest(SaucePlatform saucePlatform)
         {
+            saucePlatform = PlatformClassifer.Classify(saucePlatform);
             var factory = new OptionFactory(saucePlatform);
             var opts = factory.CreateOptions("AppiumIOSOptionTest");
             opts.ShouldNotBeNull();
@@ -39,7 +43,7 @@ namespace UnitTests
         {
             get
             {
-                yield return new SaucePlatform("", "", "latest", "", "13.0", "", "", "iPhone XS Max Simulator", "portrait");
+                yield return new SaucePlatform("", "", "latest", "", "iPhone XS Max Simulator", "13.0", "", "iPhone XS Max Simulator", "1.21.0", "portrait");
             }
         }
 

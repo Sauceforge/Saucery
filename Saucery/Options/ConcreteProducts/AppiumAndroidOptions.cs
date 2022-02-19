@@ -1,9 +1,8 @@
-﻿using System;
-using OpenQA.Selenium.Appium;
-using Saucery.Options.Base;
+﻿using OpenQA.Selenium.Appium;
 using Saucery.OnDemand;
+using Saucery.Options.Base;
 using Saucery.Util;
-using OpenQA.Selenium.Chrome;
+using System;
 
 namespace Saucery.Options.ConcreteProducts
 {
@@ -17,15 +16,19 @@ namespace Saucery.Options.ConcreteProducts
 
             DebugMessages.PrintAndroidOptionValues(platform, sanitisedLongVersion);
 
-            Console.WriteLine("Creating Android Options");
-            Opts = new ChromeOptions();
-            Opts.AddAdditionalCapability(SauceryConstants.SAUCE_DEVICE_NAME_CAPABILITY, platform.Device);
-            Opts.AddAdditionalCapability(SauceryConstants.SAUCE_PLATFORM_VERSION_CAPABILITY, sanitisedLongVersion);
-            Opts.AddAdditionalCapability(SauceryConstants.SAUCE_DEVICE_ORIENTATION_CAPABILITY, platform.DeviceOrientation);
-            //Opts.AddAdditionalCapability(SauceOpsConstants.SAUCE_BROWSER_NAME_CAPABILITY, SauceOpsConstants.CHROME_BROWSER);  //Required
-            //Opts.AddAdditionalCapability(SauceOpsConstants.SAUCE_PLATFORM_NAME_CAPABILITY, SauceOpsConstants.ANDROID);
-            
-            Opts.AddAdditionalCapability(SauceryConstants.SAUCE_OPTIONS_CAPABILITY, SauceOptions);
+            Console.WriteLine("Creating Appium Options");
+
+            var options = new AppiumOptions
+            {
+                PlatformName = SauceryConstants.ANDROID,
+                BrowserName = SauceryConstants.CHROME_BROWSER,
+                DeviceName = platform.LongName,
+                PlatformVersion = sanitisedLongVersion
+            };
+
+            SauceOptions.Add(SauceryConstants.SAUCE_APPIUM_VERSION_CAPABILITY, platform.AppiumVersion);
+            options.AddAdditionalAppiumOption(SauceryConstants.SAUCE_OPTIONS_CAPABILITY, SauceOptions);
+            Opts = options;
         }
     }
 }

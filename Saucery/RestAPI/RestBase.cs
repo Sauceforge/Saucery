@@ -1,6 +1,7 @@
 ﻿using RestSharp;
 using RestSharp.Authenticators;
 using Saucery.Util;
+using System.Net;
 using System.Threading;
 
 //Hello from January 2020 :)
@@ -42,7 +43,12 @@ namespace Saucery.RestAPI
         }
 
         private RestResponse GetResponse(RestRequest request) {
-            var response = Client.ExecuteAsync(request).Result ;
+            var response = Client.ExecuteAsync(request).Result;
+            if(response.StatusCode.Equals(HttpStatusCode.OK))
+            {
+                return response;
+            }
+
             LimitChecker.Update(response);
 
             while (LimitChecker.IsLimitExceeded())

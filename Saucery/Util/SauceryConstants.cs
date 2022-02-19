@@ -2,7 +2,7 @@
     public class SauceryConstants {
         //ACTIVATION DETAILS
         internal const string MY_USERNAME = "saucefauge";
-        internal static readonly string MY_USERNAME_LOWER = MY_USERNAME.ToLower();
+        public static readonly string MY_USERNAME_LOWER = MY_USERNAME.ToLower();
         internal const string COMPANYNAME = "SauceForge";
         internal const string EDITION = "Enterprise";
         internal const string KEYNAME = "SauceryKey";
@@ -12,6 +12,15 @@
         //internal const string FIRST_KEY = "0CDCF65343FEDEE34702856B251025AD80D4FE58C2481B584D7FB246BAC23A6DB4E44E5654A856F182A673D6953FD42725FAA316DE6A78059DECE599BF233D00";
         internal const int FREE_TRIAL_PERIOD = 30;
         internal const int PAID_LICENCE_PERIOD = 366;
+
+        internal const string PRODUCTNAME = "Saucery";
+        internal const string VERSION = "4.0.0.0";
+        internal const string SAUCERY_LICENCE_FILE = @"\Saucery.lic"; //need the backslash here!
+        internal const string LICENCE_PRODUCTCODE = "N3";
+        internal const string TRIAL_PRODUCTCODE = "3T";
+        internal static readonly int[] NUNIT3POSARRAY = { 3, 6, 9, 12, 15, 18, 21, 24, 27, 30 };
+        internal const string SAUCERY_ASSEMBLY = "<Reference Include=\"Saucery";
+        internal const string SAUCERYTESTER_ASSEMBLY = "<ProjectReference Include=\"..\\Saucery\\Saucery.csproj\">";
 
         internal const string SOLUTION_MASK = ASTERIX + ".sln";
         internal const string PROJECT_EXTENSION = ".csproj";
@@ -26,8 +35,8 @@
         //CAPABILITIES
         //internal const string RESOLUTION_CAPABILITY = "resolution";
         //internal const string SCREENRESOLUTION_CAPABILITY = "screen-resolution";
-        //internal const string SAUCE_APPIUM_VERSION_CAPABILITY = "appiumVersion";
-        //internal const string APPIUM_VERSION = "1.4.13";
+        public const string LATEST_APPIUM_VERSION = "1.22.0";
+        internal const string SAUCE_APPIUM_VERSION_CAPABILITY = "appiumVersion";
         internal const string SELENIUM_VERSION_CAPABILITY = "seleniumVersion";
         internal const string LATEST_SELENIUM_VERSION = "3.141.0";  //"latest" does not work.
         internal const double APPIUM_IOS_MINIMUM_VERSION = 6.1;
@@ -39,18 +48,22 @@
         internal const string SAUCE_BROWSER_NAME_CAPABILITY = "browserName";
         internal const string SAUCE_PLATFORM_CAPABILITY = "platform";
         internal const string SAUCE_PLATFORM_NAME_CAPABILITY = "platformName";
-        internal const string SAUCE_PLATFORM_VERSION_CAPABILITY = "platformVersion";
+        //internal const string SAUCE_PLATFORM_VERSION_CAPABILITY = "platformVersion";
+        internal const string SAUCE_PLATFORM_VERSION_CAPABILITY = "PlatformVersion";
+        internal const string SAUCE_APPIUM_PLATFORM_VERSION_CAPABILITY = "platformVersion";
         internal const string SAUCE_VERSION_CAPABILITY = "version";
         internal const string SAUCE_DEVICE_CAPABILITY = "device";
-        internal const string SAUCE_DEVICE_NAME_CAPABILITY = "deviceName";
+        //internal const string SAUCE_DEVICE_NAME_CAPABILITY = "deviceName";
+        internal const string SAUCE_DEVICE_NAME_CAPABILITY = "DeviceName";
+        internal const string SAUCE_APPIUM_DEVICE_NAME_CAPABILITY = "deviceName";
         internal const string SAUCE_DEVICE_ORIENTATION_CAPABILITY = "deviceOrientation";
         internal const string SAUCE_NATIVE_APP_CAPABILITY = "app";
         internal const string SAUCE_VUOP_CAPABILITY = "videoUploadOnPass";
         internal const string SAUCE_OPTIONS_CAPABILITY = "sauce:options";
 
         //SAUCE ENVIRONMENT VARIABLES
-        internal const string SAUCE_USER_NAME = "SAUCE_USER_NAME";
-        internal const string SAUCE_API_KEY = "SAUCE_API_KEY";
+        public const string SAUCE_USER_NAME = "SAUCE_USER_NAME";
+        public const string SAUCE_API_KEY = "SAUCE_API_KEY";
         internal const string SAUCE_ONDEMAND_BROWSERS = "SAUCE_ONDEMAND_BROWSERS";
         internal const string SAUCE_NATIVE_APP = "SAUCE_NATIVE_APP";
         internal const string SAUCE_USE_CHROME_ON_ANDROID = "SAUCE_USE_CHROME_ON_ANDROID";
@@ -66,7 +79,7 @@
         internal const string JSON_CONTENT_TYPE = "application/json";
         internal const string RESTAPI_LIMIT_EXCEEDED_INDICATOR = "API rate limit exceeded for";
         internal const string RESTAPI_LIMIT_EXCEEDED_MSG = "API rate limit exceeded. We have to wait. See https://saucelabs.com/blog/announcing-new-rest-api-rate-limits for more details.";
-        internal const string SAUCE_REST_BASE = "https://saucelabs.com/rest/v1/";
+        internal const string SAUCE_REST_BASE = "https://api.us-west-1.saucelabs.com/rest/v1/";
         internal const string ACCOUNT_CONCURRENCY_REQUEST = "users/{0}/concurrency";
         internal const string JOB_REQUEST = "{0}/jobs/{1}";
         internal const string RECOMMENDED_APPIUM_REQUEST = "info/platforms/appium";
@@ -101,7 +114,7 @@
         internal const string PASSED = "passed";
         internal const string FAILED = "failed";
         internal const string NULL_STRING = "null";
-        internal const string DOT = ".";
+        public const string DOT = ".";
         internal const string SPACE = " ";
         internal const string TWO_SPACES = "  ";
         internal const string ASTERIX = "*";
@@ -146,10 +159,17 @@
         internal const string VISIBILITY_PRIVATE = "private";
 
         //OPTIONS BROWSER SUPPORT
-        internal const int SAFARI_SUPPORTED_VERSION = 11;
-        internal const int FIREFOX_SUPPORTED_VERSION = 53;
-        internal const int CHROME_SUPPORTED_VERSION = 61;
-        internal const int IE_SUPPORTED_VERSION = 11;
+        internal const int MAX_SAFARI_SUPPORTED_VERSION = 15;
+        internal const int MAX_FIREFOX_SUPPORTED_VERSION = 96;
+        internal const int MAX_CHROME_SUPPORTED_VERSION = 97;
+        internal const int MAX_EDGE_SUPPORTED_VERSION = 97;
+        internal const int MAX_IE_SUPPORTED_VERSION = 11;
+
+        internal const int MIN_SAFARI_SUPPORTED_VERSION = 8;
+        internal const int MIN_FIREFOX_SUPPORTED_VERSION = 4;
+        internal const int MIN_CHROME_SUPPORTED_VERSION = 26;
+        internal const int MIN_EDGE_SUPPORTED_VERSION = 13;
+        internal const int MIN_IE_SUPPORTED_VERSION = 9;
         internal const string NOT_SUPPORTED_MESSAGE = "Browser version not supported by DriverOptions. Please see: https://wiki.saucelabs.com/display/DOCS/2018/03/27/Introducing+Selenium+WebDriver+W3C+Protocol+Beta.";
     }
 }

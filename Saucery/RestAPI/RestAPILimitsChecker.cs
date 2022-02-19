@@ -17,6 +17,9 @@ namespace Saucery.RestAPI
             foreach(var p in response.Headers) {
                 if (!Headers.ContainsKey(p.Name)) {
                     Headers.Add(p.Name, p.Value.ToString());
+                } else {
+                    Headers.Remove(p.Name);
+                    Headers.Add(p.Name, p.Value.ToString());
                 }
             }
         }
@@ -34,11 +37,11 @@ namespace Saucery.RestAPI
         }
 
         private bool NoRemaining() {
-            return int.Parse(Headers["X-Ratelimit-Remaining"]) <= 0;
+            return int.Parse(Headers["x-ratelimit-remaining"]) <= 0;
         }
 
         internal int GetReset() {
-            return int.Parse(Headers["X-Ratelimit-Reset"]);
+            return int.Parse(Headers["x-ratelimit-reset"]);
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace Saucery.RestAPI.FlowControl
 {
-    internal class SauceLabsFlowController : FlowController {
+    public class SauceLabsFlowController : FlowController {
         public override void ControlFlow() {
             while(TooManyTests()) {
                 Thread.Sleep(SauceryConstants.SAUCELABS_FLOW_WAIT);

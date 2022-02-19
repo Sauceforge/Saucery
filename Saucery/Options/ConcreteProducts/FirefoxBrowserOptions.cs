@@ -18,7 +18,8 @@ namespace Saucery.Options.ConcreteProducts {
                 PlatformName = platform.Os,
                 BrowserVersion = platform.BrowserVersion
             };
-            o.AddAdditionalCapability(SauceryConstants.SAUCE_OPTIONS_CAPABILITY, SauceOptions, true);
+            //o.AddAdditionalCapability(SauceryConstants.SAUCE_OPTIONS_CAPABILITY, SauceOptions, true);
+            o.AddAdditionalOption(SauceryConstants.SAUCE_OPTIONS_CAPABILITY, SauceOptions);
             Opts = o;
         }
     }
