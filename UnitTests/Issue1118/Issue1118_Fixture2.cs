@@ -7,12 +7,12 @@ namespace UnitTests.Issue1118 {
 
         [Test]
         //[Ignore("Only needs to exist for Issue1118 Test")]
-        public void DoSomethingOnAWebPageWithSelenium() {
+        public void Test3() {
         }
 
         [Test]
         //[Ignore("Only needs to exist for Issue1118 Test")]
-        public void DoSomethingElseOnAWebPageWithSelenium() {
+        public void Test4() {
         }
     }
 }

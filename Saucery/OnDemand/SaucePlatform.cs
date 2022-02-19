@@ -41,8 +41,8 @@ namespace Saucery.OnDemand {
         //    //OnceOnlyMessages.OnDemand();
         //}
 
-        public SaucePlatform(string desktopPlatformName, string browser, string browserVersion, string platform, string longName,
-            string longVersion, string url, string device, string appiumVersion, string deviceOrientation) {
+        public SaucePlatform(string desktopPlatformName = "", string browser = "", string browserVersion = "", string platform = "", string longName = "",
+            string longVersion = "", string url = "", string device = "", string appiumVersion = "", string deviceOrientation = "") {
             Os = Sanitiser.SanitisePlatformField(desktopPlatformName);
             Browser = Sanitiser.SanitisePlatformField(browser);
             BrowserVersion = Sanitiser.SanitisePlatformField(browserVersion);
@@ -53,7 +53,6 @@ namespace Saucery.OnDemand {
             Device = device ?? SauceryConstants.NULL_STRING;
             AppiumVersion = Sanitiser.SanitisePlatformField(appiumVersion);
             DeviceOrientation = deviceOrientation ?? SauceryConstants.NULL_STRING;
-            //PlatformType = platformType;
         }
 
         #endregion
