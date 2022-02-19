@@ -6,6 +6,8 @@ using Shouldly;
 
 namespace UnitTests
 {
+    [TestFixture]
+    [Order(6)]
     public class RestTests {
         [Test]
         //[Ignore("Need OpenSauce")]

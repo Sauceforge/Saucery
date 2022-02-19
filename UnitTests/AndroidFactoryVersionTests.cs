@@ -7,6 +7,7 @@ using System.Collections;
 namespace UnitTests
 {
     [TestFixture]
+    [Order(1)]
     public class AndroidFactoryVersionTests
     {
         [Test, TestCaseSource(typeof(AndroidDataClass), "SupportedTestCases")]

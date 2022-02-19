@@ -7,6 +7,7 @@ using System.Collections;
 namespace UnitTests
 {
     [TestFixture]
+    [Order(5)]
     public class IOSFactoryVersionTests
     {
         [Test, TestCaseSource(typeof(IOSDataClass), "SupportedTestCases")]

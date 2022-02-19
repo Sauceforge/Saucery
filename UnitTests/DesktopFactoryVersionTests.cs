@@ -7,6 +7,7 @@ using System.Collections;
 namespace UnitTests
 {
     [TestFixture]
+    [Order(3)]
     public class DesktopFactoryVersionTests
     {
         [Test, TestCaseSource(typeof(DesktopDataClass), "SupportedTestCases")]

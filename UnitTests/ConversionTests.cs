@@ -6,6 +6,7 @@ using System;
 namespace UnitTests
 {
     [TestFixture]
+    [Order(2)]
     class ConversionTests
     {
         [Test]

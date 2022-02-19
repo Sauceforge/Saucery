@@ -5,6 +5,7 @@ using Shouldly;
 namespace UnitTests
 {
     [TestFixture]
+    [Order(4)]
     class IDGeneratorTests
     {
         [Test]
