@@ -83,6 +83,7 @@
         internal const string ACCOUNT_CONCURRENCY_REQUEST = "users/{0}/concurrency";
         internal const string JOB_REQUEST = "{0}/jobs/{1}";
         internal const string RECOMMENDED_APPIUM_REQUEST = "info/platforms/appium";
+        internal const string SUPPORTED_PLATFORMS_REQUEST = "info/platforms/all";
         internal const string JSON_SEGMENT_CONTAINER = "{{{0}}}";
         internal const string NUGET_API = "https://packages.nuget.org/api/v2";
         internal const string NUGET_VERSION = "{0}.{1}.{2}";

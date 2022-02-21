@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 
-namespace Saucery.RestAPI.RecommendedAppiumVersion {
-    public class AppiumPlatform {
+namespace Saucery.RestAPI {
+    public class SupportedPlatform {
         public List<object> deprecated_backend_versions { get; set; }
         public string short_version { get; set; }
         public string long_name { get; set; }

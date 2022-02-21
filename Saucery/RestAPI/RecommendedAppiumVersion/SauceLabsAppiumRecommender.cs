@@ -5,11 +5,11 @@ using Saucery.Util;
 
 namespace Saucery.RestAPI.RecommendedAppiumVersion
 {
-    public class SauceLabsAppiumRecommender : AppiumRecommender
+    public class SauceLabsAppiumRecommender : PlatformAcquirer
     {
         public override string RecommendAppium() {
             var json = GetJsonResponse(SauceryConstants.RECOMMENDED_APPIUM_REQUEST);
-            var recommendedAppiumVersion = JsonConvert.DeserializeObject<List<AppiumPlatform>>(json);
+            var recommendedAppiumVersion = JsonConvert.DeserializeObject<List<SupportedPlatform>>(json);
             return recommendedAppiumVersion[0].recommended_backend_version;
         }
     }

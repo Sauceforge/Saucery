@@ -1,8 +1,11 @@
 ﻿using NUnit.Framework;
+using Saucery.Dojo;
 using Saucery.RestAPI.FlowControl;
 using Saucery.RestAPI.RecommendedAppiumVersion;
+using Saucery.RestAPI.SupportedPlatforms;
 using Saucery.Util;
 using Shouldly;
+using System.Linq;
 
 namespace UnitTests
 {
@@ -31,6 +34,18 @@ namespace UnitTests
             components[0].ShouldBeGreaterThanOrEqualTo(latestAppiumComponents[0]);
             components[1].ShouldBeGreaterThanOrEqualTo(latestAppiumComponents[1]);
             components[2].ShouldBeGreaterThanOrEqualTo(latestAppiumComponents[2]);
+        }
+
+        [Test]
+        //[Ignore("Account has no minutes")]
+        public void SupportedPlatformTest()
+        {
+            var platformAcquirer = new SauceLabsPlatformAcquirer();
+            var platforms = platformAcquirer.AcquirePlatforms();
+            
+            platforms.ShouldNotBeNull();
+
+            var configurator = new PlatformConfigurator(platforms);
         }
     }
 }
