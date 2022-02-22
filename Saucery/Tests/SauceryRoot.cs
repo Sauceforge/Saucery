@@ -10,7 +10,7 @@ using Saucery.Util;
 using System;
 using System.Collections.Generic;
 
-[assembly: LevelOfParallelism(5)]
+[assembly: LevelOfParallelism(4)]
 
 namespace Saucery.Tests
 {
