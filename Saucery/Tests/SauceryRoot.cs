@@ -10,10 +10,12 @@ using Saucery.Util;
 using System;
 using System.Collections.Generic;
 
+[assembly: LevelOfParallelism(5)]
+
 namespace Saucery.Tests
 {
     [TestFixture]
-    //[Parallelizable(ParallelScope.All)]
+    [Parallelizable(ParallelScope.All)]
     public abstract class SauceryRoot {
         protected string TestName;
         protected readonly SaucePlatform Platform;

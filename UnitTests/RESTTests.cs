@@ -42,10 +42,16 @@ namespace UnitTests
         {
             var platformAcquirer = new SauceLabsPlatformAcquirer();
             var platforms = platformAcquirer.AcquirePlatforms();
+
+            var androidplatforms = platforms.FindAll(a => a.api_name.Equals("android"));
             
             platforms.ShouldNotBeNull();
 
             var configurator = new PlatformConfigurator(platforms);
+            var availablePlatforms = configurator.AvailablePlatforms;
+
+            //var androidplatforms2 = availablePlatforms.FindAll(a2=>a2.);
+            //availablePlatforms.Count.ShouldBe()
         }
     }
 }

@@ -161,8 +161,8 @@
 
         //OPTIONS BROWSER SUPPORT
         internal const int MIN_SAFARI_SUPPORTED_VERSION = 8;
-        internal const int MIN_FIREFOX_SUPPORTED_VERSION = 4;
-        internal const int MIN_CHROME_SUPPORTED_VERSION = 26;
+        internal const int MIN_FIREFOX_SUPPORTED_VERSION = 78;
+        internal const int MIN_CHROME_SUPPORTED_VERSION = 75;
         internal const int MIN_EDGE_SUPPORTED_VERSION = 79;
         internal const int MIN_IE_SUPPORTED_VERSION = 9;
 

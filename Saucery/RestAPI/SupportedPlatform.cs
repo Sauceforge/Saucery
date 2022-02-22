@@ -13,6 +13,9 @@ namespace Saucery.RestAPI {
         public string latest_stable_version { get; set; }
         public string automation_backend { get; set; }
         public string os { get; set; }
+
+
+        public int short_version_as_int => int.TryParse(short_version, out int discard) ? int.Parse(short_version) : 0;
     }
 }
 /*
