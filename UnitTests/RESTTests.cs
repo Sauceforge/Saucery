@@ -43,7 +43,8 @@ namespace UnitTests
             var platformAcquirer = new SauceLabsPlatformAcquirer();
             var platforms = platformAcquirer.AcquirePlatforms();
 
-            var androidplatforms = platforms.FindAll(a => a.api_name.Equals("android"));
+            //var androidplatforms = platforms.FindAll(a => a.api_name.Equals("android"));
+            //var appleplatforms = platforms.FindAll(a => a.api_name.Equals("iphone") || a.api_name.Equals("ipad"));
             
             platforms.ShouldNotBeNull();
 

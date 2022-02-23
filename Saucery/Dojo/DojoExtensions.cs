@@ -1,20 +1,23 @@
-﻿using Saucery.RestAPI;
-using Saucery.Util;
+﻿using Saucery.Dojo.Browsers;
+using Saucery.Dojo.Browsers.Base;
+using Saucery.Dojo.Platforms;
+using Saucery.Dojo.Platforms.Base;
+using Saucery.RestAPI;
 using System.Collections.Generic;
 
 namespace Saucery.Dojo
 {
     public static class DojoExtensions
     {
-        public static void AddPlatform(this List<AvailablePlatform> platforms, SupportedPlatform sp)
+        public static void AddPlatform(this List<PlatformBase> platforms, SupportedPlatform sp)
         {
             var p = platforms.FindPlatform(sp);
             if (p == null)
             {
                 //first one
-                p = new AvailablePlatform(sp);
+                p = new PlatformFactory().CreatePlatform(sp);
                 
-                if(p.IsDesktopPlatform() || p.IsMobilePlatform())
+                if(p.IsDesktopPlatform(sp) || sp.IsMobilePlatform())
                 {
                     p.Browsers.AddBrowser(sp, p.FindBrowser(sp));
                 }
@@ -23,65 +26,33 @@ namespace Saucery.Dojo
             }
             else
             {
-                if (p.IsDesktopPlatform() || p.IsMobilePlatform())
+                if (p.IsDesktopPlatform(sp) || sp.IsMobilePlatform())
                 {
                     p.Browsers.AddBrowser(sp, p.FindBrowser(sp));
                 }
             }
         }
 
-        public static AvailablePlatform FindPlatform(this List<AvailablePlatform> platforms, SupportedPlatform sp)
+        public static PlatformBase FindPlatform(this List<PlatformBase> platforms, SupportedPlatform sp)
         {
             return platforms.Find(p => p.Name.Equals(sp.os));
         }
 
-        public static void AddBrowser(this List<Browser> browsers, SupportedPlatform sp, Browser b = null)
+        public static void AddBrowser(this List<BrowserBase> browsers, SupportedPlatform sp, BrowserBase b = null)
         {
             if (b == null)
             {
                 //first one
-                b = new Browser(sp);
-                b.BrowserVersions.AddVersion(sp);
+                b = new BrowserFactory(sp).CreateBrowser();
+            }
+
+
+            var v = b.FindVersion(sp);
+            if (v == null && b.IsSupportedVersion(sp))
+            {
+                b.BrowserVersions.Add(new BrowserVersion(sp));
                 browsers.Add(b);
             }
-            else
-            {
-                b.BrowserVersions.AddVersion(sp);
-            }
         }
-
-        public static void AddVersion(this List<BrowserVersion> versions, SupportedPlatform sp)
-        {
-            var minVersion = 0;
-            switch (sp.api_name) {
-                case "chrome":
-                    minVersion = SauceryConstants.MIN_CHROME_SUPPORTED_VERSION;
-                    break;
-                case "firefox":
-                    minVersion = SauceryConstants.MIN_FIREFOX_SUPPORTED_VERSION;
-                    break;
-                case "MicrosoftEdge":
-                    minVersion = SauceryConstants.MIN_EDGE_SUPPORTED_VERSION;
-                    break;
-                case "internet explorer":
-                    minVersion = SauceryConstants.MIN_IE_SUPPORTED_VERSION;
-                    break;
-                default:
-                    break;
-            }
-
-            switch (sp.short_version_as_int)
-            {
-                case 0:
-                    versions.Add(new BrowserVersion(sp)); //version not numeric
-                    break;
-                default:
-                    if (sp.short_version_as_int >= minVersion)
-                    {
-                        versions.Add(new BrowserVersion(sp));
-                    }
-                    break;
-            }
-        }  
     }
 }
