@@ -6,13 +6,6 @@ namespace Saucery.Dojo.Platforms
 {
     public class PlatformFactory
     {
-        //private SupportedPlatform Sp { get; set; }
-
-        //public PlatformFactory(SupportedPlatform platform)
-        //{
-        //    //Sp = platform;
-        //}
-
         public PlatformBase CreatePlatform(SupportedPlatform sp)
         {
             return sp.IsAndroidPlatform()
@@ -34,7 +27,6 @@ namespace Saucery.Dojo.Platforms
                 "Mac 10.13" => new Mac1013PlatformCreator(sp).Create(),
                 "Mac 10.14" => new Mac1014PlatformCreator(sp).Create(),
                 "Mac 10.15" => new Mac1015PlatformCreator(sp).Create(),
-                //"Linux" => new AndroidPlatformCreator(sp).Create(),
                 _ => null
             };
         }

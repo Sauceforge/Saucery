@@ -26,7 +26,6 @@ namespace Saucery.Dojo.Browsers
                     "Windows 2012 R2" => new Windows81BrowserCreator(Platform).Create(),
                     "Windows 10" => new Windows10BrowserCreator(Platform).Create(),
                     "Windows 11" => new Windows11BrowserCreator(Platform).Create(),
-                    //"Linux" => new AndroidBrowserCreator(Platform).Create(),
                     "Mac 11" => new Mac11BrowserCreator(Platform).Create(),
                     "Mac 12" => new Mac12BrowserCreator(Platform).Create(),
                     "Mac 10.10" => new Mac1010BrowserCreator(Platform).Create(),

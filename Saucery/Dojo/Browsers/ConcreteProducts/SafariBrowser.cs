@@ -5,8 +5,6 @@ namespace Saucery.Dojo.Browsers.ConcreteProducts
 {
     internal class SafariBrowser : BrowserBase
     {
-        private SupportedPlatform Platform;
-
         public SafariBrowser(SupportedPlatform sp) : base(sp)
         {
         }
@@ -18,12 +16,28 @@ namespace Saucery.Dojo.Browsers.ConcreteProducts
 
         public override int MaximumVersion(SupportedPlatform sp)
         {
-            throw new System.NotImplementedException();
+            return sp.os switch
+            {
+                "Mac 12" => 15,
+                "Mac 11" => 14,
+                "Mac 10.15" => 13,
+                "Mac 10.14" => 12,
+                "Mac 10.13" => 13,
+                _ => 0,
+            };
         }
 
         public override int MinimumVersion(SupportedPlatform sp)
         {
-            throw new System.NotImplementedException();
+            return sp.os switch
+            {
+                "Mac 12" => 15,
+                "Mac 11" => 14,
+                "Mac 10.15" => 13,
+                "Mac 10.14" => 12,
+                "Mac 10.13" => 12,
+                _ => 0,
+            };
         }
 
         internal override bool IsSupportedVersion(SupportedPlatform sp)

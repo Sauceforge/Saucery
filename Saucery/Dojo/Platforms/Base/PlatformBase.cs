@@ -15,7 +15,7 @@ namespace Saucery.Dojo.Platforms.Base
         public List<string> SupportedBackendVersions { get; set; }
         public List<object> DeprecatedBackendVersions { get; set; }
         public List<BrowserBase> Browsers;
-        private BrowserFactory BrowserFactory;
+        //public BrowserFactory BrowserFactory;
         
 
         public PlatformBase(SupportedPlatform sp)
@@ -26,22 +26,9 @@ namespace Saucery.Dojo.Platforms.Base
             SupportedBackendVersions = sp.supported_backend_versions;
             DeprecatedBackendVersions = sp.deprecated_backend_versions;
             Browsers = new List<BrowserBase>();
-            BrowserFactory = new BrowserFactory(sp);
+            //BrowserFactory = new BrowserFactory(sp);
         }
 
         public abstract bool IsDesktopPlatform(SupportedPlatform sp);
-
-        public BrowserBase FindBrowser(SupportedPlatform sp)
-        {
-            Predicate<BrowserBase> desktop = b => b.Name.Equals(sp.api_name);
-            Predicate<BrowserBase> mobile = b => b.Name.Equals(sp.api_name) && b.DeviceName != null && b.DeviceName.Equals(sp.long_name);
-
-            BrowserBase result = null;
-            foreach (var b in Browsers)
-            {
-                result = sp.IsMobilePlatform() ? Browsers.Find(mobile) : Browsers.Find(desktop);
-            }
-            return result;
-        }
     }
 }
