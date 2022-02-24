@@ -5,6 +5,7 @@ using Saucery.RestAPI.RecommendedAppiumVersion;
 using Saucery.RestAPI.SupportedPlatforms;
 using Saucery.Util;
 using Shouldly;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace UnitTests
@@ -42,17 +43,30 @@ namespace UnitTests
         {
             var platformAcquirer = new SauceLabsPlatformAcquirer();
             var platforms = platformAcquirer.AcquirePlatforms();
-
-            //var androidplatforms = platforms.FindAll(a => a.api_name.Equals("android"));
-            //var appleplatforms = platforms.FindAll(a => a.api_name.Equals("iphone") || a.api_name.Equals("ipad"));
             
             platforms.ShouldNotBeNull();
 
             var configurator = new PlatformConfigurator(platforms);
             var availablePlatforms = configurator.AvailablePlatforms;
 
-            //var androidplatforms2 = availablePlatforms.FindAll(a2=>a2.);
-            //availablePlatforms.Count.ShouldBe()
+            //IOS
+            var iosp1 = availablePlatforms[2];
+            var allNames = iosp1.Browsers.Select(n => n.DeviceName);
+            var distinctNames = iosp1.Browsers.Select(n => n.DeviceName).Distinct();
+
+            var iosp2 = availablePlatforms[6];
+            var allNames2 = iosp2.Browsers.Select(n => n.DeviceName);
+            var distinctNames2 = iosp2.Browsers.Select(n => n.DeviceName).Distinct();
+
+            //Join Lists
+            distinctNames.ToList().AddRange(distinctNames2.ToList());
+            var fullDistinct = distinctNames.Distinct();
+
+            //Android
+            var androidplatforms = availablePlatforms[5];
+
+            var allAndroidNames = androidplatforms.Browsers.Select(n => n.DeviceName);
+            var distinctAndroidNames = androidplatforms.Browsers.Select(n => n.DeviceName).Distinct();
         }
     }
 }

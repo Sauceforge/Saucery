@@ -6,7 +6,7 @@ namespace Saucery.Dojo.Browsers.Base
     public abstract class BrowserBase : IBrowser
     {
         internal readonly string Name;
-        internal string DeviceName;
+        public string DeviceName;
         internal string PlatformName;
         
         internal string PlatformVersion;
