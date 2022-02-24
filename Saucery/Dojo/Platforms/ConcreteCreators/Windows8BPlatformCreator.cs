@@ -4,16 +4,13 @@ using Saucery.RestAPI;
 
 namespace Saucery.Dojo.Platforms.ConcreteCreators
 {
-    internal class Windows8PlatformCreator
+    internal class Windows8PlatformCreator : PlatformCreator
     {
-        private readonly SupportedPlatform Platform;
-
-        public Windows8PlatformCreator(SupportedPlatform platform)
+        public Windows8PlatformCreator(SupportedPlatform sp) : base(sp)
         {
-            Platform = platform;
         }
 
-        internal PlatformBase Create()
+        public override PlatformBase Create()
         {
             return new Windows8Platform(Platform);
         }

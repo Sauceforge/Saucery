@@ -3,16 +3,13 @@ using Saucery.RestAPI;
 
 namespace Saucery.Dojo.Browsers
 {
-    internal class IOSBrowserCreator
+    internal class IOSBrowserCreator : BrowserCreator
     {
-        private SupportedPlatform Platform;
-
-        public IOSBrowserCreator(SupportedPlatform platform)
+        public IOSBrowserCreator(SupportedPlatform sp) : base(sp)
         {
-            Platform = platform;
         }
 
-        internal BrowserBase Create()
+        public override BrowserBase Create()
         {
             return new IOSBrowser(Platform);
         }

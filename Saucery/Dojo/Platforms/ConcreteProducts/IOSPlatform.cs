@@ -1,5 +1,6 @@
 ﻿using Saucery.Dojo.Platforms.Base;
 using Saucery.RestAPI;
+using System.Collections.Generic;
 
 namespace Saucery.Dojo.Platforms.ConcreteProducts
 {
@@ -7,11 +8,7 @@ namespace Saucery.Dojo.Platforms.ConcreteProducts
     {
         public IOSPlatform(SupportedPlatform sp) : base(sp)
         {
-        }
-
-        public override bool IsDesktopPlatform(SupportedPlatform sp)
-        {
-            return false;
+            BrowserNames = new List<string>();
         }
     }
 }

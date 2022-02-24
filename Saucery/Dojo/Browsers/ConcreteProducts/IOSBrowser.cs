@@ -24,7 +24,7 @@ namespace Saucery.Dojo.Browsers
             throw new System.NotImplementedException();
         }
 
-        internal override bool IsSupportedVersion(SupportedPlatform sp)
+        public override bool IsSupportedVersion(SupportedPlatform sp)
         {
             return true;
         }

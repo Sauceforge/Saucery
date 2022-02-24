@@ -4,16 +4,13 @@ using Saucery.RestAPI;
 
 namespace Saucery.Dojo.Browsers.ConcreteCreators
 {
-    internal class AndroidBrowserCreator
+    internal class AndroidBrowserCreator : BrowserCreator
     {
-        private SupportedPlatform Platform;
-
-        public AndroidBrowserCreator(SupportedPlatform platform)
+        public AndroidBrowserCreator(SupportedPlatform sp) : base(sp)
         {
-            Platform = platform;
         }
 
-        internal BrowserBase Create()
+        public override BrowserBase Create()
         {
             return new AndroidBrowser(Platform);
         }

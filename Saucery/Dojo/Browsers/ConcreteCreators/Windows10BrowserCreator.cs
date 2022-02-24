@@ -4,16 +4,13 @@ using Saucery.RestAPI;
 
 namespace Saucery.Dojo.Browsers.ConcreteCreators
 {
-    internal class Windows10BrowserCreator
+    internal class Windows10BrowserCreator : BrowserCreator
     {
-        private readonly SupportedPlatform Platform;
-
-        public Windows10BrowserCreator(SupportedPlatform platform)
-        {
-            Platform = platform;
+        public Windows10BrowserCreator(SupportedPlatform sp) : base(sp)
+        { 
         }
 
-        internal BrowserBase Create()
+        public override BrowserBase Create()
         {
             return Platform.api_name switch
             {

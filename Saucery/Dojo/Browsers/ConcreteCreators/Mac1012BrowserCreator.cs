@@ -4,16 +4,13 @@ using Saucery.RestAPI;
 
 namespace Saucery.Dojo.Browsers
 {
-    internal class Mac1012BrowserCreator
+    internal class Mac1012BrowserCreator : BrowserCreator
     {
-        private readonly SupportedPlatform Platform;
-
-        public Mac1012BrowserCreator(SupportedPlatform platform)
+        public Mac1012BrowserCreator(SupportedPlatform sp) : base(sp)
         {
-            Platform = platform;
         }
 
-        internal BrowserBase Create()
+        public override BrowserBase Create()
         {
             return Platform.api_name switch
             {

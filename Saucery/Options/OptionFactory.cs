@@ -46,21 +46,15 @@ namespace Saucery.Options
 
         private DriverOptions GetDesktopOptions(string testName)
         {
-            switch (Platform.Browser.ToLower())
+            return Platform.Browser.ToLower() switch
             {
-                case "firefox":
-                    return new FirefoxCreator().Create(Platform, testName).GetOpts(Platform.PlatformType);
-                case "internet explorer":
-                    return new IECreator().Create(Platform, testName).GetOpts(Platform.PlatformType);
-                case "microsoftedge":
-                    return new EdgeCreator().Create(Platform, testName).GetOpts(Platform.PlatformType);
-                case "chrome":
-                    return new ChromeCreator().Create(Platform, testName).GetOpts(Platform.PlatformType);
-                case "safari":
-                    return new SafariCreator().Create(Platform, testName).GetOpts(Platform.PlatformType);
-                default:
-                    return new ChromeCreator().Create(Platform, testName).GetOpts(Platform.PlatformType);
-            }
+                "firefox" => new FirefoxCreator().Create(Platform, testName).GetOpts(Platform.PlatformType),
+                "internet explorer" => new IECreator().Create(Platform, testName).GetOpts(Platform.PlatformType),
+                "microsoftedge" => new EdgeCreator().Create(Platform, testName).GetOpts(Platform.PlatformType),
+                "chrome" => new ChromeCreator().Create(Platform, testName).GetOpts(Platform.PlatformType),
+                "safari" => new SafariCreator().Create(Platform, testName).GetOpts(Platform.PlatformType),
+                _ => new ChromeCreator().Create(Platform, testName).GetOpts(Platform.PlatformType),
+            };
         }
 
         public bool IsSupportedPlatform()
@@ -69,21 +63,15 @@ namespace Saucery.Options
                 return true;
             }
 
-            switch (Platform.Browser.ToLower())
+            return Platform.Browser.ToLower() switch
             {
-                case "firefox":
-                    return Platform.FirefoxVersionIsSupported();
-                case "internet explorer":
-                    return Platform.IEVersionIsSupported();
-                case "microsoftedge":
-                    return Platform.EdgeVersionIsSupported();
-                case "chrome":
-                    return Platform.ChromeVersionIsSupported();
-                case "safari":
-                    return Platform.SafariVersionIsSupported();
-                default:
-                    return false;
-            }
+                "firefox" => Platform.FirefoxVersionIsSupported(),
+                "internet explorer" => Platform.IEVersionIsSupported(),
+                "microsoftedge" => Platform.EdgeVersionIsSupported(),
+                "chrome" => Platform.ChromeVersionIsSupported(),
+                "safari" => Platform.SafariVersionIsSupported(),
+                _ => false,
+            };
         }
     }
 }

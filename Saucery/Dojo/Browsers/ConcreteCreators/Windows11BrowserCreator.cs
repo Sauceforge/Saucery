@@ -4,16 +4,13 @@ using Saucery.RestAPI;
 
 namespace Saucery.Dojo.Browsers
 {
-    internal class Windows11BrowserCreator
+    internal class Windows11BrowserCreator : BrowserCreator
     {
-        private readonly SupportedPlatform Platform;
-
-        public Windows11BrowserCreator(SupportedPlatform platform)
+        public Windows11BrowserCreator(SupportedPlatform sp) : base(sp)
         {
-            Platform = platform;
         }
 
-        internal BrowserBase Create()
+        public override BrowserBase Create()
         {
             return Platform.api_name switch
             {

@@ -31,7 +31,7 @@ namespace Saucery.Dojo.Browsers.ConcreteProducts
             return 79;
         }
 
-        internal override bool IsSupportedVersion(SupportedPlatform sp)
+        public override bool IsSupportedVersion(SupportedPlatform sp)
         {
             return (sp.short_version_as_int != 0 &&
                    sp.short_version_as_int >= MinimumVersion(sp) &&

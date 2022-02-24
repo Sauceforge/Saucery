@@ -4,16 +4,13 @@ using Saucery.RestAPI;
 
 namespace Saucery.Dojo.Platforms
 {
-    internal class Mac1012PlatformCreator
+    internal class Mac1012PlatformCreator : PlatformCreator
     {
-        private readonly SupportedPlatform Platform;
-
-        public Mac1012PlatformCreator(SupportedPlatform platform)
+        public Mac1012PlatformCreator(SupportedPlatform sp) : base(sp)
         {
-            Platform = platform;
         }
 
-        internal PlatformBase Create()
+        public override PlatformBase Create()
         {
             return new Mac1013Platform(Platform);
         }

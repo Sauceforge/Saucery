@@ -4,6 +4,13 @@ namespace Saucery.Dojo.Browsers.Base
 {
     public abstract class BrowserCreator
     {
-        public abstract BrowserBase Create(SupportedPlatform sp);
+        internal readonly SupportedPlatform Platform;
+
+        public BrowserCreator(SupportedPlatform sp)
+        {
+            Platform = sp;
+        }
+
+        public abstract BrowserBase Create();
     }
 }

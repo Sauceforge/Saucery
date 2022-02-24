@@ -5,7 +5,6 @@ using Saucery.RestAPI.RecommendedAppiumVersion;
 using Saucery.RestAPI.SupportedPlatforms;
 using Saucery.Util;
 using Shouldly;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace UnitTests
