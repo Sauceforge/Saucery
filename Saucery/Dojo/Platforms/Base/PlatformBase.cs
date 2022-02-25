@@ -24,10 +24,5 @@ namespace Saucery.Dojo.Platforms.Base
             DeprecatedBackendVersions = sp.deprecated_backend_versions;
             Browsers = new List<BrowserBase>();
         }
-
-        public bool IsDesktopPlatform(SupportedPlatform sp)
-        {
-            return sp.IsDesktop() && BrowserNames.Contains(sp.api_name);
-        }
     }
 }

@@ -16,20 +16,12 @@ namespace Saucery.Dojo
             {
                 //first one
                 p = new PlatformFactory().CreatePlatform(sp);
-                
-                if(p.IsDesktopPlatform(sp) || sp.IsMobilePlatform())
-                {
-                    p.Browsers.AddBrowser(sp);
-                }
-                
+                p.Browsers.AddBrowser(sp);
                 platforms.Add(p);
             }
             else
             {
-                if (p.IsDesktopPlatform(sp) || sp.IsMobilePlatform())
-                {
-                    p.Browsers.AddBrowser(sp);
-                }
+                p.Browsers.AddBrowser(sp);
             }
         }
 
@@ -40,35 +32,36 @@ namespace Saucery.Dojo
 
         public static void AddBrowser(this List<BrowserBase> browsers, SupportedPlatform sp)
         {
-            BrowserBase existent = null;
-            foreach (var b in browsers)
-            {
-                if (b.Name.Equals(sp.api_name) && b.DeviceName.Equals(sp.long_name) && b.PlatformName.Equals(sp.os))
-                {
-                    existent = b;
-                }
-            }
+            BrowserBase b = FindBrowser(browsers, sp);
 
-            if (existent == null)
-            {
+            if (b == null) {
                 //first one
-                existent = new BrowserFactory(sp).CreateBrowser();
-                if (existent == null || !existent.IsSupportedVersion(sp))
-                {
+                b = new BrowserFactory(sp).CreateBrowser();
+                if (b == null) {
                     return;
                 }
-                if (existent.IsSupportedVersion(sp))
-                {
-                    existent.BrowserVersions.Add(new BrowserVersion(sp));
-                    browsers.Add(existent);
+                if (b.IsSupportedVersion(sp)) {
+                    b.BrowserVersions.Add(new BrowserVersion(sp));
+                    browsers.Add(b);
                     return;
                 }
             }
- 
-            if (existent.FindVersion(sp) == null && existent.IsSupportedVersion(sp))
-            {
-                existent.BrowserVersions.Add(new BrowserVersion(sp));
+            
+            //Browser found or created, now add version
+            if (b.IsSupportedVersion(sp) && b.FindVersion(sp) == null) {
+                b.BrowserVersions.Add(new BrowserVersion(sp));
             }
+        }
+
+        private static BrowserBase FindBrowser(this List<BrowserBase> browsers, SupportedPlatform sp) {
+            BrowserBase extant = null;
+            foreach (var b in browsers) {
+                if (b.Name.Equals(sp.api_name) && b.DeviceName.Equals(sp.long_name) && b.PlatformName.Equals(sp.os)) {
+                    extant = b;
+                    break;
+                }
+            }
+            return extant;
         }
     }
 }

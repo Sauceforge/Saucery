@@ -8,10 +8,8 @@ namespace Saucery.Dojo.Browsers.Base
         internal readonly string Name;
         public string DeviceName;
         internal string PlatformName;
-        
         internal string PlatformVersion;
         internal string RecommendedBackendVersion;
-        
         internal List<BrowserVersion> BrowserVersions;
 
         public BrowserBase(SupportedPlatform sp)

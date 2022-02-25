@@ -6,7 +6,6 @@ namespace Saucery.Dojo
 {
     public class PlatformConfigurator
     {
-        //private PlatformFactory PlatformFactory;
         public List<PlatformBase> AvailablePlatforms { get; set; }
 
         public PlatformConfigurator(List<SupportedPlatform> platforms)

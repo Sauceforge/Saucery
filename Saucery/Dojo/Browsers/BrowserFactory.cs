@@ -1,5 +1,7 @@
 ﻿using Saucery.Dojo.Browsers.Base;
-using Saucery.Dojo.Browsers.ConcreteCreators;
+using Saucery.Dojo.Browsers.ConcreteCreators.Apple;
+using Saucery.Dojo.Browsers.ConcreteCreators.Google;
+using Saucery.Dojo.Browsers.ConcreteCreators.PC;
 using Saucery.RestAPI;
 
 namespace Saucery.Dojo.Browsers

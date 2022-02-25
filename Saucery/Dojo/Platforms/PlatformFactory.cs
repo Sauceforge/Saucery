@@ -1,5 +1,7 @@
 ﻿using Saucery.Dojo.Platforms.Base;
-using Saucery.Dojo.Platforms.ConcreteCreators;
+using Saucery.Dojo.Platforms.ConcreteCreators.Apple;
+using Saucery.Dojo.Platforms.ConcreteCreators.Google;
+using Saucery.Dojo.Platforms.ConcreteCreators.PC;
 using Saucery.RestAPI;
 
 namespace Saucery.Dojo.Platforms

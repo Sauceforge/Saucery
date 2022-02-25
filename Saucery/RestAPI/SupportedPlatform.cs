@@ -17,16 +17,6 @@ namespace Saucery.RestAPI {
 
         public int short_version_as_int => int.TryParse(short_version, out int discard) ? int.Parse(short_version) : 0;
 
-        public bool IsDesktop()
-        {
-            return automation_backend.Equals("webdriver");
-        }
-
-        public bool IsMobilePlatform()
-        {
-            return (api_name == "iphone" || api_name == "ipad" || api_name == "android");
-        }
-
         public bool IsIOSPlatform()
         {
             return recommended_backend_version != null && (api_name == "iphone" || api_name == "ipad");
@@ -37,10 +27,10 @@ namespace Saucery.RestAPI {
             return api_name == "android";
         }
 
-        //private bool IsMobile()
-        //{
-        //    return automation_backend.Equals("appium");
-        //}
+        public bool IsMobilePlatform()
+        {
+            return IsIOSPlatform() || IsAndroidPlatform();
+        }
     }
 }
 /*
