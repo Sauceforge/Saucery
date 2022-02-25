@@ -11,10 +11,5 @@ namespace Saucery.Dojo.Platforms.ConcreteProducts
         {
             BrowserNames = new List<string> { "chrome", "MicrosoftEdge" };
         }
-
-        //public override bool IsDesktopPlatform(SupportedPlatform sp)
-        //{
-        //    return sp.IsDesktop() && BrowserNames.Contains(sp.api_name);
-        //}
     }
 }

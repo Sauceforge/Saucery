@@ -1,10 +1,11 @@
-﻿using System;
-using Saucery.Options.Base;
+﻿using OpenQA.Selenium.Edge;
 using Saucery.OnDemand;
+using Saucery.Options.Base;
 using Saucery.Util;
-using OpenQA.Selenium.Edge;
+using System;
 
-namespace Saucery.Options.ConcreteProducts {
+namespace Saucery.Options.ConcreteProducts
+{
     internal class EdgeBrowserOptions : BaseOptions {
         public EdgeBrowserOptions(SaucePlatform platform, string testName) : base(testName)
         {

@@ -1,9 +1,10 @@
-﻿using System;
-using OpenQA.Selenium;
+﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Appium.iOS;
 using Saucery.Util;
+using System;
 
-namespace Saucery.Driver {
+namespace Saucery.Driver
+{
     public class SauceryIOSDriver : IOSDriver {
         public SauceryIOSDriver(DriverOptions options)
             : base(new Uri(SauceryConstants.SAUCELABS_HUB), options, TimeSpan.FromSeconds(400)) {

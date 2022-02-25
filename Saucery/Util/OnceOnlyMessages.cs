@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Saucery.OnDemand;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Saucery.NuGet;
-using Saucery.OnDemand;
 
-namespace Saucery.Util {
+namespace Saucery.Util
+{
     internal class OnceOnlyMessages {
         public static void CopyrightBanner() {
             OnceOnlyWriter.WriteLine(SauceryConstants.CONSOLE_RUNNER, SauceryConstants.PRODUCTNAME/*, NuGetHelper.GetInstalledVersion()*/);

@@ -1,8 +1,9 @@
-﻿using Saucery.Options.Base;
+﻿using Saucery.OnDemand;
+using Saucery.Options.Base;
 using Saucery.Options.ConcreteProducts;
-using Saucery.OnDemand;
 
-namespace Saucery.Options.ConcreteCreators {
+namespace Saucery.Options.ConcreteCreators
+{
     internal class AppiumAndroidCreator : Creator {
         public override BaseOptions Create(SaucePlatform platform, string testName)
         {

@@ -1,7 +1,8 @@
 ﻿using Newtonsoft.Json;
 using Saucery.Util;
 
-namespace Saucery.OnDemand {
+namespace Saucery.OnDemand
+{
     public class SaucePlatform {
         #region Attributes
 

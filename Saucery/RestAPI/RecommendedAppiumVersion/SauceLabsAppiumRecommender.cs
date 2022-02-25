@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Saucery.RestAPI.RecommendedAppiumVersion.Base;
 using Saucery.Util;
+using System.Collections.Generic;
 
 namespace Saucery.RestAPI.RecommendedAppiumVersion
 {

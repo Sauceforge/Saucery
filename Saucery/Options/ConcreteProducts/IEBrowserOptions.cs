@@ -1,10 +1,11 @@
-﻿using System;
-using Saucery.Options.Base;
+﻿using OpenQA.Selenium.IE;
 using Saucery.OnDemand;
+using Saucery.Options.Base;
 using Saucery.Util;
-using OpenQA.Selenium.IE;
+using System;
 
-namespace Saucery.Options.ConcreteProducts {
+namespace Saucery.Options.ConcreteProducts
+{
     internal class IEBrowserOptions : BaseOptions {
         public IEBrowserOptions(SaucePlatform platform, string testName) : base(testName)
         {

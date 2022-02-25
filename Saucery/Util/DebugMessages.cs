@@ -1,8 +1,8 @@
-﻿using System;
-using Saucery.OnDemand;
-using Saucery.Options;
+﻿using Saucery.OnDemand;
+using System;
 
-namespace Saucery.Util {
+namespace Saucery.Util
+{
     public class DebugMessages {
         //public static void PrintPlatformDetails(PlatformTestData platform) {
         //    if (UserChecker.ItIsMe())

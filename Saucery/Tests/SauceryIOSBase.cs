@@ -1,12 +1,13 @@
-﻿using System;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using OpenQA.Selenium;
 using Saucery.DataSources;
 using Saucery.Driver;
 using Saucery.OnDemand;
+using System;
 
-namespace Saucery.Tests {
+namespace Saucery.Tests
+{
     [TestFixtureSource(typeof(PlatformTestData))]
     public class SauceryIOSBase : SauceryRoot {
         protected SauceryIOSDriver Driver;

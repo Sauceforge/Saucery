@@ -1,9 +1,10 @@
-﻿using System;
-using OpenQA.Selenium;
+﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Appium.Android;
 using Saucery.Util;
+using System;
 
-namespace Saucery.Driver {
+namespace Saucery.Driver
+{
     public class SauceryAndroidDriver : AndroidDriver {
         public SauceryAndroidDriver(DriverOptions options)
             : base(new Uri(SauceryConstants.SAUCELABS_HUB), options) {

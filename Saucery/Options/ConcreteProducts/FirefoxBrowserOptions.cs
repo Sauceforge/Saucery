@@ -1,10 +1,11 @@
-﻿using System;
-using Saucery.Options.Base;
+﻿using OpenQA.Selenium.Firefox;
 using Saucery.OnDemand;
+using Saucery.Options.Base;
 using Saucery.Util;
-using OpenQA.Selenium.Firefox;
+using System;
 
-namespace Saucery.Options.ConcreteProducts {
+namespace Saucery.Options.ConcreteProducts
+{
     internal class FirefoxBrowserOptions : BaseOptions {
         public FirefoxBrowserOptions(SaucePlatform platform, string testName) : base(testName)
         {

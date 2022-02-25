@@ -1,8 +1,9 @@
-﻿using System.Collections.ObjectModel;
-using OpenQA.Selenium;
+﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Remote;
+using System.Collections.ObjectModel;
 
-namespace Saucery.Util {
+namespace Saucery.Util
+{
     public class WebControl {
         private readonly By _by;
 

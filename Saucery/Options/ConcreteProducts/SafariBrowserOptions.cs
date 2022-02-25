@@ -1,10 +1,11 @@
-﻿using System;
-using Saucery.Options.Base;
+﻿using OpenQA.Selenium.Safari;
 using Saucery.OnDemand;
+using Saucery.Options.Base;
 using Saucery.Util;
-using OpenQA.Selenium.Safari;
+using System;
 
-namespace Saucery.Options.ConcreteProducts {
+namespace Saucery.Options.ConcreteProducts
+{
     internal class SafariBrowserOptions : BaseOptions {
         public SafariBrowserOptions(SaucePlatform platform, string testName) : base(testName)
         {

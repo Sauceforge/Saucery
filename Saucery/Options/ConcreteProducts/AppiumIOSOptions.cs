@@ -1,10 +1,11 @@
-﻿using System;
-using Saucery.Options.Base;
+﻿using OpenQA.Selenium.Appium;
 using Saucery.OnDemand;
+using Saucery.Options.Base;
 using Saucery.Util;
-using OpenQA.Selenium.Appium;
+using System;
 
-namespace Saucery.Options.ConcreteProducts {
+namespace Saucery.Options.ConcreteProducts
+{
     internal class AppiumIOSOptions : BaseOptions {
         public AppiumIOSOptions(SaucePlatform platform, string testName) : base(testName) {
             Console.WriteLine(SauceryConstants.SETTING_UP, testName, SauceryConstants.IOS_ON_APPIUM);
