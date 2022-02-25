@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Merlin.PageObjects;
 using NUnit.Framework;
 using Saucery.OnDemand;
 using Saucery.Tests;
-using Merlin.PageObjects;
 using Shouldly;
+using System;
 
-namespace Merlin {
+namespace Merlin
+{
     public class OpenSauceTests : SauceryBase {
         public OpenSauceTests(SaucePlatform platform) : base(platform) {
         }
