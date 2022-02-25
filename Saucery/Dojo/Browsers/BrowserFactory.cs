@@ -8,34 +8,31 @@ namespace Saucery.Dojo.Browsers
 {
     public class BrowserFactory
     {
-        private SupportedPlatform Platform { get; set; }
-
-        public BrowserFactory(SupportedPlatform platform)
+        public BrowserFactory()
         {
-            Platform = platform;
         }
 
-        public BrowserBase CreateBrowser()
+        public static BrowserBase CreateBrowser(SupportedPlatform sp)
         {
-            return Platform.IsAndroidPlatform()
-                ? new AndroidBrowserCreator(Platform).Create()
-                : Platform.IsIOSPlatform()
-                ? new IOSBrowserCreator(Platform).Create()
-                : Platform.os switch
+            return sp.IsAndroidPlatform()
+                ? new AndroidBrowserCreator(sp).Create()
+                : sp.IsIOSPlatform()
+                ? new IOSBrowserCreator(sp).Create()
+                : sp.os switch
                 {
-                    "Windows 2008" => new Windows7BrowserCreator(Platform).Create(),
-                    "Windows 2012" => new Windows8BrowserCreator(Platform).Create(),
-                    "Windows 2012 R2" => new Windows81BrowserCreator(Platform).Create(),
-                    "Windows 10" => new Windows10BrowserCreator(Platform).Create(),
-                    "Windows 11" => new Windows11BrowserCreator(Platform).Create(),
-                    "Mac 11" => new Mac11BrowserCreator(Platform).Create(),
-                    "Mac 12" => new Mac12BrowserCreator(Platform).Create(),
-                    "Mac 10.10" => new Mac1010BrowserCreator(Platform).Create(),
-                    "Mac 10.11" => new Mac1011BrowserCreator(Platform).Create(),
-                    "Mac 10.12" => new Mac1012BrowserCreator(Platform).Create(),
-                    "Mac 10.13" => new Mac1013BrowserCreator(Platform).Create(),
-                    "Mac 10.14" => new Mac1014BrowserCreator(Platform).Create(),
-                    "Mac 10.15" => new Mac1015BrowserCreator(Platform).Create(),
+                    "Windows 2008" => new Windows7BrowserCreator(sp).Create(),
+                    "Windows 2012" => new Windows8BrowserCreator(sp).Create(),
+                    "Windows 2012 R2" => new Windows81BrowserCreator(sp).Create(),
+                    "Windows 10" => new Windows10BrowserCreator(sp).Create(),
+                    "Windows 11" => new Windows11BrowserCreator(sp).Create(),
+                    "Mac 11" => new Mac11BrowserCreator(sp).Create(),
+                    "Mac 12" => new Mac12BrowserCreator(sp).Create(),
+                    "Mac 10.10" => new Mac1010BrowserCreator(sp).Create(),
+                    "Mac 10.11" => new Mac1011BrowserCreator(sp).Create(),
+                    "Mac 10.12" => new Mac1012BrowserCreator(sp).Create(),
+                    "Mac 10.13" => new Mac1013BrowserCreator(sp).Create(),
+                    "Mac 10.14" => new Mac1014BrowserCreator(sp).Create(),
+                    "Mac 10.15" => new Mac1015BrowserCreator(sp).Create(),
                     _ => null,
                 };
         }

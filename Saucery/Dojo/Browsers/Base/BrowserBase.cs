@@ -9,7 +9,7 @@ namespace Saucery.Dojo.Browsers.Base
         public string DeviceName;
         internal string PlatformName;
         internal string PlatformVersion;
-        internal string RecommendedBackendVersion;
+        internal string RecommendedAppiumVersion;
         internal List<BrowserVersion> BrowserVersions;
 
         public BrowserBase(SupportedPlatform sp)
@@ -21,7 +21,7 @@ namespace Saucery.Dojo.Browsers.Base
             if (sp.IsMobilePlatform())
             {
                 PlatformVersion = sp.short_version;
-                RecommendedBackendVersion = sp.recommended_backend_version;
+                RecommendedAppiumVersion = sp.recommended_backend_version;
             }
             BrowserVersions = new List<BrowserVersion>();
         }

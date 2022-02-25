@@ -14,22 +14,29 @@ namespace Saucery.RestAPI {
         public string automation_backend { get; set; }
         public string os { get; set; }
 
-
         public int short_version_as_int => int.TryParse(short_version, out int discard) ? int.Parse(short_version) : 0;
 
         public bool IsIOSPlatform()
         {
-            return recommended_backend_version != null && (api_name == "iphone" || api_name == "ipad");
+            return automation_backend.Equals("appium") && 
+                   recommended_backend_version != null && 
+                   (api_name.Equals("iphone") || api_name.Equals("ipad"));
         }
 
         public bool IsAndroidPlatform()
         {
             return api_name == "android";
+            //return automation_backend.Equals("appium") &&
+            //       recommended_backend_version != null &&
+            //       api_name.Equals("android");
         }
 
         public bool IsMobilePlatform()
         {
-            return IsIOSPlatform() || IsAndroidPlatform();
+            //return IsIOSPlatform() || IsAndroidPlatform();
+            return automation_backend.Equals("appium") &&
+                   recommended_backend_version != null &&
+                   (api_name == "iphone" || api_name == "ipad" || api_name.Equals("android"));
         }
     }
 }

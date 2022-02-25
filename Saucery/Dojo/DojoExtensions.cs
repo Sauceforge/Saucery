@@ -15,7 +15,7 @@ namespace Saucery.Dojo
             if (p == null)
             {
                 //first one
-                p = new PlatformFactory().CreatePlatform(sp);
+                p = PlatformFactory.CreatePlatform(sp);
                 p.Browsers.AddBrowser(sp);
                 platforms.Add(p);
             }
@@ -27,7 +27,47 @@ namespace Saucery.Dojo
 
         public static PlatformBase FindPlatform(this List<PlatformBase> platforms, SupportedPlatform sp)
         {
-            return platforms.Find(p => p.Name.Equals(sp.os));
+            PlatformBase result = null;
+
+            List<PlatformBase> mobilePlatforms = platforms.FindAll(p=>p.AutomationBackend.Equals("appium"));
+            List<PlatformBase> desktopPlatforms = platforms.FindAll(p=>p.AutomationBackend.Equals("webdriver"));
+
+            if (sp.IsMobilePlatform())
+            {
+                foreach(var m in mobilePlatforms)
+                {
+                    result = mobilePlatforms.Find(mp => mp.Name.Equals(sp.os) && mp.PlatformVersion.Equals(sp.short_version));
+                    if(result != null)
+                    {
+                        break;
+                    }
+                }
+
+            } else {
+                foreach (var d in desktopPlatforms)
+                {
+                    result = desktopPlatforms.Find(dp => dp.Name.Equals(sp.os));
+                    if (result != null)
+                    {
+                        break;
+                    }
+                }
+
+            }
+
+            //foreach (var p in platforms)
+            //{
+            //    if (sp.IsMobilePlatform() && p.IsMobilePlatform())
+            //    {
+            //        result = platforms.Find(p => p.Name.Equals(sp.os) && p.PlatformVersion.Equals(sp.short_version));
+            //    }
+
+            //    return p.IsMobilePlatform()
+            //        ? platforms.Find(p => p.Name.Equals(sp.os) && p.PlatformVersion.Equals(sp.short_version))
+            //        : platforms.Find(p => p.Name.Equals(sp.os));
+            //}
+
+            return result;
         }
 
         public static void AddBrowser(this List<BrowserBase> browsers, SupportedPlatform sp)
@@ -36,7 +76,7 @@ namespace Saucery.Dojo
 
             if (b == null) {
                 //first one
-                b = new BrowserFactory(sp).CreateBrowser();
+                b = BrowserFactory.CreateBrowser(sp);
                 if (b == null) {
                     return;
                 }

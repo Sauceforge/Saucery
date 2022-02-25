@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 namespace Saucery.Dojo.Platforms.ConcreteProducts.Apple
 {
-    internal class IOSPlatform : PlatformBase
+    internal class IOS144Platform : PlatformBase
     {
-        public IOSPlatform(SupportedPlatform sp) : base(sp)
+        public IOS144Platform(SupportedPlatform sp) : base(sp)
         {
             BrowserNames = new List<string>();
         }

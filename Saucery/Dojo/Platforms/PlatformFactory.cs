@@ -1,5 +1,4 @@
 ﻿using Saucery.Dojo.Platforms.Base;
-using Saucery.Dojo.Platforms.ConcreteCreators.Apple;
 using Saucery.Dojo.Platforms.ConcreteCreators.Google;
 using Saucery.Dojo.Platforms.ConcreteCreators.PC;
 using Saucery.RestAPI;
@@ -8,12 +7,12 @@ namespace Saucery.Dojo.Platforms
 {
     public class PlatformFactory
     {
-        public PlatformBase CreatePlatform(SupportedPlatform sp)
+        public static PlatformBase CreatePlatform(SupportedPlatform sp)
         {
             return sp.IsAndroidPlatform()
                 ? new AndroidPlatformCreator(sp).Create()
                 : sp.IsIOSPlatform()
-                ? new IOSPlatformCreator(sp).Create()
+                ? ApplePlatformFactory.CreatePlatform(sp)
                 : sp.os switch
             {
                 "Windows 2008" => new Windows7PlatformCreator(sp).Create(),

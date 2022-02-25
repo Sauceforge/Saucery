@@ -29,7 +29,7 @@ namespace Saucery.Dojo.Browsers.ConcreteProducts.PC
         {
             return sp.os switch
             {
-                "Windows 2008" => 11,
+                "Windows 2008" => 10,
                 "Windows 2012" => 10,
                 "Windows 2012 R2" => 11,
                 _ => 0,

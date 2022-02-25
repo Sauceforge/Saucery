@@ -12,7 +12,7 @@ namespace Saucery.Dojo.Platforms.ConcreteCreators.PC
 
         public override PlatformBase Create()
         {
-            return new Mac1013Platform(Platform);
+            return new Mac1012Platform(Platform);
         }
     }
 }

@@ -11,8 +11,11 @@ namespace Saucery.Dojo.Platforms.Base
         public string RecommendedAppiumVersion { get; set; }
         public List<string> SupportedBackendVersions { get; set; }
         public List<object> DeprecatedBackendVersions { get; set; }
+        public string PlatformVersion { get; set; }
+        //public string RecommendedBackendVersion { get; set; }
         protected List<string> BrowserNames { get; set; }
-        public List<BrowserBase> Browsers;
+        
+        public List<BrowserBase> Browsers { get; set; }
         
 
         public PlatformBase(SupportedPlatform sp)
@@ -22,7 +25,17 @@ namespace Saucery.Dojo.Platforms.Base
             RecommendedAppiumVersion = sp.recommended_backend_version;
             SupportedBackendVersions = sp.supported_backend_versions;
             DeprecatedBackendVersions = sp.deprecated_backend_versions;
+            if (sp.IsMobilePlatform())
+            {
+                PlatformVersion = sp.short_version;
+                //RecommendedBackendVersion = sp.recommended_backend_version;
+            }
             Browsers = new List<BrowserBase>();
+        }
+
+        public bool IsMobilePlatform()
+        {
+            return RecommendedAppiumVersion != null && AutomationBackend.Equals("appium");
         }
     }
 }
