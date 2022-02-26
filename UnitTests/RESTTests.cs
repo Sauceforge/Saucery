@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using Saucery.Dojo;
+using Saucery.Dojo.Platforms.ConcreteProducts.PC;
 using Saucery.RestAPI;
 using Saucery.RestAPI.FlowControl;
 using Saucery.RestAPI.RecommendedAppiumVersion;
@@ -98,24 +99,9 @@ namespace UnitTests
             var configurator = new PlatformConfigurator(filteredPlatforms);
             var availablePlatforms = configurator.AvailablePlatforms;
 
-            //IOS
-            //var iosp1 = availablePlatforms[2];
-            //var allNames = iosp1.Browsers.Select(n => n.DeviceName);
-            //var distinctNames = iosp1.Browsers.Select(n => n.DeviceName).Distinct();
-
-            //var iosp2 = availablePlatforms[6];
-            //var allNames2 = iosp2.Browsers.Select(n => n.DeviceName);
-            //var distinctNames2 = iosp2.Browsers.Select(n => n.DeviceName).Distinct();
-
-            //Join Lists
-            //distinctNames.ToList().AddRange(distinctNames2.ToList());
-            //var fullDistinct = distinctNames.Distinct();
-
-            //Android
-            //var androidplatforms = availablePlatforms[5];
-
-            //var allAndroidNames = androidplatforms.Browsers.Select(n => n.DeviceName);
-            //var distinctAndroidNames = androidplatforms.Browsers.Select(n => n.DeviceName).Distinct();
+            //Reflection Test - WORKS
+            var windows81platform = availablePlatforms.GetPlatform<Windows81Platform>();
+            var mac1014platform = availablePlatforms.GetPlatform<Mac1014Platform>();
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Saucery.Dojo.Platforms
         public static PlatformBase CreatePlatform(SupportedPlatform sp)
         {
             return sp.IsAndroidPlatform()
-                ? new AndroidPlatformCreator(sp).Create()
+                ? AndroidPlatformFactory.CreatePlatform(sp)
                 : sp.IsIOSPlatform()
                 ? ApplePlatformFactory.CreatePlatform(sp)
                 : sp.os switch

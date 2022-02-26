@@ -4,6 +4,7 @@ using Saucery.Dojo.Platforms;
 using Saucery.Dojo.Platforms.Base;
 using Saucery.RestAPI;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Saucery.Dojo
 {
@@ -91,6 +92,11 @@ namespace Saucery.Dojo
             if (b.IsSupportedVersion(sp) && b.FindVersion(sp) == null) {
                 b.BrowserVersions.Add(new BrowserVersion(sp));
             }
+        }
+
+        public static IList<T> GetPlatform<T>(this List<PlatformBase> availablePlatforms) where T : PlatformBase
+        {
+            return availablePlatforms.OfType<T>().ToList();
         }
 
         private static BrowserBase FindBrowser(this List<BrowserBase> browsers, SupportedPlatform sp) {
