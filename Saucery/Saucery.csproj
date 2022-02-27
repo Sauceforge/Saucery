@@ -6,12 +6,6 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
-  <!--<ItemGroup>
-    <Compile Remove="Capabilities\**" />
-    <EmbeddedResource Remove="Capabilities\**" />
-    <None Remove="Capabilities\**" />
-  </ItemGroup>-->
-
   <PropertyGroup>
     <IsPackable>true</IsPackable>
     <PackageId>Saucery</PackageId>
