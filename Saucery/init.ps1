@@ -1,13 +1,13 @@
 param($installPath, $toolsPath, $package, $project)
 
-$coreName = 'Saucery3'
+$coreName = 'Saucery'
 $psMajorVersion = $PSVersionTable.PSVersion.Major
 
 $dte.ExecuteCommand("File.SaveAll")
 
 $scriptPath = If ($psMajorVersion -ge 3) { split-path -parent $MyInvocation.MyCommand.Definition } Else { $PSScriptRoot }
 
-$dllPath = "$($scriptPath)\..\lib\net461\$($coreName).dll"
+$dllPath = "$($scriptPath)\..\lib\net5.0\$($coreName).dll"
 #$nugetPath = "$PSScriptRoot\..\lib\net461\$($nugetCore).dll"
 #$xmlPath = "$PSScriptRoot\..\lib\net461\$($xmlTransform).dll"
 
@@ -22,5 +22,5 @@ $validator.CheckActivation()
 
 #
 # Copyright Andrew Gray, SauceForge
-# Date: 12th November 2016
+# Date: 27th February 2022
 # 

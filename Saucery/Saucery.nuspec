@@ -35,8 +35,8 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\Saucery3.dll" target="lib\net461\" />
-    <file src="bin\Release\nunit.framework.dll" target="lib\net461\" /> <!--Got to do this to make it work-->
+    <file src="bin\Release\Saucery.dll" target="lib\net5.0\" />
+    <file src="bin\Release\nunit.framework.dll" target="lib\net5.0\" /> <!--Got to do this to make it work-->
     <!--<file src="bin\Release\NuGet.Core.dll" target="lib\net452\" />--> <!--Got to do this to make it work-->
     <!--<file src="bin\Release\Microsoft.Web.XmlTransform.dll" target="lib\net452\" />--> <!--Got to do this to make it work-->
   </files>
