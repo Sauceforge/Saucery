@@ -32,6 +32,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Capabilities\**" />
+    <EmbeddedResource Remove="Capabilities\**" />
+    <None Remove="Capabilities\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Appium.WebDriver" Version="5.0.0-beta01" />
     <PackageReference Include="Castle.Core" Version="4.4.1" />
     <PackageReference Include="DotNetSeleniumExtras.WaitHelpers" Version="3.11.0" />
@@ -41,7 +47,7 @@
     <PackageReference Include="RestSharp" Version="107.3.0" />
     <PackageReference Include="Selenium.Support" Version="4.1.0" />
     <PackageReference Include="Selenium.WebDriver" Version="4.1.0" />
-    <None Include="Images\SauceryNUnit.png" Pack="true" PackagePath="\"/>
+    <None Include="Images\SauceryNUnit.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>
