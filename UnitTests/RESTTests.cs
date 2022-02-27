@@ -1,6 +1,5 @@
 ﻿using NUnit.Framework;
 using Saucery.Dojo;
-using Saucery.Dojo.Platforms.Base;
 using Saucery.Dojo.Platforms.ConcreteProducts.Apple;
 using Saucery.Dojo.Platforms.ConcreteProducts.Google;
 using Saucery.Dojo.Platforms.ConcreteProducts.PC;
