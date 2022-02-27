@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Saucery.Dojo.Platforms.ConcreteProducts.Google
 {
-    internal class Android51Platform : PlatformBase
+    public class Android51Platform : PlatformBase
     {
         public Android51Platform(SupportedPlatform sp) : base(sp)
         {

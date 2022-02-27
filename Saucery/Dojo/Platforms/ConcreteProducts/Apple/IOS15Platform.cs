@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Saucery.Dojo.Platforms.ConcreteProducts.Apple
 {
-    internal class IOS15Platform : PlatformBase
+    public class IOS15Platform : PlatformBase
     {
         public IOS15Platform(SupportedPlatform sp) : base(sp)
         {
