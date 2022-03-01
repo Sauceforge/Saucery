@@ -32,7 +32,7 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         # Check for latest at link at .NET 5 download page (https://dotnet.microsoft.com/download/dotnet/5.0)
-        ddotnet-version: 5.0.x
+        dotnet-version: 5.0.x
         #dotnet-version: | 
         #  3.1.x
         #  5.0.x
