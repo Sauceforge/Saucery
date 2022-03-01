@@ -5,18 +5,22 @@ namespace Saucery.Dojo.Browsers.Base
 {
     public abstract class BrowserBase : IBrowser
     {
-        internal readonly string Name;
-        public string DeviceName;
-        internal string PlatformName;
-        internal string PlatformVersion;
-        internal string RecommendedAppiumVersion;
-        internal List<BrowserVersion> BrowserVersions;
+        public string Os { get; set; }
+        public string PlatformNameForOption { get; set; }
+        public string AutomationBackend { get; set; }
+        internal string Name { get; set; }
+        public string DeviceName { get; set; }        
+        internal string PlatformVersion { get; set; }
+        internal string RecommendedAppiumVersion { get; set; }
+        internal List<BrowserVersion> BrowserVersions { get; set; }
 
-        public BrowserBase(SupportedPlatform sp)
+        public BrowserBase(SupportedPlatform sp, string platformNameForOption)
         {
+            Os = sp.os;
+            PlatformNameForOption = platformNameForOption;
+            AutomationBackend = sp.automation_backend;
             Name = sp.api_name;
             DeviceName = sp.long_name;
-            PlatformName = sp.os;
             
             if (sp.IsMobilePlatform())
             {

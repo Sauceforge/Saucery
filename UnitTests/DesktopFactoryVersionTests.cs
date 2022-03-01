@@ -1,6 +1,8 @@
 ﻿using NUnit.Framework;
+using Saucery.Dojo;
 using Saucery.OnDemand;
 using Saucery.Options;
+using Saucery.RestAPI.SupportedPlatforms;
 using Shouldly;
 using System.Collections;
 
@@ -14,6 +16,13 @@ namespace UnitTests
         public void IsSupportedPlatformTest(SaucePlatform saucePlatform)
         {
             saucePlatform = PlatformClassifer.Classify(saucePlatform);
+
+            var platformAcquirer = new SauceLabsPlatformAcquirer();
+            var platforms = platformAcquirer.AcquirePlatforms();
+            var configurator = new PlatformConfigurator(platforms);
+
+            var validplatform = configurator.Validate(saucePlatform);
+            //var factory = new OptionFactory(validplatform);
             var factory = new OptionFactory(saucePlatform);
             var result = factory.IsSupportedPlatform();
             result.ShouldBeTrue();
@@ -43,15 +52,13 @@ namespace UnitTests
         {
             get
             {
-                yield return new TestCaseData(new SaucePlatform("Windows 10", "safari", "8"));
-                yield return new TestCaseData(new SaucePlatform("Windows 10", "safari", "15"));
                 yield return new TestCaseData(new SaucePlatform("Windows 10", "chrome", "latest"));
                 yield return new TestCaseData(new SaucePlatform("Windows 10", "chrome", "75"));
                 yield return new TestCaseData(new SaucePlatform("Windows 10", "chrome", "98"));
                 yield return new TestCaseData(new SaucePlatform("Windows 10", "firefox", "78"));
                 yield return new TestCaseData(new SaucePlatform("Windows 10", "firefox", "97"));
-                yield return new TestCaseData(new SaucePlatform("Windows 10", "microsoftedge", "79"));
-                yield return new TestCaseData(new SaucePlatform("Windows 10", "microsoftedge", "98"));
+                yield return new TestCaseData(new SaucePlatform("Windows 10", "MicrosoftEdge", "79"));
+                yield return new TestCaseData(new SaucePlatform("Windows 10", "MicrosoftEdge", "98"));
                 yield return new TestCaseData(new SaucePlatform("Windows 10", "internet explorer", "9"));
                 yield return new TestCaseData(new SaucePlatform("Windows 10", "internet explorer", "11"));
                 

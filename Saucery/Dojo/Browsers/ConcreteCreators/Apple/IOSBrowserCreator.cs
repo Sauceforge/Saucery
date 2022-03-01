@@ -10,9 +10,9 @@ namespace Saucery.Dojo.Browsers.ConcreteCreators.Apple
         {
         }
 
-        public override BrowserBase Create()
+        public override BrowserBase Create(string platformNameForOption)
         {
-            return new IOSBrowser(Platform);
+            return new IOSBrowser(Platform, platformNameForOption);
         }
     }
 }

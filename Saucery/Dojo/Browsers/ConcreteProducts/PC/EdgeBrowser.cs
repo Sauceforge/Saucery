@@ -5,7 +5,7 @@ namespace Saucery.Dojo.Browsers.ConcreteProducts.PC
 {
     internal class EdgeBrowser : BrowserBase
     {
-        public EdgeBrowser(SupportedPlatform sp) : base(sp)
+        public EdgeBrowser(SupportedPlatform sp, string platformNameForOption) : base(sp, platformNameForOption)
         {
         }
 

@@ -1,4 +1,6 @@
-﻿using Saucery.Dojo.Platforms.Base;
+﻿using Saucery.Dojo.Browsers.Base;
+using Saucery.Dojo.Platforms.Base;
+using Saucery.OnDemand;
 using Saucery.RestAPI;
 using System.Collections.Generic;
 
@@ -44,15 +46,15 @@ namespace Saucery.Dojo
             //var android_appium_platforms_byversion = android_appium_platforms.GroupBy(g => g.recommended_backend_version);
 
             var filteredPlatforms = new List<SupportedPlatform>();
-            filteredPlatforms.AddRange(windows_platforms);           //Not filtered for Min and Max Versions
-            filteredPlatforms.AddRange(mac1010_webdriver_platforms); //Not filtered for Min and Max Versions
-            filteredPlatforms.AddRange(mac1011_webdriver_platforms); //Not filtered for Min and Max Versions
-            filteredPlatforms.AddRange(mac1012_webdriver_platforms); //Not filtered for Min and Max Versions
-            filteredPlatforms.AddRange(mac1013_webdriver_platforms); //Not filtered for Min and Max Versions
-            filteredPlatforms.AddRange(mac1014_webdriver_platforms); //Not filtered for Min and Max Versions
-            filteredPlatforms.AddRange(mac1015_webdriver_platforms); //Not filtered for Min and Max Versions
-            filteredPlatforms.AddRange(mac11_webdriver_platforms);   //Not filtered for Min and Max Versions
-            filteredPlatforms.AddRange(mac12_webdriver_platforms);   //Not filtered for Min and Max Versions
+            filteredPlatforms.AddRange(windows_platforms);           //Not filtered for Min and Max Versions yet
+            filteredPlatforms.AddRange(mac1010_webdriver_platforms); //Not filtered for Min and Max Versions yet
+            filteredPlatforms.AddRange(mac1011_webdriver_platforms); //Not filtered for Min and Max Versions yet
+            filteredPlatforms.AddRange(mac1012_webdriver_platforms); //Not filtered for Min and Max Versions yet
+            filteredPlatforms.AddRange(mac1013_webdriver_platforms); //Not filtered for Min and Max Versions yet
+            filteredPlatforms.AddRange(mac1014_webdriver_platforms); //Not filtered for Min and Max Versions yet
+            filteredPlatforms.AddRange(mac1015_webdriver_platforms); //Not filtered for Min and Max Versions yet
+            filteredPlatforms.AddRange(mac11_webdriver_platforms);   //Not filtered for Min and Max Versions yet
+            filteredPlatforms.AddRange(mac12_webdriver_platforms);   //Not filtered for Min and Max Versions yet
             filteredPlatforms.AddRange(ios_appium_platforms);
             filteredPlatforms.AddRange(android_appium_platforms);
 
@@ -61,6 +63,33 @@ namespace Saucery.Dojo
             {
                 AvailablePlatforms.AddPlatform(sp);
             }
+        }
+
+        public BrowserVersion Validate(SaucePlatform requested)
+        {
+            BrowserVersion browserVersion = null;
+            //TODO: Needs work
+            switch (requested.PlatformType)
+            {
+                case PlatformType.Chrome:
+                case PlatformType.Edge:
+                case PlatformType.Firefox:
+                case PlatformType.IE:
+                case PlatformType.Safari:
+                    browserVersion = AvailablePlatforms.FindDesktopBrowser(requested);
+                    break;
+                case PlatformType.Android:
+                    //browserVersion = AvailablePlatforms.FindAndroidBrowser(requested);
+                    break;
+                case PlatformType.Apple:
+                    //browserVersion = AvailablePlatforms.FindIOSBrowser(requested);
+                    break;
+                default:
+                    break;
+            }
+
+            //Console.WriteLine("{0} of {1} platforms request are valid", valid.Count, requested.Count);
+            return browserVersion;
         }
     }
 }

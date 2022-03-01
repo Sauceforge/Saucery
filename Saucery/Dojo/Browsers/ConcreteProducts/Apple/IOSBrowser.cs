@@ -5,7 +5,7 @@ namespace Saucery.Dojo.Browsers.ConcreteProducts.Apple
 {
     internal class IOSBrowser : BrowserBase
     {
-        public IOSBrowser(SupportedPlatform sp) : base(sp)
+        public IOSBrowser(SupportedPlatform sp, string platformNameForOption) : base(sp, platformNameForOption)
         {
         }
 

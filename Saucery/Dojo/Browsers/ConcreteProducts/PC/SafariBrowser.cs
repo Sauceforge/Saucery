@@ -5,7 +5,7 @@ namespace Saucery.Dojo.Browsers.ConcreteProducts.PC
 {
     internal class SafariBrowser : BrowserBase
     {
-        public SafariBrowser(SupportedPlatform sp) : base(sp)
+        public SafariBrowser(SupportedPlatform sp, string platformNameForOption) : base(sp, platformNameForOption)
         {
         }
 

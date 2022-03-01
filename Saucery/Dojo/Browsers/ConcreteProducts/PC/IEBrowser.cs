@@ -5,7 +5,7 @@ namespace Saucery.Dojo.Browsers.ConcreteProducts.PC
 {
     internal class IEBrowser : BrowserBase
     {
-        public IEBrowser(SupportedPlatform sp) : base(sp)
+        public IEBrowser(SupportedPlatform sp, string platformNameForOption) : base(sp, platformNameForOption)
         {
         }
 
@@ -21,6 +21,7 @@ namespace Saucery.Dojo.Browsers.ConcreteProducts.PC
                 "Windows 2008" => 11,
                 "Windows 2012" => 10,
                 "Windows 2012 R2" => 11,
+                "Windows 10" => 11,
                 _ => 0,
             };
         }
@@ -32,6 +33,7 @@ namespace Saucery.Dojo.Browsers.ConcreteProducts.PC
                 "Windows 2008" => 10,
                 "Windows 2012" => 10,
                 "Windows 2012 R2" => 11,
+                "Windows 10" => 11,
                 _ => 0,
             };
         }

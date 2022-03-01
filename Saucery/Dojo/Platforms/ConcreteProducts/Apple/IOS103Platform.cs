@@ -6,10 +6,12 @@ namespace Saucery.Dojo.Platforms.ConcreteProducts.Apple
 {
     public class IOS103Platform : PlatformBase
     {
+        public override string PlatformNameForOption { get; set; }
 
         public IOS103Platform(SupportedPlatform sp) : base(sp)
         {
             BrowserNames = new List<string>();
+            PlatformNameForOption = "iOS";
         }
     }
 }

@@ -10,9 +10,9 @@ namespace Saucery.Dojo.Browsers.ConcreteCreators.Google
         {
         }
 
-        public override BrowserBase Create()
+        public override BrowserBase Create(string platformNameForOption)
         {
-            return new AndroidBrowser(Platform);
+            return new AndroidBrowser(Platform, platformNameForOption);
         }
     }
 }

@@ -7,13 +7,13 @@ namespace Saucery.Dojo.Platforms.Base
     public abstract class PlatformBase : IPlatform
     {
         public string Name { get; set; }
+        public abstract string PlatformNameForOption {get;set;}
         public string AutomationBackend { get; set; }
         public string RecommendedAppiumVersion { get; set; }
         public List<string> SupportedBackendVersions { get; set; }
         public List<object> DeprecatedBackendVersions { get; set; }
         public string PlatformVersion { get; set; }
-        //public string RecommendedBackendVersion { get; set; }
-        protected List<string> BrowserNames { get; set; }
+        public List<string> BrowserNames { get; set; }
         
         public List<BrowserBase> Browsers { get; set; }
         
@@ -28,7 +28,6 @@ namespace Saucery.Dojo.Platforms.Base
             if (sp.IsMobilePlatform())
             {
                 PlatformVersion = sp.short_version;
-                //RecommendedBackendVersion = sp.recommended_backend_version;
             }
             Browsers = new List<BrowserBase>();
         }

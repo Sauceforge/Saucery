@@ -5,7 +5,7 @@ namespace Saucery.Dojo.Browsers.ConcreteProducts.PC
 {
     internal class ChromeBrowser : BrowserBase
     {
-        public ChromeBrowser(SupportedPlatform sp) : base(sp)
+        public ChromeBrowser(SupportedPlatform sp, string platformNameForOption) : base(sp, platformNameForOption)
         {
         }
 

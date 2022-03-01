@@ -6,9 +6,12 @@ namespace Saucery.Dojo.Platforms.ConcreteProducts.PC
 {
     public class Windows8Platform : PlatformBase
     {
+        public override string PlatformNameForOption { get; set; }
+
         public Windows8Platform(SupportedPlatform sp) : base (sp)
         {
             BrowserNames = new List<string> { "chrome", "firefox", "internet explorer" };
+            PlatformNameForOption = "Windows 8";
         }
     }
 }

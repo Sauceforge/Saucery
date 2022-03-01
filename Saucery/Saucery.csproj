@@ -3,12 +3,12 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <IncludeBuildOutput>true</IncludeBuildOutput>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <!--<GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
   </PropertyGroup>
 
   <PropertyGroup>
     <IsPackable>true</IsPackable>
-    <PackageId>Saucery</PackageId>
+    <!--<PackageId>Saucery</PackageId>
     <PackageVersion>4.0.0</PackageVersion>
     <Authors>Andrew Gray</Authors>
     <Company>SauceForge</Company>
@@ -22,7 +22,7 @@
     <PackageProjectUrl>https://github.com/Sauceforge/Saucery</PackageProjectUrl>
     <PackageIconUrl>http://sauceforge.github.io/Images/SauceryNUnit3_New.png</PackageIconUrl>
     <PackageIcon>SauceryNUnit.png</PackageIcon>
-    <PackageTags>nunit saucelabs test testing tdd framework assert</PackageTags>
+    <PackageTags>nunit saucelabs test testing tdd framework assert</PackageTags>-->
   </PropertyGroup>
 
   <ItemGroup>

@@ -173,6 +173,13 @@
         internal const int MAX_IE_SUPPORTED_VERSION = 11;
 
         internal const string NOT_SUPPORTED_MESSAGE = "Browser version not supported by DriverOptions. Please see: https://wiki.saucelabs.com/display/DOCS/2018/03/27/Introducing+Selenium+WebDriver+W3C+Protocol+Beta.";
+
+        //PLATFORMS
+        //internal const string PLATFORM_WINDOWS_11;
+        //internal const string PLATFORM_WINDOWS_10;
+        //internal const string PLATFORM_WINDOWS_11;
+
+
     }
 }
 /*

@@ -10,13 +10,13 @@ namespace Saucery.Dojo.Browsers.ConcreteCreators.PC
         {
         }
 
-        public override BrowserBase Create()
+        public override BrowserBase Create(string platformNameForOption)
         {
             return Platform.api_name switch
             {
-                "chrome" => new ChromeBrowser(Platform),
-                "MicrosoftEdge" => new EdgeBrowser(Platform),
-                "firefox" => new FirefoxBrowser(Platform),
+                "chrome" => new ChromeBrowser(Platform, platformNameForOption),
+                "MicrosoftEdge" => new EdgeBrowser(Platform, platformNameForOption),
+                "firefox" => new FirefoxBrowser(Platform, platformNameForOption),
                 _ => null,
             };
         }

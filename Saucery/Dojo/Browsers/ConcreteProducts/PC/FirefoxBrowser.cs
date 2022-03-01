@@ -5,7 +5,7 @@ namespace Saucery.Dojo.Browsers.ConcreteProducts.PC
 {
     internal class FirefoxBrowser : BrowserBase
     {
-        public FirefoxBrowser(SupportedPlatform sp) : base(sp)
+        public FirefoxBrowser(SupportedPlatform sp, string platformNameForOption) : base(sp, platformNameForOption)
         {
         }
 

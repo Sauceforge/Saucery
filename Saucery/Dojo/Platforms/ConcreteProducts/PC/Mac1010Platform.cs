@@ -7,9 +7,12 @@ namespace Saucery.Dojo.Platforms.ConcreteProducts.PC
     //OS X Yosemite
     public class Mac1010Platform : PlatformBase
     {
+        public override string PlatformNameForOption { get; set; }
+
         public Mac1010Platform(SupportedPlatform sp) : base(sp)
         {
             BrowserNames = new List<string> { "chrome", "MicrosoftEdge" };
+            PlatformNameForOption = "OS X 10.10";
         }
     }
 }

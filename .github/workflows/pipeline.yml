@@ -8,6 +8,7 @@ on: [push, pull_request]
 #      - master
 
 env:
+  PROJECT_NAME: Saucery
   SOLN_FILE: Saucery.sln                          # full path to your solution file
   UT_DIR: UnitTests
   UT_PROJECT: UnitTests/UnitTests.csproj          # full path to your unit test project file
@@ -61,6 +62,15 @@ jobs:
         targetdir: 'coveragereport' # REQUIRED # The directory where the generated report should be saved.
         reporttypes: 'HtmlInline;Cobertura' # The output formats and scope (separated by semicolon) Values: Badges, Clover, Cobertura, CsvSummary, Html, HtmlChart, HtmlInline, HtmlInline_AzurePipelines, HtmlInline_AzurePipelines_Dark, HtmlSummary, JsonSummary, Latex, LatexSummary, lcov, MarkdownSummary, MHtml, PngChart, SonarQube, TeamCitySummary, TextSummary, Xml, XmlSummary
 
+    - name: Pack
+      run: dotnet pack -c Release --no-restore -p:NuspecFile=Saucery.nuspec
+
+    - name: Upload Nupkg Artifact
+      uses: actions/upload-artifact@v2.2.3
+      with:
+        name: nupkg
+        path: ${{ env.PROJECT_NAME }}/bin/Release/*.nupkg
+
     - name: Upload coverage report artifact
       uses: actions/upload-artifact@v2.2.3
       with:
@@ -68,6 +78,7 @@ jobs:
         path: coveragereport # Directory containing files to upload
       # Use always() to always run this step to publish test results when there are test failures
       if: ${{ always() }}
+
 
     - name: Bump version and push tag
       if: ${{ github.ref == 'ref/head/develop' && success() }}

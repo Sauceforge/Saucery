@@ -9,6 +9,7 @@ using Saucery.RestAPI.SupportedPlatforms;
 using Saucery.Util;
 using Shouldly;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace UnitTests
 {
@@ -47,6 +48,9 @@ namespace UnitTests
             var platforms = platformAcquirer.AcquirePlatforms();
             
             platforms.ShouldNotBeNull();
+
+            //var windows10platforms = platforms.FindAll(w => w.os.Equals("Windows 10"));
+            //var windows10platformbrowsers = windows10platforms.GroupBy(w => w.api_name);
 
             var configurator = new PlatformConfigurator(platforms);
             var availablePlatforms = configurator.AvailablePlatforms;
@@ -182,6 +186,21 @@ namespace UnitTests
             android7platform.Count.ShouldBe(1);
             android6platform.Count.ShouldBe(1);
             android51platform.Count.ShouldBe(1);
+
+            //Browser Count Checks
+            windows11platform[0].Browsers.Count.ShouldBeEquivalentTo(windows11platform[0].BrowserNames.Count);
+            windows10platform[0].Browsers.Count.ShouldBeEquivalentTo(windows10platform[0].BrowserNames.Count);
+            windows81platform[0].Browsers.Count.ShouldBeEquivalentTo(windows81platform[0].BrowserNames.Count);
+            windows8platform[0].Browsers.Count.ShouldBeEquivalentTo(windows8platform[0].BrowserNames.Count);
+            windows7platform[0].Browsers.Count.ShouldBeEquivalentTo(windows7platform[0].BrowserNames.Count);
+            mac1010platform[0].Browsers.Count.ShouldBeEquivalentTo(mac1010platform[0].BrowserNames.Count);
+            mac1011platform[0].Browsers.Count.ShouldBeEquivalentTo(mac1011platform[0].BrowserNames.Count);
+            mac1012platform[0].Browsers.Count.ShouldBeEquivalentTo(mac1012platform[0].BrowserNames.Count);
+            mac1013platform[0].Browsers.Count.ShouldBeEquivalentTo(mac1013platform[0].BrowserNames.Count);
+            mac1014platform[0].Browsers.Count.ShouldBeEquivalentTo(mac1014platform[0].BrowserNames.Count);
+            mac1015platform[0].Browsers.Count.ShouldBeEquivalentTo(mac1015platform[0].BrowserNames.Count);
+            mac11platform[0].Browsers.Count.ShouldBeEquivalentTo(mac11platform[0].BrowserNames.Count);
+            mac12platform[0].Browsers.Count.ShouldBeEquivalentTo(mac12platform[0].BrowserNames.Count);
 
             //TypeOf Checks
             windows11platform.ShouldBeAssignableTo(typeof(List<Windows11Platform>));

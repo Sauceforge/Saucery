@@ -11,6 +11,6 @@ namespace Saucery.Dojo.Browsers.Base
             Platform = sp;
         }
 
-        public abstract BrowserBase Create();
+        public abstract BrowserBase Create(string platformNameForOption);
     }
 }
