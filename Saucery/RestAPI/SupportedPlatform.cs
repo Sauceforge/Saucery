@@ -2,7 +2,7 @@
 
 namespace Saucery.RestAPI {
     public class SupportedPlatform {
-        public List<object> deprecated_backend_versions { get; set; }
+        public List<string> deprecated_backend_versions { get; set; }
         public string short_version { get; set; }
         public string long_name { get; set; }
         public string recommended_backend_version { get; set; }

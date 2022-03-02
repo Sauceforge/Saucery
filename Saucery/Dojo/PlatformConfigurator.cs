@@ -1,5 +1,4 @@
-﻿using Saucery.Dojo.Browsers.Base;
-using Saucery.Dojo.Platforms.Base;
+﻿using Saucery.Dojo.Platforms.Base;
 using Saucery.OnDemand;
 using Saucery.RestAPI;
 using System.Collections.Generic;
@@ -62,6 +61,41 @@ namespace Saucery.Dojo
             foreach (var sp in filteredPlatforms)
             {
                 AvailablePlatforms.AddPlatform(sp);
+            }
+
+            AddLatestBrowserVersion();
+        }
+
+        public void AddLatestBrowserVersion()
+        {
+            foreach(var p in AvailablePlatforms)
+            {
+                foreach (var b in p.Browsers)
+                {
+                    if (p.BrowsersWithLatestVersion != null && p.BrowsersWithLatestVersion.Contains(b.Name))
+                    {
+                        b.BrowserVersions.Add(new BrowserVersion(b.Os,
+                                                                 "latest",
+                                                                 b.Name,
+                                                                 "latest",
+                                                                 b.PlatformVersion,
+                                                                 b.AutomationBackend,
+                                                                 b.DeviceName,
+                                                                 b.RecommendedAppiumVersion,
+                                                                 null,
+                                                                 null));
+                        b.BrowserVersions.Add(new BrowserVersion(b.Os,
+                                                                 "latest-1",
+                                                                 b.Name,
+                                                                 "latest-1",
+                                                                 b.PlatformVersion,
+                                                                 b.AutomationBackend,
+                                                                 b.DeviceName,
+                                                                 b.RecommendedAppiumVersion,
+                                                                 null,
+                                                                 null));
+                    }
+                }
             }
         }
 

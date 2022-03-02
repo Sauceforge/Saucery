@@ -13,7 +13,7 @@ namespace Saucery.Dojo
         public string DeviceName { get; set; }
         public string RecommendedAppiumVersion { get; set; }
         public List<string> SupportedBackendVersions { get; set; }
-        public List<object> DeprecatedBackendVersions { get; set; }
+        public List<string> DeprecatedBackendVersions { get; set; }
 
         public BrowserVersion(SupportedPlatform sp, string platformNameForOption)
         {
@@ -26,6 +26,28 @@ namespace Saucery.Dojo
             RecommendedAppiumVersion = sp.recommended_backend_version;
             SupportedBackendVersions = sp.supported_backend_versions;
             DeprecatedBackendVersions = sp.deprecated_backend_versions;
+        }
+
+        public BrowserVersion(string os, 
+                              string platformNameForOption, 
+                              string api_name, 
+                              string latest_stable_version, 
+                              string short_version, 
+                              string automation_backend,
+                              string long_name,
+                              string recommended_backend_version,
+                              List<string> supported_backend_versions,
+                              List<string> deprecated_backend_versions)
+        {
+            Os = os;
+            PlatformNameForOption = platformNameForOption;
+            BrowserName = api_name;
+            Name = latest_stable_version != string.Empty ? latest_stable_version : short_version;
+            AutomationBackend = automation_backend;
+            DeviceName = long_name;
+            RecommendedAppiumVersion = recommended_backend_version;
+            SupportedBackendVersions = supported_backend_versions;
+            DeprecatedBackendVersions = deprecated_backend_versions;
         }
     }
 }

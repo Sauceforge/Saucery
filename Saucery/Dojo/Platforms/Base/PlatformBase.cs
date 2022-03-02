@@ -11,7 +11,7 @@ namespace Saucery.Dojo.Platforms.Base
         public string AutomationBackend { get; set; }
         public string RecommendedAppiumVersion { get; set; }
         public List<string> SupportedBackendVersions { get; set; }
-        public List<object> DeprecatedBackendVersions { get; set; }
+        public List<string> DeprecatedBackendVersions { get; set; }
         public string PlatformVersion { get; set; }
         public List<string> BrowserNames { get; set; }
         public List<string> BrowsersWithLatestVersion { get; set; }
