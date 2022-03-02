@@ -11,6 +11,7 @@ namespace Saucery.Dojo.Platforms.ConcreteProducts.PC
         public Windows10Platform(SupportedPlatform sp) : base (sp)
         {
             BrowserNames = new List<string> { "chrome", "firefox", "MicrosoftEdge", "internet explorer" };
+            BrowsersWithLatestVersion = new List<string> { "chrome", "firefox", "MicrosoftEdge" };
             PlatformNameForOption = "Windows 10";
         }
     }

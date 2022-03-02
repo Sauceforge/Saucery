@@ -14,8 +14,10 @@ namespace Saucery.Dojo.Platforms.Base
         public List<object> DeprecatedBackendVersions { get; set; }
         public string PlatformVersion { get; set; }
         public List<string> BrowserNames { get; set; }
-        
+        public List<string> BrowsersWithLatestVersion { get; set; }
+
         public List<BrowserBase> Browsers { get; set; }
+        
         
 
         public PlatformBase(SupportedPlatform sp)

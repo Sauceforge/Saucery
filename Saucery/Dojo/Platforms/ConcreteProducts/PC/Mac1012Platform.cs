@@ -12,6 +12,7 @@ namespace Saucery.Dojo.Platforms.ConcreteProducts.PC
         public Mac1012Platform(SupportedPlatform sp) : base (sp)
         {
             BrowserNames = new List<string> { "chrome", "firefox", "MicrosoftEdge" };
+            BrowsersWithLatestVersion = new List<string> { "chrome", "firefox", "MicrosoftEdge" };
             PlatformNameForOption = "macOS 10.12";
         }
     }

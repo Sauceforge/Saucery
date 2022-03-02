@@ -11,6 +11,7 @@ namespace Saucery.Dojo.Platforms.ConcreteProducts.PC
         public Windows11Platform(SupportedPlatform sp) : base (sp)
         {
             BrowserNames = new List<string> { "chrome", "firefox", "MicrosoftEdge" };
+            BrowsersWithLatestVersion = new List<string> { };
             PlatformNameForOption = "Windows 11";
         }
     }
