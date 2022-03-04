@@ -113,7 +113,7 @@ namespace Saucery.Dojo
                     browserVersion = AvailablePlatforms.FindDesktopBrowser(requested);
                     break;
                 case PlatformType.Android:
-                    //browserVersion = AvailablePlatforms.FindAndroidBrowser(requested);
+                    browserVersion = AvailablePlatforms.FindAndroidBrowser(requested);
                     break;
                 case PlatformType.Apple:
                     //browserVersion = AvailablePlatforms.FindIOSBrowser(requested);

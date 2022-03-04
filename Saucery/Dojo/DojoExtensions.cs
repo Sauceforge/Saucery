@@ -142,47 +142,102 @@ namespace Saucery.Dojo
 
             if (platform == null) { return null; }
 
-            var browsers = platform.Browsers.Find(b=>b.Os.Equals(sp.Os) && b.Name.Equals(sp.Browser));
+            var browsers = platform.Browsers.Find(b=>b.Os.Equals(sp.Os) && b.Name.Equals(sp.LongVersion));
+            return browsers.BrowserVersions.Find(v => v.Os.Equals(sp.Os) && v.BrowserName.Equals(sp.LongVersion) && v.Name.Equals(sp.BrowserVersion));
+
+        }
+
+        public static BrowserVersion FindAndroidBrowser(this List<PlatformBase> platforms, SaucePlatform sp)
+        {
+            PlatformBase platform = null;
+            var platformToSearchFor = string.Format("{0} {1)", sp.Os, sp.Platform);
+            switch (platformToSearchFor)
+            {
+                case "Linux 12.0":
+                    platform = platforms.GetPlatform<Android12Platform>()[0];
+                    break;
+                case "Linux 11.0":
+                    platform = platforms.GetPlatform<Android11Platform>()[0];
+                    break;
+                case "Linux 10.0":
+                    platform = platforms.GetPlatform<Android10Platform>()[0];
+                    break;
+                case "Linux 9.0":
+                    platform = platforms.GetPlatform<Android9Platform>()[0];
+                    break;
+                case "Linux 8.1":
+                    platform = platforms.GetPlatform<Android81Platform>()[0];
+                    break;
+                case "Linux 8.0":
+                    platform = platforms.GetPlatform<Android8Platform>()[0];
+                    break;
+                case "Linux 7.1":
+                    platform = platforms.GetPlatform<Android71Platform>()[0];
+                    break;
+                case "Linux 7.0":
+                    platform = platforms.GetPlatform<Android7Platform>()[0];
+                    break;
+                case "Linux 6.0":
+                    platform = platforms.GetPlatform<Android6Platform>()[0];
+                    break;
+                case "Linux 5.1":
+                    platform = platforms.GetPlatform<Android51Platform>()[0];
+                    break;
+                default:
+                    break;
+            }
+
+            if (platform == null) { return null; }
+
+            var browsers = platform.Browsers.Find(b => b.Os.Equals(sp.Os) && b.Name.Equals(sp.Browser));
             return browsers.BrowserVersions.Find(v => v.Os.Equals(sp.Os) && v.BrowserName.Equals(sp.Browser) && v.Name.Equals(sp.BrowserVersion));
 
         }
 
-        //public static PlatformBase FindAndroidBrowser(this List<PlatformBase> platforms, SaucePlatform sp)
+        //public static BrowserVersion FindIOSBrowser(this List<PlatformBase> platforms, SaucePlatform sp)
         //{
-        //    var androidPlatforms = new List<PlatformBase>();
-        //    androidPlatforms.AddRange(platforms.GetPlatform<Android12Platform>());
-        //    androidPlatforms.AddRange(platforms.GetPlatform<Android11Platform>());
-        //    androidPlatforms.AddRange(platforms.GetPlatform<Android10Platform>());
-        //    androidPlatforms.AddRange(platforms.GetPlatform<Android9Platform>());
-        //    androidPlatforms.AddRange(platforms.GetPlatform<Android81Platform>());
-        //    androidPlatforms.AddRange(platforms.GetPlatform<Android8Platform>());
-        //    androidPlatforms.AddRange(platforms.GetPlatform<Android71Platform>());
-        //    androidPlatforms.AddRange(platforms.GetPlatform<Android7Platform>());
-        //    androidPlatforms.AddRange(platforms.GetPlatform<Android6Platform>());
-        //    androidPlatforms.AddRange(platforms.GetPlatform<Android51Platform>());
+        //    PlatformBase platform = null;
+        //    var platformToSearchFor = string.Format("{0} {1)", sp.Os, sp.Platform);
+        //    switch (platformToSearchFor)
+        //    {
+        //        case "Linux 12.0":
+        //            platform = platforms.GetPlatform<Android12Platform>()[0];
+        //            break;
+        //        case "Linux 11.0":
+        //            platform = platforms.GetPlatform<Android11Platform>()[0];
+        //            break;
+        //        case "Linux 10.0":
+        //            platform = platforms.GetPlatform<Android10Platform>()[0];
+        //            break;
+        //        case "Linux 9.0":
+        //            platform = platforms.GetPlatform<Android9Platform>()[0];
+        //            break;
+        //        case "Linux 8.1":
+        //            platform = platforms.GetPlatform<Android81Platform>()[0];
+        //            break;
+        //        case "Linux 8.0":
+        //            platform = platforms.GetPlatform<Android8Platform>()[0];
+        //            break;
+        //        case "Linux 7.1":
+        //            platform = platforms.GetPlatform<Android71Platform>()[0];
+        //            break;
+        //        case "Linux 7.0":
+        //            platform = platforms.GetPlatform<Android7Platform>()[0];
+        //            break;
+        //        case "Linux 6.0":
+        //            platform = platforms.GetPlatform<Android6Platform>()[0];
+        //            break;
+        //        case "Linux 5.1":
+        //            platform = platforms.GetPlatform<Android51Platform>()[0];
+        //            break;
+        //        default:
+        //            break;
+        //    }
 
-            
-        //}
+        //    if (platform == null) { return null; }
 
-        //public static PlatformBase FindIOSBrowser(this List<PlatformBase> platforms, SaucePlatform sp)
-        //{
-        //    var iosPlatforms = new List<PlatformBase>();
-        //    iosPlatforms.AddRange(platforms.GetPlatform<IOS103Platform>());
-        //    iosPlatforms.AddRange(platforms.GetPlatform<IOS111Platform>());
-        //    iosPlatforms.AddRange(platforms.GetPlatform<IOS112Platform>());
-        //    iosPlatforms.AddRange(platforms.GetPlatform<IOS113Platform>());
-        //    iosPlatforms.AddRange(platforms.GetPlatform<IOS11Platform>());
-        //    iosPlatforms.AddRange(platforms.GetPlatform<IOS122Platform>());
-        //    iosPlatforms.AddRange(platforms.GetPlatform<IOS124Platform>());
-        //    iosPlatforms.AddRange(platforms.GetPlatform<IOS12Platform>());
-        //    iosPlatforms.AddRange(platforms.GetPlatform<IOS132Platform>());
-        //    iosPlatforms.AddRange(platforms.GetPlatform<IOS134Platform>());
-        //    iosPlatforms.AddRange(platforms.GetPlatform<IOS13Platform>());
-        //    iosPlatforms.AddRange(platforms.GetPlatform<IOS143Platform>());
-        //    iosPlatforms.AddRange(platforms.GetPlatform<IOS144Platform>());
-        //    iosPlatforms.AddRange(platforms.GetPlatform<IOS145Platform>());
-        //    iosPlatforms.AddRange(platforms.GetPlatform<IOS14Platform>());
-        //    iosPlatforms.AddRange(platforms.GetPlatform<IOS15Platform>());
+        //    var browsers = platform.Browsers.Find(b => b.Os.Equals(sp.Os) && b.Name.Equals(sp.Browser));
+        //    return browsers.BrowserVersions.Find(v => v.Os.Equals(sp.Os) && v.BrowserName.Equals(sp.Browser) && v.Name.Equals(sp.BrowserVersion));
         //}
 
         private static BrowserBase FindBrowser(this List<BrowserBase> browsers, SupportedPlatform sp) {
