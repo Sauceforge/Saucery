@@ -1,6 +1,8 @@
 ﻿using NUnit.Framework;
+using Saucery.Dojo;
 using Saucery.OnDemand;
 using Saucery.Options;
+using Saucery.RestAPI.SupportedPlatforms;
 using Shouldly;
 using System.Collections;
 
@@ -14,6 +16,14 @@ namespace UnitTests
         public void IsSupportedPlatformTest(SaucePlatform saucePlatform)
         {
             saucePlatform = PlatformClassifer.Classify(saucePlatform);
+
+            var platformAcquirer = new SauceLabsPlatformAcquirer();
+            var platforms = platformAcquirer.AcquirePlatforms();
+            var configurator = new PlatformConfigurator(platforms);
+
+            var validplatform = configurator.Validate(saucePlatform);
+            validplatform.ShouldNotBeNull();
+            //var factory = new OptionFactory(validplatform);
             var factory = new OptionFactory(saucePlatform);
             var result = factory.IsSupportedPlatform();
             result.ShouldBeTrue();
@@ -23,6 +33,14 @@ namespace UnitTests
         public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform)
         {
             saucePlatform = PlatformClassifer.Classify(saucePlatform);
+
+            var platformAcquirer = new SauceLabsPlatformAcquirer();
+            var platforms = platformAcquirer.AcquirePlatforms();
+            var configurator = new PlatformConfigurator(platforms);
+
+            var validplatform = configurator.Validate(saucePlatform);
+            validplatform.ShouldBeNull();
+            //var factory = new OptionFactory(validplatform);
             var factory = new OptionFactory(saucePlatform);
             var result = factory.IsSupportedPlatform();
             result.ShouldBeFalse();
@@ -43,7 +61,7 @@ namespace UnitTests
         {
             get
             {
-                yield return new TestCaseData(new SaucePlatform("", "", "latest", "android", "Google Pixel 3 GoogleAPI Emulator", "10.0.", "", "android", "1.22.1", "landscape"));
+                yield return new TestCaseData(new SaucePlatform("Linux", "", "12.0", "android", "Google Pixel 5 GoogleAPI Emulator", "12.0", "", "android", "1.22.1", "landscape"));
             }
         }
 
@@ -51,7 +69,7 @@ namespace UnitTests
         {
             get
             {
-                yield return new TestCaseData(new SaucePlatform("android", "android", "android", "10", "Google Pixel 3 GoogleAPI Emulator", "10.0.", "", "android", "1.22.1", "landscape"));
+                yield return new TestCaseData(new SaucePlatform("Linux", "android", "android", "10", "Google Pixel 3 GoogleAPI Emulator", "10.0.", "", "android", "1.22.1", "landscape"));
             }
         }
     }

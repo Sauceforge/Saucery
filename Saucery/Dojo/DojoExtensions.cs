@@ -149,7 +149,7 @@ namespace Saucery.Dojo
         public static BrowserVersion FindAndroidBrowser(this List<PlatformBase> platforms, SaucePlatform sp)
         {
             PlatformBase platform = null;
-            var platformToSearchFor = string.Format("{0} {1)", sp.Os, sp.Platform);
+            var platformToSearchFor = string.Format("{0} {1}", sp.Os, sp.LongVersion);
             switch (platformToSearchFor)
             {
                 case "Linux 12.0":
@@ -187,10 +187,9 @@ namespace Saucery.Dojo
             }
 
             if (platform == null) { return null; }
-
-            var browsers = platform.Browsers.Find(b => b.Os.Equals(sp.Os) && b.Name.Equals(sp.Browser));
-            return browsers.BrowserVersions.Find(v => v.Os.Equals(sp.Os) && v.BrowserName.Equals(sp.Browser) && v.Name.Equals(sp.BrowserVersion));
-
+            var browsers = platform.Browsers.Find(b => b.Os.Equals(sp.Os) && b.DeviceName.Equals(sp.LongName));
+            if (browsers == null) { return null; }
+            return browsers.BrowserVersions.Find(v => v.Os.Equals(sp.Os) && v.DeviceName.Equals(sp.LongName) && v.Name.Equals(sp.BrowserVersion));
         }
 
         //public static BrowserVersion FindIOSBrowser(this List<PlatformBase> platforms, SaucePlatform sp)
