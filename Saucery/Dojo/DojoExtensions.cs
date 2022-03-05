@@ -141,10 +141,9 @@ namespace Saucery.Dojo
             }
 
             if (platform == null) { return null; }
-
-            var browsers = platform.Browsers.Find(b=>b.Os.Equals(sp.Os) && b.Name.Equals(sp.LongVersion));
-            return browsers.BrowserVersions.Find(v => v.Os.Equals(sp.Os) && v.BrowserName.Equals(sp.LongVersion) && v.Name.Equals(sp.BrowserVersion));
-
+            var browsers = platform.Browsers.Find(b=>b.Os.Equals(sp.Os) && b.Name.ToLower().Equals(sp.Browser.ToLower()));
+            if (browsers == null) { return null; }
+            return browsers.BrowserVersions.Find(v => v.Os.Equals(sp.Os) && v.BrowserName.ToLower().Equals(sp.Browser.ToLower()) && v.Name.ToLower().Equals(sp.BrowserVersion.ToLower()));
         }
 
         public static BrowserVersion FindAndroidBrowser(this List<PlatformBase> platforms, SaucePlatform sp)

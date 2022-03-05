@@ -22,6 +22,7 @@ namespace UnitTests
             var configurator = new PlatformConfigurator(platforms);
 
             var validplatform = configurator.Validate(saucePlatform);
+            validplatform.ShouldNotBeNull();
             //var factory = new OptionFactory(validplatform);
             var factory = new OptionFactory(saucePlatform);
             var result = factory.IsSupportedPlatform();
@@ -32,6 +33,14 @@ namespace UnitTests
         public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform)
         {
             saucePlatform = PlatformClassifer.Classify(saucePlatform);
+
+            var platformAcquirer = new SauceLabsPlatformAcquirer();
+            var platforms = platformAcquirer.AcquirePlatforms();
+            var configurator = new PlatformConfigurator(platforms);
+
+            var validplatform = configurator.Validate(saucePlatform);
+            validplatform.ShouldBeNull();
+            //var factory = new OptionFactory(validplatform);
             var factory = new OptionFactory(saucePlatform);
             var result = factory.IsSupportedPlatform();
             result.ShouldBeFalse();
@@ -59,7 +68,6 @@ namespace UnitTests
                 yield return new TestCaseData(new SaucePlatform("Windows 10", "firefox", "97"));
                 yield return new TestCaseData(new SaucePlatform("Windows 10", "MicrosoftEdge", "79"));
                 yield return new TestCaseData(new SaucePlatform("Windows 10", "MicrosoftEdge", "98"));
-                yield return new TestCaseData(new SaucePlatform("Windows 10", "internet explorer", "9"));
                 yield return new TestCaseData(new SaucePlatform("Windows 10", "internet explorer", "11"));
                 
             }
