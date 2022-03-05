@@ -189,54 +189,76 @@ namespace Saucery.Dojo
             if (platform == null) { return null; }
             var browsers = platform.Browsers.Find(b => b.Os.Equals(sp.Os) && b.DeviceName.Equals(sp.LongName));
             if (browsers == null) { return null; }
-            return browsers.BrowserVersions.Find(v => v.Os.Equals(sp.Os) && v.DeviceName.Equals(sp.LongName) && v.Name.Equals(sp.BrowserVersion));
+            return browsers.BrowserVersions.Count == 1
+                ? browsers.BrowserVersions[0]
+                : browsers.BrowserVersions.Find(v => v.Os.Equals(sp.Os) && v.DeviceName.Equals(sp.LongName) && v.Name.Equals(sp.BrowserVersion));
         }
 
-        //public static BrowserVersion FindIOSBrowser(this List<PlatformBase> platforms, SaucePlatform sp)
-        //{
-        //    PlatformBase platform = null;
-        //    var platformToSearchFor = string.Format("{0} {1)", sp.Os, sp.Platform);
-        //    switch (platformToSearchFor)
-        //    {
-        //        case "Linux 12.0":
-        //            platform = platforms.GetPlatform<Android12Platform>()[0];
-        //            break;
-        //        case "Linux 11.0":
-        //            platform = platforms.GetPlatform<Android11Platform>()[0];
-        //            break;
-        //        case "Linux 10.0":
-        //            platform = platforms.GetPlatform<Android10Platform>()[0];
-        //            break;
-        //        case "Linux 9.0":
-        //            platform = platforms.GetPlatform<Android9Platform>()[0];
-        //            break;
-        //        case "Linux 8.1":
-        //            platform = platforms.GetPlatform<Android81Platform>()[0];
-        //            break;
-        //        case "Linux 8.0":
-        //            platform = platforms.GetPlatform<Android8Platform>()[0];
-        //            break;
-        //        case "Linux 7.1":
-        //            platform = platforms.GetPlatform<Android71Platform>()[0];
-        //            break;
-        //        case "Linux 7.0":
-        //            platform = platforms.GetPlatform<Android7Platform>()[0];
-        //            break;
-        //        case "Linux 6.0":
-        //            platform = platforms.GetPlatform<Android6Platform>()[0];
-        //            break;
-        //        case "Linux 5.1":
-        //            platform = platforms.GetPlatform<Android51Platform>()[0];
-        //            break;
-        //        default:
-        //            break;
-        //    }
+        public static BrowserVersion FindIOSBrowser(this List<PlatformBase> platforms, SaucePlatform sp)
+        {
+            PlatformBase platform = null;
+            var platformToSearchFor = string.Format("{0} {1}", sp.Os, sp.LongVersion);
+            switch (platformToSearchFor)
+            {
+                case "iOS 15.0":
+                    platform = platforms.GetPlatform<IOS15Platform>()[0];
+                    break;
+                case "iOS 14.5":
+                    platform = platforms.GetPlatform<IOS145Platform>()[0];
+                    break;
+                case "iOS 14.4":
+                    platform = platforms.GetPlatform<IOS144Platform>()[0];
+                    break;
+                case "iOS 14.3":
+                    platform = platforms.GetPlatform<IOS143Platform>()[0];
+                    break;
+                case "iOS 14.0":
+                    platform = platforms.GetPlatform<IOS14Platform>()[0];
+                    break;
+                case "iOS 13.4":
+                    platform = platforms.GetPlatform<IOS134Platform>()[0];
+                    break;
+                case "iOS 13.2":
+                    platform = platforms.GetPlatform<IOS132Platform>()[0];
+                    break;
+                case "iOS 13.0":
+                    platform = platforms.GetPlatform<IOS13Platform>()[0];
+                    break;
+                case "iOS 12.4":
+                    platform = platforms.GetPlatform<IOS124Platform>()[0];
+                    break;
+                case "iOS 12.2":
+                    platform = platforms.GetPlatform<IOS122Platform>()[0];
+                    break;
+                case "iOS 12.0":
+                    platform = platforms.GetPlatform<IOS12Platform>()[0];
+                    break;
+                case "iOS 11.3":
+                    platform = platforms.GetPlatform<IOS113Platform>()[0];
+                    break;
+                case "iOS 11.2":
+                    platform = platforms.GetPlatform<IOS112Platform>()[0];
+                    break;
+                case "iOS 11.1":
+                    platform = platforms.GetPlatform<IOS111Platform>()[0];
+                    break;
+                case "iOS 11.0":
+                    platform = platforms.GetPlatform<IOS11Platform>()[0];
+                    break;
+                case "iOS 10.3":
+                    platform = platforms.GetPlatform<IOS103Platform>()[0];
+                    break;
+                default:
+                    break;
+            }
 
-        //    if (platform == null) { return null; }
-
-        //    var browsers = platform.Browsers.Find(b => b.Os.Equals(sp.Os) && b.Name.Equals(sp.Browser));
-        //    return browsers.BrowserVersions.Find(v => v.Os.Equals(sp.Os) && v.BrowserName.Equals(sp.Browser) && v.Name.Equals(sp.BrowserVersion));
-        //}
+            if (platform == null) { return null; }
+            var browsers = platform.Browsers.Find(b => b.PlatformNameForOption.Equals(sp.Os) && b.DeviceName.Equals(sp.LongName));
+            if (browsers == null) { return null; }
+            return browsers.BrowserVersions.Count == 1
+                ? browsers.BrowserVersions[0]
+                : browsers.BrowserVersions.Find(v => v.PlatformNameForOption.Equals(sp.Os) && v.DeviceName.Equals(sp.LongName) && v.Name.Equals(sp.BrowserVersion));
+        }
 
         private static BrowserBase FindBrowser(this List<BrowserBase> browsers, SupportedPlatform sp) {
             BrowserBase extant = null;

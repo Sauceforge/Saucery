@@ -1,6 +1,8 @@
 ﻿using NUnit.Framework;
+using Saucery.Dojo;
 using Saucery.OnDemand;
 using Saucery.Options;
+using Saucery.RestAPI.SupportedPlatforms;
 using Shouldly;
 using System.Collections;
 
@@ -14,6 +16,14 @@ namespace UnitTests
         public void IsSupportedPlatformTest(SaucePlatform saucePlatform)
         {
             saucePlatform = PlatformClassifer.Classify(saucePlatform);
+
+            var platformAcquirer = new SauceLabsPlatformAcquirer();
+            var platforms = platformAcquirer.AcquirePlatforms();
+            var configurator = new PlatformConfigurator(platforms);
+
+            var validplatform = configurator.Validate(saucePlatform);
+            validplatform.ShouldNotBeNull();
+            //var factory = new OptionFactory(validplatform);
             var factory = new OptionFactory(saucePlatform);
             var result = factory.IsSupportedPlatform();
             result.ShouldBeTrue();
@@ -23,6 +33,14 @@ namespace UnitTests
         public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform)
         {
             saucePlatform = PlatformClassifer.Classify(saucePlatform);
+
+            var platformAcquirer = new SauceLabsPlatformAcquirer();
+            var platforms = platformAcquirer.AcquirePlatforms();
+            var configurator = new PlatformConfigurator(platforms);
+
+            var validplatform = configurator.Validate(saucePlatform);
+            validplatform.ShouldBeNull();
+            //var factory = new OptionFactory(validplatform);
             var factory = new OptionFactory(saucePlatform);
             var result = factory.IsSupportedPlatform();
             result.ShouldBeFalse();
@@ -43,7 +61,7 @@ namespace UnitTests
         {
             get
             {
-                yield return new SaucePlatform("", "", "latest", "", "iPhone XS Max Simulator", "13.0", "", "iPhone XS Max Simulator", "1.21.0", "portrait");
+                yield return new SaucePlatform("iOS", "iphone", "", "Mac 10.15", "iPhone XS Max Simulator", "13.0", "", "iphone", "1.21.0", "portrait");
             }
         }
 
@@ -51,7 +69,7 @@ namespace UnitTests
         {
             get
             {
-                yield return new SaucePlatform("", "", "wrong", "", "NonExistent", "13.0", "", "NonExistent", "1.21.0", "portrait");
+                yield return new SaucePlatform("iOS", "", "999", "Mac 11", "NonExistent", "13.0", "", "NonExistent", "1.21.0", "portrait");
             }
         }
     }
