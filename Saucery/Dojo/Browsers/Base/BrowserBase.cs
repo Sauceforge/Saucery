@@ -8,9 +8,9 @@ namespace Saucery.Dojo.Browsers.Base
         public string Os { get; set; }
         public string PlatformNameForOption { get; set; }
         public string AutomationBackend { get; set; }
-        internal string Name { get; set; }
+        public string Name { get; set; }
         public string DeviceName { get; set; }        
-        internal string PlatformVersion { get; set; }
+        public string PlatformVersion { get; set; }
         internal string RecommendedAppiumVersion { get; set; }
         internal List<BrowserVersion> BrowserVersions { get; set; }
 

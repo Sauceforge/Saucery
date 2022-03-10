@@ -46,7 +46,7 @@ namespace UnitTests
         {
             var platformAcquirer = new SauceLabsPlatformAcquirer();
             var platforms = platformAcquirer.AcquirePlatforms();
-            
+
             platforms.ShouldNotBeNull();
 
             //var windows10platforms = platforms.FindAll(w => w.os.Equals("Windows 10"));
@@ -56,6 +56,9 @@ namespace UnitTests
             var availablePlatforms = configurator.AvailablePlatforms;
 
             availablePlatforms.ShouldNotBeNull();
+
+            var browsers = availablePlatforms.SelectMany(i => i.Browsers).Distinct().ToList();
+            var iosBrowsers = browsers.FindAll(x => x.DeviceName.Equals("iPhone XS Max Simulator") || x.DeviceName.Equals("iPhone 5s Simulator")).OrderBy(o=>o.DeviceName).ThenBy(o=>o.PlatformVersion);
 
             //Reflection Tests
             var windows11platform = availablePlatforms.GetPlatform<Windows11Platform>();

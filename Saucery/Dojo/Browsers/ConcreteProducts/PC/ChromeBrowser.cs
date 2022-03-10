@@ -18,7 +18,7 @@ namespace Saucery.Dojo.Browsers.ConcreteProducts.PC
         {
             return sp.os switch
             {
-                "Windows 2008" or "Windows 2012" or "Windows 2012 R2" or "Windows 10" or "Windows 11" or "Mac 12" or "Mac 11" or "Mac 10.15" or "Mac 10.14" or "Mac 10.13" or "Mac 10.12" or "Mac 10.11" => 98,
+                "Windows 2008" or "Windows 2012" or "Windows 2012 R2" or "Windows 10" or "Windows 11" or "Mac 12" or "Mac 11" or "Mac 10.15" or "Mac 10.14" or "Mac 10.13" or "Mac 10.12" or "Mac 10.11" => 99,
                 "Mac 10.10" => 87,
                 _ => 0,
             };

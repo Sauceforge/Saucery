@@ -20,7 +20,7 @@ namespace Saucery.DataSources
                 new SaucePlatform("Windows 10", "firefox", "86"),
                 new SaucePlatform("macOS 10.15", "safari", "13"),
                 new SaucePlatform("Windows 10", "internet explorer", "11"),
-                new SaucePlatform("Windows 10", "microsoftedge", "98"),
+                new SaucePlatform("Windows 10", "microsoftedge", "99"),
 
                 //Mobile Platforms
                 new SaucePlatform("Android", "Chrome", "89", "Android", "Google Pixel 6 Pro GoogleAPI Emulator", "12.0", "", "Android", "1.22.1", "portrait"),

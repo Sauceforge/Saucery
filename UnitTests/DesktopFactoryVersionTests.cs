@@ -62,14 +62,24 @@ namespace UnitTests
             get
             {
                 yield return new TestCaseData(new SaucePlatform("Windows 10", "chrome", "latest"));
-                yield return new TestCaseData(new SaucePlatform("Windows 10", "chrome", "75"));
-                yield return new TestCaseData(new SaucePlatform("Windows 10", "chrome", "98"));
+                yield return new TestCaseData(new SaucePlatform("Windows 10", "chrome", "99"));
                 yield return new TestCaseData(new SaucePlatform("Windows 10", "firefox", "78"));
-                yield return new TestCaseData(new SaucePlatform("Windows 10", "firefox", "97"));
+                yield return new TestCaseData(new SaucePlatform("Windows 10", "firefox", "98"));
                 yield return new TestCaseData(new SaucePlatform("Windows 10", "MicrosoftEdge", "79"));
-                yield return new TestCaseData(new SaucePlatform("Windows 10", "MicrosoftEdge", "98"));
+                yield return new TestCaseData(new SaucePlatform("Windows 10", "MicrosoftEdge", "99"));
                 yield return new TestCaseData(new SaucePlatform("Windows 10", "internet explorer", "11"));
-                
+                yield return new TestCaseData(new SaucePlatform("Windows 11", "chrome", "99"));
+                yield return new TestCaseData(new SaucePlatform("Windows 2012 R2", "chrome", "99"));
+                yield return new TestCaseData(new SaucePlatform("Windows 2012", "chrome", "99"));
+                yield return new TestCaseData(new SaucePlatform("Windows 2008", "chrome", "99"));
+                yield return new TestCaseData(new SaucePlatform("Mac 12", "chrome", "99"));
+                yield return new TestCaseData(new SaucePlatform("Mac 11", "chrome", "99"));
+                yield return new TestCaseData(new SaucePlatform("Mac 10.15", "chrome", "99"));
+                yield return new TestCaseData(new SaucePlatform("Mac 10.14", "chrome", "99"));
+                yield return new TestCaseData(new SaucePlatform("Mac 10.13", "chrome", "99"));
+                yield return new TestCaseData(new SaucePlatform("Mac 10.12", "chrome", "99"));
+                yield return new TestCaseData(new SaucePlatform("Mac 10.11", "chrome", "99"));
+                yield return new TestCaseData(new SaucePlatform("Mac 10.10", "chrome", "87"));
             }
         }
 

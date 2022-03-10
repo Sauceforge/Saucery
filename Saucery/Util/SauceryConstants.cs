@@ -167,9 +167,9 @@
         internal const int MIN_IE_SUPPORTED_VERSION = 9;
 
         internal const int MAX_SAFARI_SUPPORTED_VERSION = 15;
-        internal const int MAX_FIREFOX_SUPPORTED_VERSION = 97;
-        internal const int MAX_CHROME_SUPPORTED_VERSION = 98;
-        internal const int MAX_EDGE_SUPPORTED_VERSION = 98;
+        internal const int MAX_FIREFOX_SUPPORTED_VERSION = 98;
+        internal const int MAX_CHROME_SUPPORTED_VERSION = 99;
+        internal const int MAX_EDGE_SUPPORTED_VERSION = 99;
         internal const int MAX_IE_SUPPORTED_VERSION = 11;
 
         internal const string NOT_SUPPORTED_MESSAGE = "Browser version not supported by DriverOptions. Please see: https://wiki.saucelabs.com/display/DOCS/2018/03/27/Introducing+Selenium+WebDriver+W3C+Protocol+Beta.";

@@ -62,6 +62,23 @@ namespace UnitTests
             get
             {
                 yield return new SaucePlatform("iOS", "iphone", "", "Mac 10.15", "iPhone XS Max Simulator", "13.0", "", "iphone", "1.21.0", "portrait");
+
+                yield return new SaucePlatform("iOS", "iphone", "", "Mac 11", "iPhone XS Max Simulator", "15.0", "", "iphone", "1.22.0", "portrait");
+                yield return new SaucePlatform("iOS", "iphone", "", "Mac 11", "iPhone XS Max Simulator", "14.5", "", "iphone", "1.21.0", "portrait");
+                yield return new SaucePlatform("iOS", "iphone", "", "Mac 11", "iPhone XS Max Simulator", "14.4", "", "iphone", "1.21.0", "portrait");
+                yield return new SaucePlatform("iOS", "iphone", "", "Mac 11", "iPhone XS Max Simulator", "14.3", "", "iphone", "1.21.0", "portrait");
+                yield return new SaucePlatform("iOS", "iphone", "", "Mac 11", "iPhone XS Max Simulator", "14.0", "", "iphone", "1.21.0", "portrait");
+                yield return new SaucePlatform("iOS", "iphone", "", "Mac 10.15", "iPhone XS Max Simulator", "13.4", "", "iphone", "1.21.0", "portrait");
+                yield return new SaucePlatform("iOS", "iphone", "", "Mac 10.15", "iPhone XS Max Simulator", "13.2", "", "iphone", "1.21.0", "portrait");
+                yield return new SaucePlatform("iOS", "iphone", "", "Mac 10.15", "iPhone XS Max Simulator", "13.0", "", "iphone", "1.21.0", "portrait");
+                yield return new SaucePlatform("iOS", "iphone", "", "Mac 10.15", "iPhone XS Max Simulator", "12.4", "", "iphone", "1.21.0", "portrait");
+                yield return new SaucePlatform("iOS", "iphone", "", "Mac 10.14", "iPhone XS Max Simulator", "12.2", "", "iphone", "1.21.0", "portrait");
+                yield return new SaucePlatform("iOS", "iphone", "", "Mac 10.13", "iPhone XS Max Simulator", "12.0", "", "iphone", "1.9.1", "portrait");
+                yield return new SaucePlatform("iOS", "iphone", "", "Mac 10.13", "iPhone 5s Simulator", "11.3", "", "iphone", "1.9.1", "portrait");
+                yield return new SaucePlatform("iOS", "iphone", "", "Mac 10.12", "iPhone 5s Simulator", "11.2", "", "iphone", "1.9.1", "portrait");
+                yield return new SaucePlatform("iOS", "iphone", "", "Mac 10.12", "iPhone 5s Simulator", "11.1", "", "iphone", "1.9.1", "portrait");
+                yield return new SaucePlatform("iOS", "iphone", "", "Mac 10.12", "iPhone 5s Simulator", "11.0", "", "iphone", "1.9.1", "portrait");
+                yield return new SaucePlatform("iOS", "iphone", "", "Mac 10.12", "iPhone 5s Simulator", "10.3", "", "iphone", "1.9.1", "portrait");
             }
         }
 
