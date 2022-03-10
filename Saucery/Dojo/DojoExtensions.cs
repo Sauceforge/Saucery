@@ -70,33 +70,33 @@ namespace Saucery.Dojo
             if (b == null) {
                 //first one
                 b = BrowserFactory.CreateBrowser(sp);
-                if (b == null) {
-                    return;
+                if (b != null) {
+                    b.AddVersion(browsers, sp, false);
                 }
-
-                b.AddVersion(browsers, sp, false);
-                return;
+            } else
+            {
+                b.AddVersion(browsers, sp, true);
             }
 
-            b.AddVersion(browsers, sp, true);
+            
         }
 
         private static void AddVersion(this BrowserBase b, List<BrowserBase> browsers, SupportedPlatform sp, bool findVersion)
         {
-            if (findVersion == false)
-            {
-                if (b.IsSupportedVersion(sp))
-                {
-                    b.BrowserVersions.Add(new BrowserVersion(sp, b.PlatformNameForOption));
-                    browsers.Add(b);
-                    //return;
-                }
-            } else
+            if (findVersion)
             {
                 //Browser found or created, now add version
                 if (b.IsSupportedVersion(sp) && b.FindVersion(sp) == null)
                 {
                     b.BrowserVersions.Add(new BrowserVersion(sp, b.PlatformNameForOption));
+                }
+            }
+            else
+            {
+                if (b.IsSupportedVersion(sp))
+                {
+                    b.BrowserVersions.Add(new BrowserVersion(sp, b.PlatformNameForOption));
+                    browsers.Add(b);
                 }
             }
         }
