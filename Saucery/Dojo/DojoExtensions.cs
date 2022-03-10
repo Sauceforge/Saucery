@@ -91,7 +91,6 @@ namespace Saucery.Dojo
             return availablePlatforms.OfType<T>().ToList();
         }
 
-
         public static BrowserVersion FindDesktopBrowser(this List<PlatformBase> platforms, SaucePlatform sp)
         {
             PlatformBase platform = null;

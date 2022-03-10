@@ -57,8 +57,8 @@ namespace UnitTests
 
             availablePlatforms.ShouldNotBeNull();
 
-            var browsers = availablePlatforms.SelectMany(i => i.Browsers).Distinct().ToList();
-            var iosBrowsers = browsers.FindAll(x => x.DeviceName.Equals("iPhone XS Max Simulator") || x.DeviceName.Equals("iPhone 5s Simulator")).OrderBy(o=>o.DeviceName).ThenBy(o=>o.PlatformVersion);
+            //var browsers = availablePlatforms.SelectMany(i => i.Browsers).Distinct().ToList();
+            //var iosBrowsers = browsers.FindAll(x => x.DeviceName.Equals("iPhone XS Max Simulator") || x.DeviceName.Equals("iPhone 5s Simulator")).OrderBy(o=>o.DeviceName).ThenBy(o=>o.PlatformVersion);
 
             //Reflection Tests
             var windows11platform = availablePlatforms.GetPlatform<Windows11Platform>();
