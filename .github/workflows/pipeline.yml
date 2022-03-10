@@ -68,7 +68,7 @@ jobs:
     - name: Upload Nupkg Artifact
       uses: actions/upload-artifact@v2.2.3
       with:
-        name: nupkg
+        name: Saucery.nupkg
         path: ${{ env.PROJECT_NAME }}/bin/Release/*.nupkg
 
     - name: Upload coverage report artifact
@@ -79,11 +79,12 @@ jobs:
       # Use always() to always run this step to publish test results when there are test failures
       if: ${{ always() }}
 
-
     - name: Bump version and push tag
       if: ${{ github.ref == 'ref/head/develop' && success() }}
       id: tag_version
       uses: mathieudutour/github-tag-action@v5.6
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        
+    
+    #- name: Deploy to nuget
+    #  run: dotnet nuget push **/*.nupkg --api-key ${{ secrets.NUGET_DEPLOY_KEY }} --source https://api.nuget.org/v3/index.json
