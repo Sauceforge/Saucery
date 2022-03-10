@@ -63,10 +63,11 @@ namespace Saucery.Dojo
                 AvailablePlatforms.AddPlatform(sp);
             }
 
-            AddLatestBrowserVersion();
+            AddLatestBrowserVersion("latest");
+            AddLatestBrowserVersion("latest-1");
         }
 
-        public void AddLatestBrowserVersion()
+        public void AddLatestBrowserVersion(string version)
         {
             foreach(var p in AvailablePlatforms)
             {
@@ -75,19 +76,9 @@ namespace Saucery.Dojo
                     if (p.BrowsersWithLatestVersion != null && p.BrowsersWithLatestVersion.Contains(b.Name))
                     {
                         b.BrowserVersions.Add(new BrowserVersion(b.Os,
-                                                                 "latest",
+                                                                 version,
                                                                  b.Name,
-                                                                 "latest",
-                                                                 b.PlatformVersion,
-                                                                 b.AutomationBackend,
-                                                                 b.DeviceName,
-                                                                 b.RecommendedAppiumVersion,
-                                                                 null,
-                                                                 null));
-                        b.BrowserVersions.Add(new BrowserVersion(b.Os,
-                                                                 "latest-1",
-                                                                 b.Name,
-                                                                 "latest-1",
+                                                                 version,
                                                                  b.PlatformVersion,
                                                                  b.AutomationBackend,
                                                                  b.DeviceName,
