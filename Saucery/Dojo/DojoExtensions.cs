@@ -73,16 +73,31 @@ namespace Saucery.Dojo
                 if (b == null) {
                     return;
                 }
-                if (b.IsSupportedVersion(sp)) {
+
+                b.AddVersion(browsers, sp, false);
+                return;
+            }
+
+            b.AddVersion(browsers, sp, true);
+        }
+
+        private static void AddVersion(this BrowserBase b, List<BrowserBase> browsers, SupportedPlatform sp, bool findVersion)
+        {
+            if (findVersion == false)
+            {
+                if (b.IsSupportedVersion(sp))
+                {
                     b.BrowserVersions.Add(new BrowserVersion(sp, b.PlatformNameForOption));
                     browsers.Add(b);
-                    return;
+                    //return;
                 }
-            }
-            
-            //Browser found or created, now add version
-            if (b.IsSupportedVersion(sp) && b.FindVersion(sp) == null) {
-                b.BrowserVersions.Add(new BrowserVersion(sp, b.PlatformNameForOption));
+            } else
+            {
+                //Browser found or created, now add version
+                if (b.IsSupportedVersion(sp) && b.FindVersion(sp) == null)
+                {
+                    b.BrowserVersions.Add(new BrowserVersion(sp, b.PlatformNameForOption));
+                }
             }
         }
 

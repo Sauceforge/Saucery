@@ -248,6 +248,14 @@ namespace UnitTests
             android7platform.ShouldBeAssignableTo(typeof(List<Android7Platform>));
             android6platform.ShouldBeAssignableTo(typeof(List<Android6Platform>));
             android51platform.ShouldBeAssignableTo(typeof(List<Android51Platform>));
+
+            //Num Browsers Tests
+            var windowsPlatforms = availablePlatforms.FindAll(w => w.Name.Contains("Windows"));
+
+            foreach (var p in windowsPlatforms)
+            {
+                p.BrowserNames.Count.ShouldBeEquivalentTo(p.Browsers.Count);
+            }
         }
     }
 }
