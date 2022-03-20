@@ -12,7 +12,7 @@ namespace Saucery.OnDemand
             }
             return platforms;
         }
-
+        
         public static SaucePlatform Classify(this SaucePlatform platform)
         {
             if (platform.IsAnAndroidDevice())
