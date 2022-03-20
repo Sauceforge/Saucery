@@ -12,7 +12,7 @@ namespace Saucery.DataSources
 
     public class PlatformTestData : IEnumerable {
         #region Attributes
-        private static List<SaucePlatform> Platforms { get; set; }
+        internal static List<SaucePlatform> Platforms { get; set; }
         internal static List<BrowserVersion> BrowserVersions { get; set; }
         internal static Compositor Compositor { get; set; }
         //internal static CompositorBuilder Builder { get; set; }
