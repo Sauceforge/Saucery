@@ -11,39 +11,42 @@ namespace UnitTests
     [Order(3)]
     public class DesktopFactoryVersionTests
     {
+        static PlatformConfigurator PlatformConfigurator { get; set; }
+
+        static DesktopFactoryVersionTests()
+        {
+            PlatformConfigurator = new PlatformConfigurator();
+        }
+
         [Test, TestCaseSource(typeof(DesktopDataClass), "SupportedTestCases")]
         public void IsSupportedPlatformTest(SaucePlatform saucePlatform)
         {
-            saucePlatform = PlatformClassifer.Classify(saucePlatform);
-            var configurator = new PlatformConfigurator();
-            var validplatform = configurator.Validate(saucePlatform);
+            saucePlatform.Classify();
+            var validplatform = PlatformConfigurator.Validate(saucePlatform);
             validplatform.ShouldNotBeNull();
 
-            //var factory = new OptionFactory(validplatform); //TODO: New way
-            var factory = new OptionFactory(saucePlatform);   //TODO: Old way
-            var result = factory.IsSupportedPlatform();
-            result.ShouldBeTrue();
+            var factory = new OptionFactory(validplatform); //TODO: New way
+            factory.ShouldNotBeNull();
         }
 
         [Test, TestCaseSource(typeof(DesktopDataClass), "NotSupportedTestCases")]
         public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform)
         {
-            saucePlatform = PlatformClassifer.Classify(saucePlatform);
-            var configurator = new PlatformConfigurator();
-            var validplatform = configurator.Validate(saucePlatform);
+            saucePlatform.Classify();
+            var validplatform = PlatformConfigurator.Validate(saucePlatform);
             validplatform.ShouldBeNull();
-
-            //var factory = new OptionFactory(validplatform); //TODO: New way
-            var factory = new OptionFactory(saucePlatform);   //TODO: Old way
-            var result = factory.IsSupportedPlatform();
-            result.ShouldBeFalse();
         }
 
         [Test, TestCaseSource(typeof(DesktopDataClass), "SupportedTestCases")]
         public void DesktopOptionTest(SaucePlatform saucePlatform)
         {
-            saucePlatform = PlatformClassifer.Classify(saucePlatform);
-            var factory = new OptionFactory(saucePlatform);
+            saucePlatform.Classify();
+            var validplatform = PlatformConfigurator.Validate(saucePlatform);
+            validplatform.ShouldNotBeNull();
+
+            var factory = new OptionFactory(validplatform); //TODO: New way
+            factory.ShouldNotBeNull();
+
             var opts = factory.CreateOptions("DesktopOptionTest");
             opts.ShouldNotBeNull();
         }

@@ -2,8 +2,8 @@
 using NUnit.Framework.Interfaces;
 using OpenQA.Selenium;
 using Saucery.DataSources;
+using Saucery.Dojo;
 using Saucery.Driver;
-using Saucery.OnDemand;
 using System;
 
 namespace Saucery.Tests
@@ -12,7 +12,7 @@ namespace Saucery.Tests
     public class SauceryIOSBase : SauceryRoot {
         protected SauceryIOSDriver Driver;
 
-        public SauceryIOSBase(SaucePlatform platform) : base(platform) {
+        public SauceryIOSBase(BrowserVersion browserVersion) : base(browserVersion) {
         }
 
         public override void InitialiseDriver(DriverOptions options, int waitSecs) {

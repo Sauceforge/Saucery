@@ -2,45 +2,45 @@
 {
     public static class PlatformClassifer
     {
-        public static SaucePlatform Classify(this SaucePlatform platform)
+        public static SaucePlatform Classify(this SaucePlatform saucePlatform)
         {
-            if (platform.IsAnAndroidDevice())
+            if (saucePlatform.IsAnAndroidDevice())
             {
-                platform.PlatformType = PlatformType.Android;
-                return platform;
+                saucePlatform.PlatformType = PlatformType.Android;
+                return saucePlatform;
             }
             else
             {
-                if (platform.IsAnAppleDevice())
+                if (saucePlatform.IsAnAppleDevice())
                 {
-                    platform.PlatformType = PlatformType.Apple;
-                    return platform;
+                    saucePlatform.PlatformType = PlatformType.Apple;
+                    return saucePlatform;
                 }
             }
 
             //Desktop
-            switch (platform.Browser.ToLower())
+            switch (saucePlatform.Browser.ToLower())
             {
                 case "chrome":
-                    platform.PlatformType = PlatformType.Chrome;
+                    saucePlatform.PlatformType = PlatformType.Chrome;
                     break;
                 case "firefox":
-                    platform.PlatformType = PlatformType.Firefox;
+                    saucePlatform.PlatformType = PlatformType.Firefox;
                     break;
                 case "internet explorer":
-                    platform.PlatformType = PlatformType.IE;
+                    saucePlatform.PlatformType = PlatformType.IE;
                     break;
                 case "microsoftedge":
-                    platform.PlatformType = PlatformType.Edge;
+                    saucePlatform.PlatformType = PlatformType.Edge;
                     break;
                 case "safari":
-                    platform.PlatformType = PlatformType.Safari;
+                    saucePlatform.PlatformType = PlatformType.Safari;
                     break;
                 default:
                     break;
             }
 
-            return platform;
+            return saucePlatform;
         }
     }
 }

@@ -1,13 +1,14 @@
-﻿using Saucery.OnDemand;
+﻿using Saucery.Dojo;
+using Saucery.OnDemand;
 using Saucery.Options.Base;
 using Saucery.Options.ConcreteProducts;
 
 namespace Saucery.Options.ConcreteCreators
 {
     internal class AppiumIOSCreator : Creator {
-        public override BaseOptions Create(SaucePlatform platform, string testName)
+        public override BaseOptions Create(BrowserVersion browserVersion, string testName)
         {
-            return new AppiumIOSOptions(platform, testName);
+            return new AppiumIOSOptions(browserVersion, testName);
         }
     }
 }

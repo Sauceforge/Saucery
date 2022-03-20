@@ -11,39 +11,43 @@ namespace UnitTests
     [Order(5)]
     public class IOSFactoryVersionTests
     {
+        static PlatformConfigurator PlatformConfigurator { get; set; }
+
+        static IOSFactoryVersionTests()
+        {
+            PlatformConfigurator = new PlatformConfigurator();
+        }
+
+
         [Test, TestCaseSource(typeof(IOSDataClass), "SupportedTestCases")]
         public void IsSupportedPlatformTest(SaucePlatform saucePlatform)
         {
-            saucePlatform = PlatformClassifer.Classify(saucePlatform);
-            var configurator = new PlatformConfigurator();
-            var validplatform = configurator.Validate(saucePlatform);
+            saucePlatform.Classify();
+            var validplatform = PlatformConfigurator.Validate(saucePlatform);
             validplatform.ShouldNotBeNull();
 
-            //var factory = new OptionFactory(validplatform); //TODO: New way
-            var factory = new OptionFactory(saucePlatform);   //TODO: Old way
-            var result = factory.IsSupportedPlatform();
-            result.ShouldBeTrue();
+            var factory = new OptionFactory(validplatform); //TODO: New way
+            factory.ShouldNotBeNull();
         }
 
         [Test, TestCaseSource(typeof(IOSDataClass), "NotSupportedTestCases")]
         public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform)
         {
-            saucePlatform = PlatformClassifer.Classify(saucePlatform);
-            var configurator = new PlatformConfigurator();
-            var validplatform = configurator.Validate(saucePlatform);
+            saucePlatform.Classify();
+            var validplatform = PlatformConfigurator.Validate(saucePlatform);
             validplatform.ShouldBeNull();
-
-            //var factory = new OptionFactory(validplatform); //TODO: New way
-            var factory = new OptionFactory(saucePlatform);   //TODO: Old way
-            var result = factory.IsSupportedPlatform();
-            result.ShouldBeFalse();
         }
 
         [Test, TestCaseSource(typeof(IOSDataClass), "SupportedTestCases")]
         public void AppiumIOSOptionTest(SaucePlatform saucePlatform)
         {
-            saucePlatform = PlatformClassifer.Classify(saucePlatform);
-            var factory = new OptionFactory(saucePlatform);
+            saucePlatform.Classify();
+            var validplatform = PlatformConfigurator.Validate(saucePlatform);
+            validplatform.ShouldBeNull();
+
+            var factory = new OptionFactory(validplatform); //TODO: New way
+            factory.ShouldNotBeNull();
+            
             var opts = factory.CreateOptions("AppiumIOSOptionTest");
             opts.ShouldNotBeNull();
         }

@@ -1,9 +1,10 @@
-﻿using Saucery.OnDemand;
+﻿using Saucery.Dojo;
+using Saucery.OnDemand;
 
 namespace Saucery.Options.Base
 {
     internal abstract class Creator {
-        public abstract BaseOptions Create(SaucePlatform platform, string testName);
+        public abstract BaseOptions Create(BrowserVersion browserVersion, string testName);
     }
 }
 /*

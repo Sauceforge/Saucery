@@ -11,39 +11,41 @@ namespace UnitTests
     [Order(1)]
     public class AndroidFactoryVersionTests
     {
+        static PlatformConfigurator PlatformConfigurator { get; set; }
+
+        static AndroidFactoryVersionTests() {
+            PlatformConfigurator = new PlatformConfigurator();
+        }
+
         [Test, TestCaseSource(typeof(AndroidDataClass), "SupportedTestCases")]
         public void IsSupportedPlatformTest(SaucePlatform saucePlatform)
         {
-            saucePlatform = PlatformClassifer.Classify(saucePlatform);
-            var configurator = new PlatformConfigurator();
-            var validplatform = configurator.Validate(saucePlatform);
+            saucePlatform.Classify();
+            var validplatform = PlatformConfigurator.Validate(saucePlatform);
             validplatform.ShouldNotBeNull();
 
-            //var factory = new OptionFactory(validplatform); //TODO: New way
-            var factory = new OptionFactory(saucePlatform);   //TODO: Old way
-            var result = factory.IsSupportedPlatform();
-            result.ShouldBeTrue();
+            var factory = new OptionFactory(validplatform); //TODO: New way
+            factory.ShouldNotBeNull();
         }
 
         [Test, TestCaseSource(typeof(AndroidDataClass), "NotSupportedTestCases")]
         public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform)
         {
-            saucePlatform = PlatformClassifer.Classify(saucePlatform);
-            var configurator = new PlatformConfigurator();
-            var validplatform = configurator.Validate(saucePlatform);
+            saucePlatform.Classify();
+            var validplatform = PlatformConfigurator.Validate(saucePlatform);
             validplatform.ShouldBeNull();
-
-            //var factory = new OptionFactory(validplatform); //TODO: New way
-            var factory = new OptionFactory(saucePlatform);   //TODO: Old way
-            var result = factory.IsSupportedPlatform();
-            result.ShouldBeFalse();
         }
 
         [Test, TestCaseSource(typeof(AndroidDataClass), "SupportedTestCases")]
         public void AppiumAndroidOptionTest(SaucePlatform saucePlatform)
         {
-            saucePlatform = PlatformClassifer.Classify(saucePlatform);
-            var factory = new OptionFactory(saucePlatform);
+            saucePlatform.Classify();
+            var validplatform = PlatformConfigurator.Validate(saucePlatform);
+            validplatform.ShouldNotBeNull();
+
+            var factory = new OptionFactory(validplatform); //TODO: New way
+            factory.ShouldNotBeNull();
+
             var opts = factory.CreateOptions("AppiumAndroidOptionTest");
             opts.ShouldNotBeNull();
         }

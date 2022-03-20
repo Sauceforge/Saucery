@@ -1,4 +1,5 @@
 ﻿using OpenQA.Selenium.Firefox;
+using Saucery.Dojo;
 using Saucery.OnDemand;
 using Saucery.Options.Base;
 using Saucery.Util;
@@ -7,17 +8,17 @@ using System;
 namespace Saucery.Options.ConcreteProducts
 {
     internal class FirefoxBrowserOptions : BaseOptions {
-        public FirefoxBrowserOptions(SaucePlatform platform, string testName) : base(testName)
+        public FirefoxBrowserOptions(BrowserVersion browserVersion, string testName) : base(testName)
         {
             Console.WriteLine(SauceryConstants.SETTING_UP, testName, SauceryConstants.DESKTOP_ON_WEBDRIVER);
 
-            DebugMessages.PrintDesktopOptionValues(platform);
+            DebugMessages.PrintDesktopOptionValues(browserVersion);
             
             Console.WriteLine("Creating Firefox Options");
             var o = new FirefoxOptions
             {
-                PlatformName = platform.Os,
-                BrowserVersion = platform.BrowserVersion
+                PlatformName = browserVersion.Os,
+                BrowserVersion = browserVersion.Name
             };
             //o.AddAdditionalCapability(SauceryConstants.SAUCE_OPTIONS_CAPABILITY, SauceOptions, true);
             o.AddAdditionalOption(SauceryConstants.SAUCE_OPTIONS_CAPABILITY, SauceOptions);

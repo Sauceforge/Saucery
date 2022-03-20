@@ -1,4 +1,5 @@
 ﻿using OpenQA.Selenium;
+using Saucery.Dojo;
 using Saucery.OnDemand;
 using Saucery.Options.ConcreteCreators;
 using Saucery.Util;
@@ -7,31 +8,31 @@ namespace Saucery.Options
 {
     public class OptionFactory
     {
-        private SaucePlatform Platform { get; set; }
+        private BrowserVersion BrowserVersion { get; set; }
 
-        public OptionFactory(SaucePlatform platform)
+        public OptionFactory(BrowserVersion browserVersion)
         {
-            Platform = platform;
+            BrowserVersion = browserVersion;
         }
 
         public DriverOptions CreateOptions(string testName) {
 
             //TODO: Determine platform type upfront with an enum attribute on the platform.
 
-            if (!Platform.IsAMobileDevice()) {
+            if (!BrowserVersion.IsAMobileDevice()) {
                 DebugMessages.PrintHaveDesktopPlatform();
                 return GetDesktopOptions(testName);
             }
             //Mobile Platform
-            if (Platform.PlatformType.Equals(OnDemand.PlatformType.Apple))
+            if (BrowserVersion.PlatformType.Equals(OnDemand.PlatformType.Apple))
             {
                 DebugMessages.PrintHaveApplePlatform();
-                return new AppiumIOSCreator().Create(Platform, testName).GetOpts(Platform.PlatformType);
+                return new AppiumIOSCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType);
             }
             else
             {
                 DebugMessages.PrintHaveAndroidPlatform();
-                return new AppiumAndroidCreator().Create(Platform, testName).GetOpts(Platform.PlatformType);
+                return new AppiumAndroidCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType);
             }
             //return platform.CanUseAppium()
             //    //Mobile Platform
@@ -46,33 +47,33 @@ namespace Saucery.Options
 
         private DriverOptions GetDesktopOptions(string testName)
         {
-            return Platform.Browser.ToLower() switch
+            return BrowserVersion.BrowserName.ToLower() switch
             {
-                "firefox" => new FirefoxCreator().Create(Platform, testName).GetOpts(Platform.PlatformType),
-                "internet explorer" => new IECreator().Create(Platform, testName).GetOpts(Platform.PlatformType),
-                "microsoftedge" => new EdgeCreator().Create(Platform, testName).GetOpts(Platform.PlatformType),
-                "chrome" => new ChromeCreator().Create(Platform, testName).GetOpts(Platform.PlatformType),
-                "safari" => new SafariCreator().Create(Platform, testName).GetOpts(Platform.PlatformType),
-                _ => new ChromeCreator().Create(Platform, testName).GetOpts(Platform.PlatformType),
+                "firefox" => new FirefoxCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType),
+                "internet explorer" => new IECreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType),
+                "microsoftedge" => new EdgeCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType),
+                "chrome" => new ChromeCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType),
+                "safari" => new SafariCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType),
+                _ => new ChromeCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType),
             };
         }
 
-        public bool IsSupportedPlatform()
-        {
-            if (Platform.PlatformType.Equals(OnDemand.PlatformType.Android) || Platform.PlatformType.Equals(OnDemand.PlatformType.Apple)) {
-                return true;
-            }
+        //public bool IsSupportedPlatform()
+        //{
+        //    if (BrowserVersion.PlatformType.Equals(OnDemand.PlatformType.Android) || BrowserVersion.PlatformType.Equals(OnDemand.PlatformType.Apple)) {
+        //        return true;
+        //    }
 
-            return Platform.Browser.ToLower() switch
-            {
-                "firefox" => Platform.FirefoxVersionIsSupported(),
-                "internet explorer" => Platform.IEVersionIsSupported(),
-                "microsoftedge" => Platform.EdgeVersionIsSupported(),
-                "chrome" => Platform.ChromeVersionIsSupported(),
-                "safari" => Platform.SafariVersionIsSupported(),
-                _ => false,
-            };
-        }
+        //    return BrowserVersion.BrowserName.ToLower() switch
+        //    {
+        //        "firefox" => BrowserVersion.FirefoxVersionIsSupported(),
+        //        "internet explorer" => BrowserVersion.IEVersionIsSupported(),
+        //        "microsoftedge" => BrowserVersion.EdgeVersionIsSupported(),
+        //        "chrome" => BrowserVersion.ChromeVersionIsSupported(),
+        //        "safari" => BrowserVersion.SafariVersionIsSupported(),
+        //        _ => false,
+        //    };
+        //}
     }
 }
 /*
