@@ -11,7 +11,7 @@ namespace Merlin.PageObjects
         public GuineaPigPage(SauceryRemoteWebDriver driver, string urlRoot)
             : base(urlRoot + "test/guinea-pig", "GuineaPig", "I am a page title - Sauce Labs") {
             GetPage(driver);
-            CheckTitle(driver);
+            //CheckTitle(driver);
             PageFactory.InitElements(driver, this);
         }
 
