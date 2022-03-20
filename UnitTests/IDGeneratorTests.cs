@@ -13,7 +13,7 @@ namespace UnitTests
         {
             var generator = IDGenerator.Instance;
             generator.ShouldNotBeNull();
-            generator.Id.ShouldNotBeNull();
+            IDGenerator.Id.ShouldNotBeNull();
         }
 
         [Test]
@@ -21,12 +21,12 @@ namespace UnitTests
         {
             var generator = IDGenerator.Instance;
             generator.ShouldNotBeNull();
-            generator.Id.ShouldNotBeNull();
+            IDGenerator.Id.ShouldNotBeNull();
 
             var generator2 = IDGenerator.Instance;
             generator2.ShouldNotBeNull();
-            generator2.Id.ShouldNotBeNull();
-            generator.Id.ShouldBeEquivalentTo(generator2.Id);
+            IDGenerator.Id.ShouldNotBeNull();
+            IDGenerator.Id.ShouldBeEquivalentTo(IDGenerator.Id);
         }
     }
 }

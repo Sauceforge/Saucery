@@ -1,6 +1,7 @@
 ﻿using Saucery.Dojo.Platforms.Base;
 using Saucery.OnDemand;
 using Saucery.RestAPI;
+using Saucery.RestAPI.SupportedPlatforms;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,12 +9,18 @@ namespace Saucery.Dojo
 {
     public class PlatformConfigurator
     {
+        SauceLabsPlatformAcquirer PlatformAcquirer { get; set; }
+        
         public List<PlatformBase> AvailablePlatforms { get; set; }
 
-        public PlatformConfigurator(List<SupportedPlatform> platforms)
+        public PlatformConfigurator()
         {
+            PlatformAcquirer = new SauceLabsPlatformAcquirer();
+            var platforms = PlatformAcquirer.AcquirePlatforms();
+
             var filteredPlatforms = new List<SupportedPlatform>();
-            filteredPlatforms.AddRange(FindWindowsPlatforms(platforms));          //Not filtered for Min and Max Versions yet
+            //Not filtered for Min and Max Versions yet
+            filteredPlatforms.AddRange(FindWindowsPlatforms(platforms));
             filteredPlatforms.AddRange(FindMacPlatforms(platforms, new List<string> { "Mac 10.10", "Mac 10.11", "Mac 10.12", "Mac 10.13", "Mac 10.14", "Mac 10.15", "Mac 11", "Mac 12" }));
             filteredPlatforms.AddRange(FindMobilePlatforms(platforms, new List<string> { "iphone", "ipad" }));
             filteredPlatforms.AddRange(FindMobilePlatforms(platforms, new List<string> { "android" }));

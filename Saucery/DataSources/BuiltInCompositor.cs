@@ -10,7 +10,7 @@ namespace Saucery.DataSources
     {
         public override void Compose()
         {
-            var platforms =  new List<SaucePlatform>
+            var platforms = new List<SaucePlatform>
             {
                 //Desktop Platforms
                 new SaucePlatform("Windows 10", "chrome", "latest"),
@@ -25,7 +25,7 @@ namespace Saucery.DataSources
                 //Mobile Platforms
                 new SaucePlatform("Android", "Chrome", "89", "Android", "Google Pixel 6 Pro GoogleAPI Emulator", "12.0", "", "Android", "1.22.1", "portrait"),
                 //new SaucePlatform("iOS", "Safari", "13", "iOS", "iPhone 12 Pro Simulator", "14.3", "", "iphone", "1.21.0", "portrait")
-        };
+            };
 
             var json = JsonConvert.SerializeObject(platforms);
             Enviro.SetVar(SauceryConstants.SAUCE_ONDEMAND_BROWSERS, json);

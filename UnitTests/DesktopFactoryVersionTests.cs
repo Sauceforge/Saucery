@@ -2,7 +2,6 @@
 using Saucery.Dojo;
 using Saucery.OnDemand;
 using Saucery.Options;
-using Saucery.RestAPI.SupportedPlatforms;
 using Shouldly;
 using System.Collections;
 
@@ -16,15 +15,12 @@ namespace UnitTests
         public void IsSupportedPlatformTest(SaucePlatform saucePlatform)
         {
             saucePlatform = PlatformClassifer.Classify(saucePlatform);
-
-            var platformAcquirer = new SauceLabsPlatformAcquirer();
-            var platforms = platformAcquirer.AcquirePlatforms();
-            var configurator = new PlatformConfigurator(platforms);
-
+            var configurator = new PlatformConfigurator();
             var validplatform = configurator.Validate(saucePlatform);
             validplatform.ShouldNotBeNull();
-            //var factory = new OptionFactory(validplatform);
-            var factory = new OptionFactory(saucePlatform);
+
+            //var factory = new OptionFactory(validplatform); //TODO: New way
+            var factory = new OptionFactory(saucePlatform);   //TODO: Old way
             var result = factory.IsSupportedPlatform();
             result.ShouldBeTrue();
         }
@@ -33,15 +29,12 @@ namespace UnitTests
         public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform)
         {
             saucePlatform = PlatformClassifer.Classify(saucePlatform);
-
-            var platformAcquirer = new SauceLabsPlatformAcquirer();
-            var platforms = platformAcquirer.AcquirePlatforms();
-            var configurator = new PlatformConfigurator(platforms);
-
+            var configurator = new PlatformConfigurator();
             var validplatform = configurator.Validate(saucePlatform);
             validplatform.ShouldBeNull();
-            //var factory = new OptionFactory(validplatform);
-            var factory = new OptionFactory(saucePlatform);
+
+            //var factory = new OptionFactory(validplatform); //TODO: New way
+            var factory = new OptionFactory(saucePlatform);   //TODO: Old way
             var result = factory.IsSupportedPlatform();
             result.ShouldBeFalse();
         }

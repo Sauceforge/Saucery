@@ -13,7 +13,7 @@ namespace Saucery.DataSources
         #region Attributes
         internal static List<SaucePlatform> Platforms { get; set; }
         internal static Compositor Compositor { get; set; }
-        internal static CompositorBuilder Builder { get; set; }
+        //internal static CompositorBuilder Builder { get; set; }
 
         internal string Os { get; set; }
         internal string Platform { get; set; }
@@ -36,7 +36,7 @@ namespace Saucery.DataSources
 
         static PlatformTestData()
         {
-            Builder = new CompositorBuilder();
+            //Builder = new CompositorBuilder();
             Compositor = CompositorBuilder.Build();
             Compositor.Compose();
             Platforms = JsonConvert.DeserializeObject<List<SaucePlatform>>(Enviro.SauceOnDemandBrowsers);

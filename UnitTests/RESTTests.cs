@@ -5,11 +5,9 @@ using Saucery.Dojo.Platforms.ConcreteProducts.Google;
 using Saucery.Dojo.Platforms.ConcreteProducts.PC;
 using Saucery.RestAPI.FlowControl;
 using Saucery.RestAPI.RecommendedAppiumVersion;
-using Saucery.RestAPI.SupportedPlatforms;
 using Saucery.Util;
 using Shouldly;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace UnitTests
 {
@@ -44,15 +42,10 @@ namespace UnitTests
         //[Ignore("Account has no minutes")]
         public void SupportedPlatformTest()
         {
-            var platformAcquirer = new SauceLabsPlatformAcquirer();
-            var platforms = platformAcquirer.AcquirePlatforms();
-
-            platforms.ShouldNotBeNull();
-
             //var windows10platforms = platforms.FindAll(w => w.os.Equals("Windows 10"));
             //var windows10platformbrowsers = windows10platforms.GroupBy(w => w.api_name);
 
-            var configurator = new PlatformConfigurator(platforms);
+            var configurator = new PlatformConfigurator();
             var availablePlatforms = configurator.AvailablePlatforms;
 
             availablePlatforms.ShouldNotBeNull();

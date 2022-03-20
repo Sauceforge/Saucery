@@ -5,9 +5,9 @@ namespace Saucery.Util
     public sealed class IDGenerator
     {
         private static readonly IDGenerator instance = new();
-        private string TheId = null;
+        private readonly string TheId;
 
-        public string Id => instance.TheId;
+        public static string Id => instance.TheId;
 
         // Explicit static constructor to tell C# compiler
         // not to mark type as beforefieldinit

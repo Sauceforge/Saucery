@@ -13,7 +13,7 @@ namespace Saucery.Util {
         internal static bool SauceUseChromeOnAndroid => GetBoolVar(SauceryConstants.SAUCE_USE_CHROME_ON_ANDROID);
 
         //TODO: Guid needs to be a singleton
-        internal static string BuildName => string.Format("Desktop_{0}", GetStringVar(SauceryConstants.BUILD_NUMBER) ?? IDGenerator.Instance.Id);
+        internal static string BuildName => string.Format("Desktop_{0}", GetStringVar(SauceryConstants.BUILD_NUMBER) ?? IDGenerator.Id);
 
         internal static string BuildNumber
         {
