@@ -22,9 +22,6 @@ namespace Saucery.Tests
             try {
                 //Console.WriteLine("About to create Driver");
                 Driver = new SauceryRemoteWebDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts);
-                //var wait = new WebDriverWait(Driver, new TimeSpan(0, 0, 30));
-                //var element = wait.Until(ExpectedConditions.ElementIsVisible(By.Id("content-section")));
-                //Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(waitSecs);
             } catch(Exception ex) {
                 Console.WriteLine(ex.Message);
             }

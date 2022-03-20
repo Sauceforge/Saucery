@@ -3,10 +3,8 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
 using Saucery.Driver;
-using Saucery.Util;
 using SeleniumExtras.WaitHelpers;
 using System;
-using System.Linq;
 using System.Threading;
 
 namespace Saucery.PageObjects
@@ -62,46 +60,6 @@ namespace Saucery.PageObjects
             var actions = new Actions(driver);
             actions.KeyDown(Keys.Control).SendKeys(Keys.End).Perform();
         }
-
-        //public static void WaitForPageLoad(SauceryRemoteWebDriver driver, int maxWaitTimeInSeconds) {
-        //    var state = string.Empty;
-        //    try {
-        //        var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(maxWaitTimeInSeconds));
-        //        //Checks every 500 ms whether predicate returns true if returns exit otherwise keep trying till it returns true
-        //        wait.Until(d => {
-        //            try {
-        //                state = ((IJavaScriptExecutor)driver).ExecuteScript(@"return document.readyState").ToString();
-        //            } catch(InvalidOperationException) {
-        //                //Ignore
-        //            } catch(NoSuchWindowException) {
-        //                //when popup is closed, switch to last windows
-        //                driver.SwitchTo().Window(driver.WindowHandles.Last());
-        //            }
-        //            //In IE7 there are chances we may get state as loaded instead of complete
-        //            return (state.Equals("complete", StringComparison.InvariantCultureIgnoreCase) || state.Equals("loaded", StringComparison.InvariantCultureIgnoreCase));
-        //        });
-        //    } catch(TimeoutException) {
-        //        //sometimes Page remains in Interactive mode and never becomes Complete, then we can still try to access the controls 
-        //        if(!state.Equals("interactive", StringComparison.InvariantCultureIgnoreCase)) {
-        //            throw;
-        //        }
-        //    } catch(NullReferenceException) {
-        //        //sometimes Page remains in Interactive mode and never becomes Complete, then we can still try to access the controls 
-        //        if(!state.Equals("interactive", StringComparison.InvariantCultureIgnoreCase)) {
-        //            throw;
-        //        }
-        //    } catch(WebDriverException) {
-        //        if(driver.WindowHandles.Count == 1) {
-        //            driver.SwitchTo().Window(driver.WindowHandles[0]);
-        //        }
-        //        state = ((IJavaScriptExecutor)driver).ExecuteScript(@"return document.readyState").ToString();
-
-        //        if(!(state.Equals("complete", StringComparison.InvariantCultureIgnoreCase) ||
-        //             state.Equals("loaded", StringComparison.InvariantCultureIgnoreCase))) {
-        //            throw;
-        //        }
-        //    }
-        //}
 
         protected static void WaitUntilOptionsLoad(ISearchContext dropdown) {
             while(true) {
