@@ -25,11 +25,8 @@ namespace Saucery.PageObjects
         }
 
         public void GetPage(SauceryRemoteWebDriver driver) {
-            //wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
             driver.Navigate().GoToUrl(PageUrl);
             CheckTitle(driver);
-            //wait.Until(ExpectedConditions.TitleIs(Title));
-            //WaitForPageLoad(driver, 10);
         }
 
         public void CheckTitle(SauceryRemoteWebDriver driver) {
@@ -38,9 +35,6 @@ namespace Saucery.PageObjects
             {
                 GetPage(driver);
             }
-            //while(driver.Title.Equals(SauceryConstants.APPLE_TITLE) || driver.PageSource.Contains("Let's browse!")) {
-            //    GetPage(driver);
-            //}
             Assert.AreEqual(Title, driver.Title);
         }
 

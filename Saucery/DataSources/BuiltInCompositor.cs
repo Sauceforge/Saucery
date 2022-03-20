@@ -24,7 +24,8 @@ namespace Saucery.DataSources
 
                 //Mobile Platforms
                 new SaucePlatform("Android", "Chrome", "89", "Android", "Google Pixel 6 Pro GoogleAPI Emulator", "12.0", "", "Android", "1.22.1", "portrait"),
-                new SaucePlatform("iOS", "iphone", "", "Mac 11", "iPhone 13 Pro Max Simulator", "15.0", "", "iphone", "1.22.0", "portrait")
+                //https://github.com/SeleniumHQ/selenium/issues/10460
+                //new SaucePlatform("iOS", "iphone", "", "Mac 11", "iPhone 13 Pro Max Simulator", "15.0", "", "iphone", "1.22.0", "portrait")
         };
 
             var json = JsonConvert.SerializeObject(platforms);
