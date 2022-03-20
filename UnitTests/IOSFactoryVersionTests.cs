@@ -18,7 +18,6 @@ namespace UnitTests
             PlatformConfigurator = new PlatformConfigurator();
         }
 
-
         [Test, TestCaseSource(typeof(IOSDataClass), "SupportedTestCases")]
         public void IsSupportedPlatformTest(SaucePlatform saucePlatform)
         {
@@ -43,7 +42,7 @@ namespace UnitTests
         {
             saucePlatform.Classify();
             var validplatform = PlatformConfigurator.Validate(saucePlatform);
-            validplatform.ShouldBeNull();
+            validplatform.ShouldNotBeNull();
 
             var factory = new OptionFactory(validplatform); //TODO: New way
             factory.ShouldNotBeNull();
