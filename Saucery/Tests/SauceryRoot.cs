@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using NUnit.Framework;
 using OpenQA.Selenium;
+using Saucery.Dojo;
 using Saucery.OnDemand;
 using Saucery.Options;
 using Saucery.RestAPI.FlowControl;
@@ -19,6 +20,7 @@ namespace Saucery.Tests
     public abstract class SauceryRoot {
         protected string TestName;
         protected readonly SaucePlatform Platform;
+        protected static PlatformConfigurator PlatformConfigurator;
         protected static SauceLabsStatusNotifier SauceLabsStatusNotifier;
         internal static SauceLabsFlowController SauceLabsFlowController;
         protected static SauceLabsAppiumRecommender SauceLabsAppiumRecommender;
@@ -32,6 +34,7 @@ namespace Saucery.Tests
         static SauceryRoot() {
             OnceOnlyMessages.TestingOn(JsonConvert.DeserializeObject<List<SaucePlatform>>(Enviro.SauceOnDemandBrowsers));
             OnceOnlyMessages.OnDemand();
+            PlatformConfigurator = new PlatformConfigurator();
             SauceLabsStatusNotifier = new SauceLabsStatusNotifier();
             SauceLabsFlowController = new SauceLabsFlowController();
         }

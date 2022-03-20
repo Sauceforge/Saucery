@@ -28,7 +28,7 @@ namespace Saucery.PageObjects
         }
 
         public void CheckTitle(SauceryRemoteWebDriver driver) {
-            while(driver.Title.Equals(SauceryConstants.APPLE_TITLE)) {
+            while(driver.Title.Equals(SauceryConstants.APPLE_TITLE) || driver.PageSource.Contains("Let's browse!")) {
                 GetPage(driver);
             }
             Assert.AreEqual(Title, driver.Title);
