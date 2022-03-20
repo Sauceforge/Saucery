@@ -89,5 +89,13 @@ namespace Saucery.Dojo
             //Console.WriteLine("{0} of {1} platforms request are valid", valid.Count, requested.Count);
             return browserVersion;
         }
+
+        internal List<BrowserVersion> Filter(List<SaucePlatform> platforms)
+        {
+            return (from p in platforms
+                    let bv = Validate(p)
+                    where bv != null
+                    select bv).ToList();
+        }
     }
 }
