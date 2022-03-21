@@ -1,6 +1,5 @@
 ﻿using OpenQA.Selenium.Appium;
 using Saucery.Dojo;
-using Saucery.OnDemand;
 using Saucery.Options.Base;
 using Saucery.Util;
 using System;
@@ -18,7 +17,7 @@ namespace Saucery.Options.ConcreteProducts
 
             var options = new AppiumOptions()
             {
-                PlatformName = SauceryConstants.IOS_PLATFORM,
+                PlatformName = browserVersion.PlatformNameForOption,
                 BrowserName = SauceryConstants.SAFARI_BROWSER,
                 DeviceName = browserVersion.DeviceName,
                 PlatformVersion = browserVersion.Name

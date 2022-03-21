@@ -1,7 +1,6 @@
 ﻿using Saucery.Dojo;
 using Saucery.Util;
 using System;
-using System.Linq;
 using System.Text;
 
 namespace Saucery.OnDemand
@@ -22,7 +21,7 @@ namespace Saucery.OnDemand
 
         public static bool IsAnAndroidDevice(this BrowserVersion browserVersion)
         {
-            return browserVersion.Os != null && browserVersion.Os.ToUpper().Contains(SauceryConstants.ANDROID_PLATFORM);
+            return browserVersion.Os != null && browserVersion.Os.ToUpper().Contains(SauceryConstants.LINUX.ToUpper());
         }
 
         public static bool IsAnAppleDevice(this BrowserVersion browserVersion)
@@ -40,10 +39,10 @@ namespace Saucery.OnDemand
             return browserVersion.DeviceName != null && browserVersion.DeviceName.ToLower().Contains(SauceryConstants.APPLE_IPAD);
         }
 
-        public static bool IsAMobileDevice(this SaucePlatform platform)
-        {
-            return IsAnAndroidDevice(platform) || IsAnAppleDevice(platform);
-        }
+        //public static bool IsAMobileDevice(this SaucePlatform platform)
+        //{
+        //    return IsAnAndroidDevice(platform) || IsAnAppleDevice(platform);
+        //}
 
         public static bool IsAnAppleDevice(this SaucePlatform platform)
         {
@@ -62,15 +61,15 @@ namespace Saucery.OnDemand
             return platform.Device != null && platform.Device.ToUpper().Contains(SauceryConstants.ANDROID_PLATFORM);
         }
 
-        public static void SetTestName(this SaucePlatform platform, string testName) {
-            var shortTestName = new StringBuilder();
-            shortTestName.Append(testName.Contains(SauceryConstants.LEFT_SQUARE_BRACKET) 
-                                    ? testName.Substring(0, testName.IndexOf(SauceryConstants.LEFT_SQUARE_BRACKET, StringComparison.Ordinal)) 
-                                    : testName);
-            platform.TestName = platform.IsAMobileDevice()
-                ? AppendPlatformField(AppendPlatformField(AppendPlatformField(shortTestName, platform.LongName), platform.BrowserVersion), platform.DeviceOrientation).ToString()
-                : AppendPlatformField(AppendPlatformField(AppendPlatformField(shortTestName, platform.Os),       platform.Browser),        platform.BrowserVersion).ToString();
-        }
+        //public static void SetTestName(this SaucePlatform platform, string testName) {
+        //    var shortTestName = new StringBuilder();
+        //    shortTestName.Append(testName.Contains(SauceryConstants.LEFT_SQUARE_BRACKET) 
+        //                            ? testName.Substring(0, testName.IndexOf(SauceryConstants.LEFT_SQUARE_BRACKET, StringComparison.Ordinal)) 
+        //                            : testName);
+        //    platform.TestName = platform.IsAMobileDevice()
+        //        ? AppendPlatformField(AppendPlatformField(AppendPlatformField(shortTestName, platform.LongName), platform.BrowserVersion), platform.DeviceOrientation).ToString()
+        //        : AppendPlatformField(AppendPlatformField(AppendPlatformField(shortTestName, platform.Os),       platform.Browser),        platform.BrowserVersion).ToString();
+        //}
 
         public static void SetTestName(this BrowserVersion browserVersion, string testName)
         {
@@ -83,44 +82,14 @@ namespace Saucery.OnDemand
                 : AppendPlatformField(AppendPlatformField(AppendPlatformField(shortTestName, browserVersion.Os), browserVersion.BrowserName), browserVersion.Name).ToString();
         }
 
-        public static string SanitisedLongVersion(this SaucePlatform platform)
-        {
-            var result = platform.LongVersion.EndsWith(SauceryConstants.DOT)
-                            ? platform.LongVersion.Trim().Remove(platform.LongVersion.Length - 1)
-                            : platform.LongVersion.Trim();
-            Console.WriteLine("SanitisedLongVersion returning string '{0}'", result);
-            return result;
-        }
-
-        public static bool FirefoxVersionIsSupported(this SaucePlatform Platform)
-        {
-            return Platform.BrowserVersion.Equals("latest") ||
-                   Enumerable.Range(SauceryConstants.MIN_FIREFOX_SUPPORTED_VERSION, SauceryConstants.MAX_FIREFOX_SUPPORTED_VERSION).Contains(Platform.ParseBrowserVersion());
-        }
-
-        public static bool IEVersionIsSupported(this SaucePlatform Platform)
-        {
-            return Platform.BrowserVersion.Equals("latest") ||
-                   Enumerable.Range(SauceryConstants.MIN_IE_SUPPORTED_VERSION, SauceryConstants.MAX_IE_SUPPORTED_VERSION).Contains(Platform.ParseBrowserVersion());
-        }
-
-        public static bool EdgeVersionIsSupported(this SaucePlatform Platform)
-        {
-            return Platform.BrowserVersion.Equals("latest") ||
-                   Enumerable.Range(SauceryConstants.MIN_EDGE_SUPPORTED_VERSION, SauceryConstants.MAX_EDGE_SUPPORTED_VERSION).Contains(Platform.ParseBrowserVersion());
-        }
-
-        public static bool SafariVersionIsSupported(this SaucePlatform Platform)
-        {
-            return Platform.BrowserVersion.Equals("latest") ||
-                   Enumerable.Range(SauceryConstants.MIN_SAFARI_SUPPORTED_VERSION, SauceryConstants.MAX_SAFARI_SUPPORTED_VERSION).Contains(Platform.ParseBrowserVersion());
-        }
-
-        public static bool ChromeVersionIsSupported(this SaucePlatform Platform)
-        {
-            return Platform.BrowserVersion.Equals("latest") || 
-                   Enumerable.Range(SauceryConstants.MIN_CHROME_SUPPORTED_VERSION, SauceryConstants.MAX_CHROME_SUPPORTED_VERSION).Contains(Platform.ParseBrowserVersion());
-        }
+        //public static string SanitisedLongVersion(this SaucePlatform platform)
+        //{
+        //    var result = platform.LongVersion.EndsWith(SauceryConstants.DOT)
+        //                    ? platform.LongVersion.Trim().Remove(platform.LongVersion.Length - 1)
+        //                    : platform.LongVersion.Trim();
+        //    Console.WriteLine("SanitisedLongVersion returning string '{0}'", result);
+        //    return result;
+        //}
 
         private static StringBuilder AppendPlatformField(this StringBuilder testName, string fieldToAdd) {
             return testName.Append(SauceryConstants.UNDERSCORE).Append(fieldToAdd);

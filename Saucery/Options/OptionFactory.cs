@@ -57,23 +57,6 @@ namespace Saucery.Options
                 _ => new ChromeCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType),
             };
         }
-
-        //public bool IsSupportedPlatform()
-        //{
-        //    if (BrowserVersion.PlatformType.Equals(OnDemand.PlatformType.Android) || BrowserVersion.PlatformType.Equals(OnDemand.PlatformType.Apple)) {
-        //        return true;
-        //    }
-
-        //    return BrowserVersion.BrowserName.ToLower() switch
-        //    {
-        //        "firefox" => BrowserVersion.FirefoxVersionIsSupported(),
-        //        "internet explorer" => BrowserVersion.IEVersionIsSupported(),
-        //        "microsoftedge" => BrowserVersion.EdgeVersionIsSupported(),
-        //        "chrome" => BrowserVersion.ChromeVersionIsSupported(),
-        //        "safari" => BrowserVersion.SafariVersionIsSupported(),
-        //        _ => false,
-        //    };
-        //}
     }
 }
 /*
