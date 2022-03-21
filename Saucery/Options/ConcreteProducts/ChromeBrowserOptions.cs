@@ -1,5 +1,5 @@
 ﻿using OpenQA.Selenium.Chrome;
-using Saucery.OnDemand;
+using Saucery.Dojo;
 using Saucery.Options.Base;
 using Saucery.Util;
 using System;
@@ -7,17 +7,17 @@ using System;
 namespace Saucery.Options.ConcreteProducts
 {
     internal class ChromeBrowserOptions : BaseOptions {
-        public ChromeBrowserOptions(SaucePlatform platform, string testName) : base(testName)
+        public ChromeBrowserOptions(BrowserVersion browserVersion, string testName) : base(testName)
         {
             Console.WriteLine(SauceryConstants.SETTING_UP, testName, SauceryConstants.DESKTOP_ON_WEBDRIVER);
 
-            DebugMessages.PrintDesktopOptionValues(platform);
+            DebugMessages.PrintDesktopOptionValues(browserVersion);
 
             Console.WriteLine("Creating Chrome Options");
             var o = new ChromeOptions
             {
-                BrowserVersion = platform.BrowserVersion,
-                PlatformName = platform.Os,
+                BrowserVersion = browserVersion.Name,
+                PlatformName = browserVersion.Os,
                 UseSpecCompliantProtocol = true
             };
             //o.AddAdditionalCapability(SauceryConstants.SAUCE_OPTIONS_CAPABILITY, SauceOptions, true);

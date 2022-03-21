@@ -2,8 +2,8 @@
 using NUnit.Framework.Interfaces;
 using OpenQA.Selenium;
 using Saucery.DataSources;
+using Saucery.Dojo;
 using Saucery.Driver;
-using Saucery.OnDemand;
 using Saucery.Util;
 using System;
 
@@ -13,7 +13,8 @@ namespace Saucery.Tests
     public class SauceryBase : SauceryRoot {
         protected SauceryRemoteWebDriver Driver;
 
-        public SauceryBase(SaucePlatform platform) : base(platform) {
+        //public SauceryBase(SaucePlatform platform) : base(platform) {
+        public SauceryBase(BrowserVersion browserVersion) : base(browserVersion) {
             
         }
 

@@ -1,4 +1,5 @@
-﻿using Saucery.RestAPI;
+﻿using Saucery.OnDemand;
+using Saucery.RestAPI;
 using System.Collections.Generic;
 
 namespace Saucery.Dojo
@@ -14,6 +15,10 @@ namespace Saucery.Dojo
         public string RecommendedAppiumVersion { get; set; }
         public List<string> SupportedBackendVersions { get; set; }
         public List<string> DeprecatedBackendVersions { get; set; }
+        public string TestName { get; set; }
+        public string DeviceOrientation { get; set; }
+
+        public PlatformType PlatformType { get; set; }
 
         public BrowserVersion(SupportedPlatform sp, string platformNameForOption)
         {

@@ -1,12 +1,13 @@
-﻿using Saucery.OnDemand;
+﻿using Saucery.Dojo;
+using Saucery.OnDemand;
 using Saucery.Options.Base;
 using Saucery.Options.ConcreteProducts;
 
 namespace Saucery.Options.ConcreteCreators
 {
     internal class SafariCreator : Creator {
-        public override BaseOptions Create(SaucePlatform platform, string testName) {
-            return new SafariBrowserOptions(platform, testName);
+        public override BaseOptions Create(BrowserVersion browserVersion, string testName) {
+            return new SafariBrowserOptions(browserVersion, testName);
         }
     }
 }

@@ -8,7 +8,6 @@ using Saucery.RestAPI.FlowControl;
 using Saucery.RestAPI.RecommendedAppiumVersion;
 using Saucery.RestAPI.TestStatus;
 using Saucery.Util;
-using System;
 using System.Collections.Generic;
 
 //[assembly: LevelOfParallelism(3)]
@@ -19,16 +18,15 @@ namespace Saucery.Tests
     //[Parallelizable(ParallelScope.All)]
     public abstract class SauceryRoot {
         protected string TestName;
-        protected readonly SaucePlatform Platform;
+        protected readonly BrowserVersion BrowserVersion;
         protected static PlatformConfigurator PlatformConfigurator;
         protected static SauceLabsStatusNotifier SauceLabsStatusNotifier;
         internal static SauceLabsFlowController SauceLabsFlowController;
         protected static SauceLabsAppiumRecommender SauceLabsAppiumRecommender;
 
-
-        protected SauceryRoot(SaucePlatform platform) {
+        protected SauceryRoot(BrowserVersion browserVersion) {
             //Console.WriteLine(@"In SauceryRoot constructor");
-            Platform = platform;
+            BrowserVersion = browserVersion;
         }
 
         static SauceryRoot() {
@@ -42,21 +40,14 @@ namespace Saucery.Tests
         [SetUp]
         public void Setup() {
             //Console.WriteLine("In Setup");
-            Platform.SetTestName(TestContext.CurrentContext.Test.Name);
-            TestName = Platform.TestName;
+            BrowserVersion.SetTestName(TestContext.CurrentContext.Test.Name);
+            TestName = BrowserVersion.TestName;
 
             //DebugMessages.PrintPlatformDetails(platform);
-            // set up the desired capabilities
-            var factory = new OptionFactory(Platform);
-            if (factory.IsSupportedPlatform())
-            {
-                var opts = factory.CreateOptions(TestName);
-                InitialiseDriver(opts, 60);
-            }
-            else
-            {
-                Console.WriteLine(SauceryConstants.NOT_SUPPORTED_MESSAGE);
-            }
+            // set up the desired options
+            var factory = new OptionFactory(BrowserVersion);
+            var opts = factory.CreateOptions(TestName);
+            InitialiseDriver(opts, 60);
         }
 
         public abstract void InitialiseDriver(DriverOptions opts, int waitSecs);

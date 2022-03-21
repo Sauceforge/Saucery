@@ -88,14 +88,16 @@ namespace Saucery.Dojo
                 //Browser found or created, now add version
                 if (b.IsSupportedVersion(sp) && b.FindVersion(sp) == null)
                 {
-                    b.BrowserVersions.Add(new BrowserVersion(sp, b.PlatformNameForOption));
+                    var bv = new BrowserVersion(sp, b.PlatformNameForOption);
+                    b.BrowserVersions.Add(bv);
                 }
             }
             else
             {
                 if (b.IsSupportedVersion(sp))
                 {
-                    b.BrowserVersions.Add(new BrowserVersion(sp, b.PlatformNameForOption));
+                    var bv = new BrowserVersion(sp, b.PlatformNameForOption);
+                    b.BrowserVersions.Add(bv);
                     browsers.Add(b);
                 }
             }
@@ -284,5 +286,57 @@ namespace Saucery.Dojo
             }
             return extant;
         }
+
+
+        public static List<BrowserVersion> ClassifyAll(this List<BrowserVersion> browserVersions)
+        {
+            foreach (var bv in browserVersions)
+            {
+                bv.Classify();
+            }
+            return browserVersions;
+        }
+
+        public static BrowserVersion Classify(this BrowserVersion browserVersion)
+        {
+            if (browserVersion.IsAnAndroidDevice())
+            {
+                browserVersion.PlatformType = PlatformType.Android;
+                return browserVersion;
+            }
+            else
+            {
+                if (browserVersion.IsAnAppleDevice())
+                {
+                    browserVersion.PlatformType = PlatformType.Apple;
+                    return browserVersion;
+                }
+            }
+
+            //Desktop
+            switch (browserVersion.BrowserName.ToLower())
+            {
+                case "chrome":
+                    browserVersion.PlatformType = PlatformType.Chrome;
+                    break;
+                case "firefox":
+                    browserVersion.PlatformType = PlatformType.Firefox;
+                    break;
+                case "internet explorer":
+                    browserVersion.PlatformType = PlatformType.IE;
+                    break;
+                case "microsoftedge":
+                    browserVersion.PlatformType = PlatformType.Edge;
+                    break;
+                case "safari":
+                    browserVersion.PlatformType = PlatformType.Safari;
+                    break;
+                default:
+                    break;
+            }
+
+            return browserVersion;
+        }
+
     }
 }

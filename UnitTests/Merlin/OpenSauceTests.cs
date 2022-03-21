@@ -1,6 +1,6 @@
 ﻿using Merlin.PageObjects;
 using NUnit.Framework;
-using Saucery.OnDemand;
+using Saucery.Dojo;
 using Saucery.Tests;
 using Shouldly;
 using System;
@@ -8,7 +8,7 @@ using System;
 namespace Merlin
 {
     public class OpenSauceTests : SauceryBase {
-        public OpenSauceTests(SaucePlatform platform) : base(platform) {
+        public OpenSauceTests(BrowserVersion browserVersion) : base(browserVersion) {
         }
 
         [Test]
