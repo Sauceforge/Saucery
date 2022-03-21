@@ -21,10 +21,11 @@ namespace UnitTests
         public void IsSupportedPlatformTest(SaucePlatform saucePlatform)
         {
             saucePlatform.Classify();
-            var validplatform = PlatformConfigurator.Validate(saucePlatform);
-            validplatform.ShouldNotBeNull();
+            var validPlatform = PlatformConfigurator.Validate(saucePlatform);
+            validPlatform.Classify();
+            validPlatform.ShouldNotBeNull();
 
-            var factory = new OptionFactory(validplatform); //TODO: New way
+            var factory = new OptionFactory(validPlatform); //TODO: New way
             factory.ShouldNotBeNull();
         }
 
@@ -32,18 +33,19 @@ namespace UnitTests
         public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform)
         {
             saucePlatform.Classify();
-            var validplatform = PlatformConfigurator.Validate(saucePlatform);
-            validplatform.ShouldBeNull();
+            var validPlatform = PlatformConfigurator.Validate(saucePlatform);
+            validPlatform.ShouldBeNull();
         }
 
         [Test, TestCaseSource(typeof(AndroidDataClass), "SupportedTestCases")]
         public void AppiumAndroidOptionTest(SaucePlatform saucePlatform)
         {
             saucePlatform.Classify();
-            var validplatform = PlatformConfigurator.Validate(saucePlatform);
-            validplatform.ShouldNotBeNull();
+            var validPlatform = PlatformConfigurator.Validate(saucePlatform);
+            validPlatform.Classify();
+            validPlatform.ShouldNotBeNull();
 
-            var factory = new OptionFactory(validplatform); //TODO: New way
+            var factory = new OptionFactory(validPlatform); //TODO: New way
             factory.ShouldNotBeNull();
 
             var opts = factory.CreateOptions("AppiumAndroidOptionTest");
