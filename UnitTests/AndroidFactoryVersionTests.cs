@@ -25,7 +25,7 @@ namespace UnitTests
             validPlatform.Classify();
             validPlatform.ShouldNotBeNull();
 
-            var factory = new OptionFactory(validPlatform); //TODO: New way
+            var factory = new OptionFactory(validPlatform);
             factory.ShouldNotBeNull();
         }
 
@@ -45,7 +45,7 @@ namespace UnitTests
             validPlatform.Classify();
             validPlatform.ShouldNotBeNull();
 
-            var factory = new OptionFactory(validPlatform); //TODO: New way
+            var factory = new OptionFactory(validPlatform);
             factory.ShouldNotBeNull();
 
             var opts = factory.CreateOptions("AppiumAndroidOptionTest");
