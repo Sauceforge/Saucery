@@ -13,7 +13,6 @@ namespace Saucery.Tests
     public class SauceryBase : SauceryRoot {
         protected SauceryRemoteWebDriver Driver;
 
-        //public SauceryBase(SaucePlatform platform) : base(platform) {
         public SauceryBase(BrowserVersion browserVersion) : base(browserVersion) {
             
         }
@@ -47,11 +46,6 @@ namespace Saucery.Tests
                 Console.WriteLine(@"Caught WebDriverException, quitting driver.");
                 Driver.Quit();
             }
-        }
-
-        public override void InitialiseDriver(ICapabilities driver, int waitSecs)
-        {
-            throw new NotImplementedException();
         }
     }
 }

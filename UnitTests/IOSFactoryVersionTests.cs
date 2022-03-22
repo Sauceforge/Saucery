@@ -8,7 +8,6 @@ using System.Collections;
 namespace UnitTests
 {
     [TestFixture]
-    [Order(5)]
     public class IOSFactoryVersionTests
     {
         static PlatformConfigurator PlatformConfigurator { get; set; }

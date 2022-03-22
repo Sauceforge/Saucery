@@ -6,8 +6,7 @@ using Saucery.Dojo;
 using Saucery.Driver;
 using System;
 
-namespace Saucery.Tests
-{
+namespace Saucery.Tests {
     [TestFixtureSource(typeof(PlatformTestData))]
     public class SauceryIOSBase : SauceryRoot {
         protected SauceryIOSDriver Driver;
@@ -43,11 +42,6 @@ namespace Saucery.Tests
                 Console.WriteLine(@"Caught WebDriverException, quitting driver.");
                 Driver.Quit();
             }
-        }
-
-        public override void InitialiseDriver(ICapabilities driver, int waitSecs)
-        {
-            throw new NotImplementedException();
         }
     }
 }
