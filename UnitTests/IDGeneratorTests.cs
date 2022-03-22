@@ -2,10 +2,8 @@
 using Saucery.Util;
 using Shouldly;
 
-namespace UnitTests
-{
+namespace UnitTests {
     [TestFixture]
-    [Order(4)]
     class IDGeneratorTests
     {
         [Test]

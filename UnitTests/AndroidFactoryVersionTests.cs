@@ -8,7 +8,6 @@ using System.Collections;
 namespace UnitTests
 {
     [TestFixture]
-    [Order(1)]
     public class AndroidFactoryVersionTests
     {
         static PlatformConfigurator PlatformConfigurator { get; set; }
@@ -25,7 +24,7 @@ namespace UnitTests
             validPlatform.Classify();
             validPlatform.ShouldNotBeNull();
 
-            var factory = new OptionFactory(validPlatform); //TODO: New way
+            var factory = new OptionFactory(validPlatform);
             factory.ShouldNotBeNull();
         }
 
@@ -45,7 +44,7 @@ namespace UnitTests
             validPlatform.Classify();
             validPlatform.ShouldNotBeNull();
 
-            var factory = new OptionFactory(validPlatform); //TODO: New way
+            var factory = new OptionFactory(validPlatform);
             factory.ShouldNotBeNull();
 
             var opts = factory.CreateOptions("AppiumAndroidOptionTest");

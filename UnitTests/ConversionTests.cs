@@ -3,10 +3,8 @@ using Saucery.Util;
 using Shouldly;
 using System;
 
-namespace UnitTests
-{
+namespace UnitTests {
     [TestFixture]
-    [Order(2)]
     class ConversionTests
     {
         [Test]

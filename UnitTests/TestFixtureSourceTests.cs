@@ -4,7 +4,6 @@ using UnitTests.Issue1118;
 
 namespace UnitTests {
     [TestFixture]
-    [Order(6)]
     public class TestFixtureSourceTests {
         [Test]
         public void Issue1118() {

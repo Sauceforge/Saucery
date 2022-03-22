@@ -13,7 +13,6 @@ namespace Saucery.Tests
     public class SauceryBase : SauceryRoot {
         protected SauceryRemoteWebDriver Driver;
 
-        //public SauceryBase(SaucePlatform platform) : base(platform) {
         public SauceryBase(BrowserVersion browserVersion) : base(browserVersion) {
             
         }

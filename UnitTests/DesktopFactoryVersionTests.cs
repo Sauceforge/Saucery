@@ -5,10 +5,8 @@ using Saucery.Options;
 using Shouldly;
 using System.Collections;
 
-namespace UnitTests
-{
+namespace UnitTests {
     [TestFixture]
-    [Order(3)]
     public class DesktopFactoryVersionTests
     {
         static PlatformConfigurator PlatformConfigurator { get; set; }
