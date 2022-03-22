@@ -9,10 +9,8 @@ using Saucery.Util;
 using Shouldly;
 using System.Collections.Generic;
 
-namespace UnitTests
-{
+namespace UnitTests {
     [TestFixture]
-    [Order(6)]
     public class RestTests {
         [Test]
         //[Ignore("Need OpenSauce")]
