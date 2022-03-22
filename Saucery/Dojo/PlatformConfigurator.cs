@@ -2,7 +2,6 @@
 using Saucery.OnDemand;
 using Saucery.RestAPI;
 using Saucery.RestAPI.SupportedPlatforms;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 

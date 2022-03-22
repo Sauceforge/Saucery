@@ -27,7 +27,7 @@
         <dependency id="DotNetSeleniumExtras.WaitHelpers" version="3.11.0" />
         <dependency id="Microsoft.NET.Test.Sdk" version="17.1.0" />
         <dependency id="Newtonsoft.Json" version="13.0.1" />
-        <dependency id="NUnit" version="3.13.2" />
+        <dependency id="NUnit" version="3.13.3" />
         <dependency id="RestSharp" version="107.3.0" />
         <dependency id="Selenium.Support" version="4.1.0" />
         <dependency id="Selenium.WebDriver" version="4.1.0" />

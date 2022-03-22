@@ -61,11 +61,14 @@ namespace Saucery.PageObjects
             actions.KeyDown(Keys.Control).SendKeys(Keys.End).Perform();
         }
 
-        protected static void WaitUntilOptionsLoad(ISearchContext dropdown) {
-            while(true) {
+        protected static void WaitUntilOptionsLoad(ISearchContext dropdown)
+        {
+            while (true)
+            {
                 Thread.Sleep(1000);
                 var options = dropdown.FindElements(By.TagName("option"));
-                if(options.Count > 0) {
+                if (options.Count > 0)
+                {
                     //System.out.println("More than one option tag found; therefore options have loaded");
                     break;
                 }

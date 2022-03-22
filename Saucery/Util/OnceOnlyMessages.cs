@@ -1,17 +1,16 @@
 ﻿using Saucery.OnDemand;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Saucery.Util
 {
     internal class OnceOnlyMessages {
-        public static void CopyrightBanner() {
-            OnceOnlyWriter.WriteLine(SauceryConstants.CONSOLE_RUNNER, SauceryConstants.PRODUCTNAME/*, NuGetHelper.GetInstalledVersion()*/);
-            OnceOnlyWriter.WriteLine(SauceryConstants.COPYRIGHT_NOTICE, GetCurrentYear());
-            //NewVersionAvailable();
-            OnceOnlyWriter.WriteLine(SauceryConstants.SPACE);
-        }
+        //public static void CopyrightBanner() {
+        //    OnceOnlyWriter.WriteLine(SauceryConstants.CONSOLE_RUNNER, SauceryConstants.PRODUCTNAME/*, NuGetHelper.GetInstalledVersion()*/);
+        //    OnceOnlyWriter.WriteLine(SauceryConstants.COPYRIGHT_NOTICE, GetCurrentYear());
+        //    //NewVersionAvailable();
+        //    OnceOnlyWriter.WriteLine(SauceryConstants.SPACE);
+        //}
 
         public static void TestingOn(List<SaucePlatform> platforms) {
             OnceOnlyWriter.WriteLine(platforms.Any()
@@ -33,21 +32,21 @@ namespace Saucery.Util
         //    }
         //}
 
-        public static void UsingLicenced() {
-            OnceOnlyWriter.WriteLine(SauceryConstants.LICENCED_VERSION, SauceryConstants.PRODUCTNAME);
-        }
+        //public static void UsingLicenced() {
+        //    OnceOnlyWriter.WriteLine(SauceryConstants.LICENCED_VERSION, SauceryConstants.PRODUCTNAME);
+        //}
 
-        public static void UsingTrial() {
-            OnceOnlyWriter.WriteLine(SauceryConstants.TRIAL_VERSION, SauceryConstants.PRODUCTNAME);
-        }
+        //public static void UsingTrial() {
+        //    OnceOnlyWriter.WriteLine(SauceryConstants.TRIAL_VERSION, SauceryConstants.PRODUCTNAME);
+        //}
 
-        public static void DaysRemaining(double remaining) {
-            OnceOnlyWriter.WriteLine(SauceryConstants.DAYS_REMAINING, remaining);
-        }
+        //public static void DaysRemaining(double remaining) {
+        //    OnceOnlyWriter.WriteLine(SauceryConstants.DAYS_REMAINING, remaining);
+        //}
 
-        private static string GetCurrentYear() {
-            return DateTime.Now.ToString(SauceryConstants.YEAR_FORMAT);
-        }
+        //private static string GetCurrentYear() {
+        //    return DateTime.Now.ToString(SauceryConstants.YEAR_FORMAT);
+        //}
 
         private static string GetMoniker(IReadOnlyCollection<SaucePlatform> platforms) {
             return platforms.Count == 1 ? "platform" : "platforms";

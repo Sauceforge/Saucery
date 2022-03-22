@@ -44,11 +44,6 @@ namespace Saucery.Tests
                 Driver.Quit();
             }
         }
-
-        public override void InitialiseDriver(ICapabilities driver, int waitSecs)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
 /*

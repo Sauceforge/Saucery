@@ -51,8 +51,6 @@ namespace Saucery.Tests
         }
 
         public abstract void InitialiseDriver(DriverOptions opts, int waitSecs);
-
-        public abstract void InitialiseDriver(ICapabilities driver, int waitSecs);
     }
 }
 /*
