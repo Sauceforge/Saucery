@@ -6,7 +6,8 @@ using Saucery.Dojo;
 using Saucery.Driver;
 using System;
 
-namespace Saucery.Tests {
+namespace Saucery.Tests
+{
     [TestFixtureSource(typeof(PlatformTestData))]
     public class SauceryIOSBase : SauceryRoot {
         protected SauceryIOSDriver Driver;
