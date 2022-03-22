@@ -3,7 +3,7 @@ using Saucery.RestAPI;
 
 namespace Saucery.Dojo.Browsers.ConcreteProducts.PC
 {
-    internal class SafariBrowser : BrowserBase
+    internal class SafariBrowser : BrowserBase, IVersion
     {
         public SafariBrowser(SupportedPlatform sp, string platformNameForOption) : base(sp, platformNameForOption)
         {
@@ -14,7 +14,7 @@ namespace Saucery.Dojo.Browsers.ConcreteProducts.PC
             return BrowserVersions.Find(bv => bv.Name.Equals(sp.latest_stable_version) || bv.Name.Equals(sp.short_version));
         }
 
-        public override int MaximumVersion(SupportedPlatform sp)
+        public int MaximumVersion(SupportedPlatform sp)
         {
             return sp.os switch
             {
@@ -27,7 +27,7 @@ namespace Saucery.Dojo.Browsers.ConcreteProducts.PC
             };
         }
 
-        public override int MinimumVersion(SupportedPlatform sp)
+        public int MinimumVersion(SupportedPlatform sp)
         {
             return sp.os switch
             {

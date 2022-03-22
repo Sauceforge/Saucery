@@ -22,9 +22,6 @@ namespace Saucery.OnDemand
         public string Url { get; set; }
         public string Device { get; set; }
 
-        //[JsonProperty(PropertyName = "device-type")]
-        //public string DeviceType { get; set; }
-
         [JsonProperty(PropertyName = "device-orientation")]
         public string DeviceOrientation { get; set; }
 
@@ -54,14 +51,6 @@ namespace Saucery.OnDemand
             Device = device ?? SauceryConstants.NULL_STRING;
             AppiumVersion = Sanitiser.SanitisePlatformField(appiumVersion);
             DeviceOrientation = deviceOrientation ?? SauceryConstants.NULL_STRING;
-        }
-
-        #endregion
-
-        #region Methods
-
-        internal int ParseBrowserVersion() {
-            return int.Parse(BrowserVersion);
         }
 
         #endregion

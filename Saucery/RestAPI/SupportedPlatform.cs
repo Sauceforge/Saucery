@@ -33,7 +33,6 @@ namespace Saucery.RestAPI {
 
         public bool IsMobilePlatform()
         {
-            //return IsIOSPlatform() || IsAndroidPlatform();
             return automation_backend.Equals("appium") &&
                    recommended_backend_version != null &&
                    (api_name == "iphone" || api_name == "ipad" || api_name.Equals("android"));
