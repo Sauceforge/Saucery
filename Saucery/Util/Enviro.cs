@@ -10,8 +10,6 @@ namespace Saucery.Util {
 
         public static string SauceOnDemandBrowsers => GetStringVar(SauceryConstants.SAUCE_ONDEMAND_BROWSERS);
 
-        internal static bool SauceUseChromeOnAndroid => GetBoolVar(SauceryConstants.SAUCE_USE_CHROME_ON_ANDROID);
-
         //TODO: Guid needs to be a singleton
         internal static string BuildName => string.Format("Desktop_{0}", GetStringVar(SauceryConstants.BUILD_NUMBER) ?? IDGenerator.Id);
 
@@ -45,21 +43,6 @@ namespace Saucery.Util {
 
         private static string GetStringVar(string envVar) {
             return envVar == null ? null : Environment.GetEnvironmentVariable(envVar);
-        }
-
-        private static bool GetBoolVar(string envVar) {
-            var v = GetStringVar(envVar);
-            return v != null && Convert.ToBoolean(v);
-        }
-
-        private static int GetIntVar(string envVar) {
-            var v = GetStringVar(envVar);
-            return v == null ? 0 : Convert.ToInt32(v);
-        }
-
-        private static double GetDoubleVar(string envVar) {
-            var v = GetStringVar(envVar);
-            return v == null ? 0 : Convert.ToDouble(v);
         }
     }
 }
