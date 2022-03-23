@@ -47,6 +47,11 @@ namespace Saucery.Tests
                 Driver.Quit();
             }
         }
+
+        public static void SetRequestedPlatforms()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
 /*
