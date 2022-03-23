@@ -34,9 +34,9 @@ namespace Saucery.Dojo.Platforms.Base
             Browsers = new List<BrowserBase>();
         }
 
-        public bool IsMobilePlatform()
-        {
-            return RecommendedAppiumVersion != null && AutomationBackend.Equals("appium");
-        }
+        //public bool IsMobilePlatform()
+        //{
+        //    return RecommendedAppiumVersion != null && AutomationBackend.Equals("appium");
+        //}
     }
 }

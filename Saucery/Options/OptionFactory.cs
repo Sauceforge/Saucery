@@ -16,9 +16,6 @@ namespace Saucery.Options
         }
 
         public DriverOptions CreateOptions(string testName) {
-
-            //TODO: Determine platform type upfront with an enum attribute on the platform.
-
             if (!BrowserVersion.IsAMobileDevice()) {
                 DebugMessages.PrintHaveDesktopPlatform();
                 return GetDesktopOptions(testName);
@@ -34,15 +31,6 @@ namespace Saucery.Options
                 DebugMessages.PrintHaveAndroidPlatform();
                 return new AppiumAndroidCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType);
             }
-            //return platform.CanUseAppium()
-            //    //Mobile Platform
-            //    ? platform.IsAnAppleDevice()
-            //        ? new AppiumIOSCreator().Create(platform, testName).GetOpts()
-            //        : new AppiumAndroidCreator().Create(platform, testName).GetOpts()
-            //    //Devolve to WebDriver    
-            //    : platform.IsAnAppleDevice()
-            //        ? new WebDriverIOSCreator().Create(platform, testName).GetCaps()
-            //        : new WebDriverAndroidCreator().Create(platform, testName).GetCaps();
         }
 
         private DriverOptions GetDesktopOptions(string testName)

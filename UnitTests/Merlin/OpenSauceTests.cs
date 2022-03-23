@@ -9,6 +9,7 @@ namespace Merlin
 {
     public class OpenSauceTests : SauceryBase {
         public OpenSauceTests(BrowserVersion browserVersion) : base(browserVersion) {
+            SauceryBase.SetRequestedPlatforms();
         }
 
         [Test]

@@ -32,7 +32,5 @@ namespace Saucery.Dojo.Browsers.Base
 
         public abstract BrowserVersion FindVersion(SupportedPlatform sp);
         public abstract bool IsSupportedVersion(SupportedPlatform sp);
-        public abstract int MaximumVersion(SupportedPlatform sp);
-        public abstract int MinimumVersion(SupportedPlatform sp);
     }
 }
