@@ -50,7 +50,7 @@ namespace Saucery.Tests
 
         public static void SetRequestedPlatforms()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
     }
 }
