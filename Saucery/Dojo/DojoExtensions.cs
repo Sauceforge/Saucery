@@ -21,6 +21,11 @@ namespace Saucery.Dojo
             {
                 //first one
                 p = PlatformFactory.CreatePlatform(sp);
+                if(p == null)
+                {
+                    //SauceLabs may have just added it to the platform configurator.  Don't fall over.
+                    return;
+                }
                 p.Browsers.AddBrowser(sp);
                 platforms.Add(p);
             }

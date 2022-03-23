@@ -83,6 +83,7 @@ namespace UnitTests {
             var ios145platform = availablePlatforms.GetPlatform<IOS145Platform>();
             var ios14platform = availablePlatforms.GetPlatform<IOS14Platform>();
             var ios15platform = availablePlatforms.GetPlatform<IOS15Platform>();
+            var ios152platform = availablePlatforms.GetPlatform<IOS152Platform>();
 
             var android12platform = availablePlatforms.GetPlatform<Android12Platform>();
             var android11platform = availablePlatforms.GetPlatform<Android11Platform>();
@@ -126,6 +127,7 @@ namespace UnitTests {
             ios145platform.ShouldNotBeNull();
             ios14platform.ShouldNotBeNull();
             ios15platform.ShouldNotBeNull();
+            ios152platform.ShouldNotBeNull();
 
             android12platform.ShouldNotBeNull();
             android11platform.ShouldNotBeNull();
@@ -169,6 +171,7 @@ namespace UnitTests {
             ios145platform.Count.ShouldBe(1);
             ios14platform.Count.ShouldBe(1);
             ios15platform.Count.ShouldBe(1);
+            ios152platform.Count.ShouldBe(1);
 
             android12platform.Count.ShouldBe(1);
             android11platform.Count.ShouldBe(1);
@@ -228,6 +231,7 @@ namespace UnitTests {
             ios145platform.ShouldBeAssignableTo(typeof(List<IOS145Platform>));
             ios14platform.ShouldBeAssignableTo(typeof(List<IOS14Platform>));
             ios15platform.ShouldBeAssignableTo(typeof(List<IOS15Platform>));
+            ios152platform.ShouldBeAssignableTo(typeof(List<IOS152Platform>));
 
             android12platform.ShouldBeAssignableTo(typeof(List<Android12Platform>));
             android11platform.ShouldBeAssignableTo(typeof(List<Android11Platform>));
