@@ -55,6 +55,8 @@ namespace Saucery.Tests
         {
             if (Enviro.SauceOnDemandBrowsers == null)
             {
+                //Not Unit Tests: Should only be executed once.
+                //Unit Tests: Will not be executed (as the BuiltInCompositor will set it).
                 var json = JsonConvert.SerializeObject(platforms);
                 Enviro.SetVar(SauceryConstants.SAUCE_ONDEMAND_BROWSERS, json);
             }
