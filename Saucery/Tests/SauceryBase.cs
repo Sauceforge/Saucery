@@ -1,11 +1,14 @@
-﻿using NUnit.Framework;
+﻿using Newtonsoft.Json;
+using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using OpenQA.Selenium;
 using Saucery.DataSources;
 using Saucery.Dojo;
 using Saucery.Driver;
+using Saucery.OnDemand;
 using Saucery.Util;
 using System;
+using System.Collections.Generic;
 
 namespace Saucery.Tests
 {
@@ -48,9 +51,13 @@ namespace Saucery.Tests
             }
         }
 
-        public static void SetRequestedPlatforms()
+        public static void SetRequestedPlatforms(List<SaucePlatform> platforms)
         {
-            //throw new NotImplementedException();
+            if (Enviro.SauceOnDemandBrowsers == null)
+            {
+                var json = JsonConvert.SerializeObject(platforms);
+                Enviro.SetVar(SauceryConstants.SAUCE_ONDEMAND_BROWSERS, json);
+            }
         }
     }
 }
