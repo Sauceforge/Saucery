@@ -43,7 +43,6 @@ namespace Merlin
             guineaPigPage.TypeField(Driver, "comments", data.ToString());
             // verify the page title is correct - this is actually checked as part of the constructor above.
             Driver.Title.ShouldContain("I am a page title - Sauce Labs");
-            Driver.FindElement(By.Id("comments")).Text.ShouldBeEquivalentTo(data);
         }
 
         [Test]
