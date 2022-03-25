@@ -42,7 +42,7 @@ namespace Saucery.OnDemand
                 case SauceryConstants.BROWSER_IE:
                     platform.PlatformType = PlatformType.IE;
                     break;
-                case SauceryConstants.BROWSER_EDGE:
+                case "microsoftedge":
                     platform.PlatformType = PlatformType.Edge;
                     break;
                 case SauceryConstants.BROWSER_SAFARI:

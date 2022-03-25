@@ -331,7 +331,7 @@ namespace Saucery.Dojo
                 case SauceryConstants.BROWSER_IE:
                     browserVersion.PlatformType = PlatformType.IE;
                     break;
-                case SauceryConstants.BROWSER_EDGE:
+                case "microsoftedge":
                     browserVersion.PlatformType = PlatformType.Edge;
                     break;
                 case SauceryConstants.BROWSER_SAFARI:

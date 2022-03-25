@@ -193,7 +193,7 @@
         public const string BROWSER_CHROME = "chrome";
         public const string BROWSER_FIREFOX = "firefox";
         public const string BROWSER_IE = "internet explorer";
-        public const string BROWSER_EDGE = "microsoftedge";
+        public const string BROWSER_EDGE = "MicrosoftEdge";
         public const string BROWSER_SAFARI = "safari";
 
     }
