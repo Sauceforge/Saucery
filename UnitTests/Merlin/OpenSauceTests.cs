@@ -14,11 +14,11 @@ namespace Merlin
             SetRequestedPlatforms(new List<SaucePlatform>
             {
                 //Desktop Platforms
-                new SaucePlatform("Windows 10", "chrome", "latest"),
+                new SaucePlatform("Windows 11", "chrome", "latest"),
                 new SaucePlatform("Windows 10", "chrome", "88"),
-                new SaucePlatform("Windows 10", "chrome", "75"),
-                new SaucePlatform("Windows 10", "firefox", "87"),
-                new SaucePlatform("Windows 10", "firefox", "86"),
+                new SaucePlatform("Windows 2012 R2", "chrome", "75"),
+                new SaucePlatform("Windows 2012", "firefox", "87"),
+                new SaucePlatform("Windows 2008", "firefox", "78"),
                 new SaucePlatform("Mac 10.15", "safari", "13"),
                 new SaucePlatform("Windows 10", "internet explorer", "11"),
                 new SaucePlatform("Windows 10", "microsoftedge", "99"),

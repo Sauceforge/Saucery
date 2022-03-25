@@ -175,9 +175,20 @@
         internal const string NOT_SUPPORTED_MESSAGE = "Browser version not supported by DriverOptions. Please see: https://wiki.saucelabs.com/display/DOCS/2018/03/27/Introducing+Selenium+WebDriver+W3C+Protocol+Beta.";
 
         //PLATFORMS
-        //internal const string PLATFORM_WINDOWS_11;
-        //internal const string PLATFORM_WINDOWS_10;
-        //internal const string PLATFORM_WINDOWS_11;
+        public const string PLATFORM_WINDOWS_11 = "Windows 11";
+        public const string PLATFORM_WINDOWS_10 = "Windows 10";
+        public const string PLATFORM_WINDOWS_81 = "Windows 8.1";
+        public const string PLATFORM_WINDOWS_8 = "Windows 8";
+        public const string PLATFORM_WINDOWS_7 = "Windows 7";
+        public const string PLATFORM_MAC_12 = "Mac 12";
+        public const string PLATFORM_MAC_11 = "Mac 11";
+        public const string PLATFORM_MAC_1015 = "Mac 10.15";
+        public const string PLATFORM_MAC_1014 = "Mac 10.14";
+        public const string PLATFORM_MAC_1013 = "Mac 10.13";
+        public const string PLATFORM_MAC_1012 = "Mac 10.12";
+        public const string PLATFORM_MAC_1011 = "Mac 10.11";
+        public const string PLATFORM_MAC_1010 = "Mac 10.10";
+
 
 
     }
