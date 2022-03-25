@@ -94,7 +94,6 @@
         //DEVICES
         internal const string LINUX = "Linux";
         internal const string APPLE_IOS = "Apple IOS";
-        internal const string IOS_PLATFORM = "iOS";
         internal const string ANDROID_PLATFORM = "ANDROID";
         internal const string ANDROID_DEVICE = "android";
         internal const string GOOGLE = "Google";
@@ -177,9 +176,9 @@
         //PLATFORMS
         public const string PLATFORM_WINDOWS_11 = "Windows 11";
         public const string PLATFORM_WINDOWS_10 = "Windows 10";
-        public const string PLATFORM_WINDOWS_81 = "Windows 8.1";
-        public const string PLATFORM_WINDOWS_8 = "Windows 8";
-        public const string PLATFORM_WINDOWS_7 = "Windows 7";
+        public const string PLATFORM_WINDOWS_81 = "Windows 2012 R2";
+        public const string PLATFORM_WINDOWS_8 = "Windows 2012";
+        public const string PLATFORM_WINDOWS_7 = "Windows 2008";
         public const string PLATFORM_MAC_12 = "Mac 12";
         public const string PLATFORM_MAC_11 = "Mac 11";
         public const string PLATFORM_MAC_1015 = "Mac 10.15";
@@ -188,8 +187,14 @@
         public const string PLATFORM_MAC_1012 = "Mac 10.12";
         public const string PLATFORM_MAC_1011 = "Mac 10.11";
         public const string PLATFORM_MAC_1010 = "Mac 10.10";
+        public const string PLATFORM_IOS = "iOS";
 
-
+        //BROWSERS
+        public const string BROWSER_CHROME = "chrome";
+        public const string BROWSER_FIREFOX = "firefox";
+        public const string BROWSER_IE = "internet explorer";
+        public const string BROWSER_EDGE = "MicrosoftEdge";
+        public const string BROWSER_SAFARI = "safari";
 
     }
 }

@@ -2,6 +2,7 @@
 using Saucery.Dojo;
 using Saucery.OnDemand;
 using Saucery.Options;
+using Saucery.Util;
 using Shouldly;
 using System.Collections;
 
@@ -55,25 +56,25 @@ namespace UnitTests {
         {
             get
             {
-                yield return new TestCaseData(new SaucePlatform("Windows 10", "chrome", "latest"));
-                yield return new TestCaseData(new SaucePlatform("Windows 10", "chrome", "99"));
-                yield return new TestCaseData(new SaucePlatform("Windows 10", "firefox", "78"));
-                yield return new TestCaseData(new SaucePlatform("Windows 10", "firefox", "98"));
-                yield return new TestCaseData(new SaucePlatform("Windows 10", "MicrosoftEdge", "79"));
-                yield return new TestCaseData(new SaucePlatform("Windows 10", "MicrosoftEdge", "99"));
-                yield return new TestCaseData(new SaucePlatform("Windows 10", "internet explorer", "11"));
-                yield return new TestCaseData(new SaucePlatform("Windows 11", "chrome", "99"));
-                yield return new TestCaseData(new SaucePlatform("Windows 2012 R2", "chrome", "99"));
-                yield return new TestCaseData(new SaucePlatform("Windows 2012", "chrome", "99"));
-                yield return new TestCaseData(new SaucePlatform("Windows 2008", "chrome", "99"));
-                yield return new TestCaseData(new SaucePlatform("Mac 12", "chrome", "99"));
-                yield return new TestCaseData(new SaucePlatform("Mac 11", "chrome", "99"));
-                yield return new TestCaseData(new SaucePlatform("Mac 10.15", "chrome", "99"));
-                yield return new TestCaseData(new SaucePlatform("Mac 10.14", "chrome", "99"));
-                yield return new TestCaseData(new SaucePlatform("Mac 10.13", "chrome", "99"));
-                yield return new TestCaseData(new SaucePlatform("Mac 10.12", "chrome", "99"));
-                yield return new TestCaseData(new SaucePlatform("Mac 10.11", "chrome", "99"));
-                yield return new TestCaseData(new SaucePlatform("Mac 10.10", "chrome", "87"));
+                yield return new TestCaseData(new SaucePlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_CHROME, "latest"));
+                yield return new TestCaseData(new SaucePlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_CHROME, "99"));
+                yield return new TestCaseData(new SaucePlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_FIREFOX, "78"));
+                yield return new TestCaseData(new SaucePlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_FIREFOX, "98"));
+                yield return new TestCaseData(new SaucePlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_EDGE, "79"));
+                yield return new TestCaseData(new SaucePlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_EDGE, "99"));
+                yield return new TestCaseData(new SaucePlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_IE, "11"));
+                yield return new TestCaseData(new SaucePlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "99"));
+                yield return new TestCaseData(new SaucePlatform(SauceryConstants.PLATFORM_WINDOWS_81, SauceryConstants.BROWSER_CHROME, "99"));
+                yield return new TestCaseData(new SaucePlatform(SauceryConstants.PLATFORM_WINDOWS_8, SauceryConstants.BROWSER_CHROME, "99"));
+                yield return new TestCaseData(new SaucePlatform(SauceryConstants.PLATFORM_WINDOWS_7, SauceryConstants.BROWSER_CHROME, "99"));
+                yield return new TestCaseData(new SaucePlatform(SauceryConstants.PLATFORM_MAC_12, SauceryConstants.BROWSER_CHROME, "99"));
+                yield return new TestCaseData(new SaucePlatform(SauceryConstants.PLATFORM_MAC_11, SauceryConstants.BROWSER_CHROME, "99"));
+                yield return new TestCaseData(new SaucePlatform(SauceryConstants.PLATFORM_MAC_1015, SauceryConstants.BROWSER_CHROME, "99"));
+                yield return new TestCaseData(new SaucePlatform(SauceryConstants.PLATFORM_MAC_1014, SauceryConstants.BROWSER_CHROME, "99"));
+                yield return new TestCaseData(new SaucePlatform(SauceryConstants.PLATFORM_MAC_1013, SauceryConstants.BROWSER_CHROME, "99"));
+                yield return new TestCaseData(new SaucePlatform(SauceryConstants.PLATFORM_MAC_1012, SauceryConstants.BROWSER_CHROME, "99"));
+                yield return new TestCaseData(new SaucePlatform(SauceryConstants.PLATFORM_MAC_1011, SauceryConstants.BROWSER_CHROME, "99"));
+                yield return new TestCaseData(new SaucePlatform(SauceryConstants.PLATFORM_MAC_1010, SauceryConstants.BROWSER_CHROME, "87"));
             }
         }
 
@@ -81,13 +82,13 @@ namespace UnitTests {
         {
             get
             {
-                yield return new TestCaseData(new SaucePlatform("Windows 10", "chrome", "9999"));
-                yield return new TestCaseData(new SaucePlatform("Windows 10", "chrome", "25"));
-                yield return new TestCaseData(new SaucePlatform("Windows 10", "firefox", "3"));
-                yield return new TestCaseData(new SaucePlatform("Windows 10", "firefox", "9999"));
-                yield return new TestCaseData(new SaucePlatform("Windows 10", "safari", "7"));
-                yield return new TestCaseData(new SaucePlatform("Windows 10", "internet explorer", "8"));
-                yield return new TestCaseData(new SaucePlatform("Windows 10", "internet explorer", "9999"));
+                yield return new TestCaseData(new SaucePlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_CHROME, "9999"));
+                yield return new TestCaseData(new SaucePlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_CHROME, "25"));
+                yield return new TestCaseData(new SaucePlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_FIREFOX, "3"));
+                yield return new TestCaseData(new SaucePlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_FIREFOX, "9999"));
+                yield return new TestCaseData(new SaucePlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_SAFARI, "7"));
+                yield return new TestCaseData(new SaucePlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_IE, "8"));
+                yield return new TestCaseData(new SaucePlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_IE, "9999"));
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using Saucery.Dojo.Platforms.Base;
 using Saucery.RestAPI;
+using Saucery.Util;
 using System.Collections.Generic;
 
 namespace Saucery.Dojo.Platforms.ConcreteProducts.Apple
@@ -11,7 +12,7 @@ namespace Saucery.Dojo.Platforms.ConcreteProducts.Apple
         public IOS15Platform(SupportedPlatform sp) : base(sp)
         {
             BrowserNames = new List<string>();
-            PlatformNameForOption = "iOS";
+            PlatformNameForOption = SauceryConstants.PLATFORM_IOS;
         }
     }
 }

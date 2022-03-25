@@ -37,11 +37,11 @@ namespace Saucery.Options
         {
             return BrowserVersion.BrowserName.ToLower() switch
             {
-                "firefox" => new FirefoxCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType),
-                "internet explorer" => new IECreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType),
+                SauceryConstants.BROWSER_FIREFOX => new FirefoxCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType),
+                SauceryConstants.BROWSER_IE => new IECreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType),
                 "microsoftedge" => new EdgeCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType),
-                "chrome" => new ChromeCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType),
-                "safari" => new SafariCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType),
+                SauceryConstants.BROWSER_CHROME => new ChromeCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType),
+                SauceryConstants.BROWSER_SAFARI => new SafariCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType),
                 _ => new ChromeCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType),
             };
         }

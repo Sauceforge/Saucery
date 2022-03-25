@@ -1,5 +1,6 @@
 ﻿using Saucery.Dojo.Browsers.Base;
 using Saucery.RestAPI;
+using Saucery.Util;
 
 namespace Saucery.Dojo.Browsers.ConcreteProducts.PC
 {
@@ -18,10 +19,10 @@ namespace Saucery.Dojo.Browsers.ConcreteProducts.PC
         {
             return sp.os switch
             {
-                "Windows 2008" => 11,
-                "Windows 2012" => 10,
-                "Windows 2012 R2" => 11,
-                "Windows 10" => 11,
+                SauceryConstants.PLATFORM_WINDOWS_10 => 11,
+                SauceryConstants.PLATFORM_WINDOWS_81 => 11,
+                SauceryConstants.PLATFORM_WINDOWS_8 => 10,
+                SauceryConstants.PLATFORM_WINDOWS_7 => 11,
                 _ => 0,
             };
         }
@@ -30,10 +31,10 @@ namespace Saucery.Dojo.Browsers.ConcreteProducts.PC
         {
             return sp.os switch
             {
-                "Windows 2008" => 10,
-                "Windows 2012" => 10,
-                "Windows 2012 R2" => 11,
-                "Windows 10" => 11,
+                SauceryConstants.PLATFORM_WINDOWS_10 => 11,
+                SauceryConstants.PLATFORM_WINDOWS_81 => 11,
+                SauceryConstants.PLATFORM_WINDOWS_8 => 10,
+                SauceryConstants.PLATFORM_WINDOWS_7 => 10,
                 _ => 0,
             };
         }

@@ -1,6 +1,7 @@
 ﻿using Saucery.Dojo.Browsers.Base;
 using Saucery.Dojo.Browsers.ConcreteProducts.PC;
 using Saucery.RestAPI;
+using Saucery.Util;
 
 namespace Saucery.Dojo.Browsers.ConcreteCreators.PC {
     internal class Windows8BrowserCreator : BrowserCreator
@@ -13,9 +14,9 @@ namespace Saucery.Dojo.Browsers.ConcreteCreators.PC {
         {
             return Platform.api_name switch
             {
-                "chrome" => new ChromeBrowser(Platform, platformNameForOption),
-                "firefox" => new FirefoxBrowser(Platform, platformNameForOption),
-                "internet explorer" => new IEBrowser(Platform, platformNameForOption),
+                SauceryConstants.BROWSER_CHROME => new ChromeBrowser(Platform, platformNameForOption),
+                SauceryConstants.BROWSER_FIREFOX => new FirefoxBrowser(Platform, platformNameForOption),
+                SauceryConstants.BROWSER_IE => new IEBrowser(Platform, platformNameForOption),
                 _ => null,
             };
         }
