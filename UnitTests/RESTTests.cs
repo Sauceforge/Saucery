@@ -40,7 +40,7 @@ namespace UnitTests {
         //[Ignore("Account has no minutes")]
         public void SupportedPlatformTest()
         {
-            //var windows10platforms = platforms.FindAll(w => w.os.Equals("Windows 10"));
+            //var windows10platforms = platforms.FindAll(w => w.os.Equals(SauceryConstants.PLATFORM_WINDOWS_10));
             //var windows10platformbrowsers = windows10platforms.GroupBy(w => w.api_name);
 
             var configurator = new PlatformConfigurator();

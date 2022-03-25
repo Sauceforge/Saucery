@@ -1,6 +1,7 @@
 ﻿using Saucery.Dojo.Browsers.Base;
 using Saucery.Dojo.Browsers.ConcreteProducts.PC;
 using Saucery.RestAPI;
+using Saucery.Util;
 
 namespace Saucery.Dojo.Browsers.ConcreteCreators.PC
 {
@@ -14,8 +15,8 @@ namespace Saucery.Dojo.Browsers.ConcreteCreators.PC
         {
             return Platform.api_name switch
             {
-                "chrome" => new ChromeBrowser(Platform, platformNameForOption),
-                "MicrosoftEdge" => new EdgeBrowser(Platform, platformNameForOption),
+                SauceryConstants.BROWSER_CHROME => new ChromeBrowser(Platform, platformNameForOption),
+                SauceryConstants.BROWSER_EDGE => new EdgeBrowser(Platform, platformNameForOption),
                 _ => null,
             };
         }

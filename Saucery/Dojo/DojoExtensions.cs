@@ -7,6 +7,7 @@ using Saucery.Dojo.Platforms.ConcreteProducts.Google;
 using Saucery.Dojo.Platforms.ConcreteProducts.PC;
 using Saucery.OnDemand;
 using Saucery.RestAPI;
+using Saucery.Util;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -118,44 +119,44 @@ namespace Saucery.Dojo
             PlatformBase platform = null;
             switch (sp.Os)
             {
-                case "Windows 11":
+                case SauceryConstants.PLATFORM_WINDOWS_11:
                     platform = platforms.GetPlatform<Windows11Platform>()[0];
                     break;
-                case "Windows 10":
+                case SauceryConstants.PLATFORM_WINDOWS_10:
                     platform = platforms.GetPlatform<Windows10Platform>()[0];
                     break;
-                case "Windows 2008":
-                    platform = platforms.GetPlatform<Windows7Platform>()[0];
-                    break;
-                case "Windows 2012":
-                    platform = platforms.GetPlatform<Windows8Platform>()[0];
-                    break;
-                case "Windows 2012 R2":
+                case SauceryConstants.PLATFORM_WINDOWS_81:
                     platform = platforms.GetPlatform<Windows81Platform>()[0];
                     break;
-                case "Mac 10.10":
-                    platform = platforms.GetPlatform<Mac1010Platform>()[0];
+                case SauceryConstants.PLATFORM_WINDOWS_8:
+                    platform = platforms.GetPlatform<Windows8Platform>()[0];
                     break;
-                case "Mac 10.11":
-                    platform = platforms.GetPlatform<Mac1011Platform>()[0];
+                case SauceryConstants.PLATFORM_WINDOWS_7:
+                    platform = platforms.GetPlatform<Windows7Platform>()[0];
                     break;
-                case "Mac 10.12":
-                    platform = platforms.GetPlatform<Mac1012Platform>()[0];
+                case SauceryConstants.PLATFORM_MAC_12:
+                    platform = platforms.GetPlatform<Mac12Platform>()[0];
                     break;
-                case "Mac 10.13":
-                    platform = platforms.GetPlatform<Mac1013Platform>()[0];
-                    break;
-                case "Mac 10.14":
-                    platform = platforms.GetPlatform<Mac1014Platform>()[0];
-                    break;
-                case "Mac 10.15":
-                    platform = platforms.GetPlatform<Mac1015Platform>()[0];
-                    break;
-                case "Mac 11":
+                case SauceryConstants.PLATFORM_MAC_11:
                     platform = platforms.GetPlatform<Mac11Platform>()[0];
                     break;
-                case "Mac 12":
-                    platform = platforms.GetPlatform<Mac12Platform>()[0];
+                case SauceryConstants.PLATFORM_MAC_1015:
+                    platform = platforms.GetPlatform<Mac1015Platform>()[0];
+                    break;
+                case SauceryConstants.PLATFORM_MAC_1014:
+                    platform = platforms.GetPlatform<Mac1014Platform>()[0];
+                    break;
+                case SauceryConstants.PLATFORM_MAC_1013:
+                    platform = platforms.GetPlatform<Mac1013Platform>()[0];
+                    break;
+                case SauceryConstants.PLATFORM_MAC_1012:
+                    platform = platforms.GetPlatform<Mac1012Platform>()[0];
+                    break;
+                case SauceryConstants.PLATFORM_MAC_1011:
+                    platform = platforms.GetPlatform<Mac1011Platform>()[0];
+                    break;
+                case SauceryConstants.PLATFORM_MAC_1010:
+                    platform = platforms.GetPlatform<Mac1010Platform>()[0];
                     break;
                 default:
                     break;
@@ -321,19 +322,19 @@ namespace Saucery.Dojo
             //Desktop
             switch (browserVersion.BrowserName.ToLower())
             {
-                case "chrome":
+                case SauceryConstants.BROWSER_CHROME:
                     browserVersion.PlatformType = PlatformType.Chrome;
                     break;
-                case "firefox":
+                case SauceryConstants.BROWSER_FIREFOX:
                     browserVersion.PlatformType = PlatformType.Firefox;
                     break;
-                case "internet explorer":
+                case SauceryConstants.BROWSER_IE:
                     browserVersion.PlatformType = PlatformType.IE;
                     break;
-                case "microsoftedge":
+                case SauceryConstants.BROWSER_EDGE:
                     browserVersion.PlatformType = PlatformType.Edge;
                     break;
-                case "safari":
+                case SauceryConstants.BROWSER_SAFARI:
                     browserVersion.PlatformType = PlatformType.Safari;
                     break;
                 default:

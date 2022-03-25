@@ -1,6 +1,7 @@
 ﻿using Saucery.Dojo.Platforms.Base;
 using Saucery.Dojo.Platforms.ConcreteCreators.PC;
 using Saucery.RestAPI;
+using Saucery.Util;
 
 namespace Saucery.Dojo.Platforms
 {
@@ -14,19 +15,19 @@ namespace Saucery.Dojo.Platforms
                 ? ApplePlatformFactory.CreatePlatform(sp)
                 : sp.os switch
             {
-                "Windows 2008" => new Windows7PlatformCreator(sp).Create(),
-                "Windows 2012" => new Windows8PlatformCreator(sp).Create(),
-                "Windows 2012 R2" => new Windows81PlatformCreator(sp).Create(),
-                "Windows 10" => new Windows10PlatformCreator(sp).Create(),
-                "Windows 11" => new Windows11PlatformCreator(sp).Create(),
-                "Mac 11" => new Mac11PlatformCreator(sp).Create(),
-                "Mac 12" => new Mac12PlatformCreator(sp).Create(),
-                "Mac 10.10" => new Mac1010PlatformCreator(sp).Create(),
-                "Mac 10.11" => new Mac1011PlatformCreator(sp).Create(),
-                "Mac 10.12" => new Mac1012PlatformCreator(sp).Create(),
-                "Mac 10.13" => new Mac1013PlatformCreator(sp).Create(),
-                "Mac 10.14" => new Mac1014PlatformCreator(sp).Create(),
-                "Mac 10.15" => new Mac1015PlatformCreator(sp).Create(),
+                SauceryConstants.PLATFORM_WINDOWS_11 => new Windows11PlatformCreator(sp).Create(),
+                SauceryConstants.PLATFORM_WINDOWS_10 => new Windows10PlatformCreator(sp).Create(),
+                SauceryConstants.PLATFORM_WINDOWS_81 => new Windows81PlatformCreator(sp).Create(),
+                SauceryConstants.PLATFORM_WINDOWS_8 => new Windows8PlatformCreator(sp).Create(),
+                SauceryConstants.PLATFORM_WINDOWS_7 => new Windows7PlatformCreator(sp).Create(),
+                SauceryConstants.PLATFORM_MAC_12 => new Mac12PlatformCreator(sp).Create(),
+                SauceryConstants.PLATFORM_MAC_11 => new Mac11PlatformCreator(sp).Create(),
+                SauceryConstants.PLATFORM_MAC_1015 => new Mac1015PlatformCreator(sp).Create(),
+                SauceryConstants.PLATFORM_MAC_1014 => new Mac1014PlatformCreator(sp).Create(),
+                SauceryConstants.PLATFORM_MAC_1013 => new Mac1013PlatformCreator(sp).Create(),
+                SauceryConstants.PLATFORM_MAC_1012 => new Mac1012PlatformCreator(sp).Create(),
+                SauceryConstants.PLATFORM_MAC_1011 => new Mac1011PlatformCreator(sp).Create(),
+                SauceryConstants.PLATFORM_MAC_1010 => new Mac1010PlatformCreator(sp).Create(),
                 _ => null
             };
         }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Saucery.Util;
+using System.Collections.Generic;
 
 namespace Saucery.OnDemand
 {
@@ -32,19 +33,19 @@ namespace Saucery.OnDemand
             //Desktop
             switch (platform.Browser.ToLower())
             {
-                case "chrome":
+                case SauceryConstants.BROWSER_CHROME:
                     platform.PlatformType = PlatformType.Chrome;
                     break;
-                case "firefox":
+                case SauceryConstants.BROWSER_FIREFOX:
                     platform.PlatformType = PlatformType.Firefox;
                     break;
-                case "internet explorer":
+                case SauceryConstants.BROWSER_IE:
                     platform.PlatformType = PlatformType.IE;
                     break;
-                case "microsoftedge":
+                case SauceryConstants.BROWSER_EDGE:
                     platform.PlatformType = PlatformType.Edge;
                     break;
-                case "safari":
+                case SauceryConstants.BROWSER_SAFARI:
                     platform.PlatformType = PlatformType.Safari;
                     break;
                 default:

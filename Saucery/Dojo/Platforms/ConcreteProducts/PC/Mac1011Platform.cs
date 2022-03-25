@@ -1,5 +1,6 @@
 ﻿using Saucery.Dojo.Platforms.Base;
 using Saucery.RestAPI;
+using Saucery.Util;
 using System.Collections.Generic;
 
 namespace Saucery.Dojo.Platforms.ConcreteProducts.PC
@@ -11,8 +12,8 @@ namespace Saucery.Dojo.Platforms.ConcreteProducts.PC
 
         public Mac1011Platform(SupportedPlatform sp) : base(sp)
         {
-            BrowserNames = new List<string> { "chrome", "firefox", "MicrosoftEdge" };
-            BrowsersWithLatestVersion = new List<string> { "chrome" };
+            BrowserNames = new List<string> { SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_FIREFOX, SauceryConstants.BROWSER_EDGE };
+            BrowsersWithLatestVersion = new List<string> { SauceryConstants.BROWSER_CHROME };
             PlatformNameForOption = "OS X 10.11";
         }
     }

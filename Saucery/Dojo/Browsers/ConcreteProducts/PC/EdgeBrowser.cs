@@ -1,5 +1,6 @@
 ﻿using Saucery.Dojo.Browsers.Base;
 using Saucery.RestAPI;
+using Saucery.Util;
 
 namespace Saucery.Dojo.Browsers.ConcreteProducts.PC
 {
@@ -18,8 +19,16 @@ namespace Saucery.Dojo.Browsers.ConcreteProducts.PC
         {
             return sp.os switch
             {
-                "Windows 10" or "Windows 11" or "Mac 12" or "Mac 11" or "Mac 10.15" or "Mac 10.14" or "Mac 10.13" or "Mac 10.12" => 99,
-                "Mac 10.11" or "Mac 10.10" => 81,
+                SauceryConstants.PLATFORM_WINDOWS_11 or
+                SauceryConstants.PLATFORM_WINDOWS_10 or
+                SauceryConstants.PLATFORM_MAC_12 or
+                SauceryConstants.PLATFORM_MAC_11 or
+                SauceryConstants.PLATFORM_MAC_1015 or
+                SauceryConstants.PLATFORM_MAC_1014 or
+                SauceryConstants.PLATFORM_MAC_1013 or
+                SauceryConstants.PLATFORM_MAC_1012 => 99,
+                SauceryConstants.PLATFORM_MAC_1011 or
+                SauceryConstants.PLATFORM_MAC_1010 => 81,
                 _ => 0,
             };
         }
