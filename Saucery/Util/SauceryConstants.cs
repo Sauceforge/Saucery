@@ -196,6 +196,31 @@
         public const string BROWSER_EDGE = "MicrosoftEdge";
         public const string BROWSER_SAFARI = "safari";
 
+        //SCREEN RESOLUTIONS
+        public const string SCREENRES_800_600 = "800x600";
+        public const string SCREENRES_1024_768 = "1024x768";
+        public const string SCREENRES_1152_720 = "1152x720";
+        public const string SCREENRES_1152_864 = "1152x864";
+        public const string SCREENRES_1152_900 = "1152x900";
+        public const string SCREENRES_1280_720 = "1280x720";
+        public const string SCREENRES_1280_768 = "1280x768";
+        public const string SCREENRES_1280_800 = "1280x800";
+        public const string SCREENRES_1280_960 = "1280x960";
+        public const string SCREENRES_1280_1024 = "1280x1024";
+        public const string SCREENRES_1376_1032 = "1376x1032";
+        public const string SCREENRES_1400_1050 = "1400x1050";
+        public const string SCREENRES_1440_900 = "1440x900";
+        public const string SCREENRES_1600_900 = "1600x900";
+        public const string SCREENRES_1600_1200 = "1600x1200";
+        public const string SCREENRES_1680_1050 = "1680x1050";
+        public const string SCREENRES_1920_1080 = "1920x1080";
+        public const string SCREENRES_1920_1200 = "1920x1200";
+        public const string SCREENRES_1920_1440 = "1920x1440";
+        public const string SCREENRES_2048_1152 = "2048x1152";
+        public const string SCREENRES_2048_1536 = "2048x1536";
+        public const string SCREENRES_2360_1770 = "2360x1770";
+        public const string SCREENRES_2560_1600 = "2560x1600";
+
     }
 }
 /*
