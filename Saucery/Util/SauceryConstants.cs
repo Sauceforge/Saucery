@@ -66,7 +66,6 @@
         public const string SAUCE_API_KEY = "SAUCE_API_KEY";
         internal const string SAUCE_ONDEMAND_BROWSERS = "SAUCE_ONDEMAND_BROWSERS";
         internal const string SAUCE_NATIVE_APP = "SAUCE_NATIVE_APP";
-        internal const string SAUCE_USE_CHROME_ON_ANDROID = "SAUCE_USE_CHROME_ON_ANDROID";
         internal const string JENKINS_BUILD_NUMBER = "JENKINS_BUILD_NUMBER";
         internal const string BAMBOO_BUILD_NUMBER = "SAUCE_BAMBOO_BUILDNUMBER";
         internal const string BUILD_NUMBER = "BUILD_BUILDNUMBER";
@@ -194,6 +193,7 @@
         public const string BROWSER_FIREFOX = "firefox";
         public const string BROWSER_IE = "internet explorer";
         public const string BROWSER_EDGE = "MicrosoftEdge";
+        public const string BROWSER_EDGE_LOWER = "microsoftedge";
         public const string BROWSER_SAFARI = "safari";
 
         //SCREEN RESOLUTIONS
@@ -220,7 +220,6 @@
         public const string SCREENRES_2048_1536 = "2048x1536";
         public const string SCREENRES_2360_1770 = "2360x1770";
         public const string SCREENRES_2560_1600 = "2560x1600";
-
     }
 }
 /*
