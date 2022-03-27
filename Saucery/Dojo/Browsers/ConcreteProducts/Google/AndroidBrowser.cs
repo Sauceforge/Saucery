@@ -5,7 +5,7 @@ namespace Saucery.Dojo.Browsers.ConcreteProducts.Google
 {
     internal class AndroidBrowser : BrowserBase
     {
-        public AndroidBrowser(SupportedPlatform sp, string platformNameForOption) : base(sp, platformNameForOption)
+        public AndroidBrowser(SupportedPlatform sp, string platformNameForOption) : base(sp, null, platformNameForOption)
         {
         }
 

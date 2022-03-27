@@ -2,6 +2,7 @@
 using Saucery.Dojo.Browsers.ConcreteProducts.PC;
 using Saucery.RestAPI;
 using Saucery.Util;
+using System.Collections.Generic;
 
 namespace Saucery.Dojo.Browsers.ConcreteCreators.PC 
 {
@@ -11,13 +12,13 @@ namespace Saucery.Dojo.Browsers.ConcreteCreators.PC
         {
         }
 
-        public override BrowserBase Create(string platformNameForOption)
+        public override BrowserBase Create(string platformNameForOption, List<string> screenResolutions)
         {
             return Platform.api_name switch
             {
-                SauceryConstants.BROWSER_CHROME => new ChromeBrowser(Platform, platformNameForOption),
-                SauceryConstants.BROWSER_FIREFOX => new FirefoxBrowser(Platform, platformNameForOption),
-                SauceryConstants.BROWSER_IE => new IEBrowser(Platform, platformNameForOption),
+                SauceryConstants.BROWSER_CHROME => new ChromeBrowser(Platform, screenResolutions, platformNameForOption),
+                SauceryConstants.BROWSER_FIREFOX => new FirefoxBrowser(Platform, screenResolutions, platformNameForOption),
+                SauceryConstants.BROWSER_IE => new IEBrowser(Platform, screenResolutions, platformNameForOption),
                 _ => null,
             };
         }

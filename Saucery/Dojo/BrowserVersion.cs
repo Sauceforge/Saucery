@@ -1,4 +1,5 @@
-﻿using Saucery.OnDemand;
+﻿using Saucery.Dojo.Browsers.Base;
+using Saucery.OnDemand;
 using Saucery.RestAPI;
 using System.Collections.Generic;
 
@@ -19,11 +20,13 @@ namespace Saucery.Dojo
         public string DeviceOrientation { get; set; }
 
         public PlatformType PlatformType { get; set; }
+        public List<string> ScreenResolutions { get; set; }
 
-        public BrowserVersion(SupportedPlatform sp, string platformNameForOption)
+        public BrowserVersion(SupportedPlatform sp, BrowserBase b)
         {
             Os = sp.os;
-            PlatformNameForOption = platformNameForOption;
+            PlatformNameForOption = b.PlatformNameForOption;
+            ScreenResolutions = b.ScreenResolutions;
             BrowserName = sp.api_name;
             Name = sp.latest_stable_version != string.Empty ? sp.latest_stable_version : sp.short_version;
             AutomationBackend = sp.automation_backend;

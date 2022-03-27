@@ -24,15 +24,15 @@ namespace Saucery.Dojo
                 p = PlatformFactory.CreatePlatform(sp);
                 if(p == null)
                 {
-                    //SauceLabs may have just added it to the platform configurator.  Don't fall over.
+                    //SauceLabs may have just added it to the platform configurator. Don't fall over.
                     return;
                 }
-                p.Browsers.AddBrowser(sp);
+                p.Browsers.AddBrowser(sp, p.ScreenResolutions);
                 platforms.Add(p);
             }
             else
             {
-                p.Browsers.AddBrowser(sp);
+                p.Browsers.AddBrowser(sp, p.ScreenResolutions);
             }
         }
 
@@ -69,13 +69,13 @@ namespace Saucery.Dojo
             return result;
         }
 
-        public static void AddBrowser(this List<BrowserBase> browsers, SupportedPlatform sp)
+        public static void AddBrowser(this List<BrowserBase> browsers, SupportedPlatform sp, List<string> screenResolutions)
         {
-            BrowserBase b = FindBrowser(browsers, sp);
+            BrowserBase b = browsers.FindBrowser(sp);
 
             if (b == null) {
                 //first one
-                b = BrowserFactory.CreateBrowser(sp);
+                b = BrowserFactory.CreateBrowser(sp, screenResolutions);
                 if (b != null) {
                     b.AddVersion(browsers, sp, false);
                 }
@@ -94,7 +94,7 @@ namespace Saucery.Dojo
                 //Browser found or created, now add version
                 if (b.IsSupportedVersion(sp) && b.FindVersion(sp) == null)
                 {
-                    var bv = new BrowserVersion(sp, b.PlatformNameForOption);
+                    var bv = new BrowserVersion(sp, b);
                     b.BrowserVersions.Add(bv);
                 }
             }
@@ -102,7 +102,7 @@ namespace Saucery.Dojo
             {
                 if (b.IsSupportedVersion(sp))
                 {
-                    var bv = new BrowserVersion(sp, b.PlatformNameForOption);
+                    var bv = new BrowserVersion(sp, b);
                     b.BrowserVersions.Add(bv);
                     browsers.Add(b);
                 }

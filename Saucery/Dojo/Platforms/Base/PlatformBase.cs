@@ -18,8 +18,6 @@ namespace Saucery.Dojo.Platforms.Base
         public List<string> BrowsersWithLatestVersion { get; set; }
 
         public List<BrowserBase> Browsers { get; set; }
-        
-        
 
         public PlatformBase(SupportedPlatform sp)
         {
@@ -34,10 +32,5 @@ namespace Saucery.Dojo.Platforms.Base
             }
             Browsers = new List<BrowserBase>();
         }
-
-        //public bool IsMobilePlatform()
-        //{
-        //    return RecommendedAppiumVersion != null && AutomationBackend.Equals("appium");
-        //}
     }
 }

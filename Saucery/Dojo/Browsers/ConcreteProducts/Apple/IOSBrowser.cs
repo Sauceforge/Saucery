@@ -1,11 +1,12 @@
 ﻿using Saucery.Dojo.Browsers.Base;
 using Saucery.RestAPI;
+using System.Collections.Generic;
 
 namespace Saucery.Dojo.Browsers.ConcreteProducts.Apple
 {
     internal class IOSBrowser : BrowserBase
     {
-        public IOSBrowser(SupportedPlatform sp, string platformNameForOption) : base(sp, platformNameForOption)
+        public IOSBrowser(SupportedPlatform sp, List<string> screenResolutions, string platformNameForOption) : base(sp, screenResolutions, platformNameForOption)
         {
         }
 
