@@ -9,7 +9,8 @@ using Saucery.Util;
 using Shouldly;
 using System.Collections.Generic;
 
-namespace UnitTests {
+namespace UnitTests
+{
     [TestFixture]
     public class RestTests {
         [Test]
