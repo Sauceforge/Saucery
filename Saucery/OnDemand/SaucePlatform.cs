@@ -13,6 +13,8 @@ namespace Saucery.OnDemand
         [JsonProperty(PropertyName = "browser-version")]
         public string BrowserVersion { get; set; }
 
+        public string ScreenResolution { get; set; }
+
         [JsonProperty(PropertyName = "long-name")]
         public string LongName { get; set; }
 
@@ -39,11 +41,12 @@ namespace Saucery.OnDemand
         //    //OnceOnlyMessages.OnDemand();
         //}
 
-        public SaucePlatform(string desktopPlatformName = "", string browser = "", string browserVersion = "", string platform = "", string longName = "",
+        public SaucePlatform(string desktopPlatformName = "", string browser = "", string browserVersion = "", string screenResolution = "", string platform = "", string longName = "",
             string longVersion = "", string url = "", string device = "", string appiumVersion = "", string deviceOrientation = "") {
             Os = Sanitiser.SanitisePlatformField(desktopPlatformName);
             Browser = Sanitiser.SanitisePlatformField(browser);
             BrowserVersion = Sanitiser.SanitisePlatformField(browserVersion);
+            ScreenResolution = Sanitiser.SanitisePlatformField(screenResolution);
             Platform = Sanitiser.SanitisePlatformField(platform);
             LongName = Sanitiser.SanitisePlatformField(longName);
             LongVersion = Sanitiser.SanitisePlatformField(longVersion);

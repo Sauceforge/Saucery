@@ -1,6 +1,7 @@
 ﻿using Saucery.Dojo.Browsers.Base;
 using Saucery.Dojo.Browsers.ConcreteProducts.Apple;
 using Saucery.RestAPI;
+using System.Collections.Generic;
 
 namespace Saucery.Dojo.Browsers.ConcreteCreators.Apple
 {
@@ -10,9 +11,9 @@ namespace Saucery.Dojo.Browsers.ConcreteCreators.Apple
         {
         }
 
-        public override BrowserBase Create(string platformNameForOption)
+        public override BrowserBase Create(string platformNameForOption, List<string> screenResolutions)
         {
-            return new IOSBrowser(Platform, platformNameForOption);
+            return new IOSBrowser(Platform, screenResolutions, platformNameForOption);
         }
     }
 }

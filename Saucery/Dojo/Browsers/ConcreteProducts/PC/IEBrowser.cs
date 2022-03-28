@@ -1,12 +1,13 @@
 ﻿using Saucery.Dojo.Browsers.Base;
 using Saucery.RestAPI;
 using Saucery.Util;
+using System.Collections.Generic;
 
 namespace Saucery.Dojo.Browsers.ConcreteProducts.PC
 {
     internal class IEBrowser : BrowserBase, IVersion
     {
-        public IEBrowser(SupportedPlatform sp, string platformNameForOption) : base(sp, platformNameForOption)
+        public IEBrowser(SupportedPlatform sp, List<string> screenResolutions, string platformNameForOption) : base(sp, screenResolutions, platformNameForOption)
         {
         }
 

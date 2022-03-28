@@ -12,9 +12,11 @@ namespace Saucery.Dojo.Browsers.Base
         public string DeviceName { get; set; }        
         public string PlatformVersion { get; set; }
         internal string RecommendedAppiumVersion { get; set; }
+        internal List<string> ScreenResolutions { get; set; }
         internal List<BrowserVersion> BrowserVersions { get; set; }
+        
 
-        public BrowserBase(SupportedPlatform sp, string platformNameForOption)
+        public BrowserBase(SupportedPlatform sp, List<string> screenResolutions, string platformNameForOption)
         {
             Os = sp.os;
             PlatformNameForOption = platformNameForOption;
@@ -27,6 +29,7 @@ namespace Saucery.Dojo.Browsers.Base
                 PlatformVersion = sp.short_version;
                 RecommendedAppiumVersion = sp.recommended_backend_version;
             }
+            ScreenResolutions = screenResolutions;
             BrowserVersions = new List<BrowserVersion>();
         }
 

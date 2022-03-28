@@ -1,4 +1,5 @@
 ﻿using Saucery.RestAPI;
+using System.Collections.Generic;
 
 namespace Saucery.Dojo.Browsers.Base
 {
@@ -11,6 +12,6 @@ namespace Saucery.Dojo.Browsers.Base
             Platform = sp;
         }
 
-        public abstract BrowserBase Create(string platformNameForOption);
+        public abstract BrowserBase Create(string platformNameForOption, List<string> screenResolutions);
     }
 }

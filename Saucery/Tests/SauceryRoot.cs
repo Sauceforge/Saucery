@@ -47,7 +47,7 @@ namespace Saucery.Tests
             // set up the desired options
             var factory = new OptionFactory(BrowserVersion);
             var opts = factory.CreateOptions(TestName);
-            InitialiseDriver(opts, 60);
+            InitialiseDriver(opts, 180);
         }
 
         public abstract void InitialiseDriver(DriverOptions opts, int waitSecs);

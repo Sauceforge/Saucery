@@ -24,15 +24,15 @@ namespace Saucery.Dojo
                 p = PlatformFactory.CreatePlatform(sp);
                 if(p == null)
                 {
-                    //SauceLabs may have just added it to the platform configurator.  Don't fall over.
+                    //SauceLabs may have just added it to the platform configurator. Don't fall over.
                     return;
                 }
-                p.Browsers.AddBrowser(sp);
+                p.Browsers.AddBrowser(sp, p.ScreenResolutions);
                 platforms.Add(p);
             }
             else
             {
-                p.Browsers.AddBrowser(sp);
+                p.Browsers.AddBrowser(sp, p.ScreenResolutions);
             }
         }
 
@@ -69,13 +69,13 @@ namespace Saucery.Dojo
             return result;
         }
 
-        public static void AddBrowser(this List<BrowserBase> browsers, SupportedPlatform sp)
+        public static void AddBrowser(this List<BrowserBase> browsers, SupportedPlatform sp, List<string> screenResolutions)
         {
-            BrowserBase b = FindBrowser(browsers, sp);
+            BrowserBase b = browsers.FindBrowser(sp);
 
             if (b == null) {
                 //first one
-                b = BrowserFactory.CreateBrowser(sp);
+                b = BrowserFactory.CreateBrowser(sp, screenResolutions);
                 if (b != null) {
                     b.AddVersion(browsers, sp, false);
                 }
@@ -94,7 +94,7 @@ namespace Saucery.Dojo
                 //Browser found or created, now add version
                 if (b.IsSupportedVersion(sp) && b.FindVersion(sp) == null)
                 {
-                    var bv = new BrowserVersion(sp, b.PlatformNameForOption);
+                    var bv = new BrowserVersion(sp, b);
                     b.BrowserVersions.Add(bv);
                 }
             }
@@ -102,7 +102,7 @@ namespace Saucery.Dojo
             {
                 if (b.IsSupportedVersion(sp))
                 {
-                    var bv = new BrowserVersion(sp, b.PlatformNameForOption);
+                    var bv = new BrowserVersion(sp, b);
                     b.BrowserVersions.Add(bv);
                     browsers.Add(b);
                 }
@@ -165,7 +165,11 @@ namespace Saucery.Dojo
             if (platform == null) { return null; }
             var browsers = platform.Browsers.Find(b=>b.Os.Equals(sp.Os) && b.Name.ToLower().Equals(sp.Browser.ToLower()));
             if (browsers == null) { return null; }
-            return browsers.BrowserVersions.Find(v => v.Os.Equals(sp.Os) && v.BrowserName.ToLower().Equals(sp.Browser.ToLower()) && v.Name.ToLower().Equals(sp.BrowserVersion.ToLower()));
+
+
+            return sp.ScreenResolution == string.Empty
+                ? browsers.BrowserVersions.Find(v => v.Os.Equals(sp.Os) && v.BrowserName.ToLower().Equals(sp.Browser.ToLower()) && v.Name.ToLower().Equals(sp.BrowserVersion.ToLower()))
+                : browsers.BrowserVersions.Find(v => v.Os.Equals(sp.Os) && v.BrowserName.ToLower().Equals(sp.Browser.ToLower()) && v.Name.ToLower().Equals(sp.BrowserVersion.ToLower()) && v.ScreenResolutions.Contains(sp.ScreenResolution));
         }
 
         public static BrowserVersion FindAndroidBrowser(this List<PlatformBase> platforms, SaucePlatform sp)
@@ -331,7 +335,7 @@ namespace Saucery.Dojo
                 case SauceryConstants.BROWSER_IE:
                     browserVersion.PlatformType = PlatformType.IE;
                     break;
-                case "microsoftedge":
+                case SauceryConstants.BROWSER_EDGE_LOWER:
                     browserVersion.PlatformType = PlatformType.Edge;
                     break;
                 case SauceryConstants.BROWSER_SAFARI:

@@ -24,7 +24,7 @@ namespace UnitTests {
             var validplatform = PlatformConfigurator.Validate(saucePlatform);
             validplatform.ShouldNotBeNull();
 
-            var factory = new OptionFactory(validplatform); //TODO: New way
+            var factory = new OptionFactory(validplatform);
             factory.ShouldNotBeNull();
         }
 
@@ -43,7 +43,7 @@ namespace UnitTests {
             var validplatform = PlatformConfigurator.Validate(saucePlatform);
             validplatform.ShouldNotBeNull();
 
-            var factory = new OptionFactory(validplatform); //TODO: New way
+            var factory = new OptionFactory(validplatform);
             factory.ShouldNotBeNull();
 
             var opts = factory.CreateOptions("DesktopOptionTest");
@@ -56,8 +56,8 @@ namespace UnitTests {
         {
             get
             {
-                yield return new TestCaseData(new SaucePlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_CHROME, "latest"));
-                yield return new TestCaseData(new SaucePlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_CHROME, "99"));
+                yield return new TestCaseData(new SaucePlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_CHROME, "latest", SauceryConstants.SCREENRES_1280_1024));
+                yield return new TestCaseData(new SaucePlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_CHROME, "99", SauceryConstants.SCREENRES_1280_1024));
                 yield return new TestCaseData(new SaucePlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_FIREFOX, "78"));
                 yield return new TestCaseData(new SaucePlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_FIREFOX, "98"));
                 yield return new TestCaseData(new SaucePlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_EDGE, "79"));
