@@ -57,16 +57,7 @@ namespace Saucery.Dojo
                 {
                     if (p.BrowsersWithLatestVersion != null && p.BrowsersWithLatestVersion.Contains(b.Name))
                     {
-                        b.BrowserVersions.Add(new BrowserVersion(b.Os,
-                                                                 version,
-                                                                 b.Name,
-                                                                 version,
-                                                                 b.PlatformVersion,
-                                                                 b.AutomationBackend,
-                                                                 b.DeviceName,
-                                                                 b.RecommendedAppiumVersion,
-                                                                 null,
-                                                                 null));
+                        b.BrowserVersions.Add(new BrowserVersion(b, version, version, null, null));
                     }
                 }
             }
@@ -100,10 +91,24 @@ namespace Saucery.Dojo
 
         internal List<BrowserVersion> Filter(List<SaucePlatform> platforms)
         {
-            return (from p in platforms
-                    let bv = Validate(p)
-                    where bv != null
-                    select bv).ToList();
+            var bvs = new List<BrowserVersion>();
+
+            foreach (var p in platforms)
+            {
+                var bv = Validate(p);
+                if (bv != null)
+                {
+                    bv.ScreenResolution = p.ScreenResolution;
+                    bvs.Add(bv);
+                }
+            }
+
+            return bvs;
+
+            //return (from p in platforms
+            //        let bv = Validate(p)
+            //        where bv != null
+            //        select bv).ToList();
         }
     }
 }

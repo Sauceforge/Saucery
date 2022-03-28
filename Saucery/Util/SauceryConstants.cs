@@ -33,8 +33,7 @@
         internal const string SAUCELABS_HUB = "http://ondemand.saucelabs.com:80/wd/hub";
 
         //CAPABILITIES
-        //internal const string RESOLUTION_CAPABILITY = "resolution";
-        //internal const string SCREENRESOLUTION_CAPABILITY = "screen-resolution";
+        internal const string SCREEN_RESOLUTION_CAPABILITY = "screenResolution";
         public const string LATEST_APPIUM_VERSION = "1.22.0";
         internal const string SAUCE_APPIUM_VERSION_CAPABILITY = "appiumVersion";
         internal const string SELENIUM_VERSION_CAPABILITY = "seleniumVersion";

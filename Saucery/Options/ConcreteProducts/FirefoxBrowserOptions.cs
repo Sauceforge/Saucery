@@ -19,7 +19,11 @@ namespace Saucery.Options.ConcreteProducts
                 PlatformName = browserVersion.Os,
                 BrowserVersion = browserVersion.Name
             };
-            //o.AddAdditionalCapability(SauceryConstants.SAUCE_OPTIONS_CAPABILITY, SauceOptions, true);
+
+            if (browserVersion.ScreenResolution != string.Empty)
+            {
+                SauceOptions.Add(SauceryConstants.SCREEN_RESOLUTION_CAPABILITY, browserVersion.ScreenResolution);
+            }
             o.AddAdditionalOption(SauceryConstants.SAUCE_OPTIONS_CAPABILITY, SauceOptions);
             Opts = o;
         }

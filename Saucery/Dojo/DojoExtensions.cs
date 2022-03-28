@@ -167,16 +167,9 @@ namespace Saucery.Dojo
             if (browsers == null) { return null; }
 
 
-            if(sp.ScreenResolution == string.Empty)
-            {
-                return browsers.BrowserVersions.Find(v => v.Os.Equals(sp.Os) && v.BrowserName.ToLower().Equals(sp.Browser.ToLower()) && v.Name.ToLower().Equals(sp.BrowserVersion.ToLower()));
-            } else
-            {
-                return browsers.BrowserVersions.Find(v => v.Os.Equals(sp.Os) && v.BrowserName.ToLower().Equals(sp.Browser.ToLower()) && v.Name.ToLower().Equals(sp.BrowserVersion.ToLower()) & v.ScreenResolutions.Contains(sp.ScreenResolution));
-            }
-
-
-            //return browsers.BrowserVersions.Find(v => v.Os.Equals(sp.Os) && v.BrowserName.ToLower().Equals(sp.Browser.ToLower()) && v.Name.ToLower().Equals(sp.BrowserVersion.ToLower()));
+            return sp.ScreenResolution == string.Empty
+                ? browsers.BrowserVersions.Find(v => v.Os.Equals(sp.Os) && v.BrowserName.ToLower().Equals(sp.Browser.ToLower()) && v.Name.ToLower().Equals(sp.BrowserVersion.ToLower()))
+                : browsers.BrowserVersions.Find(v => v.Os.Equals(sp.Os) && v.BrowserName.ToLower().Equals(sp.Browser.ToLower()) && v.Name.ToLower().Equals(sp.BrowserVersion.ToLower()) && v.ScreenResolutions.Contains(sp.ScreenResolution));
         }
 
         public static BrowserVersion FindAndroidBrowser(this List<PlatformBase> platforms, SaucePlatform sp)
