@@ -17,8 +17,6 @@ namespace Saucery.Dojo.Browsers.ConcreteProducts.Apple
 
         public override bool IsSupportedVersion(SupportedPlatform sp)
         {
-            //Don't want to add versions to Mobile Platforms
-            //return false;
             return true;
         }
     }
