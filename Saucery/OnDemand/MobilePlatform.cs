@@ -4,9 +4,9 @@ namespace Saucery.OnDemand
 {
     public class MobilePlatform : SaucePlatform
     {
-        public MobilePlatform(string desktopPlatformName, string browser = "", string browserVersion = "", string screenResolution = "", string platform = "", string longName = "",
-                              string longVersion = "", string url = "", string device = "", string appiumVersion = "", string deviceOrientation = "") 
-            : base (desktopPlatformName, browser, browserVersion, screenResolution, platform, longName, longVersion, url, device, appiumVersion, deviceOrientation)
+        public MobilePlatform(string desktopPlatformName, string browser = "", string browserVersion = "", string platform = "", string longName = "",
+                              string longVersion = "", string device = "", string appiumVersion = "", string deviceOrientation = "") 
+            : base (desktopPlatformName, browser, browserVersion, "", platform, longName, longVersion, device, appiumVersion, deviceOrientation)
         {
         }
     }

@@ -23,8 +23,8 @@ namespace Merlin
                 new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_EDGE, "99"),
 
                 //Mobile Platforms
-                new MobilePlatform(SauceryConstants.PLATFORM_LINUX, "Chrome", "89", "", "Android", "Google Pixel 6 Pro GoogleAPI Emulator", "12.0", "", "Android", "1.22.1", "portrait"),
-                new MobilePlatform(SauceryConstants.PLATFORM_IOS, "iphone", "", "", SauceryConstants.PLATFORM_MAC_11, "iPhone 13 Pro Max Simulator", "15.0", "", "iphone", "1.22.0", "portrait")
+                new MobilePlatform(SauceryConstants.PLATFORM_LINUX, "Chrome", "89", "Android", "Google Pixel 6 Pro GoogleAPI Emulator", "12.0", "Android", "1.22.1", "portrait"),
+                new MobilePlatform(SauceryConstants.PLATFORM_IOS, "iphone", "", SauceryConstants.PLATFORM_MAC_11, "iPhone 13 Pro Max Simulator", "15.0", "iphone", "1.22.0", "portrait")
             };
 
             SetPlatforms(platforms);
