@@ -89,7 +89,7 @@ namespace Saucery.Dojo
             return browserVersion;
         }
 
-        internal List<BrowserVersion> Filter(List<SaucePlatform> platforms)
+        public List<BrowserVersion> Filter(List<SaucePlatform> platforms)
         {
             var bvs = new List<BrowserVersion>();
 
@@ -104,12 +104,7 @@ namespace Saucery.Dojo
                 }
             }
 
-            return bvs;
-
-            //return (from p in platforms
-            //        let bv = Validate(p)
-            //        where bv != null
-            //        select bv).ToList();
+            return bvs.ClassifyAll();
         }
     }
 }

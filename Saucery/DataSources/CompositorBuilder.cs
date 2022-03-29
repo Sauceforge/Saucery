@@ -3,7 +3,7 @@ using Saucery.Util;
 
 namespace Saucery.DataSources
 {
-    internal class CompositorBuilder
+    public class CompositorBuilder
     {
         public static Compositor Build()
         {

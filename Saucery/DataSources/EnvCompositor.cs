@@ -6,7 +6,6 @@ namespace Saucery.DataSources
     {
         public override void Compose()
         {
-            throw new System.NotImplementedException();
         }
     }
 }

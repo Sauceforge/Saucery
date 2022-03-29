@@ -12,7 +12,7 @@ using System.Collections.Generic;
 
 namespace Saucery.Tests
 {
-    [TestFixtureSource(typeof(PlatformTestData))]
+    //[TestFixtureSource(typeof(PlatformTestData))]
     public class SauceryBase : SauceryRoot {
         protected SauceryRemoteWebDriver Driver;
 

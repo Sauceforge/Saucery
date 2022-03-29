@@ -7,16 +7,17 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace Saucery.DataSources
+//namespace Merlin
 {
-
-    public class PlatformTestData : IEnumerable {
+    public class SauceryTestData : IEnumerable {
         #region Attributes
         internal static List<SaucePlatform> Platforms { get; set; }
         internal static List<BrowserVersion> BrowserVersions { get; set; }
         internal static Compositor Compositor { get; set; }
         #endregion
         
-        static PlatformTestData()
+        static SauceryTestData()
+        //public PlatformTestData()
         {
             Compositor = CompositorBuilder.Build();
             Compositor.Compose();

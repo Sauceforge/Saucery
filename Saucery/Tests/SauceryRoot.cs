@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using NUnit.Framework;
 using OpenQA.Selenium;
+using Saucery.DataSources;
 using Saucery.Dojo;
 using Saucery.OnDemand;
 using Saucery.Options;
@@ -14,7 +15,8 @@ using System.Collections.Generic;
 
 namespace Saucery.Tests
 {
-    [TestFixture]
+    //[TestFixture]
+    
     //[Parallelizable(ParallelScope.All)]
     public abstract class SauceryRoot {
         protected string TestName;
