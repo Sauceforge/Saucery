@@ -1,31 +1,17 @@
-﻿using Newtonsoft.Json;
-using Saucery.DataSources.Base;
+﻿using Saucery.DataSources.Base;
 using Saucery.Dojo;
 using Saucery.OnDemand;
-using Saucery.Util;
 using System.Collections;
 using System.Collections.Generic;
 
 namespace Saucery.DataSources
-//namespace Merlin
 {
     public class SauceryTestData : IEnumerable {
         #region Attributes
-        internal static List<SaucePlatform> Platforms { get; set; }
-        internal static List<BrowserVersion> BrowserVersions { get; set; }
-        internal static Compositor Compositor { get; set; }
+        protected static List<SaucePlatform> Platforms { get; set; }
+        protected static List<BrowserVersion> BrowserVersions { get; set; }
+        protected static Compositor Compositor { get; set; }
         #endregion
-        
-        static SauceryTestData()
-        //public PlatformTestData()
-        {
-            Compositor = CompositorBuilder.Build();
-            Compositor.Compose();
-            Platforms = JsonConvert.DeserializeObject<List<SaucePlatform>>(Enviro.SauceOnDemandBrowsers);
-            Platforms.ClassifyAll();
-            BrowserVersions = new PlatformConfigurator().Filter(Platforms);
-            BrowserVersions.ClassifyAll();
-        }
 
         public IEnumerator GetEnumerator() {
             return BrowserVersions?.GetEnumerator();

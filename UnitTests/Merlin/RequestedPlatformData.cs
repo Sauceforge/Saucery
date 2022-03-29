@@ -1,28 +1,15 @@
-﻿using Newtonsoft.Json;
-using Saucery.DataSources;
-using Saucery.DataSources.Base;
+﻿using Saucery.DataSources;
 using Saucery.Dojo;
 using Saucery.OnDemand;
 using Saucery.Util;
-using System.Collections;
 using System.Collections.Generic;
 
-//namespace Saucery.DataSources
 namespace Merlin
 {
     public class RequestedPlatformData : SauceryTestData
     {
-        #region Attributes
-        internal static List<SaucePlatform> Platforms { get; set; }
-        internal static List<BrowserVersion> BrowserVersions { get; set; }
-        internal static Compositor Compositor { get; set; }
-        #endregion
-        
         static RequestedPlatformData()
-        //public PlatformTestData()
         {
-            //Compositor = CompositorBuilder.Build();
-            //Compositor.Compose();
             Platforms = new List<SaucePlatform>
             {
                 //Desktop Platforms
@@ -40,15 +27,8 @@ namespace Merlin
                 new SaucePlatform(SauceryConstants.PLATFORM_IOS, "iphone", "", "", SauceryConstants.PLATFORM_MAC_11, "iPhone 13 Pro Max Simulator", "15.0", "", "iphone", "1.22.0", "portrait")
             }.ClassifyAll();
 
-            //Platforms = JsonConvert.DeserializeObject<List<SaucePlatform>>(Enviro.SauceOnDemandBrowsers);
-            //Platforms.ClassifyAll();
             BrowserVersions = new PlatformConfigurator().Filter(Platforms);
-            //BrowserVersions.ClassifyAll();
         }
-
-        //public IEnumerator GetEnumerator() {
-        //    return BrowserVersions?.GetEnumerator();
-        //}
     }
 }
 /*

@@ -1,9 +1,7 @@
 ﻿using Merlin.PageObjects;
 using NUnit.Framework;
 using Saucery.Dojo;
-using Saucery.OnDemand;
 using Saucery.Tests;
-using Saucery.Util;
 using Shouldly;
 using System;
 
@@ -19,7 +17,6 @@ namespace Merlin
         [Test]
         [TestCase(5)]
         [TestCase(4)]
-        //[Ignore("Need OpenSauce")]
         public void DataDrivenTitleTest(int data) {
             Console.WriteLine(@"My data is: " + data);
             var guineaPigPage = new GuineaPigPage(Driver, "https://saucelabs.com/");
@@ -30,7 +27,6 @@ namespace Merlin
         }
 
         [Test]
-        //[Ignore("Need OpenSauce")]
         public void ClickLinkTest() {
             var guineaPigPage = new GuineaPigPage(Driver, "https://saucelabs.com/");
             
@@ -42,7 +38,6 @@ namespace Merlin
         }
 
         [Test]
-        //[Ignore("Need OpenSauce")]
         public void UserAgentTest() {
             var guineaPigPage = new GuineaPigPage(Driver, "https://saucelabs.com/");
 

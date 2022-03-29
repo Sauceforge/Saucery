@@ -1,26 +1,32 @@
-﻿using Newtonsoft.Json;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using OpenQA.Selenium;
-using Saucery.DataSources;
 using Saucery.Dojo;
 using Saucery.Driver;
 using Saucery.OnDemand;
+using Saucery.Options;
+using Saucery.RestAPI.FlowControl;
+using Saucery.RestAPI.RecommendedAppiumVersion;
+using Saucery.RestAPI.TestStatus;
 using Saucery.Util;
 using System;
-using System.Collections.Generic;
 
 namespace Saucery.Tests
 {
-    //[TestFixtureSource(typeof(PlatformTestData))]
-    public class SauceryBase : SauceryRoot {
+    public class SauceryBase { //: SauceryRoot {
         protected SauceryRemoteWebDriver Driver;
+        protected string TestName;
+        protected readonly BrowserVersion BrowserVersion;
+        protected static PlatformConfigurator PlatformConfigurator;
+        protected static SauceLabsStatusNotifier SauceLabsStatusNotifier;
+        internal static SauceLabsFlowController SauceLabsFlowController;
+        protected static SauceLabsAppiumRecommender SauceLabsAppiumRecommender;
 
-        public SauceryBase(BrowserVersion browserVersion) : base(browserVersion) {
-            
+        protected SauceryBase(BrowserVersion browserVersion) { //: base(browserVersion) {
+            BrowserVersion = browserVersion;
         }
 
-        public override void InitialiseDriver(DriverOptions opts, int waitSecs) {
+        public void InitialiseDriver(DriverOptions opts, int waitSecs) {
             SauceLabsFlowController.ControlFlow();
             try {
                 //Console.WriteLine("About to create Driver");
@@ -28,6 +34,20 @@ namespace Saucery.Tests
             } catch(Exception ex) {
                 Console.WriteLine(ex.Message);
             }
+        }
+
+        [SetUp]
+        public void Setup()
+        {
+            //Console.WriteLine("In Setup");
+            BrowserVersion.SetTestName(TestContext.CurrentContext.Test.Name);
+            TestName = BrowserVersion.TestName;
+
+            //DebugMessages.PrintPlatformDetails(platform);
+            // set up the desired options
+            var factory = new OptionFactory(BrowserVersion);
+            var opts = factory.CreateOptions(TestName);
+            InitialiseDriver(opts, 180);
         }
 
         [TearDown]
@@ -51,16 +71,16 @@ namespace Saucery.Tests
             }
         }
 
-        public static void SetRequestedPlatforms(List<SaucePlatform> platforms)
-        {
-            if (Enviro.SauceOnDemandBrowsers == null)
-            {
-                //Not Unit Tests: Should only be executed once.
-                //Unit Tests: Will not be executed (as the BuiltInCompositor will set it).
-                var json = JsonConvert.SerializeObject(platforms);
-                Enviro.SetVar(SauceryConstants.SAUCE_ONDEMAND_BROWSERS, json);
-            }
-        }
+        //public static void SetRequestedPlatforms(List<SaucePlatform> platforms)
+        //{
+        //    if (Enviro.SauceOnDemandBrowsers == null)
+        //    {
+        //        //Not Unit Tests: Should only be executed once.
+        //        //Unit Tests: Will not be executed (as the BuiltInCompositor will set it).
+        //        var json = JsonConvert.SerializeObject(platforms);
+        //        Enviro.SetVar(SauceryConstants.SAUCE_ONDEMAND_BROWSERS, json);
+        //    }
+        //}
     }
 }
 /*

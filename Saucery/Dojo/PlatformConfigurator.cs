@@ -3,6 +3,7 @@ using Saucery.OnDemand;
 using Saucery.RestAPI;
 using Saucery.RestAPI.SupportedPlatforms;
 using Saucery.Util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -85,7 +86,6 @@ namespace Saucery.Dojo
                     break;
             }
 
-            //Console.WriteLine("{0} of {1} platforms request are valid", valid.Count, requested.Count);
             return browserVersion;
         }
 
@@ -104,6 +104,7 @@ namespace Saucery.Dojo
                 }
             }
 
+            Console.WriteLine("{0} of {1} platforms request are valid", bvs.Count, platforms.Count);
             return bvs.ClassifyAll();
         }
     }
