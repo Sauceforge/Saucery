@@ -90,7 +90,6 @@
         internal const int SAUCELABS_FLOW_WAIT = 3000;
 
         //DEVICES
-        internal const string LINUX = "Linux";
         internal const string APPLE_IOS = "Apple IOS";
         internal const string ANDROID_PLATFORM = "ANDROID";
         internal const string ANDROID_DEVICE = "android";
@@ -187,6 +186,7 @@
         public const string PLATFORM_MAC_1011 = "Mac 10.11";
         public const string PLATFORM_MAC_1010 = "Mac 10.10";
         public const string PLATFORM_IOS = "iOS";
+        public const string PLATFORM_LINUX = "Linux";
 
         //BROWSERS
         public const string BROWSER_CHROME = "chrome";
@@ -220,6 +220,8 @@
         public const string SCREENRES_2048_1536 = "2048x1536";
         public const string SCREENRES_2360_1770 = "2360x1770";
         public const string SCREENRES_2560_1600 = "2560x1600";
+
+        
     }
 }
 /*

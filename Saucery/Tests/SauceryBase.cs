@@ -28,14 +28,13 @@ namespace Saucery.Tests
             SauceLabsFlowController = new SauceLabsFlowController();
         }
 
-            protected SauceryBase(BrowserVersion browserVersion) {
+        protected SauceryBase(BrowserVersion browserVersion) {
             BrowserVersion = browserVersion;
         }
 
         public void InitialiseDriver(DriverOptions opts, int waitSecs) {
             SauceLabsFlowController.ControlFlow();
             try {
-                //Console.WriteLine("About to create Driver");
                 Driver = new SauceryRemoteWebDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, waitSecs);
             } catch(Exception ex) {
                 Console.WriteLine(ex.Message);
@@ -45,7 +44,6 @@ namespace Saucery.Tests
         [SetUp]
         public void Setup()
         {
-            //Console.WriteLine("In Setup");
             BrowserVersion.SetTestName(TestContext.CurrentContext.Test.Name);
             TestName = BrowserVersion.TestName;
 

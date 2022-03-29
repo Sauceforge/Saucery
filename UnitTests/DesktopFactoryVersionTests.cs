@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using Saucery.Dojo;
 using Saucery.OnDemand;
+using Saucery.OnDemand.Base;
 using Saucery.Options;
 using Saucery.Util;
 using Shouldly;

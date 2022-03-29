@@ -1,5 +1,6 @@
 ﻿using Saucery.Dojo.Platforms.Base;
 using Saucery.OnDemand;
+using Saucery.OnDemand.Base;
 using Saucery.RestAPI;
 using Saucery.RestAPI.SupportedPlatforms;
 using Saucery.Util;

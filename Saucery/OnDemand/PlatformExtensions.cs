@@ -1,4 +1,5 @@
 ﻿using Saucery.Dojo;
+using Saucery.OnDemand.Base;
 using Saucery.Util;
 using System;
 using System.Text;
@@ -13,7 +14,7 @@ namespace Saucery.OnDemand
 
         public static bool IsAnAndroidDevice(this BrowserVersion browserVersion)
         {
-            return browserVersion.Os != null && browserVersion.Os.ToUpper().Contains(SauceryConstants.LINUX.ToUpper());
+            return browserVersion.Os != null && browserVersion.Os.ToUpper().Contains(SauceryConstants.PLATFORM_LINUX.ToUpper());
         }
 
         public static bool IsAnAppleDevice(this BrowserVersion browserVersion)
