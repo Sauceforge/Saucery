@@ -24,7 +24,7 @@ namespace Saucery.Tests
             SauceLabsFlowController.ControlFlow();
             try {
                 //Console.WriteLine("About to create Driver");
-                Driver = new SauceryRemoteWebDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts);
+                Driver = new SauceryRemoteWebDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, waitSecs);
             } catch(Exception ex) {
                 Console.WriteLine(ex.Message);
             }

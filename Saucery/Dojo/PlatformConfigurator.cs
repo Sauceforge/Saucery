@@ -99,6 +99,7 @@ namespace Saucery.Dojo
                 if (bv != null)
                 {
                     bv.ScreenResolution = p.ScreenResolution;
+                    bv.DeviceOrientation = p.DeviceOrientation;
                     bvs.Add(bv);
                 }
             }
