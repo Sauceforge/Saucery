@@ -24,7 +24,6 @@ namespace Saucery.Tests
 
         static SauceryBase()
         {
-            PlatformConfigurator = new PlatformConfigurator();
             SauceLabsStatusNotifier = new SauceLabsStatusNotifier();
             SauceLabsFlowController = new SauceLabsFlowController();
         }

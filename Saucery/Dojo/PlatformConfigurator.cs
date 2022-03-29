@@ -104,7 +104,7 @@ namespace Saucery.Dojo
                 }
             }
 
-            Console.WriteLine("{0} of {1} platforms request are valid", bvs.Count, platforms.Count);
+            Console.WriteLine(SauceryConstants.NUM_VALID_PLATFORMS, bvs.Count, platforms.Count);
             return bvs;
         }
     }
