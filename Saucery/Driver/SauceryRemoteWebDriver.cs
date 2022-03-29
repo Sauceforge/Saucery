@@ -6,7 +6,7 @@ namespace Saucery.Driver
 {
     public class SauceryRemoteWebDriver : RemoteWebDriver {
         public SauceryRemoteWebDriver(Uri remoteAddress, DriverOptions options)
-            : base(remoteAddress, options) {
+            : base(remoteAddress, options.ToCapabilities(), TimeSpan.FromSeconds(180)) {
         }
 
         public string GetSessionId() {
