@@ -6,6 +6,7 @@ using Saucery.Dojo.Platforms.ConcreteProducts.Apple;
 using Saucery.Dojo.Platforms.ConcreteProducts.Google;
 using Saucery.Dojo.Platforms.ConcreteProducts.PC;
 using Saucery.OnDemand;
+using Saucery.OnDemand.Base;
 using Saucery.RestAPI;
 using Saucery.Util;
 using System.Collections.Generic;

@@ -1,8 +1,10 @@
 ﻿using Saucery.Dojo.Platforms.Base;
 using Saucery.OnDemand;
+using Saucery.OnDemand.Base;
 using Saucery.RestAPI;
 using Saucery.RestAPI.SupportedPlatforms;
 using Saucery.Util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -85,11 +87,10 @@ namespace Saucery.Dojo
                     break;
             }
 
-            //Console.WriteLine("{0} of {1} platforms request are valid", valid.Count, requested.Count);
             return browserVersion;
         }
 
-        internal List<BrowserVersion> Filter(List<SaucePlatform> platforms)
+        public List<BrowserVersion> Filter(List<SaucePlatform> platforms)
         {
             var bvs = new List<BrowserVersion>();
 
@@ -104,12 +105,8 @@ namespace Saucery.Dojo
                 }
             }
 
+            Console.WriteLine(SauceryConstants.NUM_VALID_PLATFORMS, bvs.Count, platforms.Count);
             return bvs;
-
-            //return (from p in platforms
-            //        let bv = Validate(p)
-            //        where bv != null
-            //        select bv).ToList();
         }
     }
 }
