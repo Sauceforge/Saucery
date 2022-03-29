@@ -22,8 +22,8 @@ namespace Saucery.Options.ConcreteProducts
                 PlatformVersion = browserVersion.Name
             };
 
-            options.AddAdditionalAppiumOption("platformName", browserVersion.PlatformNameForOption);
-            options.AddAdditionalAppiumOption("browserName", SauceryConstants.SAFARI_BROWSER);
+            //options.AddAdditionalAppiumOption("platformName", browserVersion.PlatformNameForOption);
+            //options.AddAdditionalAppiumOption("browserName", SauceryConstants.SAFARI_BROWSER);
             
             SauceOptions.Add(SauceryConstants.SAUCE_APPIUM_VERSION_CAPABILITY, browserVersion.RecommendedAppiumVersion);
             options.AddAdditionalAppiumOption(SauceryConstants.SAUCE_OPTIONS_CAPABILITY, SauceOptions);
