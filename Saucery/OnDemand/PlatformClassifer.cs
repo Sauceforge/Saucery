@@ -1,7 +1,20 @@
-﻿namespace Saucery.OnDemand
+﻿using Saucery.OnDemand.Base;
+using Saucery.Util;
+using System.Collections.Generic;
+
+namespace Saucery.OnDemand
 {
     public static class PlatformClassifer
     {
+        public static List<SaucePlatform> ClassifyAll(this List<SaucePlatform> platforms)
+        {
+            foreach (var p in platforms)
+            {
+                p.Classify();
+            }
+            return platforms;
+        }
+        
         public static SaucePlatform Classify(this SaucePlatform platform)
         {
             if (platform.IsAnAndroidDevice())
@@ -21,19 +34,19 @@
             //Desktop
             switch (platform.Browser.ToLower())
             {
-                case "chrome":
+                case SauceryConstants.BROWSER_CHROME:
                     platform.PlatformType = PlatformType.Chrome;
                     break;
-                case "firefox":
+                case SauceryConstants.BROWSER_FIREFOX:
                     platform.PlatformType = PlatformType.Firefox;
                     break;
-                case "internet explorer":
+                case SauceryConstants.BROWSER_IE:
                     platform.PlatformType = PlatformType.IE;
                     break;
-                case "microsoftedge":
+                case SauceryConstants.BROWSER_EDGE_LOWER:
                     platform.PlatformType = PlatformType.Edge;
                     break;
-                case "safari":
+                case SauceryConstants.BROWSER_SAFARI:
                     platform.PlatformType = PlatformType.Safari;
                     break;
                 default:

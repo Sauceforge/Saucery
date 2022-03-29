@@ -1,29 +1,31 @@
-﻿using System;
+﻿using Merlin.PageObjects;
 using NUnit.Framework;
-using Saucery.OnDemand;
+using Saucery.Dojo;
 using Saucery.Tests;
-using Merlin.PageObjects;
 using Shouldly;
+using System;
 
-namespace Merlin {
+namespace Merlin
+{
+    [TestFixtureSource(typeof(RequestedPlatformData))]
     public class OpenSauceTests : SauceryBase {
-        public OpenSauceTests(SaucePlatform platform) : base(platform) {
+        
+        public OpenSauceTests(BrowserVersion browserVersion) : base(browserVersion) {
         }
 
         [Test]
         [TestCase(5)]
         [TestCase(4)]
-        //[Ignore("Need OpenSauce")]
         public void DataDrivenTitleTest(int data) {
             Console.WriteLine(@"My data is: " + data);
             var guineaPigPage = new GuineaPigPage(Driver, "https://saucelabs.com/");
 
+            guineaPigPage.TypeField(Driver, "comments", data.ToString());
             // verify the page title is correct - this is actually checked as part of the constructor above.
             Driver.Title.ShouldContain("I am a page title - Sauce Labs");
         }
 
         [Test]
-        //[Ignore("Need OpenSauce")]
         public void ClickLinkTest() {
             var guineaPigPage = new GuineaPigPage(Driver, "https://saucelabs.com/");
             
@@ -35,7 +37,6 @@ namespace Merlin {
         }
 
         [Test]
-        //[Ignore("Need OpenSauce")]
         public void UserAgentTest() {
             var guineaPigPage = new GuineaPigPage(Driver, "https://saucelabs.com/");
 

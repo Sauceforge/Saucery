@@ -1,4 +1,5 @@
 ﻿using OpenQA.Selenium;
+using Saucery.Dojo;
 using Saucery.OnDemand;
 using Saucery.Options.ConcreteCreators;
 using Saucery.Util;
@@ -7,83 +8,42 @@ namespace Saucery.Options
 {
     public class OptionFactory
     {
-        private SaucePlatform Platform { get; set; }
+        private BrowserVersion BrowserVersion { get; set; }
 
-        public OptionFactory(SaucePlatform platform)
+        public OptionFactory(BrowserVersion browserVersion)
         {
-            Platform = platform;
+            BrowserVersion = browserVersion;
         }
 
         public DriverOptions CreateOptions(string testName) {
-
-            //TODO: Determine platform type upfront with an enum attribute on the platform.
-
-            if (!Platform.IsAMobileDevice()) {
+            if (!BrowserVersion.IsAMobileDevice()) {
                 DebugMessages.PrintHaveDesktopPlatform();
                 return GetDesktopOptions(testName);
             }
             //Mobile Platform
-            if (Platform.PlatformType.Equals(OnDemand.PlatformType.Apple))
+            if (BrowserVersion.PlatformType.Equals(OnDemand.PlatformType.Apple))
             {
                 DebugMessages.PrintHaveApplePlatform();
-                return new AppiumIOSCreator().Create(Platform, testName).GetOpts(Platform.PlatformType);
+                return new AppiumIOSCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType);
             }
             else
             {
                 DebugMessages.PrintHaveAndroidPlatform();
-                return new AppiumAndroidCreator().Create(Platform, testName).GetOpts(Platform.PlatformType);
+                return new AppiumAndroidCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType);
             }
-            //return platform.CanUseAppium()
-            //    //Mobile Platform
-            //    ? platform.IsAnAppleDevice()
-            //        ? new AppiumIOSCreator().Create(platform, testName).GetOpts()
-            //        : new AppiumAndroidCreator().Create(platform, testName).GetOpts()
-            //    //Devolve to WebDriver    
-            //    : platform.IsAnAppleDevice()
-            //        ? new WebDriverIOSCreator().Create(platform, testName).GetCaps()
-            //        : new WebDriverAndroidCreator().Create(platform, testName).GetCaps();
         }
 
         private DriverOptions GetDesktopOptions(string testName)
         {
-            switch (Platform.Browser.ToLower())
+            return BrowserVersion.BrowserName.ToLower() switch
             {
-                case "firefox":
-                    return new FirefoxCreator().Create(Platform, testName).GetOpts(Platform.PlatformType);
-                case "internet explorer":
-                    return new IECreator().Create(Platform, testName).GetOpts(Platform.PlatformType);
-                case "microsoftedge":
-                    return new EdgeCreator().Create(Platform, testName).GetOpts(Platform.PlatformType);
-                case "chrome":
-                    return new ChromeCreator().Create(Platform, testName).GetOpts(Platform.PlatformType);
-                case "safari":
-                    return new SafariCreator().Create(Platform, testName).GetOpts(Platform.PlatformType);
-                default:
-                    return new ChromeCreator().Create(Platform, testName).GetOpts(Platform.PlatformType);
-            }
-        }
-
-        public bool IsSupportedPlatform()
-        {
-            if (Platform.PlatformType.Equals(OnDemand.PlatformType.Android) || Platform.PlatformType.Equals(OnDemand.PlatformType.Apple)) {
-                return true;
-            }
-
-            switch (Platform.Browser.ToLower())
-            {
-                case "firefox":
-                    return Platform.FirefoxVersionIsSupported();
-                case "internet explorer":
-                    return Platform.IEVersionIsSupported();
-                case "microsoftedge":
-                    return true;
-                case "chrome":
-                    return Platform.ChromeVersionIsSupported();
-                case "safari":
-                    return Platform.SafariVersionIsSupported();
-                default:
-                    return false;
-            }
+                SauceryConstants.BROWSER_FIREFOX => new FirefoxCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType),
+                SauceryConstants.BROWSER_IE => new IECreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType),
+                SauceryConstants.BROWSER_EDGE_LOWER => new EdgeCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType),
+                SauceryConstants.BROWSER_CHROME => new ChromeCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType),
+                SauceryConstants.BROWSER_SAFARI => new SafariCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType),
+                _ => new ChromeCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType),
+            };
         }
     }
 }

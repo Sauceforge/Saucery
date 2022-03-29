@@ -1,18 +1,29 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <IncludeBuildOutput>true</IncludeBuildOutput>
+    <!--<GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Capabilities\**" />
-    <EmbeddedResource Remove="Capabilities\**" />
-    <None Remove="Capabilities\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="init.ps1" />
-  </ItemGroup>
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+    <!--<PackageId>Saucery</PackageId>
+    <PackageVersion>4.0.0</PackageVersion>
+    <Authors>Andrew Gray</Authors>
+    <Company>SauceForge</Company>
+    <Copyright>Copyright Andrew Gray 2014-2022</Copyright>
+    <Description>Sourcery for SauceLabs - Unlocking SauceLabs capability</Description>
+    <PackageReleaseNotes>
+      ChangeLog:
+      v4.0.0
+      - Initial Release
+    </PackageReleaseNotes>
+    <PackageProjectUrl>https://github.com/Sauceforge/Saucery</PackageProjectUrl>
+    <PackageIconUrl>http://sauceforge.github.io/Images/SauceryNUnit3_New.png</PackageIconUrl>
+    <PackageIcon>SauceryNUnit.png</PackageIcon>
+    <PackageTags>nunit saucelabs test testing tdd framework assert</PackageTags>-->
+  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Appium.WebDriver" Version="5.0.0-beta01" />
@@ -20,10 +31,11 @@
     <PackageReference Include="DotNetSeleniumExtras.WaitHelpers" Version="3.11.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="NUnit" Version="3.13.2" />
+    <PackageReference Include="NUnit" Version="3.13.3" />
     <PackageReference Include="RestSharp" Version="107.3.0" />
     <PackageReference Include="Selenium.Support" Version="4.1.0" />
     <PackageReference Include="Selenium.WebDriver" Version="4.1.0" />
+    <None Include="Images\SauceryNUnit.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>

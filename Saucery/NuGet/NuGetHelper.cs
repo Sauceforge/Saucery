@@ -1,9 +1,7 @@
-﻿using System;
-using System.Linq;
-//using NuGet;
-using Saucery.Util;
+﻿//using NuGet;
 
-namespace Saucery.NuGet {
+namespace Saucery.NuGet
+{
     public class NuGetHelper {
         //public static string GetInstalledVersion() {
         //    var version = GetInstalledSemanticVersion();

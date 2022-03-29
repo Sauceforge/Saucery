@@ -1,24 +1,29 @@
-﻿using System;
+﻿using OpenQA.Selenium.Firefox;
+using Saucery.Dojo;
 using Saucery.Options.Base;
-using Saucery.OnDemand;
 using Saucery.Util;
-using OpenQA.Selenium.Firefox;
+using System;
 
-namespace Saucery.Options.ConcreteProducts {
+namespace Saucery.Options.ConcreteProducts
+{
     internal class FirefoxBrowserOptions : BaseOptions {
-        public FirefoxBrowserOptions(SaucePlatform platform, string testName) : base(testName)
+        public FirefoxBrowserOptions(BrowserVersion browserVersion, string testName) : base(testName)
         {
             Console.WriteLine(SauceryConstants.SETTING_UP, testName, SauceryConstants.DESKTOP_ON_WEBDRIVER);
-
-            DebugMessages.PrintDesktopOptionValues(platform);
-            
+            DebugMessages.PrintDesktopOptionValues(browserVersion);
             Console.WriteLine("Creating Firefox Options");
+            
             var o = new FirefoxOptions
             {
-                PlatformName = platform.Os,
-                BrowserVersion = platform.BrowserVersion
+                PlatformName = browserVersion.Os,
+                BrowserVersion = browserVersion.Name
             };
-            //o.AddAdditionalCapability(SauceryConstants.SAUCE_OPTIONS_CAPABILITY, SauceOptions, true);
+
+            if (!string.IsNullOrEmpty(browserVersion.ScreenResolution))
+            {
+                SauceOptions.Add(SauceryConstants.SCREEN_RESOLUTION_CAPABILITY, browserVersion.ScreenResolution);
+            }
+
             o.AddAdditionalOption(SauceryConstants.SAUCE_OPTIONS_CAPABILITY, SauceOptions);
             Opts = o;
         }

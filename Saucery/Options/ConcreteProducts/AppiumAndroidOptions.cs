@@ -1,5 +1,5 @@
 ﻿using OpenQA.Selenium.Appium;
-using Saucery.OnDemand;
+using Saucery.Dojo;
 using Saucery.Options.Base;
 using Saucery.Util;
 using System;
@@ -7,26 +7,25 @@ using System;
 namespace Saucery.Options.ConcreteProducts
 {
     internal class AppiumAndroidOptions : BaseOptions {
-        public AppiumAndroidOptions(SaucePlatform platform, string testName)
+        public AppiumAndroidOptions(BrowserVersion browserVersion, string testName)
             : base(testName)
         {
             Console.WriteLine(SauceryConstants.SETTING_UP, testName, SauceryConstants.ANDROID_ON_APPIUM);
-            var sanitisedLongVersion = platform.SanitisedLongVersion();
             AddSauceLabsOptions(Enviro.SauceNativeApp);
 
-            DebugMessages.PrintAndroidOptionValues(platform, sanitisedLongVersion);
+            DebugMessages.PrintAndroidOptionValues(browserVersion);
 
             Console.WriteLine("Creating Appium Options");
 
             var options = new AppiumOptions
             {
-                PlatformName = SauceryConstants.ANDROID,
+                PlatformName = browserVersion.PlatformNameForOption,
                 BrowserName = SauceryConstants.CHROME_BROWSER,
-                DeviceName = platform.LongName,
-                PlatformVersion = sanitisedLongVersion
+                DeviceName = browserVersion.DeviceName,
+                PlatformVersion = browserVersion.Name
             };
 
-            SauceOptions.Add(SauceryConstants.SAUCE_APPIUM_VERSION_CAPABILITY, platform.AppiumVersion);
+            SauceOptions.Add(SauceryConstants.SAUCE_APPIUM_VERSION_CAPABILITY, browserVersion.RecommendedAppiumVersion);
             options.AddAdditionalAppiumOption(SauceryConstants.SAUCE_OPTIONS_CAPABILITY, SauceOptions);
             Opts = options;
         }

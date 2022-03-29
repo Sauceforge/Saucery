@@ -1,11 +1,12 @@
-﻿using System;
-using OpenQA.Selenium;
+﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Remote;
+using System;
 
-namespace Saucery.Driver {
+namespace Saucery.Driver
+{
     public class SauceryRemoteWebDriver : RemoteWebDriver {
-        public SauceryRemoteWebDriver(Uri remoteAddress, DriverOptions options)
-            : base(remoteAddress, options) {
+        public SauceryRemoteWebDriver(Uri remoteAddress, DriverOptions options, int secs)
+            : base(remoteAddress, options.ToCapabilities(), TimeSpan.FromSeconds(secs)) {
         }
 
         public string GetSessionId() {

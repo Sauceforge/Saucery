@@ -1,13 +1,14 @@
-﻿using System;
+﻿using OpenQA.Selenium;
+using OpenQA.Selenium.Remote;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Remote;
 
 //TODO: Do extension methods attached to RemoteWebDriver extend to subclasses of RemoteWebDriver?
 
-namespace Saucery.Selenium {
+namespace Saucery.Selenium
+{
     internal static class SeleniumExtensions {
         /// <summary>
         /// Return whether jQuery is loaded in the current page

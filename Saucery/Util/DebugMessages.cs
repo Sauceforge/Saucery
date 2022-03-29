@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Saucery.Dojo;
 using Saucery.OnDemand;
-using Saucery.Options;
+using System;
 
-namespace Saucery.Util {
+namespace Saucery.Util
+{
     public class DebugMessages {
         //public static void PrintPlatformDetails(PlatformTestData platform) {
         //    if (UserChecker.ItIsMe())
@@ -53,37 +54,37 @@ namespace Saucery.Util {
             }
         }
 
-        public static void PrintDesktopOptionValues(SaucePlatform platform)
+        public static void PrintDesktopOptionValues(BrowserVersion browserVersion)
         {
             if (UserChecker.ItIsMe())
             {
-                Console.WriteLine("Desktop platform.Browser: {0}", platform.Browser);
-                Console.WriteLine("Desktop platform.Os: {0}", platform.Os);
-                Console.WriteLine("Desktop platform.BrowserVersion: {0}", platform.BrowserVersion);
+                Console.WriteLine("Desktop platform.Browser: {0}", browserVersion.BrowserName);
+                Console.WriteLine("Desktop platform.Os: {0}", browserVersion.Os);
+                Console.WriteLine("Desktop platform.BrowserVersion: {0}", browserVersion.Name);
             }
         }
 
-        public static void PrintiOSOptionValues(SaucePlatform platform)
+        public static void PrintiOSOptionValues(BrowserVersion browserVersion)
         {
             Console.WriteLine("{0}:{1}\n{2}:{3}\n{4}:{5}\n{6}:{7}\n{8}:{9}\n{10}:{11}",
-                              SauceryConstants.SAUCE_DEVICE_NAME_CAPABILITY, platform.Device,
-                              SauceryConstants.SAUCE_DEVICE_ORIENTATION_CAPABILITY, platform.DeviceOrientation,
-                              SauceryConstants.SAUCE_PLATFORM_VERSION_CAPABILITY, platform.BrowserVersion,
-                              SauceryConstants.SAUCE_PLATFORM_NAME_CAPABILITY, SauceryConstants.IOS_PLATFORM,
+                              SauceryConstants.SAUCE_DEVICE_NAME_CAPABILITY, browserVersion.DeviceName,
+                              SauceryConstants.SAUCE_DEVICE_ORIENTATION_CAPABILITY, browserVersion.DeviceOrientation,
+                              SauceryConstants.SAUCE_PLATFORM_VERSION_CAPABILITY, browserVersion.Name,
+                              SauceryConstants.SAUCE_PLATFORM_NAME_CAPABILITY, SauceryConstants.PLATFORM_IOS,
                               SauceryConstants.SAUCE_BROWSER_NAME_CAPABILITY, SauceryConstants.SAFARI_BROWSER,
                               //SauceOpsConstants.SAUCE_DEVICE_CAPABILITY, platform.Device
                               //SauceOpsConstants.SAUCE_DEVICE_CAPABILITY, platform.IsAnIPhone() ? SauceOpsConstants.IPHONE_DEVICE : SauceOpsConstants.IPAD_DEVICE
-                              SauceryConstants.SAUCE_DEVICE_CAPABILITY, platform.IsAnIPhone() ? SauceryConstants.IPHONE_SIMULATOR : SauceryConstants.IPAD_SIMULATOR
+                              SauceryConstants.SAUCE_DEVICE_CAPABILITY, browserVersion.IsAnIPhone() ? SauceryConstants.IPHONE_SIMULATOR : SauceryConstants.IPAD_SIMULATOR
                               );
         }
 
-        public static void PrintAndroidOptionValues(SaucePlatform platform, string sanitisedLongVersion)
+        public static void PrintAndroidOptionValues(BrowserVersion browserVersion)
         {
             Console.WriteLine("{0}:{1}\n{2}:{3}\n{4}:{5}\n{6}:{7}\n{8}:{9}",
-                              SauceryConstants.SAUCE_DEVICE_NAME_CAPABILITY, platform.LongName,
-                              SauceryConstants.SAUCE_DEVICE_ORIENTATION_CAPABILITY, platform.DeviceOrientation,
+                              SauceryConstants.SAUCE_DEVICE_NAME_CAPABILITY, browserVersion.DeviceName,
+                              SauceryConstants.SAUCE_DEVICE_ORIENTATION_CAPABILITY, browserVersion.DeviceOrientation,
                               SauceryConstants.SAUCE_BROWSER_NAME_CAPABILITY, SauceryConstants.CHROME_BROWSER,
-                              SauceryConstants.SAUCE_PLATFORM_VERSION_CAPABILITY, sanitisedLongVersion,
+                              SauceryConstants.SAUCE_PLATFORM_VERSION_CAPABILITY, browserVersion.Name,
                               SauceryConstants.SAUCE_PLATFORM_NAME_CAPABILITY, SauceryConstants.ANDROID);
         }
 

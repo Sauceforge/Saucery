@@ -3,6 +3,7 @@ using OpenQA.Selenium.Support.UI;
 using Saucery.Driver;
 using Saucery.PageObjects;
 using SeleniumExtras.PageObjects;
+using Shouldly;
 using System;
 
 namespace Merlin.PageObjects
@@ -11,7 +12,6 @@ namespace Merlin.PageObjects
         public GuineaPigPage(SauceryRemoteWebDriver driver, string urlRoot)
             : base(urlRoot + "test/guinea-pig", "GuineaPig", "I am a page title - Sauce Labs") {
             GetPage(driver);
-            CheckTitle(driver);
             PageFactory.InitElements(driver, this);
         }
 
@@ -29,9 +29,12 @@ namespace Merlin.PageObjects
             return driver.FindElement(By.Id("useragent")).Text;
         }
 
-        public GuineaPigPage TypeField(IWebElement field, string data) {
-            field.Clear();
-            field.SendKeys(data);
+        public GuineaPigPage TypeField(SauceryRemoteWebDriver driver, string fieldId, string data) {
+            var element = driver.FindElement(By.Id(fieldId));
+            element.Clear();
+            element.SendKeys(data);
+            var val = element.GetAttribute("value");
+            val.ShouldBeEquivalentTo(data);
             return this;
         }
     }

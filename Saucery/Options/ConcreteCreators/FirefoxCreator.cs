@@ -1,12 +1,12 @@
-﻿using Saucery.OnDemand;
+﻿using Saucery.Dojo;
 using Saucery.Options.Base;
 using Saucery.Options.ConcreteProducts;
 
 namespace Saucery.Options.ConcreteCreators
 {
     internal class FirefoxCreator : Creator {
-        public override BaseOptions Create(SaucePlatform platform, string testName) {
-            return new FirefoxBrowserOptions(platform, testName);
+        public override BaseOptions Create(BrowserVersion browserVersion, string testName) {
+            return new FirefoxBrowserOptions(browserVersion, testName);
         }
     }
 }

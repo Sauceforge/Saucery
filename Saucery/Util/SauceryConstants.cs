@@ -33,8 +33,7 @@
         internal const string SAUCELABS_HUB = "http://ondemand.saucelabs.com:80/wd/hub";
 
         //CAPABILITIES
-        //internal const string RESOLUTION_CAPABILITY = "resolution";
-        //internal const string SCREENRESOLUTION_CAPABILITY = "screen-resolution";
+        internal const string SCREEN_RESOLUTION_CAPABILITY = "screenResolution";
         public const string LATEST_APPIUM_VERSION = "1.22.0";
         internal const string SAUCE_APPIUM_VERSION_CAPABILITY = "appiumVersion";
         internal const string SELENIUM_VERSION_CAPABILITY = "seleniumVersion";
@@ -66,7 +65,6 @@
         public const string SAUCE_API_KEY = "SAUCE_API_KEY";
         internal const string SAUCE_ONDEMAND_BROWSERS = "SAUCE_ONDEMAND_BROWSERS";
         internal const string SAUCE_NATIVE_APP = "SAUCE_NATIVE_APP";
-        internal const string SAUCE_USE_CHROME_ON_ANDROID = "SAUCE_USE_CHROME_ON_ANDROID";
         internal const string JENKINS_BUILD_NUMBER = "JENKINS_BUILD_NUMBER";
         internal const string BAMBOO_BUILD_NUMBER = "SAUCE_BAMBOO_BUILDNUMBER";
         internal const string BUILD_NUMBER = "BUILD_BUILDNUMBER";
@@ -83,6 +81,7 @@
         internal const string ACCOUNT_CONCURRENCY_REQUEST = "users/{0}/concurrency";
         internal const string JOB_REQUEST = "{0}/jobs/{1}";
         internal const string RECOMMENDED_APPIUM_REQUEST = "info/platforms/appium";
+        internal const string SUPPORTED_PLATFORMS_REQUEST = "info/platforms/all";
         internal const string JSON_SEGMENT_CONTAINER = "{{{0}}}";
         internal const string NUGET_API = "https://packages.nuget.org/api/v2";
         internal const string NUGET_VERSION = "{0}.{1}.{2}";
@@ -91,9 +90,7 @@
         internal const int SAUCELABS_FLOW_WAIT = 3000;
 
         //DEVICES
-        internal const string LINUX = "Linux";
         internal const string APPLE_IOS = "Apple IOS";
-        internal const string IOS_PLATFORM = "iOS";
         internal const string ANDROID_PLATFORM = "ANDROID";
         internal const string ANDROID_DEVICE = "android";
         internal const string GOOGLE = "Google";
@@ -149,6 +146,7 @@
         internal const string ANDROID_ON_WEBDRIVER = "Android on WebDriver";
         internal const string IOS_ON_WEBDRIVER = "IOS on WebDriver";
         internal const string DESKTOP_ON_WEBDRIVER = "Desktop on WebDriver";
+        internal const string NUM_VALID_PLATFORMS = "{0} of {1} platforms request are valid";
 
         //TEST VISIBILITY
         internal const string VISIBILITY_KEY = "public";
@@ -159,18 +157,71 @@
         internal const string VISIBILITY_PRIVATE = "private";
 
         //OPTIONS BROWSER SUPPORT
+        internal const int MIN_SAFARI_SUPPORTED_VERSION = 8;
+        internal const int MIN_FIREFOX_SUPPORTED_VERSION = 78;
+        internal const int MIN_CHROME_SUPPORTED_VERSION = 75;
+        internal const int MIN_EDGE_SUPPORTED_VERSION = 79;
+        internal const int MIN_IE_SUPPORTED_VERSION = 9;
+
         internal const int MAX_SAFARI_SUPPORTED_VERSION = 15;
-        internal const int MAX_FIREFOX_SUPPORTED_VERSION = 96;
-        internal const int MAX_CHROME_SUPPORTED_VERSION = 97;
-        internal const int MAX_EDGE_SUPPORTED_VERSION = 97;
+        internal const int MAX_FIREFOX_SUPPORTED_VERSION = 98;
+        internal const int MAX_CHROME_SUPPORTED_VERSION = 99;
+        internal const int MAX_EDGE_SUPPORTED_VERSION = 99;
         internal const int MAX_IE_SUPPORTED_VERSION = 11;
 
-        internal const int MIN_SAFARI_SUPPORTED_VERSION = 8;
-        internal const int MIN_FIREFOX_SUPPORTED_VERSION = 4;
-        internal const int MIN_CHROME_SUPPORTED_VERSION = 26;
-        internal const int MIN_EDGE_SUPPORTED_VERSION = 13;
-        internal const int MIN_IE_SUPPORTED_VERSION = 9;
         internal const string NOT_SUPPORTED_MESSAGE = "Browser version not supported by DriverOptions. Please see: https://wiki.saucelabs.com/display/DOCS/2018/03/27/Introducing+Selenium+WebDriver+W3C+Protocol+Beta.";
+
+        //PLATFORMS
+        public const string PLATFORM_WINDOWS_11 = "Windows 11";
+        public const string PLATFORM_WINDOWS_10 = "Windows 10";
+        public const string PLATFORM_WINDOWS_81 = "Windows 2012 R2";
+        public const string PLATFORM_WINDOWS_8 = "Windows 2012";
+        public const string PLATFORM_WINDOWS_7 = "Windows 2008";
+        public const string PLATFORM_MAC_12 = "Mac 12";
+        public const string PLATFORM_MAC_11 = "Mac 11";
+        public const string PLATFORM_MAC_1015 = "Mac 10.15";
+        public const string PLATFORM_MAC_1014 = "Mac 10.14";
+        public const string PLATFORM_MAC_1013 = "Mac 10.13";
+        public const string PLATFORM_MAC_1012 = "Mac 10.12";
+        public const string PLATFORM_MAC_1011 = "Mac 10.11";
+        public const string PLATFORM_MAC_1010 = "Mac 10.10";
+        public const string PLATFORM_IOS = "iOS";
+        public const string PLATFORM_LINUX = "Linux";
+
+        //BROWSERS
+        public const string BROWSER_CHROME = "chrome";
+        public const string BROWSER_FIREFOX = "firefox";
+        public const string BROWSER_IE = "internet explorer";
+        public const string BROWSER_EDGE = "MicrosoftEdge";
+        public const string BROWSER_EDGE_LOWER = "microsoftedge";
+        public const string BROWSER_SAFARI = "safari";
+
+        //SCREEN RESOLUTIONS
+        public const string SCREENRES_800_600 = "800x600";
+        public const string SCREENRES_1024_768 = "1024x768";
+        public const string SCREENRES_1152_720 = "1152x720";
+        public const string SCREENRES_1152_864 = "1152x864";
+        public const string SCREENRES_1152_900 = "1152x900";
+        public const string SCREENRES_1280_720 = "1280x720";
+        public const string SCREENRES_1280_768 = "1280x768";
+        public const string SCREENRES_1280_800 = "1280x800";
+        public const string SCREENRES_1280_960 = "1280x960";
+        public const string SCREENRES_1280_1024 = "1280x1024";
+        public const string SCREENRES_1376_1032 = "1376x1032";
+        public const string SCREENRES_1400_1050 = "1400x1050";
+        public const string SCREENRES_1440_900 = "1440x900";
+        public const string SCREENRES_1600_900 = "1600x900";
+        public const string SCREENRES_1600_1200 = "1600x1200";
+        public const string SCREENRES_1680_1050 = "1680x1050";
+        public const string SCREENRES_1920_1080 = "1920x1080";
+        public const string SCREENRES_1920_1200 = "1920x1200";
+        public const string SCREENRES_1920_1440 = "1920x1440";
+        public const string SCREENRES_2048_1152 = "2048x1152";
+        public const string SCREENRES_2048_1536 = "2048x1536";
+        public const string SCREENRES_2360_1770 = "2360x1770";
+        public const string SCREENRES_2560_1600 = "2560x1600";
+
+        
     }
 }
 /*

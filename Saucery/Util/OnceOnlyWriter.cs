@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 namespace Saucery.Util
 {
     internal class OnceOnlyWriter {
-        private static readonly HashSet<string> WrittenMessages = new HashSet<string>();
+        private static readonly HashSet<string> WrittenMessages = new();
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void WriteLine(string message) {
@@ -14,11 +14,6 @@ namespace Saucery.Util
                 Console.Out.Flush();
                 WrittenMessages.Add(message);
             }
-        }
-
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        public static void WriteLine(string messageWithParams, object o1) {
-            WriteLine(string.Format(messageWithParams, o1));
         }
     }
 }

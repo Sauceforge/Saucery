@@ -1,6 +1,6 @@
 ﻿namespace Saucery.RestAPI.RecommendedAppiumVersion.Base
 {
-    public abstract class AppiumRecommender : RestBase {
+    public abstract class PlatformAcquirer : RestBase {
         public abstract string RecommendAppium();
     }
 }

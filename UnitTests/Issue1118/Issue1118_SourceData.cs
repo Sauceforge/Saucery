@@ -1,11 +1,12 @@
-﻿using System.Collections;
+﻿using Saucery.Util;
+using System.Collections;
 
 namespace UnitTests.Issue1118 {
     public class Issue1118_SourceData : IEnumerable {
         public IEnumerator GetEnumerator() {
-            yield return "Firefox";
-            yield return "Chrome";
-            yield return "Internet Explorer";
+            yield return SauceryConstants.BROWSER_FIREFOX;
+            yield return SauceryConstants.BROWSER_CHROME;
+            yield return SauceryConstants.BROWSER_IE;
         }
     }
 }

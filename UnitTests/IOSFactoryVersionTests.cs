@@ -1,38 +1,55 @@
 ﻿using NUnit.Framework;
+using Saucery.Dojo;
 using Saucery.OnDemand;
+using Saucery.OnDemand.Base;
 using Saucery.Options;
+using Saucery.Util;
 using Shouldly;
 using System.Collections;
 
 namespace UnitTests
 {
     [TestFixture]
-    [Order(5)]
     public class IOSFactoryVersionTests
     {
+        static PlatformConfigurator PlatformConfigurator { get; set; }
+
+        static IOSFactoryVersionTests()
+        {
+            PlatformConfigurator = new PlatformConfigurator();
+        }
+
         [Test, TestCaseSource(typeof(IOSDataClass), "SupportedTestCases")]
         public void IsSupportedPlatformTest(SaucePlatform saucePlatform)
         {
-            saucePlatform = PlatformClassifer.Classify(saucePlatform);
-            var factory = new OptionFactory(saucePlatform);
-            var result = factory.IsSupportedPlatform();
-            result.ShouldBeTrue();
+            saucePlatform.Classify();
+            var validPlatform = PlatformConfigurator.Validate(saucePlatform);
+            validPlatform.Classify();
+            validPlatform.ShouldNotBeNull();
+
+            var factory = new OptionFactory(validPlatform);
+            factory.ShouldNotBeNull();
         }
 
-        //[Test, TestCaseSource(typeof(AndroidDataClass), "NotSupportedTestCases")]
-        //public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform)
-        //{
-        //    saucePlatform = PlatformClassifer.Classify(saucePlatform);
-        //    var factory = new OptionFactory(saucePlatform);
-        //    var result = factory.IsSupportedPlatform();
-        //    result.ShouldBeFalse();
-        //}
+        [Test, TestCaseSource(typeof(IOSDataClass), "NotSupportedTestCases")]
+        public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform)
+        {
+            saucePlatform.Classify();
+            var validPlatform = PlatformConfigurator.Validate(saucePlatform);
+            validPlatform.ShouldBeNull();
+        }
 
         [Test, TestCaseSource(typeof(IOSDataClass), "SupportedTestCases")]
         public void AppiumIOSOptionTest(SaucePlatform saucePlatform)
         {
-            saucePlatform = PlatformClassifer.Classify(saucePlatform);
-            var factory = new OptionFactory(saucePlatform);
+            saucePlatform.Classify();
+            var validPlatform = PlatformConfigurator.Validate(saucePlatform);
+            validPlatform.Classify();
+            validPlatform.ShouldNotBeNull();
+
+            var factory = new OptionFactory(validPlatform);
+            factory.ShouldNotBeNull();
+            
             var opts = factory.CreateOptions("AppiumIOSOptionTest");
             opts.ShouldNotBeNull();
         }
@@ -43,16 +60,33 @@ namespace UnitTests
         {
             get
             {
-                yield return new SaucePlatform("", "", "latest", "", "iPhone XS Max Simulator", "13.0", "", "iPhone XS Max Simulator", "1.21.0", "portrait");
+                yield return new MobilePlatform(SauceryConstants.PLATFORM_IOS, "iphone", "", SauceryConstants.PLATFORM_MAC_1015, "iPhone XS Max Simulator", "13.0", "iphone", "1.21.0", "portrait");
+
+                yield return new MobilePlatform(SauceryConstants.PLATFORM_IOS, "iphone", "", SauceryConstants.PLATFORM_MAC_11, "iPhone XS Max Simulator", "15.0", "iphone", "1.22.0", "portrait");
+                yield return new MobilePlatform(SauceryConstants.PLATFORM_IOS, "iphone", "", SauceryConstants.PLATFORM_MAC_11, "iPhone XS Max Simulator", "14.5", "iphone", "1.21.0", "portrait");
+                yield return new MobilePlatform(SauceryConstants.PLATFORM_IOS, "iphone", "", SauceryConstants.PLATFORM_MAC_11, "iPhone XS Max Simulator", "14.4", "iphone", "1.21.0", "portrait");
+                yield return new MobilePlatform(SauceryConstants.PLATFORM_IOS, "iphone", "", SauceryConstants.PLATFORM_MAC_11, "iPhone XS Max Simulator", "14.3", "iphone", "1.21.0", "portrait");
+                yield return new MobilePlatform(SauceryConstants.PLATFORM_IOS, "iphone", "", SauceryConstants.PLATFORM_MAC_11, "iPhone XS Max Simulator", "14.0", "iphone", "1.21.0", "portrait");
+                yield return new MobilePlatform(SauceryConstants.PLATFORM_IOS, "iphone", "", SauceryConstants.PLATFORM_MAC_1015, "iPhone XS Max Simulator", "13.4", "iphone", "1.21.0", "portrait");
+                yield return new MobilePlatform(SauceryConstants.PLATFORM_IOS, "iphone", "", SauceryConstants.PLATFORM_MAC_1015, "iPhone XS Max Simulator", "13.2", "iphone", "1.21.0", "portrait");
+                yield return new MobilePlatform(SauceryConstants.PLATFORM_IOS, "iphone", "", SauceryConstants.PLATFORM_MAC_1015, "iPhone XS Max Simulator", "13.0", "iphone", "1.21.0", "portrait");
+                yield return new MobilePlatform(SauceryConstants.PLATFORM_IOS, "iphone", "", SauceryConstants.PLATFORM_MAC_1015, "iPhone XS Max Simulator", "12.4", "iphone", "1.21.0", "portrait");
+                yield return new MobilePlatform(SauceryConstants.PLATFORM_IOS, "iphone", "", SauceryConstants.PLATFORM_MAC_1014, "iPhone XS Max Simulator", "12.2", "iphone", "1.21.0", "portrait");
+                yield return new MobilePlatform(SauceryConstants.PLATFORM_IOS, "iphone", "", SauceryConstants.PLATFORM_MAC_1013, "iPhone XS Max Simulator", "12.0", "iphone", "1.9.1", "portrait");
+                yield return new MobilePlatform(SauceryConstants.PLATFORM_IOS, "iphone", "", SauceryConstants.PLATFORM_MAC_1013, "iPhone 5s Simulator", "11.3", "iphone", "1.9.1", "portrait");
+                yield return new MobilePlatform(SauceryConstants.PLATFORM_IOS, "iphone", "", SauceryConstants.PLATFORM_MAC_1012, "iPhone 5s Simulator", "11.2", "iphone", "1.9.1", "portrait");
+                yield return new MobilePlatform(SauceryConstants.PLATFORM_IOS, "iphone", "", SauceryConstants.PLATFORM_MAC_1012, "iPhone 5s Simulator", "11.1", "iphone", "1.9.1", "portrait");
+                yield return new MobilePlatform(SauceryConstants.PLATFORM_IOS, "iphone", "", SauceryConstants.PLATFORM_MAC_1012, "iPhone 5s Simulator", "11.0", "iphone", "1.9.1", "portrait");
+                yield return new MobilePlatform(SauceryConstants.PLATFORM_IOS, "iphone", "", SauceryConstants.PLATFORM_MAC_1012, "iPhone 5s Simulator", "10.3", "iphone", "1.9.1", "portrait");
             }
         }
 
-        //public static IEnumerable NotSupportedTestCases
-        //{
-        //    get
-        //    {
-        //        yield return new TestCaseData(new SaucePlatform("android", "android", "android", "10.0", "Google Pixel 3 GoogleAPI Emulator", "10.0.", "", "android", "landscape"));
-        //    }
-        //}
+        public static IEnumerable NotSupportedTestCases
+        {
+            get
+            {
+                yield return new MobilePlatform(SauceryConstants.PLATFORM_IOS, "", "999", SauceryConstants.PLATFORM_MAC_11, "NonExistent", "13.0", "NonExistent", "1.21.0", "portrait");
+            }
+        }
     }
 }
