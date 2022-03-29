@@ -1,5 +1,4 @@
 ﻿using Saucery.DataSources;
-using Saucery.Dojo;
 using Saucery.OnDemand;
 using Saucery.Util;
 using System.Collections.Generic;
@@ -10,7 +9,7 @@ namespace Merlin
     {
         static RequestedPlatformData()
         {
-            Platforms = new List<SaucePlatform>
+            var platforms = new List<SaucePlatform>
             {
                 //Desktop Platforms
                 new SaucePlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "99", SauceryConstants.SCREENRES_2560_1600),
@@ -25,10 +24,12 @@ namespace Merlin
                 //Mobile Platforms
                 new SaucePlatform("Linux", "Chrome", "89", "", "Android", "Google Pixel 6 Pro GoogleAPI Emulator", "12.0", "", "Android", "1.22.1", "portrait"),
                 new SaucePlatform(SauceryConstants.PLATFORM_IOS, "iphone", "", "", SauceryConstants.PLATFORM_MAC_11, "iPhone 13 Pro Max Simulator", "15.0", "", "iphone", "1.22.0", "portrait")
-            }.ClassifyAll();
+            };
 
-            BrowserVersions = new PlatformConfigurator().Filter(Platforms);
+            SetPlatforms(platforms);
         }
+
+        
     }
 }
 /*

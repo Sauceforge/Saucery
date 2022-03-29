@@ -1,5 +1,4 @@
-﻿using Saucery.DataSources.Base;
-using Saucery.Dojo;
+﻿using Saucery.Dojo;
 using Saucery.OnDemand;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,11 +9,16 @@ namespace Saucery.DataSources
         #region Attributes
         protected static List<SaucePlatform> Platforms { get; set; }
         protected static List<BrowserVersion> BrowserVersions { get; set; }
-        protected static Compositor Compositor { get; set; }
         #endregion
 
         public IEnumerator GetEnumerator() {
             return BrowserVersions?.GetEnumerator();
+        }
+
+        protected static void SetPlatforms(List<SaucePlatform> platforms)
+        {
+            Platforms = platforms.ClassifyAll();
+            BrowserVersions = new PlatformConfigurator().Filter(Platforms).ClassifyAll();
         }
     }
 }

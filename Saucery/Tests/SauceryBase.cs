@@ -13,16 +13,23 @@ using System;
 
 namespace Saucery.Tests
 {
-    public class SauceryBase { //: SauceryRoot {
-        protected SauceryRemoteWebDriver Driver;
+    public class SauceryBase {
         protected string TestName;
+        protected SauceryRemoteWebDriver Driver;
         protected readonly BrowserVersion BrowserVersion;
         protected static PlatformConfigurator PlatformConfigurator;
         protected static SauceLabsStatusNotifier SauceLabsStatusNotifier;
         internal static SauceLabsFlowController SauceLabsFlowController;
         protected static SauceLabsAppiumRecommender SauceLabsAppiumRecommender;
 
-        protected SauceryBase(BrowserVersion browserVersion) { //: base(browserVersion) {
+        static SauceryBase()
+        {
+            PlatformConfigurator = new PlatformConfigurator();
+            SauceLabsStatusNotifier = new SauceLabsStatusNotifier();
+            SauceLabsFlowController = new SauceLabsFlowController();
+        }
+
+            protected SauceryBase(BrowserVersion browserVersion) {
             BrowserVersion = browserVersion;
         }
 
@@ -70,17 +77,6 @@ namespace Saucery.Tests
                 Driver.Quit();
             }
         }
-
-        //public static void SetRequestedPlatforms(List<SaucePlatform> platforms)
-        //{
-        //    if (Enviro.SauceOnDemandBrowsers == null)
-        //    {
-        //        //Not Unit Tests: Should only be executed once.
-        //        //Unit Tests: Will not be executed (as the BuiltInCompositor will set it).
-        //        var json = JsonConvert.SerializeObject(platforms);
-        //        Enviro.SetVar(SauceryConstants.SAUCE_ONDEMAND_BROWSERS, json);
-        //    }
-        //}
     }
 }
 /*
