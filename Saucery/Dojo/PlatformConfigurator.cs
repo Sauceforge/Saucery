@@ -13,7 +13,6 @@ namespace Saucery.Dojo
     public class PlatformConfigurator
     {
         SauceLabsPlatformAcquirer PlatformAcquirer { get; set; }
-        
         public List<PlatformBase> AvailablePlatforms { get; set; }
 
         public PlatformConfigurator()
@@ -68,6 +67,7 @@ namespace Saucery.Dojo
         public BrowserVersion Validate(SaucePlatform requested)
         {
             BrowserVersion browserVersion = null;
+            requested.Classify();
             switch (requested.PlatformType)
             {
                 case PlatformType.Chrome:
