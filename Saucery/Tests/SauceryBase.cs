@@ -48,7 +48,7 @@ namespace Saucery.Tests
             // set up the desired options
             var factory = new OptionFactory(BrowserVersion);
             var opts = factory.CreateOptions(TestName);
-            InitialiseDriver(opts, 180);
+            InitialiseDriver(opts, 400);
         }
 
         [TearDown]
