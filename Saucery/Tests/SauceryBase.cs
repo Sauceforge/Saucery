@@ -19,8 +19,7 @@ namespace Saucery.Tests
         protected static SauceLabsStatusNotifier SauceLabsStatusNotifier;
         internal static SauceLabsFlowController SauceLabsFlowController;
 
-        static SauceryBase()
-        {
+        static SauceryBase() {
             SauceLabsStatusNotifier = new SauceLabsStatusNotifier();
             SauceLabsFlowController = new SauceLabsFlowController();
         }
@@ -39,8 +38,7 @@ namespace Saucery.Tests
         }
 
         [SetUp]
-        public void Setup()
-        {
+        public void Setup() {
             BrowserVersion.SetTestName(TestContext.CurrentContext.Test.Name);
             TestName = BrowserVersion.TestName;
 
@@ -53,20 +51,16 @@ namespace Saucery.Tests
 
         [TearDown]
         public void Cleanup() {
-            if(Driver != null) {
-                var passed = Equals(TestContext.CurrentContext.Result.Outcome, ResultState.Success);
-                // log the result to SauceLabs
-                SauceLabsStatusNotifier.NotifyStatus(Driver.GetSessionId(), passed);
-                PrintSessionDetails();
-                Driver.Quit();
-            }
-        }
-
-        public void PrintSessionDetails() {
             try {
-                var sessionId = Driver.GetSessionId();
-                Console.WriteLine(@"SauceOnDemandSessionID={0} job-name={1}", sessionId, TestName);
-            } catch(WebDriverException) {
+                if (Driver != null) {
+                    var passed = Equals(TestContext.CurrentContext.Result.Outcome, ResultState.Success);
+                    // log the result to SauceLabs
+                    var sessionId = Driver.GetSessionId();
+                    SauceLabsStatusNotifier.NotifyStatus(sessionId, passed);
+                    Console.WriteLine(@"SessionID={0} job-name={1}", sessionId, TestName);
+                    Driver.Quit();
+                }
+            } catch (WebDriverException) {
                 Console.WriteLine(@"Caught WebDriverException, quitting driver.");
                 Driver.Quit();
             }
