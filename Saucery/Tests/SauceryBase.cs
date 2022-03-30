@@ -6,7 +6,6 @@ using Saucery.Driver;
 using Saucery.OnDemand;
 using Saucery.Options;
 using Saucery.RestAPI.FlowControl;
-using Saucery.RestAPI.RecommendedAppiumVersion;
 using Saucery.RestAPI.TestStatus;
 using Saucery.Util;
 using System;
@@ -17,13 +16,10 @@ namespace Saucery.Tests
         protected string TestName;
         protected SauceryRemoteWebDriver Driver;
         protected readonly BrowserVersion BrowserVersion;
-        protected static PlatformConfigurator PlatformConfigurator;
         protected static SauceLabsStatusNotifier SauceLabsStatusNotifier;
         internal static SauceLabsFlowController SauceLabsFlowController;
-        protected static SauceLabsAppiumRecommender SauceLabsAppiumRecommender;
 
-        static SauceryBase()
-        {
+        static SauceryBase() {
             SauceLabsStatusNotifier = new SauceLabsStatusNotifier();
             SauceLabsFlowController = new SauceLabsFlowController();
         }
@@ -42,8 +38,7 @@ namespace Saucery.Tests
         }
 
         [SetUp]
-        public void Setup()
-        {
+        public void Setup() {
             BrowserVersion.SetTestName(TestContext.CurrentContext.Test.Name);
             TestName = BrowserVersion.TestName;
 
@@ -51,25 +46,21 @@ namespace Saucery.Tests
             // set up the desired options
             var factory = new OptionFactory(BrowserVersion);
             var opts = factory.CreateOptions(TestName);
-            InitialiseDriver(opts, 180);
+            InitialiseDriver(opts, 400);
         }
 
         [TearDown]
         public void Cleanup() {
-            if(Driver != null) {
-                var passed = Equals(TestContext.CurrentContext.Result.Outcome, ResultState.Success);
-                // log the result to SauceLabs
-                SauceLabsStatusNotifier.NotifyStatus(Driver.GetSessionId(), passed);
-                PrintSessionDetails();
-                Driver.Quit();
-            }
-        }
-
-        public void PrintSessionDetails() {
             try {
-                var sessionId = Driver.GetSessionId();
-                Console.WriteLine(@"SauceOnDemandSessionID={0} job-name={1}", sessionId, TestName);
-            } catch(WebDriverException) {
+                if (Driver != null) {
+                    var passed = Equals(TestContext.CurrentContext.Result.Outcome, ResultState.Success);
+                    // log the result to SauceLabs
+                    var sessionId = Driver.GetSessionId();
+                    SauceLabsStatusNotifier.NotifyStatus(sessionId, passed);
+                    Console.WriteLine(@"SessionID={0} job-name={1}", sessionId, TestName);
+                    Driver.Quit();
+                }
+            } catch (WebDriverException) {
                 Console.WriteLine(@"Caught WebDriverException, quitting driver.");
                 Driver.Quit();
             }
