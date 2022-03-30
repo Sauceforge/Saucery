@@ -6,7 +6,6 @@ using Saucery.Driver;
 using Saucery.OnDemand;
 using Saucery.Options;
 using Saucery.RestAPI.FlowControl;
-using Saucery.RestAPI.RecommendedAppiumVersion;
 using Saucery.RestAPI.TestStatus;
 using Saucery.Util;
 using System;
@@ -17,10 +16,8 @@ namespace Saucery.Tests
         protected string TestName;
         protected SauceryRemoteWebDriver Driver;
         protected readonly BrowserVersion BrowserVersion;
-        protected static PlatformConfigurator PlatformConfigurator;
         protected static SauceLabsStatusNotifier SauceLabsStatusNotifier;
         internal static SauceLabsFlowController SauceLabsFlowController;
-        protected static SauceLabsAppiumRecommender SauceLabsAppiumRecommender;
 
         static SauceryBase()
         {

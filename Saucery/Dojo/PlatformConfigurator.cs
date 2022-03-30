@@ -13,7 +13,6 @@ namespace Saucery.Dojo
     public class PlatformConfigurator
     {
         SauceLabsPlatformAcquirer PlatformAcquirer { get; set; }
-        
         public List<PlatformBase> AvailablePlatforms { get; set; }
 
         public PlatformConfigurator()
