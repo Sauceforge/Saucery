@@ -11,8 +11,12 @@ using Saucery.RestAPI.TestStatus;
 using Saucery.Util;
 using System;
 
+//[assembly: LevelOfParallelism(3)]
+
 namespace Saucery.Tests
 {
+    [Parallelizable(ParallelScope.All)]
+    [TestFixture]
     public class SauceryBase {
         protected string TestName;
         protected SauceryRemoteWebDriver Driver;

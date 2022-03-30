@@ -5,14 +5,13 @@ using Saucery.Tests;
 using Shouldly;
 using System;
 
-[assembly: LevelOfParallelism(3)]
+//[assembly: LevelOfParallelism(3)]
 
 namespace Merlin
 {
-    [Parallelizable(ParallelScope.All)]
+    //[Parallelizable(ParallelScope.All)]
     [TestFixtureSource(typeof(RequestedPlatformData))]
     public class OpenSauceTests : SauceryBase {
-        
         public OpenSauceTests(BrowserVersion browserVersion) : base(browserVersion) {
         }
 
