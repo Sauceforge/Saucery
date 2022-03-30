@@ -21,7 +21,6 @@ namespace UnitTests {
         [Test, TestCaseSource(typeof(DesktopDataClass), "SupportedTestCases")]
         public void IsSupportedPlatformTest(SaucePlatform saucePlatform)
         {
-            saucePlatform.Classify();
             var validplatform = PlatformConfigurator.Validate(saucePlatform);
             validplatform.ShouldNotBeNull();
 
@@ -32,7 +31,6 @@ namespace UnitTests {
         [Test, TestCaseSource(typeof(DesktopDataClass), "NotSupportedTestCases")]
         public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform)
         {
-            saucePlatform.Classify();
             var validplatform = PlatformConfigurator.Validate(saucePlatform);
             validplatform.ShouldBeNull();
         }
@@ -40,7 +38,6 @@ namespace UnitTests {
         [Test, TestCaseSource(typeof(DesktopDataClass), "SupportedTestCases")]
         public void DesktopOptionTest(SaucePlatform saucePlatform)
         {
-            saucePlatform.Classify();
             var validplatform = PlatformConfigurator.Validate(saucePlatform);
             validplatform.ShouldNotBeNull();
 

@@ -67,6 +67,7 @@ namespace Saucery.Dojo
         public BrowserVersion Validate(SaucePlatform requested)
         {
             BrowserVersion browserVersion = null;
+            requested.Classify();
             switch (requested.PlatformType)
             {
                 case PlatformType.Chrome:
