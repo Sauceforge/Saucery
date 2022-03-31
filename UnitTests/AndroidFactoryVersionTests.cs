@@ -18,17 +18,6 @@ namespace UnitTests
             PlatformConfigurator = new PlatformConfigurator();
         }
 
-        [Test, TestCaseSource(typeof(AndroidDataClass), "SupportedTestCases")]
-        public void IsSupportedPlatformTest(SaucePlatform saucePlatform)
-        {
-            var validPlatform = PlatformConfigurator.Validate(saucePlatform);
-            validPlatform.ShouldNotBeNull();
-
-            validPlatform.Classify();
-            var factory = new OptionFactory(validPlatform);
-            factory.ShouldNotBeNull();
-        }
-
         [Test, TestCaseSource(typeof(AndroidDataClass), "NotSupportedTestCases")]
         public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform)
         {

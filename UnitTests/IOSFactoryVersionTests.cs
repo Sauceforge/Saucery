@@ -19,17 +19,6 @@ namespace UnitTests
             PlatformConfigurator = new PlatformConfigurator();
         }
 
-        [Test, TestCaseSource(typeof(IOSDataClass), "SupportedTestCases")]
-        public void IsSupportedPlatformTest(SaucePlatform saucePlatform)
-        {
-            var validPlatform = PlatformConfigurator.Validate(saucePlatform);
-            validPlatform.ShouldNotBeNull();
-
-            validPlatform.Classify();
-            var factory = new OptionFactory(validPlatform);
-            factory.ShouldNotBeNull();
-        }
-
         [Test, TestCaseSource(typeof(IOSDataClass), "NotSupportedTestCases")]
         public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform)
         {
@@ -57,8 +46,6 @@ namespace UnitTests
         {
             get
             {
-                yield return new MobilePlatform(SauceryConstants.PLATFORM_IOS, "iphone", "", SauceryConstants.PLATFORM_MAC_1015, "iPhone XS Max Simulator", "13.0", "iphone", "1.21.0", "portrait");
-
                 yield return new MobilePlatform(SauceryConstants.PLATFORM_IOS, "iphone", "", SauceryConstants.PLATFORM_MAC_11, "iPhone XS Max Simulator", "15.0", "iphone", "1.22.0", "portrait");
                 yield return new MobilePlatform(SauceryConstants.PLATFORM_IOS, "iphone", "", SauceryConstants.PLATFORM_MAC_11, "iPhone XS Max Simulator", "14.5", "iphone", "1.21.0", "portrait");
                 yield return new MobilePlatform(SauceryConstants.PLATFORM_IOS, "iphone", "", SauceryConstants.PLATFORM_MAC_11, "iPhone XS Max Simulator", "14.4", "iphone", "1.21.0", "portrait");
