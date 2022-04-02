@@ -168,19 +168,19 @@ namespace UnitTests
             android51platform.Count.ShouldBe(1);
 
             //Browser Count Checks
-            windows11platform[0].Browsers.Count.ShouldBeEquivalentTo(windows11platform[0].BrowserNames.Count);
-            windows10platform[0].Browsers.Count.ShouldBeEquivalentTo(windows10platform[0].BrowserNames.Count);
-            windows81platform[0].Browsers.Count.ShouldBeEquivalentTo(windows81platform[0].BrowserNames.Count);
-            windows8platform[0].Browsers.Count.ShouldBeEquivalentTo(windows8platform[0].BrowserNames.Count);
-            windows7platform[0].Browsers.Count.ShouldBeEquivalentTo(windows7platform[0].BrowserNames.Count);
-            mac1010platform[0].Browsers.Count.ShouldBeEquivalentTo(mac1010platform[0].BrowserNames.Count);
-            mac1011platform[0].Browsers.Count.ShouldBeEquivalentTo(mac1011platform[0].BrowserNames.Count);
-            mac1012platform[0].Browsers.Count.ShouldBeEquivalentTo(mac1012platform[0].BrowserNames.Count);
-            mac1013platform[0].Browsers.Count.ShouldBeEquivalentTo(mac1013platform[0].BrowserNames.Count);
-            mac1014platform[0].Browsers.Count.ShouldBeEquivalentTo(mac1014platform[0].BrowserNames.Count);
-            mac1015platform[0].Browsers.Count.ShouldBeEquivalentTo(mac1015platform[0].BrowserNames.Count);
-            mac11platform[0].Browsers.Count.ShouldBeEquivalentTo(mac11platform[0].BrowserNames.Count);
-            mac12platform[0].Browsers.Count.ShouldBeEquivalentTo(mac12platform[0].BrowserNames.Count);
+            windows11platform[0].Browsers.Count.ShouldBeEquivalentTo(windows11platform[0].Selenium4BrowserNames.Count);
+            windows10platform[0].Browsers.Count.ShouldBeEquivalentTo(windows10platform[0].Selenium4BrowserNames.Count);
+            windows81platform[0].Browsers.Count.ShouldBeEquivalentTo(windows81platform[0].Selenium4BrowserNames.Count);
+            windows8platform[0].Browsers.Count.ShouldBeEquivalentTo(windows8platform[0].Selenium4BrowserNames.Count);
+            windows7platform[0].Browsers.Count.ShouldBeEquivalentTo(windows7platform[0].Selenium4BrowserNames.Count);
+            mac1010platform[0].Browsers.Count.ShouldBeEquivalentTo(mac1010platform[0].Selenium4BrowserNames.Count);
+            mac1011platform[0].Browsers.Count.ShouldBeEquivalentTo(mac1011platform[0].Selenium4BrowserNames.Count);
+            mac1012platform[0].Browsers.Count.ShouldBeEquivalentTo(mac1012platform[0].Selenium4BrowserNames.Count);
+            mac1013platform[0].Browsers.Count.ShouldBeEquivalentTo(mac1013platform[0].Selenium4BrowserNames.Count);
+            mac1014platform[0].Browsers.Count.ShouldBeEquivalentTo(mac1014platform[0].Selenium4BrowserNames.Count);
+            mac1015platform[0].Browsers.Count.ShouldBeEquivalentTo(mac1015platform[0].Selenium4BrowserNames.Count);
+            mac11platform[0].Browsers.Count.ShouldBeEquivalentTo(mac11platform[0].Selenium4BrowserNames.Count);
+            mac12platform[0].Browsers.Count.ShouldBeEquivalentTo(mac12platform[0].Selenium4BrowserNames.Count);
 
             //TypeOf Checks
             windows11platform.ShouldBeAssignableTo(typeof(List<Windows11Platform>));

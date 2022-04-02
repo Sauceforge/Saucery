@@ -11,7 +11,7 @@ namespace Saucery.Dojo.Platforms.ConcreteProducts.PC
 
         public Windows10Platform(SupportedPlatform sp) : base(sp)
         {
-            BrowserNames = new List<string> { SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_FIREFOX, SauceryConstants.BROWSER_EDGE, SauceryConstants.BROWSER_IE };
+            Selenium4BrowserNames = new List<string> { SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_FIREFOX, SauceryConstants.BROWSER_EDGE, SauceryConstants.BROWSER_IE };
             BrowsersWithLatestVersion = new List<string> { SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_FIREFOX, SauceryConstants.BROWSER_EDGE };
             PlatformNameForOption = "Windows 10";
             ScreenResolutions = new List<string> { SauceryConstants.SCREENRES_800_600,

@@ -10,7 +10,7 @@ namespace Saucery.Dojo.Platforms.ConcreteProducts.Google
 
         public Android12Platform(SupportedPlatform sp) : base(sp)
         {
-            BrowserNames = new List<string>();
+            Selenium4BrowserNames = new List<string>();
             PlatformNameForOption = "Android";
         }
     }
