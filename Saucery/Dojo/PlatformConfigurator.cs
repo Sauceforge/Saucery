@@ -115,7 +115,7 @@ namespace Saucery.Dojo
                     break;
             }
 
-            return browserVersion.Classify();
+            return browserVersion != null ? browserVersion.Classify() : browserVersion;
         }
     }
 }

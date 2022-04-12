@@ -304,16 +304,6 @@ namespace Saucery.Dojo
             return extant;
         }
 
-
-        public static List<BrowserVersion> ClassifyAll(this List<BrowserVersion> browserVersions)
-        {
-            foreach (var bv in browserVersions)
-            {
-                bv.Classify();
-            }
-            return browserVersions;
-        }
-
         public static BrowserVersion Classify(this BrowserVersion browserVersion)
         {
             if (browserVersion.IsAnAndroidDevice())
