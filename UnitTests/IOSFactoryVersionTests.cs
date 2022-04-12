@@ -22,17 +22,16 @@ namespace UnitTests
         [Test, TestCaseSource(typeof(IOSDataClass), "NotSupportedTestCases")]
         public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform)
         {
-            var validPlatform = PlatformConfigurator.Validate(saucePlatform);
+            var validPlatform = PlatformConfigurator.Filter(saucePlatform);
             validPlatform.ShouldBeNull();
         }
 
         [Test, TestCaseSource(typeof(IOSDataClass), "SupportedTestCases")]
         public void AppiumIOSOptionTest(SaucePlatform saucePlatform)
         {
-            var validPlatform = PlatformConfigurator.Validate(saucePlatform);
+            var validPlatform = PlatformConfigurator.Filter(saucePlatform);
             validPlatform.ShouldNotBeNull();
 
-            validPlatform.Classify();
             var factory = new OptionFactory(validPlatform);
             factory.ShouldNotBeNull();
             

@@ -14,7 +14,7 @@ namespace Saucery.DataSources
 
         protected static void SetPlatforms(List<SaucePlatform> platforms)
         {
-            BrowserVersions = new PlatformConfigurator().Filter(platforms).ClassifyAll();
+            BrowserVersions = new PlatformConfigurator().FilterAll(platforms);//.ClassifyAll();
         }
     }
 }

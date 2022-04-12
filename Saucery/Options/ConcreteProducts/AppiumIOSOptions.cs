@@ -23,6 +23,10 @@ namespace Saucery.Options.ConcreteProducts
             };
             
             SauceOptions.Add(SauceryConstants.SAUCE_APPIUM_VERSION_CAPABILITY, browserVersion.RecommendedAppiumVersion);
+            if (!string.IsNullOrEmpty(browserVersion.DeviceOrientation))
+            {
+                SauceOptions.Add(SauceryConstants.SAUCE_DEVICE_ORIENTATION_CAPABILITY, browserVersion.DeviceOrientation);
+            }
             options.AddAdditionalAppiumOption(SauceryConstants.SAUCE_OPTIONS_CAPABILITY, SauceOptions);
             Opts = options;
         }
