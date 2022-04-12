@@ -24,7 +24,8 @@ namespace Merlin
 
                 //Mobile Platforms
                 new MobilePlatform(SauceryConstants.PLATFORM_LINUX, "Chrome", "89", "Android", "Google Pixel 6 Pro GoogleAPI Emulator", "12.0", "Android", "1.22.1", "portrait"),
-                new MobilePlatform(SauceryConstants.PLATFORM_IOS, "iphone", "", SauceryConstants.PLATFORM_MAC_11, "iPhone 13 Pro Max Simulator", "15.0", "iphone", "1.22.0", "portrait")
+                //new MobilePlatform(SauceryConstants.PLATFORM_IOS, "iphone", "", SauceryConstants.PLATFORM_MAC_11, "iPhone 13 Pro Max Simulator", "15.4", "iphone", "1.22.3", "portrait")
+                new IOSPlatform(SauceryConstants.PLATFORM_IOS, "iPhone 13 Pro Max Simulator", "15.4", "portrait")
             };
 
             SetPlatforms(platforms);

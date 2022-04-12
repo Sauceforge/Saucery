@@ -10,6 +10,7 @@ namespace Saucery.Dojo.Platforms
         {
             return sp.short_version switch
             {
+                "15.4" => new IOS154PlatformCreator(sp).Create(),
                 "15.2" => new IOS152PlatformCreator(sp).Create(),
                 "15.0" => new IOS15PlatformCreator(sp).Create(),
                 "14.5" => new IOS145PlatformCreator(sp).Create(),
