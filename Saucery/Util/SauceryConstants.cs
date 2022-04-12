@@ -92,10 +92,12 @@
         //DEVICES
         internal const string APPLE_IOS = "Apple IOS";
         internal const string ANDROID_PLATFORM = "ANDROID";
-        internal const string ANDROID_DEVICE = "android";
         internal const string GOOGLE = "Google";
         internal const string LG = "LG";
         internal const string SAMSUNG = "Samsung";
+        internal const string GOOGLE_LOWER = "google";
+        internal const string SAMSUNG_LOWER = "samsung";
+        internal const string ANDROID_LOWER = "android";
         internal const string APPLE_IPHONE = "iphone";
         internal const string APPLE_IPAD = "ipad";
         internal const string ANDROID = "Android";
@@ -156,21 +158,6 @@
         internal const string VISIBILITY_TEAM = "team";
         internal const string VISIBILITY_PRIVATE = "private";
 
-        //OPTIONS BROWSER SUPPORT
-        internal const int MIN_SAFARI_SUPPORTED_VERSION = 8;
-        internal const int MIN_FIREFOX_SUPPORTED_VERSION = 78;
-        internal const int MIN_CHROME_SUPPORTED_VERSION = 75;
-        internal const int MIN_EDGE_SUPPORTED_VERSION = 79;
-        internal const int MIN_IE_SUPPORTED_VERSION = 9;
-
-        internal const int MAX_SAFARI_SUPPORTED_VERSION = 15;
-        internal const int MAX_FIREFOX_SUPPORTED_VERSION = 98;
-        internal const int MAX_CHROME_SUPPORTED_VERSION = 99;
-        internal const int MAX_EDGE_SUPPORTED_VERSION = 99;
-        internal const int MAX_IE_SUPPORTED_VERSION = 11;
-
-        internal const string NOT_SUPPORTED_MESSAGE = "Browser version not supported by DriverOptions. Please see: https://wiki.saucelabs.com/display/DOCS/2018/03/27/Introducing+Selenium+WebDriver+W3C+Protocol+Beta.";
-
         //PLATFORMS
         public const string PLATFORM_WINDOWS_11 = "Windows 11";
         public const string PLATFORM_WINDOWS_10 = "Windows 10";
@@ -221,7 +208,9 @@
         public const string SCREENRES_2360_1770 = "2360x1770";
         public const string SCREENRES_2560_1600 = "2560x1600";
 
-        
+        //DEVICEORIENTATIONS
+        public const string DEVICE_ORIENTATION_PORTRAIT = "portrait";
+        public const string DEVICE_ORIENTATION_LANDSCAPE = "landscape";
     }
 }
 /*

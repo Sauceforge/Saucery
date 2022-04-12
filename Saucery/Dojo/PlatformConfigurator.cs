@@ -64,6 +64,34 @@ namespace Saucery.Dojo
             }
         }
 
+        public List<BrowserVersion> FilterAll(List<SaucePlatform> platforms)
+        {
+            var bvs = new List<BrowserVersion>();
+
+            foreach (var p in platforms)
+            {
+                var bv = Filter(p);
+                if (bv != null)
+                {
+                    bvs.Add(bv);
+                }
+            }
+
+            Console.WriteLine(SauceryConstants.NUM_VALID_PLATFORMS, bvs.Count, platforms.Count);
+            return bvs;
+        }
+
+        public BrowserVersion Filter(SaucePlatform platform)
+        {
+            var bv = Validate(platform);
+            if (bv != null)
+            {
+                bv.ScreenResolution = platform.ScreenResolution;
+                bv.DeviceOrientation = platform.DeviceOrientation;
+            }
+            return bv;
+        }
+
         public BrowserVersion Validate(SaucePlatform requested)
         {
             BrowserVersion browserVersion = null;
@@ -87,26 +115,7 @@ namespace Saucery.Dojo
                     break;
             }
 
-            return browserVersion;
-        }
-
-        public List<BrowserVersion> Filter(List<SaucePlatform> platforms)
-        {
-            var bvs = new List<BrowserVersion>();
-
-            foreach (var p in platforms)
-            {
-                var bv = Validate(p);
-                if (bv != null)
-                {
-                    bv.ScreenResolution = p.ScreenResolution;
-                    bv.DeviceOrientation = p.DeviceOrientation;
-                    bvs.Add(bv);
-                }
-            }
-
-            Console.WriteLine(SauceryConstants.NUM_VALID_PLATFORMS, bvs.Count, platforms.Count);
-            return bvs;
+            return browserVersion != null ? browserVersion.Classify() : browserVersion;
         }
     }
 }

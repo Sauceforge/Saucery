@@ -227,6 +227,12 @@ namespace Saucery.Dojo
             var platformToSearchFor = string.Format("{0} {1}", sp.Os, sp.LongVersion);
             switch (platformToSearchFor)
             {
+                case "iOS 15.4":
+                    platform = platforms.GetPlatform<IOS154Platform>()[0];
+                    break;
+                case "iOS 15.2":
+                    platform = platforms.GetPlatform<IOS152Platform>()[0];
+                    break;
                 case "iOS 15.0":
                     platform = platforms.GetPlatform<IOS15Platform>()[0];
                     break;
@@ -296,16 +302,6 @@ namespace Saucery.Dojo
                 }
             }
             return extant;
-        }
-
-
-        public static List<BrowserVersion> ClassifyAll(this List<BrowserVersion> browserVersions)
-        {
-            foreach (var bv in browserVersions)
-            {
-                bv.Classify();
-            }
-            return browserVersions;
         }
 
         public static BrowserVersion Classify(this BrowserVersion browserVersion)
