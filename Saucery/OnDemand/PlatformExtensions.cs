@@ -38,11 +38,11 @@ namespace Saucery.OnDemand
         }
 
         public static bool IsAnIPhone(this SaucePlatform platform) {
-            return platform.Device != null && platform.Device.ToLower().Contains(SauceryConstants.APPLE_IPHONE);
+            return platform.LongName != null && platform.LongName.ToLower().Contains(SauceryConstants.APPLE_IPHONE);
         }
 
         public static bool IsAnIPad(this SaucePlatform platform) {
-            return platform.Device != null && platform.Device.ToLower().Contains(SauceryConstants.APPLE_IPAD);
+            return platform.LongName != null && platform.LongName.ToLower().Contains(SauceryConstants.APPLE_IPAD);
         }
 
         public static bool IsAnAndroidDevice(this SaucePlatform platform) {
