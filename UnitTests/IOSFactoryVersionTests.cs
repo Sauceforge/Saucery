@@ -46,22 +46,22 @@ namespace UnitTests
         {
             get
             {
-                yield return new IOSPlatform(SauceryConstants.PLATFORM_IOS, "iPhone XS Max Simulator", "15.0", "portrait");
-                yield return new IOSPlatform(SauceryConstants.PLATFORM_IOS, "iPhone XS Max Simulator", "14.5", "portrait");
-                yield return new IOSPlatform(SauceryConstants.PLATFORM_IOS, "iPhone XS Max Simulator", "14.4", "portrait");
-                yield return new IOSPlatform(SauceryConstants.PLATFORM_IOS, "iPhone XS Max Simulator", "14.3", "portrait");
-                yield return new IOSPlatform(SauceryConstants.PLATFORM_IOS, "iPhone XS Max Simulator", "14.0", "portrait");
-                yield return new IOSPlatform(SauceryConstants.PLATFORM_IOS, "iPhone XS Max Simulator", "13.4", "portrait");
-                yield return new IOSPlatform(SauceryConstants.PLATFORM_IOS, "iPhone XS Max Simulator", "13.2", "portrait");
-                yield return new IOSPlatform(SauceryConstants.PLATFORM_IOS, "iPhone XS Max Simulator", "13.0", "portrait");
-                yield return new IOSPlatform(SauceryConstants.PLATFORM_IOS, "iPhone XS Max Simulator", "12.4", "portrait");
-                yield return new IOSPlatform(SauceryConstants.PLATFORM_IOS, "iPhone XS Max Simulator", "12.2", "portrait");
-                yield return new IOSPlatform(SauceryConstants.PLATFORM_IOS, "iPhone XS Max Simulator", "12.0", "portrait");
-                yield return new IOSPlatform(SauceryConstants.PLATFORM_IOS, "iPhone 5s Simulator", "11.3", "portrait");
-                yield return new IOSPlatform(SauceryConstants.PLATFORM_IOS, "iPhone 5s Simulator", "11.2", "portrait");
-                yield return new IOSPlatform(SauceryConstants.PLATFORM_IOS, "iPhone 5s Simulator", "11.1", "portrait");
-                yield return new IOSPlatform(SauceryConstants.PLATFORM_IOS, "iPhone 5s Simulator", "11.0", "portrait");
-                yield return new IOSPlatform(SauceryConstants.PLATFORM_IOS, "iPhone 5s Simulator", "10.3", "portrait");
+                yield return new IOSPlatform("iPhone XS Max Simulator", "15.0", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
+                yield return new IOSPlatform("iPhone XS Max Simulator", "14.5", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
+                yield return new IOSPlatform("iPhone XS Max Simulator", "14.4", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
+                yield return new IOSPlatform("iPhone XS Max Simulator", "14.3", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
+                yield return new IOSPlatform("iPhone XS Max Simulator", "14.0", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
+                yield return new IOSPlatform("iPhone XS Max Simulator", "13.4", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
+                yield return new IOSPlatform("iPhone XS Max Simulator", "13.2", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
+                yield return new IOSPlatform("iPhone XS Max Simulator", "13.0", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
+                yield return new IOSPlatform("iPhone XS Max Simulator", "12.4", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
+                yield return new IOSPlatform("iPhone XS Max Simulator", "12.2", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
+                yield return new IOSPlatform("iPhone XS Max Simulator", "12.0", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
+                yield return new IOSPlatform("iPhone 5s Simulator", "11.3", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
+                yield return new IOSPlatform("iPhone 5s Simulator", "11.2", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
+                yield return new IOSPlatform("iPhone 5s Simulator", "11.1", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
+                yield return new IOSPlatform("iPhone 5s Simulator", "11.0", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
+                yield return new IOSPlatform("iPhone 5s Simulator", "10.3", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
             }
         }
 
@@ -69,7 +69,7 @@ namespace UnitTests
         {
             get
             {
-                yield return new IOSPlatform(SauceryConstants.PLATFORM_IOS, "NonExistent", "13.0", "portrait");
+                yield return new IOSPlatform("NonExistent", "13.0", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
             }
         }
     }

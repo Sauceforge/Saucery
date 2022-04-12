@@ -45,16 +45,16 @@ namespace UnitTests
         {
             get
             {
-                yield return new TestCaseData(new MobilePlatform(SauceryConstants.PLATFORM_LINUX, "", "12.0", "android", "Google Pixel 5 GoogleAPI Emulator", "12.0", "android", "1.22.1", "landscape"));
-                yield return new TestCaseData(new MobilePlatform(SauceryConstants.PLATFORM_LINUX, "", "11.0", "android", "Google Pixel 4a GoogleAPI Emulator", "11.0", "android", "1.20.2", "landscape"));
-                yield return new TestCaseData(new MobilePlatform(SauceryConstants.PLATFORM_LINUX, "", "10.0", "android", "Google Pixel 3a GoogleAPI Emulator", "10.0", "android", "1.20.2", "landscape"));
-                yield return new TestCaseData(new MobilePlatform(SauceryConstants.PLATFORM_LINUX, "", "9.0", "android", "Google Pixel 3 GoogleAPI Emulator", "9.0", "android", "1.20.2", "landscape"));
-                yield return new TestCaseData(new MobilePlatform(SauceryConstants.PLATFORM_LINUX, "", "8.1", "android", "Google Pixel C GoogleAPI Emulator", "8.1", "android", "1.20.2", "landscape"));
-                yield return new TestCaseData(new MobilePlatform(SauceryConstants.PLATFORM_LINUX, "", "8.0", "android", "Google Pixel C GoogleAPI Emulator", "8.0", "android", "1.20.2", "landscape"));
-                yield return new TestCaseData(new MobilePlatform(SauceryConstants.PLATFORM_LINUX, "", "7.1", "android", "Google Pixel C GoogleAPI Emulator", "7.1", "android", "1.20.2", "landscape"));
-                yield return new TestCaseData(new MobilePlatform(SauceryConstants.PLATFORM_LINUX, "", "7.0", "android", "Google Pixel C GoogleAPI Emulator", "7.0", "android", "1.20.2", "landscape"));
-                yield return new TestCaseData(new MobilePlatform(SauceryConstants.PLATFORM_LINUX, "", "6.0", "android", "Android GoogleAPI Emulator", "6.0", "android", "1.20.2", "landscape"));
-                yield return new TestCaseData(new MobilePlatform(SauceryConstants.PLATFORM_LINUX, "", "5.1", "android", "Android GoogleAPI Emulator", "5.1", "android", "1.20.2", "landscape"));
+                yield return new AndroidPlatform("Google Pixel 5 GoogleAPI Emulator", "12.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE);
+                yield return new AndroidPlatform("Google Pixel 4a GoogleAPI Emulator", "11.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE);
+                yield return new AndroidPlatform("Google Pixel 3a GoogleAPI Emulator", "10.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE);
+                yield return new AndroidPlatform("Google Pixel 3 GoogleAPI Emulator", "9.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE);
+                yield return new AndroidPlatform("Google Pixel C GoogleAPI Emulator", "8.1", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE);
+                yield return new AndroidPlatform("Google Pixel C GoogleAPI Emulator", "8.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE);
+                yield return new AndroidPlatform("Google Pixel C GoogleAPI Emulator", "7.1", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE);
+                yield return new AndroidPlatform("Google Pixel C GoogleAPI Emulator", "7.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE);
+                yield return new AndroidPlatform("Android GoogleAPI Emulator", "6.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE);
+                yield return new AndroidPlatform("Android GoogleAPI Emulator", "5.1", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE);
             }
         }
 
@@ -62,7 +62,7 @@ namespace UnitTests
         {
             get
             {
-                yield return new TestCaseData(new MobilePlatform(SauceryConstants.PLATFORM_LINUX, "android", "10", "Google Pixel 3 GoogleAPI Emulator", "10.0.", "android", "1.22.1", "landscape"));
+                yield return new AndroidPlatform("Google Pixel 3 GoogleAPI Emulator", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE);
             }
         }
     }
