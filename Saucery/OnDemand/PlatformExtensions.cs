@@ -46,7 +46,10 @@ namespace Saucery.OnDemand
         }
 
         public static bool IsAnAndroidDevice(this SaucePlatform platform) {
-            return platform.Device != null && platform.Device.ToUpper().Contains(SauceryConstants.ANDROID_PLATFORM);
+            return platform.LongName != null && 
+                   (platform.LongName.ToLower().Contains(SauceryConstants.GOOGLE_LOWER) || 
+                    platform.LongName.ToLower().Contains(SauceryConstants.SAMSUNG_LOWER) ||
+                    platform.LongName.ToLower().Contains(SauceryConstants.ANDROID_LOWER));
         }
 
         public static void SetTestName(this BrowserVersion browserVersion, string testName)

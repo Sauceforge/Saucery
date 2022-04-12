@@ -92,10 +92,12 @@
         //DEVICES
         internal const string APPLE_IOS = "Apple IOS";
         internal const string ANDROID_PLATFORM = "ANDROID";
-        internal const string ANDROID_DEVICE = "android";
         internal const string GOOGLE = "Google";
         internal const string LG = "LG";
         internal const string SAMSUNG = "Samsung";
+        internal const string GOOGLE_LOWER = "google";
+        internal const string SAMSUNG_LOWER = "samsung";
+        internal const string ANDROID_LOWER = "android";
         internal const string APPLE_IPHONE = "iphone";
         internal const string APPLE_IPAD = "ipad";
         internal const string ANDROID = "Android";
