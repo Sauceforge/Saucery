@@ -13,7 +13,7 @@ namespace Saucery.Dojo.Platforms.Base
         public List<string> SupportedBackendVersions { get; set; }
         public List<string> DeprecatedBackendVersions { get; set; }
         public string PlatformVersion { get; set; }
-        public List<string> BrowserNames { get; set; }
+        public List<string> Selenium4BrowserNames { get; set; }
         public List<string> ScreenResolutions { get; set; }
         public List<string> BrowsersWithLatestVersion { get; set; }
 

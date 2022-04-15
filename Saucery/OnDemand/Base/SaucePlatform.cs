@@ -21,15 +21,10 @@ namespace Saucery.OnDemand.Base
         [JsonProperty(PropertyName = "long-version")]
         public string LongVersion { get; set; }
 
-        public string Url { get; set; }
-        public string Device { get; set; }
-
         [JsonProperty(PropertyName = "device-orientation")]
         public string DeviceOrientation { get; set; }
 
         public PlatformType PlatformType { get; set; }
-
-        public string AppiumVersion { get; set; }
 
         public string TestName { get; set; }
 
@@ -37,12 +32,14 @@ namespace Saucery.OnDemand.Base
 
         #region Constructors
 
-        //static SaucePlatform() {
-        //    //OnceOnlyMessages.OnDemand();
-        //}
-
-        public SaucePlatform(string desktopPlatformName = "", string browser = "", string browserVersion = "", string screenResolution = "", string platform = "", string longName = "",
-            string longVersion = "", string device = "", string appiumVersion = "", string deviceOrientation = "") {
+        public SaucePlatform(string desktopPlatformName = "", 
+                             string browser = "", 
+                             string browserVersion = "", 
+                             string screenResolution = "", 
+                             string platform = "", 
+                             string longName = "",
+                             string longVersion = "", 
+                             string deviceOrientation = "") {
             Os = Sanitiser.SanitisePlatformField(desktopPlatformName);
             Browser = Sanitiser.SanitisePlatformField(browser);
             BrowserVersion = Sanitiser.SanitisePlatformField(browserVersion);
@@ -50,8 +47,6 @@ namespace Saucery.OnDemand.Base
             Platform = Sanitiser.SanitisePlatformField(platform);
             LongName = Sanitiser.SanitisePlatformField(longName);
             LongVersion = Sanitiser.SanitisePlatformField(longVersion);
-            Device = device ?? SauceryConstants.NULL_STRING;
-            AppiumVersion = Sanitiser.SanitisePlatformField(appiumVersion);
             DeviceOrientation = deviceOrientation ?? SauceryConstants.NULL_STRING;
         }
 

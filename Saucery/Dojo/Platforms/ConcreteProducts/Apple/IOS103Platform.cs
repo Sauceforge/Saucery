@@ -11,7 +11,7 @@ namespace Saucery.Dojo.Platforms.ConcreteProducts.Apple
 
         public IOS103Platform(SupportedPlatform sp) : base(sp)
         {
-            BrowserNames = new List<string>();
+            Selenium4BrowserNames = new List<string>();
             PlatformNameForOption = SauceryConstants.PLATFORM_IOS;
         }
     }
