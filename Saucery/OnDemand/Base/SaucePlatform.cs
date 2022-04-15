@@ -26,8 +26,6 @@ namespace Saucery.OnDemand.Base
 
         public PlatformType PlatformType { get; set; }
 
-        public string AppiumVersion { get; set; }
-
         public string TestName { get; set; }
 
         #endregion
@@ -41,7 +39,6 @@ namespace Saucery.OnDemand.Base
                              string platform = "", 
                              string longName = "",
                              string longVersion = "", 
-                             string appiumVersion = "", 
                              string deviceOrientation = "") {
             Os = Sanitiser.SanitisePlatformField(desktopPlatformName);
             Browser = Sanitiser.SanitisePlatformField(browser);
@@ -50,7 +47,6 @@ namespace Saucery.OnDemand.Base
             Platform = Sanitiser.SanitisePlatformField(platform);
             LongName = Sanitiser.SanitisePlatformField(longName);
             LongVersion = Sanitiser.SanitisePlatformField(longVersion);
-            AppiumVersion = Sanitiser.SanitisePlatformField(appiumVersion);
             DeviceOrientation = deviceOrientation ?? SauceryConstants.NULL_STRING;
         }
 
