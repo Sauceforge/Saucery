@@ -45,22 +45,16 @@ namespace UnitTests
         {
             get
             {
-                yield return new IOSPlatform("iPhone XS Max Simulator", "15.0", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
-                yield return new IOSPlatform("iPhone XS Max Simulator", "14.5", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
-                yield return new IOSPlatform("iPhone XS Max Simulator", "14.4", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
-                yield return new IOSPlatform("iPhone XS Max Simulator", "14.3", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
-                yield return new IOSPlatform("iPhone XS Max Simulator", "14.0", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
-                yield return new IOSPlatform("iPhone XS Max Simulator", "13.4", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
-                yield return new IOSPlatform("iPhone XS Max Simulator", "13.2", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
-                yield return new IOSPlatform("iPhone XS Max Simulator", "13.0", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
-                yield return new IOSPlatform("iPhone XS Max Simulator", "12.4", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
-                yield return new IOSPlatform("iPhone XS Max Simulator", "12.2", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
-                yield return new IOSPlatform("iPhone XS Max Simulator", "12.0", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
-                yield return new IOSPlatform("iPhone 5s Simulator", "11.3", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
-                yield return new IOSPlatform("iPhone 5s Simulator", "11.2", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
-                yield return new IOSPlatform("iPhone 5s Simulator", "11.1", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
-                yield return new IOSPlatform("iPhone 5s Simulator", "11.0", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
-                yield return new IOSPlatform("iPhone 5s Simulator", "10.3", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
+                var versions = new [] { "10.3", 
+                                        "11.0", "11.1", "11.2", "11.3", 
+                                        "12.0", "12.2", "12.4", 
+                                        "13.0", "13.2", "13.4", 
+                                        "14.0", "14.3", "14.4", "14.5", 
+                                        "15.0", "15.2", "15.4" };
+                foreach (var v in versions)
+                {
+                    yield return new IOSPlatform("iPhone 7 Plus Simulator", v, SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
+                }
             }
         }
 
