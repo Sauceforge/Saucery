@@ -53,7 +53,7 @@ namespace Saucery.RestAPI
 
             while (LimitChecker.IsLimitExceeded())
             {
-                OnceOnlyMessages.RestApiLimitExceeded();
+                OnceOnlyWriter.WriteLine(SauceryConstants.RESTAPI_LIMIT_EXCEEDED_MSG);
                 Thread.Sleep(LimitChecker.GetReset());
                 response = Client.ExecuteAsync(request).Result;
                 LimitChecker.Update(response);
