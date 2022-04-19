@@ -27,7 +27,7 @@ namespace Saucery.Dojo.Browsers.ConcreteProducts.PC
                 SauceryConstants.PLATFORM_MAC_1015 or
                 SauceryConstants.PLATFORM_MAC_1014 or
                 SauceryConstants.PLATFORM_MAC_1013 or
-                SauceryConstants.PLATFORM_MAC_1012 => 99,
+                SauceryConstants.PLATFORM_MAC_1012 => 100,
                 SauceryConstants.PLATFORM_MAC_1011 or
                 SauceryConstants.PLATFORM_MAC_1010 => 81,
                 _ => 0,
