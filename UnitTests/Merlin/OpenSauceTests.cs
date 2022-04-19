@@ -3,7 +3,6 @@ using NUnit.Framework;
 using Saucery.Dojo;
 using Saucery.Tests;
 using Shouldly;
-using System;
 
 //[assembly: LevelOfParallelism(3)]
 
@@ -19,7 +18,6 @@ namespace Merlin
         [TestCase(5)]
         [TestCase(4)]
         public void DataDrivenTitleTest(int data) {
-            Console.WriteLine(@"My data is: " + data);
             var guineaPigPage = new GuineaPigPage(Driver, "https://saucelabs.com/");
 
             guineaPigPage.TypeField(Driver, "comments", data.ToString());
