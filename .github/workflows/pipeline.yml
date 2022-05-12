@@ -26,8 +26,8 @@ jobs:
     - name: Setup dotnet
       uses: actions/setup-dotnet@v2
       with:
-        # Check for latest at link at .NET 5 download page (https://dotnet.microsoft.com/download/dotnet/5.0)
-        dotnet-version: 5.0.x
+        # Check for latest at link at .NET 6 download page (https://dotnet.microsoft.com/download/dotnet/6.0)
+        dotnet-version: 6.0.x
         #dotnet-version: | 
         #  3.1.x
         #  5.0.x
