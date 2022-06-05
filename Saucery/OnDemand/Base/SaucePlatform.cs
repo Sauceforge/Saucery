@@ -54,7 +54,7 @@ public class SaucePlatform {
 
     public bool NeedsExpansion()
     {
-        return BrowserVersion.Replace(SauceryConstants.SPACE, string.Empty).Contains(SauceryConstants.HYPHEN);
+        return BrowserVersion.Replace(SauceryConstants.SPACE, string.Empty).Contains(SauceryConstants.PLATFORM_SEPARATOR);
     }
 }
 /*

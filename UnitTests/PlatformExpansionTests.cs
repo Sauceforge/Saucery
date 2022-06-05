@@ -1,5 +1,4 @@
-﻿using Merlin;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Saucery.OnDemand;
 using Saucery.OnDemand.Base;
 using Saucery.Util;
@@ -45,16 +44,29 @@ public class PlatformExpansionTests
             new IOSPlatform("iPhone 13 Pro Max Simulator", "15.4", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
 
             //Desktop Platforms
-            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "75-102", SauceryConstants.SCREENRES_2560_1600),
-            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_81, SauceryConstants.BROWSER_CHROME, "75-102", SauceryConstants.SCREENRES_800_600),
-            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_8, SauceryConstants.BROWSER_FIREFOX, "78-101"),
-            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_7, SauceryConstants.BROWSER_FIREFOX, "78-101"),
+            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "75->102", SauceryConstants.SCREENRES_2560_1600),
+            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_81, SauceryConstants.BROWSER_CHROME, "75->102", SauceryConstants.SCREENRES_800_600),
+            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_8, SauceryConstants.BROWSER_FIREFOX, "78->101"),
+            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_7, SauceryConstants.BROWSER_FIREFOX, "78->101"),
             new DesktopPlatform(SauceryConstants.PLATFORM_MAC_1015, SauceryConstants.BROWSER_SAFARI, "13"),
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_IE, "11"),
-            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_EDGE, "79-101")
+            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_EDGE, "79->101")
         };
 
-        var expandedSet = PlatformExpander.Expand(platforms);
+        List<SaucePlatform> expandedSet = PlatformExpander.Expand(platforms);
         expandedSet.Count.ShouldBe(128);
     }
+
+    //[Test]
+    //public void BadPlatformsTest()
+    //{
+    //    var platforms = new List<SaucePlatform>
+    //    {
+    //        //Desktop Platforms
+    //        new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "75->latest", SauceryConstants.SCREENRES_2560_1600),
+    //    };
+
+    //    List<SaucePlatform> expandedSet = PlatformExpander.Expand(platforms);
+    //    expandedSet.Count.ShouldBe(128);
+    //}
 }

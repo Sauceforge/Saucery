@@ -1,4 +1,7 @@
-﻿namespace Saucery.Util; 
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace Saucery.Util; 
 
 public class SauceryConstants {
     //ACTIVATION DETAILS
@@ -187,6 +190,11 @@ public class SauceryConstants {
     public const string BROWSER_EDGE_LOWER = "microsoftedge";
     public const string BROWSER_SAFARI = "safari";
 
+    //BROWSER VERSIONS
+    public const string PLATFORM_SEPARATOR = "->";
+    public static List<string> BROWSER_VERSIONS_LATEST = new() { "latest-1", "latest" };
+    public static List<string> BROWSER_VERSIONS_NONNUMERIC = new List<string>() { "beta", "dev" }.Concat(BROWSER_VERSIONS_LATEST).ToList();
+
     //SCREEN RESOLUTIONS
     public const string SCREENRES_800_600 = "800x600";
     public const string SCREENRES_1024_768 = "1024x768";
@@ -212,7 +220,7 @@ public class SauceryConstants {
     public const string SCREENRES_2360_1770 = "2360x1770";
     public const string SCREENRES_2560_1600 = "2560x1600";
 
-    //DEVICEORIENTATIONS
+    //DEVICE ORIENTATIONS
     public const string DEVICE_ORIENTATION_PORTRAIT = "portrait";
     public const string DEVICE_ORIENTATION_LANDSCAPE = "landscape";
 }

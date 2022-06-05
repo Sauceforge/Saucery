@@ -14,7 +14,7 @@ public class PlatformExpander
         {
             if (platform.NeedsExpansion())
             {
-                string[] requestedVersions = platform.BrowserVersion.Split(SauceryConstants.HYPHEN);
+                string[] requestedVersions = platform.BrowserVersion.Split(SauceryConstants.PLATFORM_SEPARATOR);
                 if (!int.TryParse(requestedVersions[0], out int lowerBoundVersion) ||
                     !int.TryParse(requestedVersions[1], out int upperBoundVersion))
                 {
