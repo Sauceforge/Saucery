@@ -32,6 +32,8 @@ public class SauceryConstants {
 
     //TEST URL
     internal const string SAUCELABS_HUB = "http://ondemand.saucelabs.com:80/wd/hub";
+    
+    public const int MISSING_CHROMIUM_VERSION = 82;
 
     //CAPABILITIES
     internal const string SCREEN_RESOLUTION_CAPABILITY = "screenResolution";

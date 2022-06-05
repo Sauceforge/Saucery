@@ -14,20 +14,20 @@ public class PlatformExpander
         {
             if (platform.NeedsExpansion())
             {
-                string[] versions = platform.BrowserVersion.Split(SauceryConstants.HYPHEN);
-                if (!int.TryParse(versions[0], out int lowerBoundVersion) ||
-                    !int.TryParse(versions[1], out int upperBoundVersion))
+                string[] requestedVersions = platform.BrowserVersion.Split(SauceryConstants.HYPHEN);
+                if (!int.TryParse(requestedVersions[0], out int lowerBoundVersion) ||
+                    !int.TryParse(requestedVersions[1], out int upperBoundVersion))
                 {
                     expandedSet.Add(platform);
                     continue;
                 }
-                for (int i = lowerBoundVersion; i <= upperBoundVersion; i++)
+                for (int version = lowerBoundVersion; version <= upperBoundVersion; version++)
                 {
                     if((platform.Browser.Equals(SauceryConstants.BROWSER_CHROME) || 
-                        platform.Browser.Equals(SauceryConstants.BROWSER_EDGE)) && 
-                        i == 82)
+                        platform.Browser.Equals(SauceryConstants.BROWSER_EDGE)) &&
+                        version == SauceryConstants.MISSING_CHROMIUM_VERSION)
                     {
-                        //No Chrome 82 due to Covid-19.
+                        //No Chromium 82 due to Covid-19.
                         //See https://wiki.saucelabs.com/pages/viewpage.action?pageId=102715396
                         continue;
                     }
@@ -36,7 +36,7 @@ public class PlatformExpander
                     {
                         Os = platform.Os,
                         Browser = platform.Browser,
-                        BrowserVersion = i.ToString(),
+                        BrowserVersion = version.ToString(),
                         ScreenResolution = platform.ScreenResolution,
                         Platform = platform.Platform,
                         LongName = platform.LongName,
