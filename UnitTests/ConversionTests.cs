@@ -3,19 +3,19 @@ using Saucery.Util;
 using Shouldly;
 using System;
 
-namespace UnitTests {
-    [TestFixture]
-    class ConversionTests
+namespace UnitTests;
+
+[TestFixture]
+public class ConversionTests
+{
+    [Test]
+    public void SanitisedLongVersionTest()
     {
-        [Test]
-        public void SanitisedLongVersionTest()
-        {
-            var longVersion = "10.0.";
-            var result = longVersion.EndsWith(SauceryConstants.DOT)
-                            ? longVersion.Trim().Remove(longVersion.Length - 1)
-                            : longVersion.Trim();
-            Console.WriteLine("SanitisedLongVersion returning string '{0}'", result);
-            result.ShouldBe("10.0");
-        }
+        var longVersion = "10.0.";
+        var result = longVersion.EndsWith(SauceryConstants.DOT)
+                        ? longVersion.Trim().Remove(longVersion.Length - 1)
+                        : longVersion.Trim();
+        Console.WriteLine("SanitisedLongVersion returning string '{0}'", result);
+        result.ShouldBe("10.0");
     }
 }

@@ -1,9 +1,8 @@
 ﻿using Saucery.RestAPI;
 
-namespace Saucery.Dojo.Browsers.Base
+namespace Saucery.Dojo.Browsers.Base;
+
+interface IVersion
 {
-    interface IVersion
-    {
-        int MinimumVersion(SupportedPlatform sp);
-    }
+    int MinimumVersion(SupportedPlatform sp);
 }

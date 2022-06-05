@@ -1,25 +1,25 @@
 ﻿using Saucery.Dojo;
+using Saucery.OnDemand;
 using Saucery.OnDemand.Base;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Saucery.DataSources
-{
-    public class SauceryTestData : IEnumerable {
-        protected static List<BrowserVersion> BrowserVersions { get; set; }
+namespace Saucery.DataSources;
 
-        public IEnumerator GetEnumerator() {
-            return BrowserVersions?.GetEnumerator();
-        }
+public class SauceryTestData : IEnumerable {
+    protected static List<BrowserVersion> BrowserVersions { get; set; }
 
-        protected static void SetPlatforms(List<SaucePlatform> platforms)
-        {
-            BrowserVersions = new PlatformConfigurator().FilterAll(platforms);
-        }
+    public IEnumerator GetEnumerator() {
+        return BrowserVersions?.GetEnumerator();
+    }
+
+    protected static void SetPlatforms(List<SaucePlatform> platforms)
+    {
+        BrowserVersions = new PlatformConfigurator().FilterAll(PlatformExpander.Expand(platforms));
     }
 }
 /*
- * Copyright Andrew Gray, SauceForge
- * Date: 12th July 2014
- * 
- */
+* Copyright Andrew Gray, SauceForge
+* Date: 12th July 2014
+* 
+*/

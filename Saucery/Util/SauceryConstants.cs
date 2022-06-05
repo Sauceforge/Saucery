@@ -124,6 +124,7 @@
         internal const char RIGHT_BRACKET_CHAR = ')';
         internal const string LEFT_SQUARE_BRACKET = "[";
         internal const string COLON = ":";
+        internal const string HYPHEN = "-";
         internal const string UNDERSCORE = "_";
         internal const string RESOLUTION = "1280x1024";
         internal const string YEAR_FORMAT = "yyyy";

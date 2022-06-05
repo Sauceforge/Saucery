@@ -3,17 +3,16 @@ using Saucery.Dojo.Browsers.ConcreteProducts.Google;
 using Saucery.RestAPI;
 using System.Collections.Generic;
 
-namespace Saucery.Dojo.Browsers.ConcreteCreators.Google
-{
-    internal class AndroidBrowserCreator : BrowserCreator
-    {
-        public AndroidBrowserCreator(SupportedPlatform sp) : base(sp)
-        {
-        }
+namespace Saucery.Dojo.Browsers.ConcreteCreators.Google;
 
-        public override BrowserBase Create(string platformNameForOption, List<string> screenResolutions)
-        {
-            return new AndroidBrowser(Platform, platformNameForOption);
-        }
+internal class AndroidBrowserCreator : BrowserCreator
+{
+    public AndroidBrowserCreator(SupportedPlatform sp) : base(sp)
+    {
+    }
+
+    public override BrowserBase Create(string platformNameForOption, List<string> screenResolutions)
+    {
+        return new AndroidBrowser(Platform, platformNameForOption);
     }
 }
