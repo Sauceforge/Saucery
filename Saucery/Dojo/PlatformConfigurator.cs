@@ -40,8 +40,8 @@ public class PlatformConfigurator
             AvailablePlatforms.AddPlatform(sp);
         }
 
-        AddLatestBrowserVersion("latest");
-        AddLatestBrowserVersion("latest-1");
+        AddLatestBrowserVersion(SauceryConstants.BROWSER_VERSION_LATEST);
+        AddLatestBrowserVersion(SauceryConstants.BROWSER_VERSION_LATEST_MINUS1);
     }
 
     private static List<SupportedPlatform> FindWindowsPlatforms(List<SupportedPlatform> platforms) => platforms.FindAll(p => p.os.Contains("Windows") && p.automation_backend.Equals("webdriver"));
