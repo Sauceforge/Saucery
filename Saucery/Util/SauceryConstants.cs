@@ -196,8 +196,8 @@ public class SauceryConstants {
     public const string BROWSER_VERSION_LATEST = "latest";
     public const string BROWSER_VERSION_LATEST_MINUS1 = "latest-1";
     public const string PLATFORM_SEPARATOR = "->";
-    public static List<string> BROWSER_VERSIONS_LATEST = new() { BROWSER_VERSION_LATEST_MINUS1, BROWSER_VERSION_LATEST };
-    public static List<string> BROWSER_VERSIONS_NONNUMERIC = new List<string>() { BROWSER_VERSION_BETA, BROWSER_VERSION_DEV }.Concat(BROWSER_VERSIONS_LATEST).ToList();
+    internal static List<string> BROWSER_VERSIONS_LATEST = new() { BROWSER_VERSION_LATEST_MINUS1, BROWSER_VERSION_LATEST };
+    internal static List<string> BROWSER_VERSIONS_NONNUMERIC = new List<string>() { BROWSER_VERSION_BETA, BROWSER_VERSION_DEV }.Concat(BROWSER_VERSIONS_LATEST).ToList();
 
     //SCREEN RESOLUTIONS
     public const string SCREENRES_800_600 = "800x600";
