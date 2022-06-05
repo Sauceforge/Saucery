@@ -1,56 +1,107 @@
 ﻿using Saucery.OnDemand.Base;
 using Saucery.Util;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Saucery.OnDemand;
 
 public class PlatformExpander
 {
-    public static List<SaucePlatform> Expand(List<SaucePlatform> platforms)
+    private List<SaucePlatform> ExpandedSet { get; set; }
+    private List<SaucePlatform> Platforms { get; set; }
+
+    public PlatformExpander(List<SaucePlatform> platforms)
     {
-        List<SaucePlatform> expandedSet = new();
+        ExpandedSet = new();
+        Platforms = platforms;
+    }
 
-        foreach (SaucePlatform platform in platforms)
+    public List<SaucePlatform> Expand()
+    {
+        foreach (SaucePlatform platform in Platforms)
         {
-            if (platform.NeedsExpansion())
+            if (!platform.NeedsExpansion())
             {
-                string[] requestedVersions = platform.BrowserVersion.Split(SauceryConstants.PLATFORM_SEPARATOR);
-                if (!int.TryParse(requestedVersions[0], out int lowerBoundVersion) ||
-                    !int.TryParse(requestedVersions[1], out int upperBoundVersion))
-                {
-                    expandedSet.Add(platform);
-                    continue;
-                }
-                for (int version = lowerBoundVersion; version <= upperBoundVersion; version++)
-                {
-                    if((platform.Browser.Equals(SauceryConstants.BROWSER_CHROME) || 
-                        platform.Browser.Equals(SauceryConstants.BROWSER_EDGE)) &&
-                        version == SauceryConstants.MISSING_CHROMIUM_VERSION)
-                    {
-                        //No Chromium 82 due to Covid-19.
-                        //See https://wiki.saucelabs.com/pages/viewpage.action?pageId=102715396
-                        continue;
-                    }
+                ExpandedSet.Add(platform);
+                continue;
+            }
+            
+            //Needs Expansion
+            string[] requestedVersions = platform.BrowserVersion.Split(SauceryConstants.PLATFORM_SEPARATOR);
 
-                    expandedSet.Add(new()
-                    {
-                        Os = platform.Os,
-                        Browser = platform.Browser,
-                        BrowserVersion = version.ToString(),
-                        ScreenResolution = platform.ScreenResolution,
-                        Platform = platform.Platform,
-                        LongName = platform.LongName,
-                        LongVersion = platform.LongVersion,
-                        DeviceOrientation = platform.DeviceOrientation
-                    });
-                }
-            }
-            else
+            PlatformRange rangeType = RangeClassifer.Classify(requestedVersions);
+            if(rangeType == PlatformRange.Invalid)
             {
-                expandedSet.Add(platform);
+                continue;
             }
+
+            string lowerBound = requestedVersions[0];
+            string upperBound = requestedVersions[1];
+
+            switch (rangeType)
+            {
+                case PlatformRange.NumericOnly:
+                    AddNumericRange(platform, int.Parse(lowerBound), int.Parse(upperBound));
+                    break;
+                case PlatformRange.NonNumericOnly:
+                    AddNonNumericRange(platform, lowerBound, upperBound);
+                    break;
+                case PlatformRange.NumericNonNumeric:
+                    AddMixedRange(platform, int.Parse(lowerBound), upperBound);
+                    break;
+                default:
+                    break;
+            };
         }
 
-        return expandedSet;
+        return ExpandedSet;
+    }
+
+    private void AddMixedRange(SaucePlatform platform, int v, string upperBound)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void AddNonNumericRange(SaucePlatform platform, string lowerBound, string upperBound)
+    {
+        int lowerIndex = SauceryConstants.BROWSER_VERSIONS_NONNUMERIC.IndexOf(lowerBound);
+        int upperIndex = SauceryConstants.BROWSER_VERSIONS_NONNUMERIC.IndexOf(upperBound);
+        for (int i = lowerIndex; i <= upperIndex; i++)
+        {
+            AddPlatform(platform, SauceryConstants.BROWSER_VERSIONS_NONNUMERIC.ElementAt(i));
+        }
+    }
+
+    private void AddNumericRange(SaucePlatform platform, int lowerBound, int upperBound)
+    {
+        for (int version = lowerBound; version <= upperBound; version++)
+        {
+            if ((platform.Browser.Equals(SauceryConstants.BROWSER_CHROME) ||
+                platform.Browser.Equals(SauceryConstants.BROWSER_EDGE)) &&
+                version == SauceryConstants.MISSING_CHROMIUM_VERSION)
+            {
+                //No Chromium 82 due to Covid-19.
+                //See https://wiki.saucelabs.com/pages/viewpage.action?pageId=102715396
+                continue;
+            }
+
+            AddPlatform(platform, version.ToString());
+        }
+    }
+
+    private void AddPlatform(SaucePlatform platform, string browserVersion)
+    {
+        ExpandedSet.Add(new()
+        {
+            Os = platform.Os,
+            Browser = platform.Browser,
+            BrowserVersion = browserVersion,
+            ScreenResolution = platform.ScreenResolution,
+            Platform = platform.Platform,
+            LongName = platform.LongName,
+            LongVersion = platform.LongVersion,
+            DeviceOrientation = platform.DeviceOrientation
+        });
     }
 }

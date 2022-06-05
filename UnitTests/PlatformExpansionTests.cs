@@ -30,12 +30,13 @@ public class PlatformExpansionTests
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_EDGE, "99")
         };
 
-        var expandedSet = PlatformExpander.Expand(platforms);
+        PlatformExpander expander = new(platforms);
+        var expandedSet = expander.Expand();
         expandedSet.Count.ShouldBe(platforms.Count);
     }
 
     [Test]
-    public void BasicExpansionTest()
+    public void NumericOnlyRangeTest()
     {
         var platforms = new List<SaucePlatform>
         {
@@ -53,8 +54,27 @@ public class PlatformExpansionTests
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_EDGE, "79->101")
         };
 
-        List<SaucePlatform> expandedSet = PlatformExpander.Expand(platforms);
+        PlatformExpander expander = new(platforms);
+        List<SaucePlatform> expandedSet = expander.Expand();
         expandedSet.Count.ShouldBe(128);
+    }
+
+    [Test]
+    public void NonNumericOnlyRangeTest()
+    {
+        var platforms = new List<SaucePlatform>
+        {
+            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "latest-1->dev", SauceryConstants.SCREENRES_2560_1600),    //4
+            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "latest-1->beta", SauceryConstants.SCREENRES_2560_1600),   //3
+            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "latest-1->latest", SauceryConstants.SCREENRES_2560_1600), //2
+            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "latest->dev", SauceryConstants.SCREENRES_2560_1600),      //3
+            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "latest->beta", SauceryConstants.SCREENRES_2560_1600),     //2
+            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "beta->dev", SauceryConstants.SCREENRES_2560_1600)         //2
+        };
+
+        PlatformExpander expander = new(platforms);
+        List<SaucePlatform> expandedSet = expander.Expand();
+        expandedSet.Count.ShouldBe(16);
     }
 
     //[Test]
