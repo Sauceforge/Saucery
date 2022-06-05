@@ -1,16 +1,15 @@
 ﻿using Saucery.RestAPI;
 
-namespace Saucery.Dojo.Platforms.Base
+namespace Saucery.Dojo.Platforms.Base;
+
+public abstract class PlatformCreator
 {
-    public abstract class PlatformCreator
+    internal readonly SupportedPlatform Platform;
+
+    public PlatformCreator(SupportedPlatform sp)
     {
-        internal readonly SupportedPlatform Platform;
-
-        public PlatformCreator(SupportedPlatform sp)
-        {
-            Platform = sp;
-        }
-
-        public abstract PlatformBase Create();
+        Platform = sp;
     }
+
+    public abstract PlatformBase Create();
 }

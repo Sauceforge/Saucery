@@ -1,46 +1,46 @@
 ﻿using System.Collections.Generic;
 
-namespace Saucery.RestAPI {
-    public class SupportedPlatform {
-        public List<string> deprecated_backend_versions { get; set; }
-        public string short_version { get; set; }
-        public string long_name { get; set; }
-        public string recommended_backend_version { get; set; }
-        public string long_version { get; set; }
-        public string api_name { get; set; }
-        public List<string> supported_backend_versions { get; set; }
-        public string device { get; set; }
-        public string latest_stable_version { get; set; }
-        public string automation_backend { get; set; }
-        public string os { get; set; }
+namespace Saucery.RestAPI; 
 
-        public int short_version_as_int => int.TryParse(short_version, out int discard) ? int.Parse(short_version) : 0;
+public class SupportedPlatform {
+    public List<string> deprecated_backend_versions { get; set; }
+    public string short_version { get; set; }
+    public string long_name { get; set; }
+    public string recommended_backend_version { get; set; }
+    public string long_version { get; set; }
+    public string api_name { get; set; }
+    public List<string> supported_backend_versions { get; set; }
+    public string device { get; set; }
+    public string latest_stable_version { get; set; }
+    public string automation_backend { get; set; }
+    public string os { get; set; }
 
-        public bool IsIOSPlatform()
-        {
-            return automation_backend.Equals("appium") && 
-                   recommended_backend_version != null && 
-                   (api_name.Equals("iphone") || api_name.Equals("ipad"));
-        }
+    public int short_version_as_int => int.TryParse(short_version, out int discard) ? int.Parse(short_version) : 0;
 
-        public bool IsAndroidPlatform()
-        {
-            return api_name == "android";
-            //return automation_backend.Equals("appium") &&
-            //       recommended_backend_version != null &&
-            //       api_name.Equals("android");
-        }
+    public bool IsIOSPlatform()
+    {
+        return automation_backend.Equals("appium") && 
+               recommended_backend_version != null && 
+               (api_name.Equals("iphone") || api_name.Equals("ipad"));
+    }
 
-        public bool IsMobilePlatform()
-        {
-            return automation_backend.Equals("appium") &&
-                   recommended_backend_version != null &&
-                   (api_name == "iphone" || api_name == "ipad" || api_name.Equals("android"));
-        }
+    public bool IsAndroidPlatform()
+    {
+        return api_name == "android";
+        //return automation_backend.Equals("appium") &&
+        //       recommended_backend_version != null &&
+        //       api_name.Equals("android");
+    }
+
+    public bool IsMobilePlatform()
+    {
+        return automation_backend.Equals("appium") &&
+               recommended_backend_version != null &&
+               (api_name == "iphone" || api_name == "ipad" || api_name.Equals("android"));
     }
 }
 /*
- * Copyright Andrew Gray, SauceForge
- * Date: 18th September 2014
- * 
- */
+* Copyright Andrew Gray, SauceForge
+* Date: 18th September 2014
+* 
+*/

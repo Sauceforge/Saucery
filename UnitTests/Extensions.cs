@@ -2,55 +2,54 @@
 using System.Collections;
 using System.Reflection;
 
-namespace UnitTests
+namespace UnitTests;
+
+internal static class Extensions
 {
-    internal static class Extensions
+    public static bool IsStatic(this Type type)
     {
-        public static bool IsStatic(this Type type)
-        {
-            return type.GetTypeInfo().IsAbstract && type.GetTypeInfo().IsSealed;
-        }
+        return type.GetTypeInfo().IsAbstract && type.GetTypeInfo().IsSealed;
+    }
 
-        public static bool HasAttribute<T>(this ICustomAttributeProvider attributeProvider, bool inherit)
-        {
-            return attributeProvider.IsDefined(typeof(T), inherit);
-        }
+    public static bool HasAttribute<T>(this ICustomAttributeProvider attributeProvider, bool inherit)
+    {
+        return attributeProvider.IsDefined(typeof(T), inherit);
+    }
 
-        public static bool HasAttribute<T>(this Type type, bool inherit)
-        {
-            return ((ICustomAttributeProvider)type.GetTypeInfo()).HasAttribute<T>(inherit);
-        }
+    public static bool HasAttribute<T>(this Type type, bool inherit)
+    {
+        return ((ICustomAttributeProvider)type.GetTypeInfo()).HasAttribute<T>(inherit);
+    }
 
-        public static T[] GetAttributes<T>(this ICustomAttributeProvider attributeProvider, bool inherit) where T : class
-        {
-            return (T[])attributeProvider.GetCustomAttributes(typeof(T), inherit);
-        }
+    public static T[] GetAttributes<T>(this ICustomAttributeProvider attributeProvider, bool inherit) where T : class
+    {
+        return (T[])attributeProvider.GetCustomAttributes(typeof(T), inherit);
+    }
 
-        public static T[] GetAttributes<T>(this Assembly assembly) where T : class
-        {
-            return assembly.GetAttributes<T>(inherit: false);
-        }
+    public static T[] GetAttributes<T>(this Assembly assembly) where T : class
+    {
+        return assembly.GetAttributes<T>(inherit: false);
+    }
 
-        public static T[] GetAttributes<T>(this Type type, bool inherit) where T : class
-        {
-            return ((ICustomAttributeProvider)type.GetTypeInfo()).GetAttributes<T>(inherit);
-        }
+    public static T[] GetAttributes<T>(this Type type, bool inherit) where T : class
+    {
+        return ((ICustomAttributeProvider)type.GetTypeInfo()).GetAttributes<T>(inherit);
+    }
 
-        public static IEnumerable Skip(this IEnumerable enumerable, long skip)
+    public static IEnumerable Skip(this IEnumerable enumerable, long skip)
+    {
+        var iterator = enumerable.GetEnumerator();
+        using (iterator as IDisposable)
         {
-            var iterator = enumerable.GetEnumerator();
-            using (iterator as IDisposable)
+            while (skip-- > 0)
             {
-                while (skip-- > 0)
-                {
-                    if (!iterator.MoveNext())
-                        yield break;
-                }
+                if (!iterator.MoveNext())
+                    yield break;
+            }
 
-                while (iterator.MoveNext())
-                {
-                    yield return iterator.Current;
-                }
+            while (iterator.MoveNext())
+            {
+                yield return iterator.Current;
             }
         }
     }

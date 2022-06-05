@@ -2,17 +2,16 @@
 using Saucery.Dojo.Platforms.ConcreteProducts.PC;
 using Saucery.RestAPI;
 
-namespace Saucery.Dojo.Platforms.ConcreteCreators.PC
-{
-    internal class Mac1011PlatformCreator : PlatformCreator
-    {
-        public Mac1011PlatformCreator(SupportedPlatform sp) : base(sp)
-        {
-        }
+namespace Saucery.Dojo.Platforms.ConcreteCreators.PC;
 
-        public override PlatformBase Create()
-        {
-            return new Mac1011Platform(Platform);
-        }
+internal class Mac1011PlatformCreator : PlatformCreator
+{
+    public Mac1011PlatformCreator(SupportedPlatform sp) : base(sp)
+    {
+    }
+
+    public override PlatformBase Create()
+    {
+        return new Mac1011Platform(Platform);
     }
 }
