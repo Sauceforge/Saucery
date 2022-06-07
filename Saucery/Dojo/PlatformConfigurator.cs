@@ -46,8 +46,13 @@ public class PlatformConfigurator
 
     internal int FindMaxBrowserVersion(SaucePlatform platform)
     {
-        //TODO
-        throw new NotImplementedException();
+        //Desktop Platform Only
+        var availablePlatform = AvailablePlatforms.Find(p => p.Name.Equals(platform.Os));
+        var browser = availablePlatform.Browsers.Find(b => b.Name.Equals(platform.Browser));
+        var numericBrowserVersions = browser.BrowserVersions.Where(x => x.Name.Any(char.IsNumber));
+        var browserVersion = numericBrowserVersions.Aggregate((maxItem, nextItem) => (int.Parse(maxItem.Name) > int.Parse(nextItem.Name)) ? maxItem : nextItem);
+
+        return int.Parse(browserVersion.Name);
     }
 
     private static List<SupportedPlatform> FindWindowsPlatforms(List<SupportedPlatform> platforms) => platforms.FindAll(p => p.os.Contains("Windows") && p.automation_backend.Equals("webdriver"));

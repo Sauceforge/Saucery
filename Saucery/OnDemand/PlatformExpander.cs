@@ -1,7 +1,6 @@
 ﻿using Saucery.Dojo;
 using Saucery.OnDemand.Base;
 using Saucery.Util;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,7 +11,6 @@ public class PlatformExpander
     private List<SaucePlatform> ExpandedSet { get; set; }
     private List<SaucePlatform> Platforms { get; set; }
     private PlatformConfigurator PlatformConfigurator { get; set; }
-
 
     public PlatformExpander(PlatformConfigurator platformConfigurator, List<SaucePlatform> platforms)
     {
@@ -64,8 +62,12 @@ public class PlatformExpander
 
     private void AddMixedRange(SaucePlatform platform, int lowerBound, string upperBound)
     {
-        int maxVersion = PlatformConfigurator.FindMaxBrowserVersion(platform);
+        if (platform.IsAnAndroidDevice() || platform.IsAnAppleDevice())
+        {
+            return;
+        }
 
+        int maxVersion = PlatformConfigurator.FindMaxBrowserVersion(platform);
         AddNumericRange(platform, lowerBound, maxVersion);
         AddNonNumericRange(platform, SauceryConstants.BROWSER_VERSION_LATEST_MINUS1, upperBound);
     }
