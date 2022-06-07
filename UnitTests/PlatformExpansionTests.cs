@@ -104,16 +104,32 @@ public class PlatformExpansionTests
         expandedSet.Count.ShouldBe(20);
     }
 
+    [Test]
+    public void BadRangeTest()
+    {
+        var platforms = new List<SaucePlatform>
+        {
+            //Desktop Platforms
+            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "75->100->latest", SauceryConstants.SCREENRES_2560_1600),
+        };
+
+        PlatformExpander expander = new(PlatformConfigurator, platforms);
+        List<SaucePlatform> expandedSet = expander.Expand();
+        expandedSet.Count.ShouldBe(0);
+    }
+
+    //TODO: Needs fixing
     //[Test]
-    //public void BadPlatformsTest()
+    //public void MobileExpansionTest()
     //{
     //    var platforms = new List<SaucePlatform>
     //    {
-    //        //Desktop Platforms
-    //        new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "75->latest", SauceryConstants.SCREENRES_2560_1600),
+    //        //Mobile Platforms
+    //        new IOSPlatform("iPhone 13 Pro Max Simulator", "15.2->15.4", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
     //    };
 
-    //    List<SaucePlatform> expandedSet = PlatformExpander.Expand(platforms);
-    //    expandedSet.Count.ShouldBe(128);
+    //    PlatformExpander expander = new(PlatformConfigurator, platforms);
+    //    List<SaucePlatform> expandedSet = expander.Expand();
+    //    expandedSet.Count.ShouldBe(0);
     //}
 }
