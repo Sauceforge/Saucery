@@ -44,6 +44,12 @@ public class PlatformConfigurator
         AddLatestBrowserVersion(SauceryConstants.BROWSER_VERSION_LATEST_MINUS1);
     }
 
+    internal int FindMaxBrowserVersion(SaucePlatform platform)
+    {
+        //TODO
+        throw new NotImplementedException();
+    }
+
     private static List<SupportedPlatform> FindWindowsPlatforms(List<SupportedPlatform> platforms) => platforms.FindAll(p => p.os.Contains("Windows") && p.automation_backend.Equals("webdriver"));
 
     private static List<SupportedPlatform> FindMacPlatforms(List<SupportedPlatform> platforms, List<string> oses) => platforms.FindAll(p => oses.Any(o => o.Equals(p.os)) && p.automation_backend.Equals("webdriver") && !p.api_name.Equals("ipad") && !p.api_name.Equals("iphone"));

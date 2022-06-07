@@ -1,4 +1,5 @@
-﻿using Saucery.OnDemand.Base;
+﻿using Saucery.Dojo;
+using Saucery.OnDemand.Base;
 using Saucery.Util;
 using System;
 using System.Collections.Generic;
@@ -10,11 +11,14 @@ public class PlatformExpander
 {
     private List<SaucePlatform> ExpandedSet { get; set; }
     private List<SaucePlatform> Platforms { get; set; }
+    private PlatformConfigurator PlatformConfigurator { get; set; }
 
-    public PlatformExpander(List<SaucePlatform> platforms)
+
+    public PlatformExpander(PlatformConfigurator platformConfigurator, List<SaucePlatform> platforms)
     {
         ExpandedSet = new();
         Platforms = platforms;
+        PlatformConfigurator = platformConfigurator;
     }
 
     public List<SaucePlatform> Expand()
@@ -58,9 +62,12 @@ public class PlatformExpander
         return ExpandedSet;
     }
 
-    private void AddMixedRange(SaucePlatform platform, int v, string upperBound)
+    private void AddMixedRange(SaucePlatform platform, int lowerBound, string upperBound)
     {
-        throw new NotImplementedException();
+        int maxVersion = PlatformConfigurator.FindMaxBrowserVersion(platform);
+
+        AddNumericRange(platform, lowerBound, maxVersion);
+        AddNonNumericRange(platform, SauceryConstants.BROWSER_VERSION_LATEST_MINUS1, upperBound);
     }
 
     private void AddNonNumericRange(SaucePlatform platform, string lowerBound, string upperBound)
