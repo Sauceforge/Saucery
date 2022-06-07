@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using Saucery.Dojo;
 using Saucery.OnDemand;
 using Saucery.OnDemand.Base;
 using Saucery.Util;
@@ -10,6 +11,13 @@ namespace UnitTests;
 [TestFixture]
 public class PlatformExpansionTests
 {
+    static PlatformConfigurator PlatformConfigurator { get; set; }
+
+    static PlatformExpansionTests()
+    {
+        PlatformConfigurator = new PlatformConfigurator();
+    }
+
     [Test]
     public void NoExpansionTest()
     {
@@ -30,7 +38,7 @@ public class PlatformExpansionTests
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_EDGE, "99")
         };
 
-        PlatformExpander expander = new(platforms);
+        PlatformExpander expander = new(PlatformConfigurator, platforms);
         var expandedSet = expander.Expand();
         expandedSet.Count.ShouldBe(platforms.Count);
     }
@@ -54,7 +62,7 @@ public class PlatformExpansionTests
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_EDGE, "79->101")
         };
 
-        PlatformExpander expander = new(platforms);
+        PlatformExpander expander = new(PlatformConfigurator, platforms);
         List<SaucePlatform> expandedSet = expander.Expand();
         expandedSet.Count.ShouldBe(128);
     }
@@ -72,7 +80,7 @@ public class PlatformExpansionTests
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "beta->dev", SauceryConstants.SCREENRES_2560_1600)         //2
         };
 
-        PlatformExpander expander = new(platforms);
+        PlatformExpander expander = new(PlatformConfigurator, platforms);
         List<SaucePlatform> expandedSet = expander.Expand();
         expandedSet.Count.ShouldBe(16);
     }
