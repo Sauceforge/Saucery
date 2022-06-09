@@ -26,8 +26,8 @@ public class PlatformExpansionTests
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, $"75->{SauceryConstants.BROWSER_VERSION_DEV}", SauceryConstants.SCREENRES_2560_1600)
         };
 
-        var configurator = new PlatformConfigurator();
-        PlatformExpander expander = new(configurator, platforms);
+        //var configurator = new PlatformConfigurator();
+        PlatformExpander expander = new(PlatformConfigurator, platforms);
         var expandedSet = expander.Expand();
         expandedSet.Find(e => e.BrowserVersion.Equals(82)).ShouldBeNull(); //Chrome didn't release version 82 due to Covid-19.
         expandedSet.Count.ShouldBeGreaterThanOrEqualTo(31);
@@ -118,18 +118,20 @@ public class PlatformExpansionTests
         expandedSet.Count.ShouldBe(0);
     }
 
-    //TODO: Needs fixing
-    //[Test]
-    //public void MobileExpansionTest()
-    //{
-    //    var platforms = new List<SaucePlatform>
-    //    {
-    //        //Mobile Platforms
-    //        new IOSPlatform("iPhone 13 Pro Max Simulator", "15.2->15.4", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
-    //    };
+    [Test]
+    public void MobileExpansionTest()
+    {
+        var platforms = new List<SaucePlatform>
+        {
+            //Mobile Platforms - Not supported.  This should never be done
+            new IOSPlatform("iPhone 13 Pro Max Simulator", "15.2->15.4", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
+        };
 
-    //    PlatformExpander expander = new(PlatformConfigurator, platforms);
-    //    List<SaucePlatform> expandedSet = expander.Expand();
-    //    expandedSet.Count.ShouldBe(0);
-    //}
+        PlatformExpander expander = new(PlatformConfigurator, platforms);
+        List<SaucePlatform> expandedSet = expander.Expand();
+        
+        //It is not the job of the PlatformExpander to remove this from the requested set so just return it.
+        //PlatformConfigurator Filtering will ensure it is not validated.
+        expandedSet.Count.ShouldBe(1);
+    }
 }

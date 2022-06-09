@@ -23,7 +23,7 @@ public class PlatformExpander
     {
         foreach (SaucePlatform platform in Platforms)
         {
-            if (!platform.NeedsExpansion())
+            if (!platform.NeedsExpansion() || platform.IsAnAndroidDevice() || platform.IsAnAppleDevice())
             {
                 ExpandedSet.Add(platform);
                 continue;
@@ -62,11 +62,6 @@ public class PlatformExpander
 
     private void AddMixedRange(SaucePlatform platform, int lowerBound, string upperBound)
     {
-        if (platform.IsAnAndroidDevice() || platform.IsAnAppleDevice())
-        {
-            return;
-        }
-
         int maxVersion = PlatformConfigurator.FindMaxBrowserVersion(platform);
         AddNumericRange(platform, lowerBound, maxVersion);
         AddNonNumericRange(platform, SauceryConstants.BROWSER_VERSION_LATEST_MINUS1, upperBound);
