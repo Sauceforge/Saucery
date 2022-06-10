@@ -28,7 +28,7 @@
         <dependency id="Microsoft.NET.Test.Sdk" version="17.2.0" />
         <dependency id="Newtonsoft.Json" version="13.0.1" />
         <dependency id="NUnit" version="3.13.3" />
-        <dependency id="RestSharp" version="107.3.0" />
+        <dependency id="RestSharp" version="108.0.1" />
         <dependency id="Selenium.Support" version="4.1.1" />
         <dependency id="Selenium.WebDriver" version="4.1.1" />
       </group>

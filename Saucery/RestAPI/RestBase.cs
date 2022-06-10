@@ -1,6 +1,7 @@
 ﻿using RestSharp;
 using RestSharp.Authenticators;
 using Saucery.Util;
+using System;
 using System.Net;
 using System.Threading;
 
@@ -53,7 +54,7 @@ public abstract class RestBase {
 
         while (LimitChecker.IsLimitExceeded())
         {
-            OnceOnlyWriter.WriteLine(SauceryConstants.RESTAPI_LIMIT_EXCEEDED_MSG);
+            Console.WriteLine(SauceryConstants.RESTAPI_LIMIT_EXCEEDED_MSG);
             Thread.Sleep(LimitChecker.GetReset());
             response = Client.ExecuteAsync(request).Result;
             LimitChecker.Update(response);
