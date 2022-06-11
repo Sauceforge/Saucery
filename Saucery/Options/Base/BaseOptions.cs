@@ -46,10 +46,6 @@ internal abstract class BaseOptions {
         //}
         return Opts;
     }
-
-    //protected static string GetBrowser(string nativeApp) {
-    //    return nativeApp != null ? "" : SauceryConstants.SAFARI_BROWSER;
-    //}
 }
 /*
 * Copyright Andrew Gray, SauceForge

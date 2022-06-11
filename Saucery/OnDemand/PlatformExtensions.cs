@@ -54,13 +54,18 @@ internal static class PlatformExtensions {
 
     public static void SetTestName(this BrowserVersion browserVersion, string testName)
     {
-        var shortTestName = new StringBuilder();
+        StringBuilder shortTestName = new();
         shortTestName.Append(testName.Contains(SauceryConstants.LEFT_SQUARE_BRACKET)
-                                ? testName.Substring(0, testName.IndexOf(SauceryConstants.LEFT_SQUARE_BRACKET, StringComparison.Ordinal))
+                                ? testName[..testName.IndexOf(SauceryConstants.LEFT_SQUARE_BRACKET, StringComparison.Ordinal)]
                                 : testName);
+
         browserVersion.TestName = browserVersion.IsAMobileDevice()
-            ? AppendPlatformField(AppendPlatformField(AppendPlatformField(shortTestName, browserVersion.DeviceName), browserVersion.Name), browserVersion.DeviceOrientation).ToString()
-            : AppendPlatformField(AppendPlatformField(AppendPlatformField(shortTestName, browserVersion.Os), browserVersion.BrowserName), browserVersion.Name).ToString();
+            ? string.IsNullOrEmpty(browserVersion.DeviceOrientation)
+                ? AppendPlatformField(AppendPlatformField(shortTestName, browserVersion.DeviceName), browserVersion.Name).ToString()
+                : AppendPlatformField(AppendPlatformField(AppendPlatformField(shortTestName, browserVersion.DeviceName), browserVersion.Name), browserVersion.DeviceOrientation).ToString()
+            : string.IsNullOrEmpty(browserVersion.ScreenResolution)
+                ? AppendPlatformField(AppendPlatformField(AppendPlatformField(shortTestName, browserVersion.Os), browserVersion.BrowserName), browserVersion.Name).ToString()
+                : AppendPlatformField(AppendPlatformField(AppendPlatformField(AppendPlatformField(shortTestName, browserVersion.Os), browserVersion.BrowserName), browserVersion.Name), browserVersion.ScreenResolution).ToString();
     }
 
     private static StringBuilder AppendPlatformField(this StringBuilder testName, string fieldToAdd) {
