@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
 
-namespace Saucery.RestAPI.SupportedPlatforms.Base
-{
-    public abstract class PlatformAcquirer : RestBase {
-        public abstract List<SupportedPlatform> AcquirePlatforms();
-    }
+namespace Saucery.RestAPI.SupportedPlatforms.Base;
+
+public abstract class PlatformAcquirer : RestBase {
+    public abstract List<SupportedPlatform> AcquirePlatforms();
 }
 
 /*
- * Copyright Andrew Gray, SauceForge
- * Date: 21st February 2022
- * 
- */
+* Copyright Andrew Gray, SauceForge
+* Date: 21st February 2022
+* 
+*/

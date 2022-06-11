@@ -2,46 +2,45 @@
 using Saucery.Util;
 using System.Collections.Generic;
 
-namespace Saucery.RestAPI
-{
-    internal class RestAPILimitsChecker {
-        private RestResponse Response;
-        private Dictionary<string, string> Headers;
+namespace Saucery.RestAPI;
 
-        public RestAPILimitsChecker() {
-            Headers = new Dictionary<string, string>();
-        }
+internal class RestAPILimitsChecker {
+    private RestResponse Response;
+    private Dictionary<string, string> Headers;
 
-        public void Update(RestResponse response) {
-            Response = response;
-            foreach(var p in response.Headers) {
-                if (!Headers.ContainsKey(p.Name)) {
-                    Headers.Add(p.Name, p.Value.ToString());
-                } else {
-                    Headers.Remove(p.Name);
-                    Headers.Add(p.Name, p.Value.ToString());
-                }
+    public RestAPILimitsChecker() {
+        Headers = new Dictionary<string, string>();
+    }
+
+    public void Update(RestResponse response) {
+        Response = response;
+        foreach(var p in response.Headers) {
+            if (!Headers.ContainsKey(p.Name)) {
+                Headers.Add(p.Name, p.Value.ToString());
+            } else {
+                Headers.Remove(p.Name);
+                Headers.Add(p.Name, p.Value.ToString());
             }
         }
+    }
 
-        internal bool IsLimitExceeded() {
-            return NoRemaining() || IsIndicatorPresentInJson();
+    internal bool IsLimitExceeded() {
+        return NoRemaining() || IsIndicatorPresentInJson();
+    }
+
+    private bool IsIndicatorPresentInJson() {
+        if (Response == null || Response.Content == null) {
+            return true;
         }
 
-        private bool IsIndicatorPresentInJson() {
-            if (Response == null || Response.Content == null) {
-                return true;
-            }
+        return Response.Content.Contains(SauceryConstants.RESTAPI_LIMIT_EXCEEDED_INDICATOR);
+    }
 
-            return Response.Content.Contains(SauceryConstants.RESTAPI_LIMIT_EXCEEDED_INDICATOR);
-        }
+    private bool NoRemaining() {
+        return int.Parse(Headers["x-ratelimit-remaining"]) <= 0;
+    }
 
-        private bool NoRemaining() {
-            return int.Parse(Headers["x-ratelimit-remaining"]) <= 0;
-        }
-
-        internal int GetReset() {
-            return int.Parse(Headers["x-ratelimit-reset"]);
-        }
+    internal int GetReset() {
+        return int.Parse(Headers["x-ratelimit-reset"]);
     }
 }
