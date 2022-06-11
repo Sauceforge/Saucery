@@ -4,34 +4,33 @@ using Saucery.Options.Base;
 using Saucery.Util;
 using System;
 
-namespace Saucery.Options.ConcreteProducts
-{
-    internal class SafariBrowserOptions : BaseOptions {
-        public SafariBrowserOptions(BrowserVersion browserVersion, string testName) : base(testName)
+namespace Saucery.Options.ConcreteProducts;
+
+internal class SafariBrowserOptions : BaseOptions {
+    public SafariBrowserOptions(BrowserVersion browserVersion, string testName) : base(testName)
+    {
+        Console.WriteLine(SauceryConstants.SETTING_UP, testName, SauceryConstants.DESKTOP_ON_WEBDRIVER);
+        DebugMessages.PrintDesktopOptionValues(browserVersion);
+        Console.WriteLine("Creating Safari Options");
+
+        var o = new SafariOptions
         {
-            Console.WriteLine(SauceryConstants.SETTING_UP, testName, SauceryConstants.DESKTOP_ON_WEBDRIVER);
-            DebugMessages.PrintDesktopOptionValues(browserVersion);
-            Console.WriteLine("Creating Safari Options");
+            PlatformName = browserVersion.Os,
+            BrowserVersion = browserVersion.Name
+        };
 
-            var o = new SafariOptions
-            {
-                PlatformName = browserVersion.Os,
-                BrowserVersion = browserVersion.Name
-            };
-
-            if (!string.IsNullOrEmpty(browserVersion.ScreenResolution))
-            {
-                SauceOptions.Add(SauceryConstants.SCREEN_RESOLUTION_CAPABILITY, browserVersion.ScreenResolution);
-            }
-
-            o.AddAdditionalOption(SauceryConstants.SAUCE_OPTIONS_CAPABILITY, SauceOptions);
-            Opts = o;
+        if (!string.IsNullOrEmpty(browserVersion.ScreenResolution))
+        {
+            SauceOptions.Add(SauceryConstants.SCREEN_RESOLUTION_CAPABILITY, browserVersion.ScreenResolution);
         }
+
+        o.AddAdditionalOption(SauceryConstants.SAUCE_OPTIONS_CAPABILITY, SauceOptions);
+        Opts = o;
     }
 }
 
 /*
- * Copyright Andrew Gray, SauceForge
- * Date: 5th February 2020
- * 
- */
+* Copyright Andrew Gray, SauceForge
+* Date: 5th February 2020
+* 
+*/

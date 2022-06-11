@@ -1,34 +1,27 @@
 ﻿using System;
 
-namespace Saucery.Util
+namespace Saucery.Util;
+
+public sealed class IDGenerator
 {
-    public sealed class IDGenerator
+    private static readonly IDGenerator instance = new();
+    private readonly string TheId;
+
+    public static string Id => instance.TheId;
+
+    // Explicit static constructor to tell C# compiler
+    // not to mark type as beforefieldinit
+    static IDGenerator()
     {
-        private static readonly IDGenerator instance = new();
-        private readonly string TheId;
+    }
 
-        public static string Id => instance.TheId;
-
-        // Explicit static constructor to tell C# compiler
-        // not to mark type as beforefieldinit
-        static IDGenerator()
+    private IDGenerator()
+    {
+        if (TheId == null)
         {
-        }
-
-        private IDGenerator()
-        {
-            if (TheId == null)
-            {
-                TheId = Guid.NewGuid().ToString();
-            }
-        }
-
-        public static IDGenerator Instance
-        {
-            get
-            {
-                return instance;
-            }
+            TheId = Guid.NewGuid().ToString();
         }
     }
+
+    public static IDGenerator Instance => instance;
 }

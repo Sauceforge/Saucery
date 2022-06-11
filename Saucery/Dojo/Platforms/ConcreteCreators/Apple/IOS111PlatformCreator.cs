@@ -2,16 +2,16 @@
 using Saucery.Dojo.Platforms.ConcreteProducts.Apple;
 using Saucery.RestAPI;
 
-namespace Saucery.Dojo.Platforms.ConcreteCreators.Apple {
-    internal class IOS111PlatformCreator : PlatformCreator
-    {
-        public IOS111PlatformCreator(SupportedPlatform sp) : base(sp)
-        {
-        }
+namespace Saucery.Dojo.Platforms.ConcreteCreators.Apple; 
 
-        public override PlatformBase Create()
-        {
-            return new IOS111Platform(Platform);
-        }
+internal class IOS111PlatformCreator : PlatformCreator
+{
+    public IOS111PlatformCreator(SupportedPlatform sp) : base(sp)
+    {
+    }
+
+    public override PlatformBase Create()
+    {
+        return new IOS111Platform(Platform);
     }
 }

@@ -7,7 +7,7 @@ $dte.ExecuteCommand("File.SaveAll")
 
 $scriptPath = If ($psMajorVersion -ge 3) { split-path -parent $MyInvocation.MyCommand.Definition } Else { $PSScriptRoot }
 
-$dllPath = "$($scriptPath)\..\lib\net5.0\$($coreName).dll"
+$dllPath = "$($scriptPath)\..\lib\net6.0\$($coreName).dll"
 #$nugetPath = "$PSScriptRoot\..\lib\net461\$($nugetCore).dll"
 #$xmlPath = "$PSScriptRoot\..\lib\net461\$($xmlTransform).dll"
 

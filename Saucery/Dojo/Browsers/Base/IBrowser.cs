@@ -1,10 +1,9 @@
 ﻿using Saucery.RestAPI;
 
-namespace Saucery.Dojo.Browsers.Base
+namespace Saucery.Dojo.Browsers.Base;
+
+public interface IBrowser
 {
-    public interface IBrowser
-    {
-        abstract BrowserVersion FindVersion(SupportedPlatform sp);
-        abstract bool IsSupportedVersion(SupportedPlatform sp);
-    }
+    abstract BrowserVersion FindVersion(SupportedPlatform sp);
+    abstract bool IsSupportedVersion(SupportedPlatform sp);
 }

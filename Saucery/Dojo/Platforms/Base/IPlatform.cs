@@ -1,6 +1,5 @@
-﻿namespace Saucery.Dojo.Platforms.Base
+﻿namespace Saucery.Dojo.Platforms.Base;
+
+interface IPlatform
 {
-    interface IPlatform
-    {
-    }
 }

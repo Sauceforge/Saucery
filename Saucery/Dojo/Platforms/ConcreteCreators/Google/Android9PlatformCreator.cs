@@ -2,17 +2,16 @@
 using Saucery.Dojo.Platforms.ConcreteProducts.Google;
 using Saucery.RestAPI;
 
-namespace Saucery.Dojo.Platforms.ConcreteCreators.Google
-{
-    internal class Android9PlatformCreator : PlatformCreator
-    {
-        public Android9PlatformCreator(SupportedPlatform sp) : base(sp)
-        {
-        }
+namespace Saucery.Dojo.Platforms.ConcreteCreators.Google;
 
-        public override PlatformBase Create()
-        {
-            return new Android9Platform(Platform);
-        }
+internal class Android9PlatformCreator : PlatformCreator
+{
+    public Android9PlatformCreator(SupportedPlatform sp) : base(sp)
+    {
+    }
+
+    public override PlatformBase Create()
+    {
+        return new Android9Platform(Platform);
     }
 }
