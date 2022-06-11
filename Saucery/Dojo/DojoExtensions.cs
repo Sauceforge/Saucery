@@ -159,8 +159,6 @@ public static class DojoExtensions
             case SauceryConstants.PLATFORM_MAC_1010:
                 platform = platforms.GetPlatform<Mac1010Platform>()[0];
                 break;
-            default:
-                break;
         }
 
         if (platform == null) { return null; }
@@ -208,8 +206,6 @@ public static class DojoExtensions
                 break;
             case "Linux 5.1":
                 platform = platforms.GetPlatform<Android51Platform>()[0];
-                break;
-            default:
                 break;
         }
 
@@ -281,8 +277,6 @@ public static class DojoExtensions
             case "iOS 10.3":
                 platform = platforms.GetPlatform<IOS103Platform>()[0];
                 break;
-            default:
-                break;
         }
 
         if (platform == null) { return null; }
@@ -337,8 +331,6 @@ public static class DojoExtensions
                 break;
             case SauceryConstants.BROWSER_SAFARI:
                 browserVersion.PlatformType = PlatformType.Safari;
-                break;
-            default:
                 break;
         }
 

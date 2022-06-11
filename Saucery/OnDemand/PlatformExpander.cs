@@ -52,7 +52,7 @@ public class PlatformExpander
                 case PlatformRange.NumericNonNumeric:
                     AddMixedRange(platform, int.Parse(lowerBound), upperBound);
                     break;
-                default:
+                case PlatformRange.Invalid:
                     break;
             };
         }
