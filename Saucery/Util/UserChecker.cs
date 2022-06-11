@@ -2,7 +2,7 @@
 
 internal static class UserChecker {
     internal static bool ItIsMe() {
-        return Enviro.SauceUserName.ToLower().Equals(SauceryConstants.MY_USERNAME_LOWER);
+        return Enviro.SauceUserName != null && Enviro.SauceUserName.ToLower().Equals(SauceryConstants.MY_USERNAME_LOWER);
     }
 }
 /*
