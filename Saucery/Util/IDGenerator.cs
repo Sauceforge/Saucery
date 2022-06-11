@@ -23,11 +23,5 @@ public sealed class IDGenerator
         }
     }
 
-    public static IDGenerator Instance
-    {
-        get
-        {
-            return instance;
-        }
-    }
+    public static IDGenerator Instance => instance;
 }
