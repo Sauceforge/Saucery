@@ -1,6 +1,11 @@
 name: Build Pipeline
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+      - 'releases/**'
+      - 'feat/**'
 
 env:
   PROJECT_NAME: Saucery
