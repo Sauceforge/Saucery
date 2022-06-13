@@ -27,6 +27,7 @@
         <!--<dependency id="Appium.WebDriver" version="5.0.0-beta01" />-->
         <dependency id="Castle.Core" version="5.0.0" />
         <dependency id="DotNetSeleniumExtras.WaitHelpers" version="3.11.0" />
+        <dependency id="DotNetSeleniumExtras.PageObjects.Core" version="4.0.1" />
         <dependency id="Microsoft.NET.Test.Sdk" version="17.2.0" />
         <dependency id="Newtonsoft.Json" version="13.0.1" />
         <dependency id="NUnit" version="3.13.3" />
