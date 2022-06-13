@@ -1,7 +1,7 @@
 ﻿<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Saucery</id>
-    <version>4.0.0</version>
+    <version>4.0.3</version>
     <title>Saucery</title>
     <authors>SauceForge</authors>
     <owners>Andrew Gray</owners>
@@ -27,18 +27,22 @@
         <!--<dependency id="Appium.WebDriver" version="5.0.0-beta01" />-->
         <dependency id="Castle.Core" version="5.0.0" />
         <dependency id="DotNetSeleniumExtras.WaitHelpers" version="3.11.0" />
+        <dependency id="DotNetSeleniumExtras.PageObjects.Core" version="4.0.1" />
         <dependency id="Microsoft.NET.Test.Sdk" version="17.2.0" />
         <dependency id="Newtonsoft.Json" version="13.0.1" />
         <dependency id="NUnit" version="3.13.3" />
+		<dependency id="NUnit3TestAdapter" version="4.2.1" />
         <dependency id="RestSharp" version="108.0.1" />
         <dependency id="Selenium.Support" version="4.1.1" />
         <dependency id="Selenium.WebDriver" version="4.1.1" />
+	    <dependency id="Shouldly" version="4.0.3" />
       </group>
       <!--<dependency id="NuGet.Core" version="2.14.0" />-->
     </dependencies>
   </metadata>
   <files>
     <file src="bin\Release\net6.0\Saucery.dll" target="lib\net6.0\" />
+	<file src="bin\Release\net6.0\Appium.Net.dll" target="lib\net6.0\" />
     <file src="bin\Release\net6.0\nunit.framework.dll" target="lib\net6.0\" /> <!--Got to do this to make it work-->
     <file src="bin\Release\net6.0\testhost.dll" target="lib\net6.0\" />
     <file src="bin\Release\net6.0\Microsoft.TestPlatform.PlatformAbstractions.dll" target="lib\net6.0\" />

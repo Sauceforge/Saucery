@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31702.278
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Saucery", "Saucery\Saucery.csproj", "{81A83D2A-C00E-49EA-816D-9DE714704AD6}"
 EndProject
@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "UnitTests\Unit
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{34E82214-CDA9-4CD5-9AE6-A5DAD5411F5F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExternalMerlin", "ExternalMerlin\ExternalMerlin.csproj", "{74551FBC-AD70-4889-B567-A4F4FF46F2BF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,10 @@ Global
 		{932385AE-EA11-44BB-A5C6-9ED9DFA3EFF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{932385AE-EA11-44BB-A5C6-9ED9DFA3EFF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{932385AE-EA11-44BB-A5C6-9ED9DFA3EFF4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74551FBC-AD70-4889-B567-A4F4FF46F2BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74551FBC-AD70-4889-B567-A4F4FF46F2BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74551FBC-AD70-4889-B567-A4F4FF46F2BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74551FBC-AD70-4889-B567-A4F4FF46F2BF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -38,6 +44,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{81A83D2A-C00E-49EA-816D-9DE714704AD6} = {87A95FF4-63C4-4D19-97CE-DD904CF7C631}
 		{932385AE-EA11-44BB-A5C6-9ED9DFA3EFF4} = {34E82214-CDA9-4CD5-9AE6-A5DAD5411F5F}
+		{74551FBC-AD70-4889-B567-A4F4FF46F2BF} = {34E82214-CDA9-4CD5-9AE6-A5DAD5411F5F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B287ECB9-947E-4E9C-B745-27048D5CC522}
