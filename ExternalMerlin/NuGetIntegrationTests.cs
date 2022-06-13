@@ -10,8 +10,8 @@ namespace ExternalMerlin;
 
 //[Parallelizable(ParallelScope.All)]
 [TestFixtureSource(typeof(RequestedPlatformData))]
-public class OpenSauceTests : SauceryBase {
-    public OpenSauceTests(BrowserVersion browserVersion) : base(browserVersion) {
+public class NuGetIntegrationTests : SauceryBase {
+    public NuGetIntegrationTests(BrowserVersion browserVersion) : base(browserVersion) {
     }
 
     [Test]
