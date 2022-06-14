@@ -1,7 +1,7 @@
-﻿using NUnit.Framework;
-using OpenQA.Selenium.Support.UI;
+﻿using OpenQA.Selenium.Support.UI;
 using Saucery.Driver;
 using SeleniumExtras.WaitHelpers;
+using Shouldly;
 using System;
 
 namespace Saucery.PageObjects;
@@ -30,7 +30,8 @@ public class PageObjectBase {
         {
             GetPage(driver);
         }
-        Assert.AreEqual(Title, driver.Title);
+        driver.Title.ShouldBe(Title);
+        //Assert.AreEqual(Title, driver.Title);
     }
 
     //protected static void ScrollIntoView(SauceryRemoteWebDriver driver, IWebElement element) {
