@@ -12,36 +12,84 @@ namespace Saucery.Dojo;
 
 public class PlatformConfigurator
 {
-    SauceLabsPlatformAcquirer PlatformAcquirer { get; set; }
-    public List<PlatformBase> AvailablePlatforms { get; set; }
+    SauceLabsPlatformAcquirer PlatformAcquirer { get; set; } = new();
+    public List<PlatformBase> AvailablePlatforms { get; set; } = new();
+    public List<SupportedRealDevicePlatform> AvailableRealDevices { get; set; } = new();
+
+    public PlatformConfigurator(PlatformFilter filter)
+    {
+        switch (filter)
+        {
+            case PlatformFilter.ALL:
+                ConstructAllPlatforms();
+                break;
+            case PlatformFilter.EMULATED:
+                ConstructEmulatedPlatforms();
+                break;
+            case PlatformFilter.REALDEVICE:
+                ConstructRealDevices();
+                break;
+            default:
+                break;
+        }
+    }
 
     public PlatformConfigurator()
     {
-        PlatformAcquirer = new SauceLabsPlatformAcquirer();
-        var platforms = PlatformAcquirer.AcquirePlatforms();
+        ConstructAllPlatforms();
+    }
 
-        var filteredPlatforms = new List<SupportedPlatform>();
-        //Not filtered for Min and Max Versions yet
-        filteredPlatforms.AddRange(FindWindowsPlatforms(platforms));
-        filteredPlatforms.AddRange(FindMacPlatforms(platforms, new List<string> { SauceryConstants.PLATFORM_MAC_1010, 
-                                                                                  SauceryConstants.PLATFORM_MAC_1011,
-                                                                                  SauceryConstants.PLATFORM_MAC_1012,
-                                                                                  SauceryConstants.PLATFORM_MAC_1013,
-                                                                                  SauceryConstants.PLATFORM_MAC_1014,
-                                                                                  SauceryConstants.PLATFORM_MAC_1015,
-                                                                                  SauceryConstants.PLATFORM_MAC_11,
-                                                                                  SauceryConstants.PLATFORM_MAC_12 }));
-        filteredPlatforms.AddRange(FindMobilePlatforms(platforms, new List<string> { "iphone", "ipad" }));
-        filteredPlatforms.AddRange(FindMobilePlatforms(platforms, new List<string> { "android" }));
+    private void ConstructAllPlatforms()
+    {
+        ConstructEmulatedPlatforms();
+        ConstructRealDevices();
+    }
 
-        AvailablePlatforms = new List<PlatformBase>();
-        foreach (var sp in filteredPlatforms)
+    private void ConstructEmulatedPlatforms()
+    {
+        var supportedPlatforms = PlatformAcquirer.AcquirePlatforms();
+        var filteredSupportedPlatforms = FilterSupportedPlatforms(supportedPlatforms);
+
+        foreach (var sp in filteredSupportedPlatforms)
         {
             AvailablePlatforms.AddPlatform(sp);
         }
 
         AddLatestBrowserVersion(SauceryConstants.BROWSER_VERSION_LATEST);
         AddLatestBrowserVersion(SauceryConstants.BROWSER_VERSION_LATEST_MINUS1);
+    }
+
+    private void ConstructRealDevices()
+    {
+        var supportedRealDevices = PlatformAcquirer.AcquireRealDevicePlatforms();
+        
+        foreach (var rd in supportedRealDevices)
+        {
+            //AvailableRealDevices.AddPlatform(rd);
+        }
+
+        //AddLatestBrowserVersion(SauceryConstants.BROWSER_VERSION_LATEST);
+        //AddLatestBrowserVersion(SauceryConstants.BROWSER_VERSION_LATEST_MINUS1);
+    }
+
+    private static List<SupportedPlatform> FilterSupportedPlatforms(List<SupportedPlatform> supportedPlatforms)
+    {
+        var filteredPlatforms = new List<SupportedPlatform>();
+        
+        //Not filtered for Min and Max Versions yet
+        filteredPlatforms.AddRange(FindWindowsPlatforms(supportedPlatforms));
+        filteredPlatforms.AddRange(FindMacPlatforms(supportedPlatforms, new List<string> { SauceryConstants.PLATFORM_MAC_1010,
+                                                                                           SauceryConstants.PLATFORM_MAC_1011,
+                                                                                           SauceryConstants.PLATFORM_MAC_1012,
+                                                                                           SauceryConstants.PLATFORM_MAC_1013,
+                                                                                           SauceryConstants.PLATFORM_MAC_1014,
+                                                                                           SauceryConstants.PLATFORM_MAC_1015,
+                                                                                           SauceryConstants.PLATFORM_MAC_11,
+                                                                                           SauceryConstants.PLATFORM_MAC_12 }));
+        filteredPlatforms.AddRange(FindMobilePlatforms(supportedPlatforms, new List<string> { "iphone", "ipad" }));
+        filteredPlatforms.AddRange(FindMobilePlatforms(supportedPlatforms, new List<string> { "android" }));
+
+        return filteredPlatforms;
     }
 
     internal int FindMaxBrowserVersion(SaucePlatform platform)
@@ -77,17 +125,10 @@ public class PlatformConfigurator
 
     public List<BrowserVersion> FilterAll(List<SaucePlatform> platforms)
     {
-        var bvs = new List<BrowserVersion>();
-
-        foreach (var p in platforms)
-        {
-            var bv = Filter(p);
-            if (bv != null)
-            {
-                bvs.Add(bv);
-            }
-        }
-
+        var bvs = (from p in platforms
+                   let bv = Filter(p)
+                   where bv != null
+                   select bv).ToList();
         Console.WriteLine(SauceryConstants.NUM_VALID_PLATFORMS, bvs.Count, platforms.Count);
         return bvs;
     }

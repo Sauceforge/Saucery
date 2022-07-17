@@ -20,6 +20,13 @@ public class RestTests {
     }
 
     [Test]
+    public void SupportedRealDevicePlatformTest()
+    {
+        //var configurator = new PlatformConfigurator(PlatformFilter.REALDEVICE);
+        
+    }
+
+    [Test]
     //[Ignore("Account has no minutes")]
     public void SupportedPlatformTest()
     {

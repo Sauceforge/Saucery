@@ -26,6 +26,13 @@ public abstract class RestBase {
         LimitChecker = new RestAPILimitsChecker();
     }
 
+    protected string GetJsonResponse(string requestProforma, string username = null)
+    {
+        var request = BuildRequest(requestProforma, Method.Get, username);
+        var response = GetResponse(request);
+        return response.Content;
+    }
+
     protected static RestRequest BuildRequest(string request, Method method, string username = null) {
         if (username != null)
         {
@@ -35,12 +42,6 @@ public abstract class RestBase {
         Request.AddHeader("Content-Type", SauceryConstants.JSON_CONTENT_TYPE);
         Request.RequestFormat = DataFormat.Json;
         return Request;
-    }
-
-    protected string GetJsonResponse(string requestProforma, string username = null) {
-        var request = BuildRequest(requestProforma, Method.Get, username);
-        var response = GetResponse(request);
-        return response.Content;
     }
 
     private RestResponse GetResponse(RestRequest request) {
