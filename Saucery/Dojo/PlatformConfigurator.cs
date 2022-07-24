@@ -13,6 +13,7 @@ namespace Saucery.Dojo;
 public class PlatformConfigurator
 {
     SauceLabsPlatformAcquirer PlatformAcquirer { get; set; } = new();
+    SauceLabsRealDeviceAcquirer RealDeviceAcquirer { get; set; } = new();
     public List<PlatformBase> AvailablePlatforms { get; set; } = new();
     public List<SupportedRealDevicePlatform> AvailableRealDevices { get; set; } = new();
 
@@ -34,15 +35,15 @@ public class PlatformConfigurator
         }
     }
 
-    public PlatformConfigurator()
-    {
-        ConstructAllPlatforms();
-    }
+    //public PlatformConfigurator()
+    //{
+    //    ConstructAllPlatforms();
+    //}
 
     private void ConstructAllPlatforms()
     {
-        ConstructEmulatedPlatforms();
         ConstructRealDevices();
+        ConstructEmulatedPlatforms();
     }
 
     private void ConstructEmulatedPlatforms()
@@ -61,15 +62,14 @@ public class PlatformConfigurator
 
     private void ConstructRealDevices()
     {
-        var supportedRealDevices = PlatformAcquirer.AcquireRealDevicePlatforms();
-        
-        foreach (var rd in supportedRealDevices)
-        {
-            //AvailableRealDevices.AddPlatform(rd);
-        }
+        var supportedRealDevices = RealDeviceAcquirer.AcquireRealDevicePlatforms();
 
-        //AddLatestBrowserVersion(SauceryConstants.BROWSER_VERSION_LATEST);
-        //AddLatestBrowserVersion(SauceryConstants.BROWSER_VERSION_LATEST_MINUS1);
+        AvailableRealDevices.AddRange(supportedRealDevices);
+
+        //foreach (var rd in supportedRealDevices)
+        //{
+        //    AvailableRealDevices.AddPlatform(rd);
+        //}
     }
 
     private static List<SupportedPlatform> FilterSupportedPlatforms(List<SupportedPlatform> supportedPlatforms)

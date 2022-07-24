@@ -22,8 +22,23 @@ public class RestTests {
     [Test]
     public void SupportedRealDevicePlatformTest()
     {
-        //var configurator = new PlatformConfigurator(PlatformFilter.REALDEVICE);
-        
+        PlatformConfigurator configurator = new(PlatformFilter.REALDEVICE);
+        var availablePlatforms = configurator.AvailablePlatforms;
+        var realDevices = configurator.AvailableRealDevices;
+
+        availablePlatforms.ShouldBeEmpty();
+        realDevices.ShouldNotBeNull();
+    }
+
+    [Test]
+    public void SupportedEmulatedPlatformTest()
+    {
+        PlatformConfigurator configurator = new(PlatformFilter.EMULATED);
+        var availablePlatforms = configurator.AvailablePlatforms;
+        var realDevices = configurator.AvailableRealDevices;
+
+        availablePlatforms.ShouldNotBeNull();
+        realDevices.ShouldBeEmpty();    
     }
 
     [Test]
@@ -33,11 +48,13 @@ public class RestTests {
         //var windows10platforms = platforms.FindAll(w => w.os.Equals(SauceryConstants.PLATFORM_WINDOWS_10));
         //var windows10platformbrowsers = windows10platforms.GroupBy(w => w.api_name);
 
-        var configurator = new PlatformConfigurator();
+        PlatformConfigurator configurator = new(PlatformFilter.ALL);
         var availablePlatforms = configurator.AvailablePlatforms;
+        var realDevices = configurator.AvailableRealDevices;
 
         availablePlatforms.ShouldNotBeNull();
-
+        realDevices.ShouldNotBeNull();
+        
         //var browsers = availablePlatforms.SelectMany(i => i.Browsers).Distinct().ToList();
         //var iosBrowsers = browsers.FindAll(x => x.DeviceName.Equals("iPhone XS Max Simulator") || x.DeviceName.Equals("iPhone 5s Simulator")).OrderBy(o=>o.DeviceName).ThenBy(o=>o.PlatformVersion);
 

@@ -15,7 +15,7 @@ public class SauceryTestData : IEnumerable {
 
     protected static void SetPlatforms(List<SaucePlatform> platforms)
     {
-        PlatformConfigurator platformConfigurator = new();
+        PlatformConfigurator platformConfigurator = new(PlatformFilter.ALL);
         PlatformExpander expander = new(platformConfigurator, platforms);
         List<SaucePlatform> expandedPlatforms = expander.Expand();
         BrowserVersions = platformConfigurator.FilterAll(expandedPlatforms);

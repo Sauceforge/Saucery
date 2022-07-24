@@ -1,5 +1,4 @@
 ﻿using RestSharp;
-using RestSharp.Authenticators;
 using Saucery.Util;
 using System;
 using System.Net;
@@ -14,39 +13,53 @@ namespace Saucery.RestAPI;
 public abstract class RestBase {
     internal static string UserName = Enviro.SauceUserName;
     internal static string AccessKey = Enviro.SauceApiKey;
-    internal static RestClient Client;
+    internal RestClient Client;
     internal static RestRequest Request;
     internal static RestAPILimitsChecker LimitChecker;
 
-    static RestBase() {
-        Client = new RestClient(SauceryConstants.SAUCE_REST_BASE)
-        {
-            Authenticator = new HttpBasicAuthenticator(UserName, AccessKey)
-        };
+    public RestBase() {
         LimitChecker = new RestAPILimitsChecker();
     }
 
-    protected string GetJsonResponse(string requestProforma, string username = null)
+    protected string GetJsonResponse(string requestProforma)
     {
-        var request = BuildRequest(requestProforma, Method.Get, username);
+        var request = BuildRequest(requestProforma, Method.Get);
         var response = GetResponse(request);
         return response.Content;
     }
 
-    protected static RestRequest BuildRequest(string request, Method method, string username = null) {
-        if (username != null)
-        {
-            request = string.Format(request, username);
-        }
+    protected static RestRequest BuildRequest(string request, Method method) {
+        request = string.Format(request, UserName);
         Request = new RestRequest(request, method);
         Request.AddHeader("Content-Type", SauceryConstants.JSON_CONTENT_TYPE);
         Request.RequestFormat = DataFormat.Json;
         return Request;
     }
 
-    private RestResponse GetResponse(RestRequest request) {
+    protected void EnsureExecution(RestRequest request)
+    {
         var response = Client.ExecuteAsync(request).Result;
-        if(response.StatusCode.Equals(HttpStatusCode.OK))
+        LimitChecker.Update(response);
+
+        while (LimitChecker.IsLimitExceeded())
+        {
+            Thread.Sleep(LimitChecker.GetReset());
+            response = Client.ExecuteAsync(request).Result;
+            LimitChecker.Update(response);
+        }
+    }
+
+    protected static string ExtractJsonSegment(string json, int startIndex, int endIndex) {
+        DebugMessages.ExtractJsonSegment(json, startIndex, endIndex);
+        var len = endIndex - startIndex;
+        var segment = json.Substring(startIndex, len);
+        return string.Format(SauceryConstants.JSON_SEGMENT_CONTAINER, segment);
+    }
+
+    private RestResponse GetResponse(RestRequest request)
+    {
+        var response = Client.ExecuteAsync(request).Result;
+        if (response.StatusCode.Equals(HttpStatusCode.OK))
         {
             return response;
         }
@@ -62,26 +75,6 @@ public abstract class RestBase {
         }
 
         return response;
-    }
-
-    internal void EnsureExecution(RestRequest request)
-    {
-        var response = Client.ExecuteAsync(request).Result;
-        LimitChecker.Update(response);
-
-        while (LimitChecker.IsLimitExceeded())
-        {
-            Thread.Sleep(LimitChecker.GetReset());
-            response = Client.ExecuteAsync(request).Result;
-            LimitChecker.Update(response);
-        }
-    }
-
-    protected string ExtractJsonSegment(string json, int startIndex, int endIndex) {
-        DebugMessages.ExtractJsonSegment(json, startIndex, endIndex);
-        var len = endIndex - startIndex;
-        var segment = json.Substring(startIndex, len);
-        return string.Format(SauceryConstants.JSON_SEGMENT_CONTAINER, segment);
     }
 }
 /*

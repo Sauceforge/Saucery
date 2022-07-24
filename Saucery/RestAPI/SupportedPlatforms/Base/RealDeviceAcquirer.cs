@@ -2,8 +2,8 @@
 
 namespace Saucery.RestAPI.SupportedPlatforms.Base;
 
-public abstract class PlatformAcquirer : RestBase {
-    public abstract List<SupportedPlatform> AcquirePlatforms();
+public abstract class RealDeviceAcquirer : RestBase {
+    public abstract List<SupportedRealDevicePlatform> AcquireRealDevicePlatforms();
 }
 
 /*

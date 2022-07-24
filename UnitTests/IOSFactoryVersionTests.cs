@@ -16,7 +16,7 @@ public class IOSFactoryVersionTests
 
     static IOSFactoryVersionTests()
     {
-        PlatformConfigurator = new PlatformConfigurator();
+        PlatformConfigurator = new(PlatformFilter.ALL);
     }
 
     [Test, TestCaseSource(typeof(IOSDataClass), "NotSupportedTestCases")]

@@ -84,6 +84,7 @@ public class SauceryConstants {
     internal const string RESTAPI_LIMIT_EXCEEDED_INDICATOR = "API rate limit exceeded for";
     internal const string RESTAPI_LIMIT_EXCEEDED_MSG = "API rate limit exceeded. We have to wait. See https://saucelabs.com/blog/announcing-new-rest-api-rate-limits for more details.";
     internal const string SAUCE_REST_BASE = "https://api.us-west-1.saucelabs.com/rest/v1/";
+    internal const string SAUCE_REAL_DEVICE_REST_BASE = "https://api.us-west-1.saucelabs.com/v1/";
     internal const string ACCOUNT_CONCURRENCY_REQUEST = "users/{0}/concurrency";
     internal const string JOB_REQUEST = "{0}/jobs/{1}";
     internal const string RECOMMENDED_APPIUM_REQUEST = "info/platforms/appium";
