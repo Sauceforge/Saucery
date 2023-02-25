@@ -1,5 +1,5 @@
 ﻿namespace Saucery.Dojo.Platforms.Base;
 
-interface IPlatform
+public interface IPlatform
 {
 }
