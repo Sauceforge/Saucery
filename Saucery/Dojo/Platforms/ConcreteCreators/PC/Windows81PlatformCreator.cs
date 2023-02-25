@@ -10,8 +10,5 @@ internal class Windows81PlatformCreator : PlatformCreator
     {
     }
 
-    public override PlatformBase Create()
-    {
-        return new Windows81Platform(Platform);
-    }
+    public override PlatformBase Create() => new Windows81Platform(Platform);
 }

@@ -4,42 +4,47 @@ namespace Saucery.RestAPI
 {
     public class SupportedRealDevicePlatform
     {
-        public string abiType { get; set; }
-        public int apiLevel { get; set; }
-        public int cpuCores { get; set; }
-        public int cpuFrequency { get; set; }
-        public string defaultOrientation { get; set; }
-        public int dpi { get; set; }
-        public bool hasOnScreenButtons { get; set; }
-        public string id { get; set; }
-        public string internalOrientation { get; set; }
-        public int internalStorageSize { get; set; }
-        public bool isArm { get; set; }
-        public bool isKeyGuardDisabled { get; set; }
-        public bool isPrivate { get; set; }
-        public bool isRooted { get; set; }
-        public bool isTablet { get; set; }
-        public List<string> manufacturer { get; set; }
-        public string modelNumber { get; set; }
-        public string name { get; set; }
-        public string os { get; set; }
-        public string osVersion { get; set; }
-        public int pixelsPerPoint { get; set; }
-        public int ramSize { get; set; }
-        public int resolutionHeight { get; set; }
-        public int resolutionWidth { get; set; }
-        public double screenSize { get; set; }
-        public int sdCardSize { get; set; }
-        public bool supportsAppiumWebAppTesting { get; set; }
-        public bool supportsGlobalProxy { get; set; }
-        public bool supportsMinicapSocketConnection { get; set; }
-        public bool supportsMockLocations { get; set; }
-        public string cpuType { get; set; }
-        public string deviceFamily { get; set; }
-        public string dpiName { get; set; }
-        public bool isAlternativeIoEnabled { get; set; }
-        public bool supportsManualWebTesting { get; set; }
-        public bool supportsMultiTouch { get; set; }
-        public bool supportsXcuiTest { get; set; }
+        public SupportedRealDevicePlatform(string osVersion)
+        {
+            OsVersion = osVersion;
+        }
+
+        public string AbiType { get; set; }
+        public int ApiLevel { get; set; }
+        public int CpuCores { get; set; }
+        public int CpuFrequency { get; set; }
+        public string DefaultOrientation { get; set; }
+        public int Dpi { get; set; }
+        public bool HasOnScreenButtons { get; set; }
+        public string Id { get; set; }
+        public string InternalOrientation { get; set; }
+        public int InternalStorageSize { get; set; }
+        public bool IsArm { get; set; }
+        public bool IsKeyGuardDisabled { get; set; }
+        public bool IsPrivate { get; set; }
+        public bool IsRooted { get; set; }
+        public bool IsTablet { get; set; }
+        public List<string> Manufacturer { get; set; }
+        public string ModelNumber { get; set; }
+        public string Name { get; set; }
+        public string Os { get; set; }
+        public string OsVersion { get; set; }
+        public int PixelsPerPoint { get; set; }
+        public int RamSize { get; set; }
+        public int ResolutionHeight { get; set; }
+        public int ResolutionWidth { get; set; }
+        public double ScreenSize { get; set; }
+        public int SdCardSize { get; set; }
+        public bool SupportsAppiumWebAppTesting { get; set; }
+        public bool SupportsGlobalProxy { get; set; }
+        public bool SupportsMinicapSocketConnection { get; set; }
+        public bool SupportsMockLocations { get; set; }
+        public string CpuType { get; set; }
+        public string DeviceFamily { get; set; }
+        public string DpiName { get; set; }
+        public bool IsAlternativeIoEnabled { get; set; }
+        public bool SupportsManualWebTesting { get; set; }
+        public bool SupportsMultiTouch { get; set; }
+        public bool SupportsXcuiTest { get; set; }
     }
 }

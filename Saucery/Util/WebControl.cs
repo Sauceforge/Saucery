@@ -11,13 +11,9 @@ public class WebControl {
         _by = by;
     }
 
-    public IWebElement Find(RemoteWebDriver driver){
-        return driver.FindElement(_by);
-    }
+    public IWebElement Find(RemoteWebDriver driver) => driver.FindElement(_by);
 
-    public ReadOnlyCollection<IWebElement> FindAll(RemoteWebDriver driver){
-        return driver.FindElements(_by);
-    }
+    public ReadOnlyCollection<IWebElement> FindAll(RemoteWebDriver driver) => driver.FindElements(_by);
 }
 /*
 * Copyright Andrew Gray, SauceForge

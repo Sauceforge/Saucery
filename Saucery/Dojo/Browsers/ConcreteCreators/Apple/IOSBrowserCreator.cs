@@ -11,8 +11,5 @@ internal class IOSBrowserCreator : BrowserCreator
     {
     }
 
-    public override BrowserBase Create(string platformNameForOption, List<string> screenResolutions)
-    {
-        return new IOSBrowser(Platform, screenResolutions, platformNameForOption);
-    }
+    public override BrowserBase Create(string platformNameForOption, List<string> screenResolutions) => new IOSBrowser(Platform, screenResolutions, platformNameForOption);
 }

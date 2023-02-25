@@ -9,9 +9,7 @@ namespace Saucery.DataSources;
 public class SauceryTestData : IEnumerable {
     protected static List<BrowserVersion> BrowserVersions { get; set; }
 
-    public IEnumerator GetEnumerator() {
-        return BrowserVersions?.GetEnumerator();
-    }
+    public IEnumerator GetEnumerator() => BrowserVersions?.GetEnumerator();
 
     protected static void SetPlatforms(List<SaucePlatform> platforms)
     {

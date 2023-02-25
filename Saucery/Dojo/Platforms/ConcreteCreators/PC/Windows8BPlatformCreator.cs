@@ -10,8 +10,5 @@ internal class Windows8PlatformCreator : PlatformCreator
     {
     }
 
-    public override PlatformBase Create()
-    {
-        return new Windows8Platform(Platform);
-    }
+    public override PlatformBase Create() => new Windows8Platform(Platform);
 }

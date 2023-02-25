@@ -10,8 +10,5 @@ internal class Android6PlatformCreator : PlatformCreator
     {
     }
 
-    public override PlatformBase Create()
-    {
-        return new Android6Platform(Platform);
-    }
+    public override PlatformBase Create() => new Android6Platform(Platform);
 }

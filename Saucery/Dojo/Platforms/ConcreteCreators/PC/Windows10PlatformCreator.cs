@@ -10,8 +10,5 @@ internal class Windows10PlatformCreator : PlatformCreator
     {
     }
 
-    public override PlatformBase Create()
-    {
-        return new Windows10Platform(Platform);
-    }
+    public override PlatformBase Create() => new Windows10Platform(Platform);
 }

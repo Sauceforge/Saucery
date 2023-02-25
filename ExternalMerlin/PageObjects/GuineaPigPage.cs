@@ -23,10 +23,9 @@ public class GuineaPigPage : PageObjectBase {
         return this;
     }
 
-    public string GetUserAgent(SauceryRemoteWebDriver driver) {
+    public string GetUserAgent(SauceryRemoteWebDriver driver) =>
         //Could also use a "Selectors" class here.
-        return driver.FindElement(By.Id("useragent")).Text;
-    }
+        driver.FindElement(By.Id("useragent")).Text;
 
     public GuineaPigPage TypeField(SauceryRemoteWebDriver driver, string fieldId, string data) {
         var element = driver.FindElement(By.Id(fieldId));

@@ -11,26 +11,17 @@ internal class SafariBrowser : BrowserBase, IVersion
     {
     }
 
-    public override BrowserVersion FindVersion(SupportedPlatform sp)
-    {
-        return BrowserVersions.Find(bv => bv.Name.Equals(sp.latest_stable_version) || bv.Name.Equals(sp.short_version));
-    }
+    public override BrowserVersion FindVersion(SupportedPlatform sp) => BrowserVersions.Find(bv => bv.Name.Equals(sp.latest_stable_version) || bv.Name.Equals(sp.short_version));
 
-    public int MinimumVersion(SupportedPlatform sp)
+    public int MinimumVersion(SupportedPlatform sp) => sp.os switch
     {
-        return sp.os switch
-        {
-            SauceryConstants.PLATFORM_MAC_12 => 15,
-            SauceryConstants.PLATFORM_MAC_11 => 14,
-            SauceryConstants.PLATFORM_MAC_1015 => 13,
-            SauceryConstants.PLATFORM_MAC_1014 => 12,
-            SauceryConstants.PLATFORM_MAC_1013 => 12,
-            _ => 0,
-        };
-    }
+        SauceryConstants.PLATFORM_MAC_12 => 15,
+        SauceryConstants.PLATFORM_MAC_11 => 14,
+        SauceryConstants.PLATFORM_MAC_1015 => 13,
+        SauceryConstants.PLATFORM_MAC_1014 => 12,
+        SauceryConstants.PLATFORM_MAC_1013 => 12,
+        _ => 0,
+    };
 
-    public override bool IsSupportedVersion(SupportedPlatform sp)
-    {
-        return sp.short_version_as_int != 0 && sp.short_version_as_int >= MinimumVersion(sp);
-    }
+    public override bool IsSupportedVersion(SupportedPlatform sp) => sp.short_version_as_int != 0 && sp.short_version_as_int >= MinimumVersion(sp);
 }

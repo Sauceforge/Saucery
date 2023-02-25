@@ -10,8 +10,5 @@ internal class Android7PlatformCreator : PlatformCreator
     {
     }
 
-    public override PlatformBase Create()
-    {
-        return new Android7Platform(Platform);
-    }
+    public override PlatformBase Create() => new Android7Platform(Platform);
 }

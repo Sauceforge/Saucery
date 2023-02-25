@@ -11,10 +11,7 @@ public static class Enviro {
 
     internal static string BuildName => string.Format("Desktop_{0}", GetStringVar(SauceryConstants.BUILD_NUMBER) ?? IDGenerator.Id);
 
-    private static string GetStringVar(string envVar)
-    {
-        return envVar == null ? null : Environment.GetEnvironmentVariable(envVar);
-    }
+    private static string GetStringVar(string envVar) => envVar == null ? null : Environment.GetEnvironmentVariable(envVar);
 }
 
 /*

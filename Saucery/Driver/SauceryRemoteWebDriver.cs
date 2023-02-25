@@ -9,9 +9,7 @@ public class SauceryRemoteWebDriver : RemoteWebDriver {
         : base(remoteAddress, options.ToCapabilities(), TimeSpan.FromSeconds(secs)) {
     }
 
-    public string GetSessionId() {
-        return SessionId.ToString();
-    } 
+    public string GetSessionId() => SessionId.ToString();
 }
 /*
 * Copyright Andrew Gray, SauceForge

@@ -7,50 +7,26 @@ using System.Text;
 namespace Saucery.OnDemand;
 
 internal static class PlatformExtensions {
-    public static bool IsAMobileDevice(this BrowserVersion browserVersion)
-    {
-        return IsAnAndroidDevice(browserVersion) || IsAnAppleDevice(browserVersion);
-    }
+    public static bool IsAMobileDevice(this BrowserVersion browserVersion) => IsAnAndroidDevice(browserVersion) || IsAnAppleDevice(browserVersion);
 
-    public static bool IsAnAndroidDevice(this BrowserVersion browserVersion)
-    {
-        return browserVersion.Os != null && browserVersion.Os.ToUpper().Contains(SauceryConstants.PLATFORM_LINUX.ToUpper());
-    }
+    public static bool IsAnAndroidDevice(this BrowserVersion browserVersion) => browserVersion.Os != null && browserVersion.Os.ToUpper().Contains(SauceryConstants.PLATFORM_LINUX.ToUpper());
 
-    public static bool IsAnAppleDevice(this BrowserVersion browserVersion)
-    {
-        return IsAnIPhone(browserVersion) || IsAnIPad(browserVersion);
-    }
+    public static bool IsAnAppleDevice(this BrowserVersion browserVersion) => IsAnIPhone(browserVersion) || IsAnIPad(browserVersion);
 
-    public static bool IsAnIPhone(this BrowserVersion browserVersion)
-    {
-        return browserVersion.DeviceName != null && browserVersion.DeviceName.ToLower().Contains(SauceryConstants.APPLE_IPHONE);
-    }
+    public static bool IsAnIPhone(this BrowserVersion browserVersion) => browserVersion.DeviceName != null && browserVersion.DeviceName.ToLower().Contains(SauceryConstants.APPLE_IPHONE);
 
-    public static bool IsAnIPad(this BrowserVersion browserVersion)
-    {
-        return browserVersion.DeviceName != null && browserVersion.DeviceName.ToLower().Contains(SauceryConstants.APPLE_IPAD);
-    }
+    public static bool IsAnIPad(this BrowserVersion browserVersion) => browserVersion.DeviceName != null && browserVersion.DeviceName.ToLower().Contains(SauceryConstants.APPLE_IPAD);
 
-    public static bool IsAnAppleDevice(this SaucePlatform platform)
-    {
-        return IsAnIPhone(platform) || IsAnIPad(platform);
-    }
+    public static bool IsAnAppleDevice(this SaucePlatform platform) => IsAnIPhone(platform) || IsAnIPad(platform);
 
-    public static bool IsAnIPhone(this SaucePlatform platform) {
-        return platform.LongName != null && platform.LongName.ToLower().Contains(SauceryConstants.APPLE_IPHONE);
-    }
+    public static bool IsAnIPhone(this SaucePlatform platform) => platform.LongName != null && platform.LongName.ToLower().Contains(SauceryConstants.APPLE_IPHONE);
 
-    public static bool IsAnIPad(this SaucePlatform platform) {
-        return platform.LongName != null && platform.LongName.ToLower().Contains(SauceryConstants.APPLE_IPAD);
-    }
+    public static bool IsAnIPad(this SaucePlatform platform) => platform.LongName != null && platform.LongName.ToLower().Contains(SauceryConstants.APPLE_IPAD);
 
-    public static bool IsAnAndroidDevice(this SaucePlatform platform) {
-        return platform.LongName != null && 
-               (platform.LongName.ToLower().Contains(SauceryConstants.GOOGLE_LOWER) || 
+    public static bool IsAnAndroidDevice(this SaucePlatform platform) => platform.LongName != null &&
+               (platform.LongName.ToLower().Contains(SauceryConstants.GOOGLE_LOWER) ||
                 platform.LongName.ToLower().Contains(SauceryConstants.SAMSUNG_LOWER) ||
                 platform.LongName.ToLower().Contains(SauceryConstants.ANDROID_LOWER));
-    }
 
     public static void SetTestName(this BrowserVersion browserVersion, string testName)
     {
@@ -68,9 +44,7 @@ internal static class PlatformExtensions {
                 : AppendPlatformField(AppendPlatformField(AppendPlatformField(AppendPlatformField(shortTestName, browserVersion.Os), browserVersion.BrowserName), browserVersion.Name), browserVersion.ScreenResolution).ToString();
     }
 
-    private static StringBuilder AppendPlatformField(this StringBuilder testName, string fieldToAdd) {
-        return testName.Append(SauceryConstants.UNDERSCORE).Append(fieldToAdd);
-    }
+    private static StringBuilder AppendPlatformField(this StringBuilder testName, string fieldToAdd) => testName.Append(SauceryConstants.UNDERSCORE).Append(fieldToAdd);
 }
 /*
 * Copyright Andrew Gray, SauceForge
