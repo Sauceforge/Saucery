@@ -38,6 +38,7 @@ internal abstract class BaseOptions {
         {
             ((AppiumOptions)Opts).AddAdditionalAppiumOption(SauceryConstants.SAUCE_USERNAME_CAPABILITY, Enviro.SauceUserName);
             ((AppiumOptions)Opts).AddAdditionalAppiumOption(SauceryConstants.SAUCE_ACCESSKEY_CAPABILITY, Enviro.SauceApiKey);
+            ((AppiumOptions)Opts).AutomationName = SauceryConstants.AUTOMATION_NAME;
         }
         //else
         //{
