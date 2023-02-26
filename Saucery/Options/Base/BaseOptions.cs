@@ -34,11 +34,17 @@ internal abstract class BaseOptions {
     }
 
     public DriverOptions GetOpts(OnDemand.PlatformType type) {
-        if (type.IsMobile())
+        if (type.IsAndroid())
         {
             ((AppiumOptions)Opts).AddAdditionalAppiumOption(SauceryConstants.SAUCE_USERNAME_CAPABILITY, Enviro.SauceUserName);
             ((AppiumOptions)Opts).AddAdditionalAppiumOption(SauceryConstants.SAUCE_ACCESSKEY_CAPABILITY, Enviro.SauceApiKey);
-            ((AppiumOptions)Opts).AutomationName = SauceryConstants.AUTOMATION_NAME;
+
+            if (type.IsApple())
+            {
+                ((AppiumOptions)Opts).AddAdditionalAppiumOption(SauceryConstants.SAUCE_USERNAME_CAPABILITY, Enviro.SauceUserName);
+                ((AppiumOptions)Opts).AddAdditionalAppiumOption(SauceryConstants.SAUCE_ACCESSKEY_CAPABILITY, Enviro.SauceApiKey);
+                ((AppiumOptions)Opts).AutomationName = SauceryConstants.AUTOMATION_NAME;
+            }
         }
         //else
         //{
