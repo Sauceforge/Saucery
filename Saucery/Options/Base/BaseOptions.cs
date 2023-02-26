@@ -34,7 +34,7 @@ internal abstract class BaseOptions {
     }
 
     public DriverOptions GetOpts(OnDemand.PlatformType type) {
-        if (type.IsAndroid())
+        if (type.IsMobile())
         {
             ((AppiumOptions)Opts).AddAdditionalAppiumOption(SauceryConstants.SAUCE_USERNAME_CAPABILITY, Enviro.SauceUserName);
             ((AppiumOptions)Opts).AddAdditionalAppiumOption(SauceryConstants.SAUCE_ACCESSKEY_CAPABILITY, Enviro.SauceApiKey);
@@ -42,8 +42,6 @@ internal abstract class BaseOptions {
 
         if (type.IsApple())
         {
-            ((AppiumOptions)Opts).AddAdditionalAppiumOption(SauceryConstants.SAUCE_USERNAME_CAPABILITY, Enviro.SauceUserName);
-            ((AppiumOptions)Opts).AddAdditionalAppiumOption(SauceryConstants.SAUCE_ACCESSKEY_CAPABILITY, Enviro.SauceApiKey);
             ((AppiumOptions)Opts).AutomationName = SauceryConstants.AUTOMATION_NAME;
         }
 
