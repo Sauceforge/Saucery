@@ -25,7 +25,7 @@ public static class DojoExtensions
             p = PlatformFactory.CreatePlatform(sp);
             if(p == null)
             {
-                //SauceLabs may have just added it to the platform configurator. Don't fall over.
+                //SauceLabs may have just added it to the platform cornfigurato. Don't fall over.
                 return;
             }
             p.Browsers.AddBrowser(sp, p.ScreenResolutions);
@@ -131,6 +131,9 @@ public static class DojoExtensions
                 break;
             case SauceryConstants.PLATFORM_WINDOWS_7:
                 platform = platforms.GetPlatform<Windows7Platform>()[0];
+                break;
+            case SauceryConstants.PLATFORM_MAC_13:
+                platform = platforms.GetPlatform<Mac13Platform>()[0];
                 break;
             case SauceryConstants.PLATFORM_MAC_12:
                 platform = platforms.GetPlatform<Mac12Platform>()[0];

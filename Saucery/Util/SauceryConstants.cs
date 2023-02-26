@@ -173,6 +173,7 @@ public class SauceryConstants {
     public const string PLATFORM_WINDOWS_81 = "Windows 2012 R2";
     public const string PLATFORM_WINDOWS_8 = "Windows 2012";
     public const string PLATFORM_WINDOWS_7 = "Windows 2008";
+    public const string PLATFORM_MAC_13 = "Mac 13";
     public const string PLATFORM_MAC_12 = "Mac 12";
     public const string PLATFORM_MAC_11 = "Mac 11";
     public const string PLATFORM_MAC_1015 = "Mac 10.15";
