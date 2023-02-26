@@ -38,19 +38,15 @@ internal abstract class BaseOptions {
         {
             ((AppiumOptions)Opts).AddAdditionalAppiumOption(SauceryConstants.SAUCE_USERNAME_CAPABILITY, Enviro.SauceUserName);
             ((AppiumOptions)Opts).AddAdditionalAppiumOption(SauceryConstants.SAUCE_ACCESSKEY_CAPABILITY, Enviro.SauceApiKey);
-
-            if (type.IsApple())
-            {
-                ((AppiumOptions)Opts).AddAdditionalAppiumOption(SauceryConstants.SAUCE_USERNAME_CAPABILITY, Enviro.SauceUserName);
-                ((AppiumOptions)Opts).AddAdditionalAppiumOption(SauceryConstants.SAUCE_ACCESSKEY_CAPABILITY, Enviro.SauceApiKey);
-                ((AppiumOptions)Opts).AutomationName = SauceryConstants.AUTOMATION_NAME;
-            }
         }
-        //else
-        //{
-        //    Opts.AddAdditionalOption(SauceryConstants.SAUCE_USERNAME_CAPABILITY, Enviro.SauceUserName);
-        //    Opts.AddAdditionalOption(SauceryConstants.SAUCE_ACCESSKEY_CAPABILITY, Enviro.SauceApiKey);
-        //}
+
+        if (type.IsApple())
+        {
+            ((AppiumOptions)Opts).AddAdditionalAppiumOption(SauceryConstants.SAUCE_USERNAME_CAPABILITY, Enviro.SauceUserName);
+            ((AppiumOptions)Opts).AddAdditionalAppiumOption(SauceryConstants.SAUCE_ACCESSKEY_CAPABILITY, Enviro.SauceApiKey);
+            ((AppiumOptions)Opts).AutomationName = SauceryConstants.AUTOMATION_NAME;
+        }
+
         return Opts;
     }
 }
