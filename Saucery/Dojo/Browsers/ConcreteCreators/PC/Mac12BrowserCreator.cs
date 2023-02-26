@@ -12,15 +12,12 @@ internal class Mac12BrowserCreator : BrowserCreator
     {
     }
 
-    public override BrowserBase Create(string platformNameForOption, List<string> screenResolutions)
+    public override BrowserBase Create(string platformNameForOption, List<string> screenResolutions) => Platform.api_name switch
     {
-        return Platform.api_name switch
-        {
-            SauceryConstants.BROWSER_CHROME => new ChromeBrowser(Platform, screenResolutions, platformNameForOption),
-            SauceryConstants.BROWSER_EDGE => new EdgeBrowser(Platform, screenResolutions, platformNameForOption),
-            SauceryConstants.BROWSER_FIREFOX => new FirefoxBrowser(Platform, screenResolutions, platformNameForOption),
-            SauceryConstants.BROWSER_SAFARI => new SafariBrowser(Platform, screenResolutions, platformNameForOption),
-            _ => null,
-        };
-    }
+        SauceryConstants.BROWSER_CHROME => new ChromeBrowser(Platform, screenResolutions, platformNameForOption),
+        SauceryConstants.BROWSER_EDGE => new EdgeBrowser(Platform, screenResolutions, platformNameForOption),
+        SauceryConstants.BROWSER_FIREFOX => new FirefoxBrowser(Platform, screenResolutions, platformNameForOption),
+        SauceryConstants.BROWSER_SAFARI => new SafariBrowser(Platform, screenResolutions, platformNameForOption),
+        _ => null,
+    };
 }

@@ -1,4 +1,6 @@
-﻿using Saucery.RestAPI.FlowControl.Base;
+﻿using RestSharp;
+using RestSharp.Authenticators;
+using Saucery.RestAPI.FlowControl.Base;
 using Saucery.Util;
 using System;
 using System.Text.Json;
@@ -7,6 +9,14 @@ using System.Threading;
 namespace Saucery.RestAPI.FlowControl;
 
 public class SauceLabsFlowController : FlowController {
+    public SauceLabsFlowController()
+    {
+        Client = new RestClient(SauceryConstants.SAUCE_REST_BASE)
+        {
+            Authenticator = new HttpBasicAuthenticator(UserName, AccessKey)
+        };
+    }
+
     public override void ControlFlow() {
         while(TooManyTests()) {
             Thread.Sleep(SauceryConstants.SAUCELABS_FLOW_WAIT);
@@ -15,7 +25,7 @@ public class SauceLabsFlowController : FlowController {
 
     protected override bool TooManyTests() {
         //int maxParallelMacSessionsAllowed;  //Possible future use.
-        var json = GetJsonResponse(SauceryConstants.ACCOUNT_CONCURRENCY_REQUEST, UserName);
+        var json = GetJsonResponse(SauceryConstants.ACCOUNT_CONCURRENCY_REQUEST);
 
         //Console.WriteLine(@"Debug: {0}", json);
         var remainingSection = ExtractJsonSegment(json, json.IndexOf("\"remaining", StringComparison.Ordinal), json.Length - 3);

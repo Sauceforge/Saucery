@@ -52,10 +52,7 @@ public class SaucePlatform {
 
     #endregion
 
-    public bool NeedsExpansion()
-    {
-        return BrowserVersion.Replace(SauceryConstants.SPACE, string.Empty).Contains(SauceryConstants.PLATFORM_SEPARATOR);
-    }
+    public bool NeedsExpansion() => BrowserVersion.Replace(SauceryConstants.SPACE, string.Empty).Contains(SauceryConstants.PLATFORM_SEPARATOR);
 }
 /*
 * Copyright Andrew Gray, SauceForge

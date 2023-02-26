@@ -15,7 +15,7 @@ public class PlatformExpansionTests
 
     static PlatformExpansionTests()
     {
-        PlatformConfigurator = new PlatformConfigurator();
+        PlatformConfigurator = new(PlatformFilter.ALL);
     }
 
     [Test]
@@ -26,7 +26,7 @@ public class PlatformExpansionTests
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, $"75->{SauceryConstants.BROWSER_VERSION_DEV}", SauceryConstants.SCREENRES_2560_1600)
         };
 
-        //var configurator = new PlatformConfigurator();
+        //PlatformConfigurator configurator = new();
         PlatformExpander expander = new(PlatformConfigurator, platforms);
         var expandedSet = expander.Expand();
         expandedSet.Find(e => e.BrowserVersion.Equals(82)).ShouldBeNull(); //Chrome didn't release version 82 due to Covid-19.

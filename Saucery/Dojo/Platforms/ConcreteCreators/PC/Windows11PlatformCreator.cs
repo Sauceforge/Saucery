@@ -10,8 +10,5 @@ internal class Windows11PlatformCreator : PlatformCreator
     {
     }
 
-    public override PlatformBase Create()
-    {
-        return new Windows11Platform(Platform);
-    }
+    public override PlatformBase Create() => new Windows11Platform(Platform);
 }

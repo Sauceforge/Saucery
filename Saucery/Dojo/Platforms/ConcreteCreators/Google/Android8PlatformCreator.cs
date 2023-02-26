@@ -10,8 +10,5 @@ internal class Android8PlatformCreator : PlatformCreator
     {
     }
 
-    public override PlatformBase Create()
-    {
-        return new Android8Platform(Platform);
-    }
+    public override PlatformBase Create() => new Android8Platform(Platform);
 }

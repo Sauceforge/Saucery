@@ -10,8 +10,5 @@ internal class Mac1010PlatformCreator : PlatformCreator
     {
     }
 
-    public override PlatformBase Create()
-    {
-        return new Mac1010Platform(Platform);
-    }
+    public override PlatformBase Create() => new Mac1010Platform(Platform);
 }

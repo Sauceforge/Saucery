@@ -10,8 +10,5 @@ internal class Android11PlatformCreator : PlatformCreator
     {
     }
 
-    public override PlatformBase Create()
-    {
-        return new Android11Platform(Platform);
-    }
+    public override PlatformBase Create() => new Android11Platform(Platform);
 }

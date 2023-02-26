@@ -5,10 +5,7 @@ using Saucery.Options.ConcreteProducts;
 namespace Saucery.Options.ConcreteCreators;
 
 internal class AppiumIOSCreator : Creator {
-    public override BaseOptions Create(BrowserVersion browserVersion, string testName)
-    {
-        return new AppiumIOSOptions(browserVersion, testName);
-    }
+    public override BaseOptions Create(BrowserVersion browserVersion, string testName) => new AppiumIOSOptions(browserVersion, testName);
 }
 /*
 * Copyright Andrew Gray, SauceForge

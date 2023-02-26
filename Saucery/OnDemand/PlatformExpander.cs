@@ -94,18 +94,15 @@ public class PlatformExpander
         }
     }
 
-    private void AddPlatform(SaucePlatform platform, string browserVersion)
+    private void AddPlatform(SaucePlatform platform, string browserVersion) => ExpandedSet.Add(new()
     {
-        ExpandedSet.Add(new()
-        {
-            Os = platform.Os,
-            Browser = platform.Browser,
-            BrowserVersion = browserVersion,
-            ScreenResolution = platform.ScreenResolution,
-            Platform = platform.Platform,
-            LongName = platform.LongName,
-            LongVersion = platform.LongVersion,
-            DeviceOrientation = platform.DeviceOrientation
-        });
-    }
+        Os = platform.Os,
+        Browser = platform.Browser,
+        BrowserVersion = browserVersion,
+        ScreenResolution = platform.ScreenResolution,
+        Platform = platform.Platform,
+        LongName = platform.LongName,
+        LongVersion = platform.LongVersion,
+        DeviceOrientation = platform.DeviceOrientation
+    });
 }

@@ -6,7 +6,7 @@ namespace Saucery.RestAPI;
 
 internal class RestAPILimitsChecker {
     private RestResponse Response;
-    private Dictionary<string, string> Headers;
+    private readonly Dictionary<string, string> Headers;
 
     public RestAPILimitsChecker() {
         Headers = new Dictionary<string, string>();
@@ -24,9 +24,7 @@ internal class RestAPILimitsChecker {
         }
     }
 
-    internal bool IsLimitExceeded() {
-        return NoRemaining() || IsIndicatorPresentInJson();
-    }
+    internal bool IsLimitExceeded() => NoRemaining() || IsIndicatorPresentInJson();
 
     private bool IsIndicatorPresentInJson() {
         if (Response == null || Response.Content == null) {
@@ -36,11 +34,7 @@ internal class RestAPILimitsChecker {
         return Response.Content.Contains(SauceryConstants.RESTAPI_LIMIT_EXCEEDED_INDICATOR);
     }
 
-    private bool NoRemaining() {
-        return int.Parse(Headers["x-ratelimit-remaining"]) <= 0;
-    }
+    private bool NoRemaining() => int.Parse(Headers["x-ratelimit-remaining"]) <= 0;
 
-    internal int GetReset() {
-        return int.Parse(Headers["x-ratelimit-reset"]);
-    }
+    internal int GetReset() => int.Parse(Headers["x-ratelimit-reset"]);
 }

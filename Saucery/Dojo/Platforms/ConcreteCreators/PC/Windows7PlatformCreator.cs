@@ -10,8 +10,5 @@ internal class Windows7PlatformCreator : PlatformCreator
     {
     }
 
-    public override PlatformBase Create()
-    {
-        return new Windows7Platform(Platform);
-    }
+    public override PlatformBase Create() => new Windows7Platform(Platform);
 }

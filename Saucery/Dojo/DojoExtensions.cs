@@ -110,10 +110,7 @@ public static class DojoExtensions
         }
     }
 
-    public static IList<T> GetPlatform<T>(this List<PlatformBase> availablePlatforms) where T : PlatformBase
-    {
-        return availablePlatforms.OfType<T>().ToList();
-    }
+    public static IList<T> GetPlatform<T>(this List<PlatformBase> availablePlatforms) where T : PlatformBase => availablePlatforms.OfType<T>().ToList();
 
     public static BrowserVersion FindDesktopBrowser(this List<PlatformBase> platforms, SaucePlatform sp)
     {

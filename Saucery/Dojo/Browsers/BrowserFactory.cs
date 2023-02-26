@@ -10,9 +10,7 @@ namespace Saucery.Dojo.Browsers;
 
 public class BrowserFactory
 {
-    public static BrowserBase CreateBrowser(SupportedPlatform sp, List<string> screenResolutions)
-    {
-        return sp.IsAndroidPlatform()
+    public static BrowserBase CreateBrowser(SupportedPlatform sp, List<string> screenResolutions) => sp.IsAndroidPlatform()
             ? new AndroidBrowserCreator(sp).Create("Android", null)
             : sp.IsIOSPlatform()
             ? new IOSBrowserCreator(sp).Create("iOS", null)
@@ -33,5 +31,4 @@ public class BrowserFactory
                 SauceryConstants.PLATFORM_MAC_1010 => new Mac1010BrowserCreator(sp).Create("OS X 10.10", screenResolutions),
                 _ => null,
             };
-    }
 }

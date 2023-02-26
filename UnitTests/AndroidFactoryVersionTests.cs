@@ -15,7 +15,7 @@ public class AndroidFactoryVersionTests
     static PlatformConfigurator PlatformConfigurator { get; set; }
 
     static AndroidFactoryVersionTests() {
-        PlatformConfigurator = new PlatformConfigurator();
+        PlatformConfigurator = new(PlatformFilter.ALL);
     }
 
     [Test, TestCaseSource(typeof(AndroidDataClass), "NotSupportedTestCases")]

@@ -15,13 +15,9 @@ namespace UnitTests;
 public class TestBuilder {
     #region Build Tests
 
-    public static TestSuite MakeSuite(string name) {
-        return new TestSuite(name);
-    }
+    public static TestSuite MakeSuite(string name) => new TestSuite(name);
 
-    public static TestSuite MakeFixture(Type type) {
-        return new DefaultSuiteBuilder().BuildFrom(new TypeWrapper(type));
-    }
+    public static TestSuite MakeFixture(Type type) => new DefaultSuiteBuilder().BuildFrom(new TypeWrapper(type));
 
     public static TestSuite MakeFixture(object fixture) {
         TestSuite suite = MakeFixture(fixture.GetType());
@@ -58,13 +54,9 @@ public class TestBuilder {
 
     #region Create WorkItems
 
-    public static WorkItem CreateWorkItem(Type type) {
-        return CreateWorkItem(MakeFixture(type));
-    }
+    public static WorkItem CreateWorkItem(Type type) => CreateWorkItem(MakeFixture(type));
 
-    public static WorkItem CreateWorkItem(Type type, string methodName) {
-        return CreateWorkItem(MakeTestFromMethod(type, methodName));
-    }
+    public static WorkItem CreateWorkItem(Type type, string methodName) => CreateWorkItem(MakeTestFromMethod(type, methodName));
 
     public static WorkItem CreateWorkItem(Test test) {
         var context = new TestExecutionContext
@@ -96,15 +88,9 @@ public class TestBuilder {
 
     #region Run Tests
 
-    public static ITestResult RunTestFixture(Type type)
-    {
-        return RunTest(MakeFixture(type), null);
-    }
+    public static ITestResult RunTestFixture(Type type) => RunTest(MakeFixture(type), null);
 
-    public static ITestResult RunTestFixture(object fixture)
-    {
-        return RunTest(MakeFixture(fixture), fixture);
-    }
+    public static ITestResult RunTestFixture(object fixture) => RunTest(MakeFixture(fixture), fixture);
 
     public static ITestResult RunParameterizedMethodSuite(Type type, string methodName)
     {
@@ -146,15 +132,9 @@ public class TestBuilder {
         return RunTest(testMethod);
     }
 
-    public static ITestResult RunTest(Test test)
-    {
-        return RunTest(test, null);
-    }
+    public static ITestResult RunTest(Test test) => RunTest(test, null);
 
-    public static ITestResult RunTest(Test test, object testObject)
-    {
-        return ExecuteWorkItem(CreateWorkItem(test, testObject));
-    }
+    public static ITestResult RunTest(Test test, object testObject) => ExecuteWorkItem(CreateWorkItem(test, testObject));
 
     public static ITestResult ExecuteWorkItem(WorkItem work)
     {
@@ -182,20 +162,11 @@ public class TestBuilder {
     {
         public int LevelOfParallelism { get { return 0; } }
 
-        public void Start(WorkItem topLevelWorkItem)
-        {
-            topLevelWorkItem.Execute();
-        }
+        public void Start(WorkItem topLevelWorkItem) => topLevelWorkItem.Execute();
 
-        public void Dispatch(WorkItem work)
-        {
-            work.Execute();
-        }
+        public void Dispatch(WorkItem work) => work.Execute();
 
-        public void CancelRun(bool force)
-        {
-            throw new NotImplementedException();
-        }
+        public void CancelRun(bool force) => throw new NotImplementedException();
     }
     #endregion
 }

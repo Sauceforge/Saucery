@@ -10,8 +10,5 @@ internal class IOS152PlatformCreator : PlatformCreator
     {
     }
 
-    public override PlatformBase Create()
-    {
-        return new IOS152Platform(Platform);
-    }
+    public override PlatformBase Create() => new IOS152Platform(Platform);
 }

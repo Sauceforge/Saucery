@@ -16,7 +16,7 @@ public class DesktopFactoryVersionTests
 
     static DesktopFactoryVersionTests()
     {
-        PlatformConfigurator = new PlatformConfigurator();
+        PlatformConfigurator = new(PlatformFilter.ALL);
     }
 
     [Test, TestCaseSource(typeof(DesktopDataClass), "NotSupportedTestCases")]

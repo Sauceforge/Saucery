@@ -5,9 +5,7 @@ using Saucery.Options.ConcreteProducts;
 namespace Saucery.Options.ConcreteCreators;
 
 internal class SafariCreator : Creator {
-    public override BaseOptions Create(BrowserVersion browserVersion, string testName) {
-        return new SafariBrowserOptions(browserVersion, testName);
-    }
+    public override BaseOptions Create(BrowserVersion browserVersion, string testName) => new SafariBrowserOptions(browserVersion, testName);
 }
 /*
 * Copyright Andrew Gray, SauceForge
