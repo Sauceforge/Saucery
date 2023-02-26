@@ -12,24 +12,25 @@ namespace UnitTests;
 [TestFixture]
 public class IOSFactoryVersionTests
 {
-    static PlatformConfigurator PlatformConfigurator { get; set; }
+    private PlatformConfigurator _platformConfigurator { get; set; }
 
-    static IOSFactoryVersionTests()
+    [OneTimeSetUp]
+    public void OneTimeSetUp()
     {
-        PlatformConfigurator = new(PlatformFilter.ALL);
+        _platformConfigurator = new(PlatformFilter.ALL);
     }
 
     [Test, TestCaseSource(typeof(IOSDataClass), "NotSupportedTestCases")]
     public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform)
     {
-        var validPlatform = PlatformConfigurator.Filter(saucePlatform);
+        var validPlatform = _platformConfigurator.Filter(saucePlatform);
         validPlatform.ShouldBeNull();
     }
 
     [Test, TestCaseSource(typeof(IOSDataClass), "SupportedTestCases")]
     public void AppiumIOSOptionTest(SaucePlatform saucePlatform)
     {
-        var validPlatform = PlatformConfigurator.Filter(saucePlatform);
+        var validPlatform = _platformConfigurator.Filter(saucePlatform);
         validPlatform.ShouldNotBeNull();
 
         var factory = new OptionFactory(validPlatform);
@@ -50,10 +51,11 @@ public class IOSDataClass
                                     "12.0", "12.2", "12.4", 
                                     "13.0", "13.2", "13.4", 
                                     "14.0", "14.3", "14.4", "14.5", 
-                                    "15.0", "15.2", "15.4" };
+                                    "15.0", "15.2", "15.4", 
+                                    "16.0", "16.1", "16.2" };
             foreach (var v in versions)
             {
-                yield return new IOSPlatform("iPhone 7 Plus Simulator", v, SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
+                yield return new IOSPlatform("iPhone Simulator", v, SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
             }
         }
     }

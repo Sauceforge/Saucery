@@ -223,6 +223,15 @@ public static class DojoExtensions
         var platformToSearchFor = string.Format("{0} {1}", sp.Os, sp.LongVersion);
         switch (platformToSearchFor)
         {
+            case "iOS 16.2":
+                platform = platforms.GetPlatform<IOS162Platform>()[0];
+                break;
+            case "iOS 16.1":
+                platform = platforms.GetPlatform<IOS161Platform>()[0];
+                break;
+            case "iOS 16.0":
+                platform = platforms.GetPlatform<IOS16Platform>()[0];
+                break;
             case "iOS 15.4":
                 platform = platforms.GetPlatform<IOS154Platform>()[0];
                 break;

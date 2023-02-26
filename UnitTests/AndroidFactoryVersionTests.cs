@@ -12,23 +12,25 @@ namespace UnitTests;
 [TestFixture]
 public class AndroidFactoryVersionTests
 {
-    static PlatformConfigurator PlatformConfigurator { get; set; }
+    private PlatformConfigurator _platformConfigurator { get; set; }
 
-    static AndroidFactoryVersionTests() {
-        PlatformConfigurator = new(PlatformFilter.ALL);
+    [OneTimeSetUp]
+    public void OneTimeSetUp()
+    {
+        _platformConfigurator = new(PlatformFilter.ALL);
     }
 
     [Test, TestCaseSource(typeof(AndroidDataClass), "NotSupportedTestCases")]
     public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform)
     {
-        var validPlatform = PlatformConfigurator.Filter(saucePlatform);
+        var validPlatform = _platformConfigurator.Filter(saucePlatform);
         validPlatform.ShouldBeNull();
     }
 
     [Test, TestCaseSource(typeof(AndroidDataClass), "SupportedTestCases")]
     public void AppiumAndroidOptionTest(SaucePlatform saucePlatform)
     {
-        var validPlatform = PlatformConfigurator.Filter(saucePlatform);
+        var validPlatform = _platformConfigurator.Filter(saucePlatform);
         validPlatform.ShouldNotBeNull();
 
         var factory = new OptionFactory(validPlatform);

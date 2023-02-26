@@ -8,6 +8,9 @@ public class ApplePlatformFactory
 {
     public static PlatformBase CreatePlatform(SupportedPlatform sp) => sp.short_version switch
     {
+        "16.2" => new IOS162PlatformCreator(sp).Create(),
+        "16.1" => new IOS161PlatformCreator(sp).Create(),
+        "16.0" => new IOS16PlatformCreator(sp).Create(),
         "15.4" => new IOS154PlatformCreator(sp).Create(),
         "15.2" => new IOS152PlatformCreator(sp).Create(),
         "15.0" => new IOS15PlatformCreator(sp).Create(),
