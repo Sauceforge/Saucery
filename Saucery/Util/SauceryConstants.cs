@@ -40,10 +40,11 @@ public class SauceryConstants {
 
     //CAPABILITIES
     internal const string SCREEN_RESOLUTION_CAPABILITY = "screenResolution";
-    public const string LATEST_APPIUM_VERSION = "1.22.0";
+    public const string LATEST_APPIUM_VERSION = "2.0.0";
+    internal const string AUTOMATION_NAME = "XCUITest";
     internal const string SAUCE_APPIUM_VERSION_CAPABILITY = "appiumVersion";
     internal const string SELENIUM_VERSION_CAPABILITY = "seleniumVersion";
-    internal const string LATEST_SELENIUM_VERSION = "3.141.0";  //"latest" does not work.
+    internal const string LATEST_SELENIUM_VERSION = "3.141.1";  //"latest" does not work.
     internal const double APPIUM_IOS_MINIMUM_VERSION = 6.1;
     internal const double APPIUM_ANDROID_MINIMUM_VERSION = 4.4;
     internal const string SAUCE_SESSIONNAME_CAPABILITY = "name";
@@ -173,6 +174,7 @@ public class SauceryConstants {
     public const string PLATFORM_WINDOWS_81 = "Windows 2012 R2";
     public const string PLATFORM_WINDOWS_8 = "Windows 2012";
     public const string PLATFORM_WINDOWS_7 = "Windows 2008";
+    public const string PLATFORM_MAC_13 = "Mac 13";
     public const string PLATFORM_MAC_12 = "Mac 12";
     public const string PLATFORM_MAC_11 = "Mac 11";
     public const string PLATFORM_MAC_1015 = "Mac 10.15";

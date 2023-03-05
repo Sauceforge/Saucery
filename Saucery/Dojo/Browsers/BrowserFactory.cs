@@ -21,6 +21,7 @@ public class BrowserFactory
                 SauceryConstants.PLATFORM_WINDOWS_81 => new Windows81BrowserCreator(sp).Create("Windows 8.1", screenResolutions),
                 SauceryConstants.PLATFORM_WINDOWS_8 => new Windows8BrowserCreator(sp).Create("Windows 8", screenResolutions),
                 SauceryConstants.PLATFORM_WINDOWS_7 => new Windows7BrowserCreator(sp).Create("Windows 7", screenResolutions),
+                SauceryConstants.PLATFORM_MAC_13 => new Mac13BrowserCreator(sp).Create("macOS 13", screenResolutions),
                 SauceryConstants.PLATFORM_MAC_12 => new Mac12BrowserCreator(sp).Create("macOS 12", screenResolutions),
                 SauceryConstants.PLATFORM_MAC_11 => new Mac11BrowserCreator(sp).Create("macOS 11.00", screenResolutions),
                 SauceryConstants.PLATFORM_MAC_1015 => new Mac1015BrowserCreator(sp).Create("macOS 10.15", screenResolutions),

@@ -25,7 +25,7 @@ public static class DojoExtensions
             p = PlatformFactory.CreatePlatform(sp);
             if(p == null)
             {
-                //SauceLabs may have just added it to the platform configurator. Don't fall over.
+                //SauceLabs may have just added it to the platform cornfigurato. Don't fall over.
                 return;
             }
             p.Browsers.AddBrowser(sp, p.ScreenResolutions);
@@ -132,6 +132,9 @@ public static class DojoExtensions
             case SauceryConstants.PLATFORM_WINDOWS_7:
                 platform = platforms.GetPlatform<Windows7Platform>()[0];
                 break;
+            case SauceryConstants.PLATFORM_MAC_13:
+                platform = platforms.GetPlatform<Mac13Platform>()[0];
+                break;
             case SauceryConstants.PLATFORM_MAC_12:
                 platform = platforms.GetPlatform<Mac12Platform>()[0];
                 break;
@@ -220,6 +223,15 @@ public static class DojoExtensions
         var platformToSearchFor = string.Format("{0} {1}", sp.Os, sp.LongVersion);
         switch (platformToSearchFor)
         {
+            case "iOS 16.2":
+                platform = platforms.GetPlatform<IOS162Platform>()[0];
+                break;
+            case "iOS 16.1":
+                platform = platforms.GetPlatform<IOS161Platform>()[0];
+                break;
+            case "iOS 16.0":
+                platform = platforms.GetPlatform<IOS16Platform>()[0];
+                break;
             case "iOS 15.4":
                 platform = platforms.GetPlatform<IOS154Platform>()[0];
                 break;

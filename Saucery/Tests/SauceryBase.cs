@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection;
+using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using OpenQA.Selenium;
 using Saucery.Dojo;
@@ -28,12 +29,14 @@ public class SauceryBase {
         BrowserVersion = browserVersion;
     }
 
-    public void InitialiseDriver(DriverOptions opts, int waitSecs) {
+    public bool InitialiseDriver(DriverOptions opts, int waitSecs) {
         SauceLabsFlowController.ControlFlow();
         try {
             Driver = new SauceryRemoteWebDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, waitSecs);
+            return true;
         } catch(Exception ex) {
             Console.WriteLine(ex.Message);
+            return false;
         }
     }
 
@@ -46,7 +49,15 @@ public class SauceryBase {
         // set up the desired options
         var factory = new OptionFactory(BrowserVersion);
         var opts = factory.CreateOptions(TestName);
-        InitialiseDriver(opts, 400);
+
+        bool driverInitialised = InitialiseDriver(opts, 400);
+
+        while (!driverInitialised)
+        {
+            Console.WriteLine($"Driver failed to initialise: {TestContext.CurrentContext.Test.Name}.");
+            driverInitialised = InitialiseDriver(opts, 400);
+        }
+        Console.WriteLine($"Driver successfully initialised: {TestContext.CurrentContext.Test.Name}.");
     }
 
     [TearDown]

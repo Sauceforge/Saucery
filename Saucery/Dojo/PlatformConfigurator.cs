@@ -85,7 +85,8 @@ public class PlatformConfigurator
                                                                                            SauceryConstants.PLATFORM_MAC_1014,
                                                                                            SauceryConstants.PLATFORM_MAC_1015,
                                                                                            SauceryConstants.PLATFORM_MAC_11,
-                                                                                           SauceryConstants.PLATFORM_MAC_12 }));
+                                                                                           SauceryConstants.PLATFORM_MAC_12,
+                                                                                           SauceryConstants.PLATFORM_MAC_13 }));
         filteredPlatforms.AddRange(FindMobilePlatforms(supportedPlatforms, new List<string> { "iphone", "ipad" }));
         filteredPlatforms.AddRange(FindMobilePlatforms(supportedPlatforms, new List<string> { "android" }));
 

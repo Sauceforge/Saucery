@@ -67,6 +67,7 @@ public class RestTests
     [GenericTestCase(typeof(Mac1015Platform), TestName = "Mac1015SupportedPlatformTest")]
     [GenericTestCase(typeof(Mac11Platform), TestName = "Mac11SupportedPlatformTest")]
     [GenericTestCase(typeof(Mac12Platform), TestName = "Mac12SupportedPlatformTest")]
+    [GenericTestCase(typeof(Mac13Platform), TestName = "Mac13SupportedPlatformTest")]
 
     [GenericTestCase(typeof(IOS103Platform), TestName = "IOS103SupportedPlatformTest")]
     [GenericTestCase(typeof(IOS111Platform), TestName = "IOS111SupportedPlatformTest")]
@@ -86,6 +87,9 @@ public class RestTests
     [GenericTestCase(typeof(IOS15Platform), TestName = "IOS15SupportedPlatformTest")]
     [GenericTestCase(typeof(IOS152Platform), TestName = "IOS152SupportedPlatformTest")]
     [GenericTestCase(typeof(IOS154Platform), TestName = "IOS154SupportedPlatformTest")]
+    [GenericTestCase(typeof(IOS16Platform), TestName = "IOS16SupportedPlatformTest")]
+    [GenericTestCase(typeof(IOS161Platform), TestName = "IOS161SupportedPlatformTest")]
+    [GenericTestCase(typeof(IOS162Platform), TestName = "IOS162SupportedPlatformTest")]
 
     [GenericTestCase(typeof(Android12Platform), TestName = "Android12SupportedPlatformTest")]
     [GenericTestCase(typeof(Android11Platform), TestName = "Android11SupportedPlatformTest")]
@@ -132,6 +136,7 @@ public class RestTests
     [GenericTestCase(typeof(Mac1015Platform), TestName = "Mac1015BrowserCountTest")]
     [GenericTestCase(typeof(Mac11Platform), TestName = "Mac11BrowserCountTest")]
     [GenericTestCase(typeof(Mac12Platform), TestName = "Mac12BrowserCountTest")]
+    [GenericTestCase(typeof(Mac13Platform), TestName = "Mac13BrowserCountTest")]
     //[Ignore("Account has no minutes")]
     public void BrowserCountTest<T>() where T : PlatformBase
     {
