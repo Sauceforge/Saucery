@@ -1,14 +1,12 @@
-﻿using Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using OpenQA.Selenium;
-using Saucery.Dojo;
-using Saucery.Driver;
-using Saucery.OnDemand;
-using Saucery.Options;
-using Saucery.RestAPI.FlowControl;
-using Saucery.RestAPI.TestStatus;
-using Saucery.Util;
+using Saucery.Core.Dojo;
+using Saucery.Core.Driver;
+using Saucery.Core.Options;
+using Saucery.Core.RestAPI.FlowControl;
+using Saucery.Core.RestAPI.TestStatus;
+using Saucery.Core.Util;
 using System;
 
 namespace Saucery.Tests;

@@ -1,8 +1,8 @@
 ﻿using NUnit.Framework;
-using Saucery.Util;
+using Saucery.Core.Util;
 using Shouldly;
 
-namespace UnitTests; 
+namespace UnitTests;
 
 [TestFixture]
 class IDGeneratorTests

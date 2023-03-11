@@ -23,9 +23,10 @@
       <frameworkAssembly assemblyName="System.Xml" targetFramework="net452" />
     </frameworkAssemblies>-->
     <dependencies>
-      <group targetFramework="net6.0">
+      <group targetFramework="net7.0">
+		<dependency id="Saucery.Core" version="4.0.0" />
         <!--<dependency id="Appium.WebDriver" version="5.0.0-beta01" />-->
-        <dependency id="Castle.Core" version="5.0.0" />
+        <!--<dependency id="Castle.Core" version="5.0.0" />
         <dependency id="DotNetSeleniumExtras.WaitHelpers" version="3.11.0" />
         <dependency id="DotNetSeleniumExtras.PageObjects.Core" version="4.0.1" />
         <dependency id="Microsoft.NET.Test.Sdk" version="17.2.0" />
@@ -35,17 +36,18 @@
         <dependency id="RestSharp" version="108.0.1" />
         <dependency id="Selenium.Support" version="4.1.1" />
         <dependency id="Selenium.WebDriver" version="4.1.1" />
-	    <dependency id="Shouldly" version="4.0.3" />
+	    <dependency id="Shouldly" version="4.0.3" />-->
       </group>
       <!--<dependency id="NuGet.Core" version="2.14.0" />-->
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\net6.0\Saucery.dll" target="lib\net6.0\" />
-	<file src="bin\Release\net6.0\Appium.Net.dll" target="lib\net6.0\" />
-    <file src="bin\Release\net6.0\nunit.framework.dll" target="lib\net6.0\" /> <!--Got to do this to make it work-->
-    <file src="bin\Release\net6.0\testhost.dll" target="lib\net6.0\" />
-    <file src="bin\Release\net6.0\Microsoft.TestPlatform.PlatformAbstractions.dll" target="lib\net6.0\" />
+	<file src="bin\Release\net7.0\Saucery.Core.dll" target="lib\net7.0\" />
+    <file src="bin\Release\net7.0\Saucery.dll" target="lib\net7.0\" />
+	<file src="bin\Release\net7.0\Appium.Net.dll" target="lib\net7.0\" />
+    <file src="bin\Release\net7.0\nunit.framework.dll" target="lib\net7.0\" /> <!--Got to do this to make it work-->
+    <file src="bin\Release\net7.0\testhost.dll" target="lib\net7.0\" />
+    <file src="bin\Release\net7.0\Microsoft.TestPlatform.PlatformAbstractions.dll" target="lib\net7.0\" />
     <file src="Images\SauceryNUnit.png" target="images\" />
     <!--<file src="bin\Release\NuGet.Core.dll" target="lib\net452\" />--> <!--Got to do this to make it work-->
     <!--<file src="bin\Release\Microsoft.Web.XmlTransform.dll" target="lib\net452\" />--> <!--Got to do this to make it work-->

@@ -26,17 +26,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Appium.WebDriver" Version="5.0.0-beta03" />
-    <PackageReference Include="Castle.Core" Version="5.1.1" />
-    <PackageReference Include="DotNetSeleniumExtras.WaitHelpers" Version="3.11.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="NUnit" Version="3.13.3" />
-    <PackageReference Include="RestSharp" Version="108.0.3" />
-    <PackageReference Include="Selenium.Support" Version="4.8.1" />
-    <PackageReference Include="Selenium.WebDriver" Version="4.8.1" />
-    <PackageReference Include="Shouldly" Version="4.1.0" />
     <None Include="Images\SauceryNUnit.png" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Saucery.Core\Saucery.Core.csproj" />
   </ItemGroup>
 
 </Project>

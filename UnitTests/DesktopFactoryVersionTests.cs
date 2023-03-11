@@ -1,9 +1,9 @@
 ﻿using NUnit.Framework;
-using Saucery.Dojo;
-using Saucery.OnDemand;
-using Saucery.OnDemand.Base;
-using Saucery.Options;
-using Saucery.Util;
+using Saucery.Core.Dojo;
+using Saucery.Core.OnDemand;
+using Saucery.Core.OnDemand.Base;
+using Saucery.Core.Options;
+using Saucery.Core.Util;
 using Shouldly;
 using System.Collections;
 
