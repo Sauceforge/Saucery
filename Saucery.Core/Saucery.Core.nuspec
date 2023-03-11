@@ -25,22 +25,22 @@
     <dependencies>
       <group targetFramework="net7.0">
         <!--<dependency id="Appium.WebDriver" version="5.0.0-beta01" />-->
-        <dependency id="Castle.Core" version="5.0.0" />
+        <dependency id="Castle.Core" version="5.1.1" />
         <dependency id="DotNetSeleniumExtras.WaitHelpers" version="3.11.0" />
-        <dependency id="DotNetSeleniumExtras.PageObjects.Core" version="4.0.1" />
-        <dependency id="Microsoft.NET.Test.Sdk" version="17.2.0" />
+        <dependency id="Microsoft.NET.Test.Sdk" version="17.5.0" />
         <dependency id="Newtonsoft.Json" version="13.0.1" />
         <!--<dependency id="NUnit" version="3.13.3" />
 		<dependency id="NUnit3TestAdapter" version="4.2.1" />-->
-        <dependency id="RestSharp" version="108.0.1" />
-        <dependency id="Selenium.Support" version="4.1.1" />
-        <dependency id="Selenium.WebDriver" version="4.1.1" />
-	    <dependency id="Shouldly" version="4.0.3" />
+        <dependency id="RestSharp" version="108.0.3" />
+        <dependency id="Selenium.Support" version="4.8.1" />
+        <dependency id="Selenium.WebDriver" version="4.8.1" />
+	    <dependency id="Shouldly" version="4.1.0" />
       </group>
       <!--<dependency id="NuGet.Core" version="2.14.0" />-->
     </dependencies>
   </metadata>
   <files>
+	<file src="bin\Release\net7.0\Saucery.Core.dll" target="lib\net7.0\" /> <!--Does this need to be here?-->
 	<file src="bin\Release\net7.0\Appium.Net.dll" target="lib\net7.0\" />
     <!--<file src="bin\Release\net7.0\nunit.framework.dll" target="lib\net7.0\" /> --><!--Got to do this to make it work-->
     <file src="bin\Release\net7.0\testhost.dll" target="lib\net7.0\" />

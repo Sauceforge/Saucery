@@ -42,8 +42,7 @@
     </dependencies>
   </metadata>
   <files>
-	<file src="bin\Release\net7.0\Saucery.Core.dll" target="lib\net7.0\" />
-    <file src="bin\Release\net7.0\Saucery.dll" target="lib\net7.0\" />
+    <file src="bin\Release\net7.0\Saucery.dll" target="lib\net7.0\" /> <!--Does this need to be here?-->
 	<file src="bin\Release\net7.0\Appium.Net.dll" target="lib\net7.0\" />
     <file src="bin\Release\net7.0\nunit.framework.dll" target="lib\net7.0\" /> <!--Got to do this to make it work-->
     <file src="bin\Release\net7.0\testhost.dll" target="lib\net7.0\" />
