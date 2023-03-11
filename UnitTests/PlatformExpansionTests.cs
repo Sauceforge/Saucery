@@ -11,12 +11,12 @@ namespace UnitTests;
 [TestFixture]
 public class PlatformExpansionTests
 {
-    private PlatformConfigurator _platformConfigurator { get; set; }
+    private PlatformConfigurator PlatformConfigurator { get; set; }
 
     [OneTimeSetUp]
     public void OneTimeSetUp()
     {
-        _platformConfigurator = new(PlatformFilter.ALL);
+        PlatformConfigurator = new(PlatformFilter.ALL);
     }
 
     [Test]
@@ -28,7 +28,7 @@ public class PlatformExpansionTests
         };
 
         //PlatformConfigurator configurator = new();
-        PlatformExpander expander = new(_platformConfigurator, platforms);
+        PlatformExpander expander = new(PlatformConfigurator, platforms);
         var expandedSet = expander.Expand();
         expandedSet.Find(e => e.BrowserVersion.Equals(82)).ShouldBeNull(); //Chrome didn't release version 82 due to Covid-19.
         expandedSet.Count.ShouldBeGreaterThanOrEqualTo(31);
@@ -54,7 +54,7 @@ public class PlatformExpansionTests
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_EDGE, "99")
         };
 
-        PlatformExpander expander = new(_platformConfigurator, platforms);
+        PlatformExpander expander = new(PlatformConfigurator, platforms);
         var expandedSet = expander.Expand();
         expandedSet.Count.ShouldBe(platforms.Count);
     }
@@ -78,7 +78,7 @@ public class PlatformExpansionTests
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_EDGE, "79->101")
         };
 
-        PlatformExpander expander = new(_platformConfigurator, platforms);
+        PlatformExpander expander = new(PlatformConfigurator, platforms);
         List<SaucePlatform> expandedSet = expander.Expand();
         expandedSet.Count.ShouldBe(128);
     }
@@ -100,7 +100,7 @@ public class PlatformExpansionTests
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, $"{SauceryConstants.BROWSER_VERSION_BETA}->{SauceryConstants.BROWSER_VERSION_DEV}", SauceryConstants.SCREENRES_2560_1600)                     //2
         };
 
-        PlatformExpander expander = new(_platformConfigurator, platforms);
+        PlatformExpander expander = new(PlatformConfigurator, platforms);
         List<SaucePlatform> expandedSet = expander.Expand();
         expandedSet.Count.ShouldBe(20);
     }
@@ -114,7 +114,7 @@ public class PlatformExpansionTests
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "75->100->latest", SauceryConstants.SCREENRES_2560_1600),
         };
 
-        PlatformExpander expander = new(_platformConfigurator, platforms);
+        PlatformExpander expander = new(PlatformConfigurator, platforms);
         List<SaucePlatform> expandedSet = expander.Expand();
         expandedSet.Count.ShouldBe(0);
     }
@@ -128,7 +128,7 @@ public class PlatformExpansionTests
             new IOSPlatform("iPhone 13 Pro Max Simulator", "15.2->15.4", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
         };
 
-        PlatformExpander expander = new(_platformConfigurator, platforms);
+        PlatformExpander expander = new(PlatformConfigurator, platforms);
         List<SaucePlatform> expandedSet = expander.Expand();
         
         //It is not the job of the PlatformExpander to remove this from the requested set so just return it.

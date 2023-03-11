@@ -15,7 +15,7 @@ public class SauceryBase {
     protected string TestName;
     protected SauceryRemoteWebDriver Driver;
     protected readonly BrowserVersion BrowserVersion;
-    protected static SauceLabsStatusNotifier SauceLabsStatusNotifier;
+    internal static SauceLabsStatusNotifier SauceLabsStatusNotifier;
     internal static SauceLabsFlowController SauceLabsFlowController;
 
     static SauceryBase() {
