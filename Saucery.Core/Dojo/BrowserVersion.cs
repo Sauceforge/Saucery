@@ -62,6 +62,7 @@ public class BrowserVersion
 
     public void SetTestName(string testName)
     {
+        TestNameBuilder.Clear();
         TestNameBuilder.Append(testName.Contains(SauceryConstants.LEFT_SQUARE_BRACKET)
                                 ? testName[..testName.IndexOf(SauceryConstants.LEFT_SQUARE_BRACKET, StringComparison.Ordinal)]
                                 : testName);
