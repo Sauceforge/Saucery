@@ -1,7 +1,7 @@
-﻿using Saucery.Util;
+﻿using Saucery.Core.Util;
 using System.Collections;
 
-namespace UnitTests.Issue1118; 
+namespace UnitTests.Issue1118;
 
 public class Issue1118_SourceData : IEnumerable {
     public IEnumerator GetEnumerator() {

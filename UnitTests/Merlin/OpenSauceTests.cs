@@ -1,6 +1,6 @@
 ﻿using Merlin.PageObjects;
 using NUnit.Framework;
-using Saucery.Dojo;
+using Saucery.Core.Dojo;
 using Saucery.Tests;
 using Shouldly;
 

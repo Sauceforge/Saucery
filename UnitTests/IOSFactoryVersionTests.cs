@@ -1,9 +1,9 @@
 ﻿using NUnit.Framework;
-using Saucery.Dojo;
-using Saucery.OnDemand;
-using Saucery.OnDemand.Base;
-using Saucery.Options;
-using Saucery.Util;
+using Saucery.Core.Dojo;
+using Saucery.Core.OnDemand;
+using Saucery.Core.OnDemand.Base;
+using Saucery.Core.Options;
+using Saucery.Core.Util;
 using Shouldly;
 using System.Collections;
 
@@ -12,25 +12,25 @@ namespace UnitTests;
 [TestFixture]
 public class IOSFactoryVersionTests
 {
-    private PlatformConfigurator _platformConfigurator { get; set; }
+    private PlatformConfigurator PlatformConfigurator { get; set; }
 
     [OneTimeSetUp]
     public void OneTimeSetUp()
     {
-        _platformConfigurator = new(PlatformFilter.ALL);
+        PlatformConfigurator = new(PlatformFilter.ALL);
     }
 
     [Test, TestCaseSource(typeof(IOSDataClass), "NotSupportedTestCases")]
     public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform)
     {
-        var validPlatform = _platformConfigurator.Filter(saucePlatform);
+        var validPlatform = PlatformConfigurator.Filter(saucePlatform);
         validPlatform.ShouldBeNull();
     }
 
     [Test, TestCaseSource(typeof(IOSDataClass), "SupportedTestCases")]
     public void AppiumIOSOptionTest(SaucePlatform saucePlatform)
     {
-        var validPlatform = _platformConfigurator.Filter(saucePlatform);
+        var validPlatform = PlatformConfigurator.Filter(saucePlatform);
         validPlatform.ShouldNotBeNull();
 
         var factory = new OptionFactory(validPlatform);

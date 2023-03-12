@@ -1,5 +1,5 @@
 ﻿using NUnit.Framework;
-using Saucery.Util;
+using Saucery.Core.Util;
 using Shouldly;
 using System;
 

@@ -1,10 +1,10 @@
 ﻿using NUnit.Framework;
-using Saucery.Dojo;
-using Saucery.Dojo.Platforms.Base;
-using Saucery.Dojo.Platforms.ConcreteProducts.Apple;
-using Saucery.Dojo.Platforms.ConcreteProducts.Google;
-using Saucery.Dojo.Platforms.ConcreteProducts.PC;
-using Saucery.RestAPI.FlowControl;
+using Saucery.Core.Dojo;
+using Saucery.Core.Dojo.Platforms.Base;
+using Saucery.Core.Dojo.Platforms.ConcreteProducts.Apple;
+using Saucery.Core.Dojo.Platforms.ConcreteProducts.Google;
+using Saucery.Core.Dojo.Platforms.ConcreteProducts.PC;
+using Saucery.Core.RestAPI.FlowControl;
 using Shouldly;
 using System.Collections.Generic;
 using UnitTests.Util;

@@ -1,0 +1,52 @@
+﻿<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Saucery.Core</id>
+    <version>4.0.0</version>
+    <title>Saucery.Core</title>
+    <authors>SauceForge</authors>
+    <owners>Andrew Gray</owners>
+    <description>Sourcery for SauceLabs - Unlocking SauceLabs capability</description>
+    <releaseNotes>
+      ChangeLog:
+      v4.0.0
+        - Initial Release
+    </releaseNotes>
+    <summary>Sourcery for SauceLabs - Unlocking SauceLabs capability</summary>
+    <projectUrl>https://sauceforge.github.io</projectUrl>
+    <repository type="git" url="https://github.com/Sauceforge/Saucery.git"/>
+    <icon>images/SauceryNUnit.png</icon>
+	<license type="expression">GPL-3.0-or-later</license>
+    <copyright>Copyright (c) Andrew Gray 2014-2022</copyright>
+    <tags>nunit saucelabs test testing tdd framework assert</tags>
+    <!--<frameworkAssemblies>
+      <frameworkAssembly assemblyName="System.Core" targetFramework="net452" />
+      <frameworkAssembly assemblyName="System.Xml" targetFramework="net452" />
+    </frameworkAssemblies>-->
+    <dependencies>
+      <group targetFramework="net7.0">
+        <!--<dependency id="Appium.WebDriver" version="5.0.0-beta01" />-->
+        <dependency id="Castle.Core" version="5.1.1" />
+        <dependency id="DotNetSeleniumExtras.WaitHelpers" version="3.11.0" />
+        <dependency id="Microsoft.NET.Test.Sdk" version="17.5.0" />
+        <dependency id="Newtonsoft.Json" version="13.0.1" />
+        <!--<dependency id="NUnit" version="3.13.3" />
+		<dependency id="NUnit3TestAdapter" version="4.2.1" />-->
+        <dependency id="RestSharp" version="108.0.3" />
+        <dependency id="Selenium.Support" version="4.8.1" />
+        <dependency id="Selenium.WebDriver" version="4.8.1" />
+	    <dependency id="Shouldly" version="4.1.0" />
+      </group>
+      <!--<dependency id="NuGet.Core" version="2.14.0" />-->
+    </dependencies>
+  </metadata>
+  <files>
+	<file src="bin\Release\net7.0\Saucery.Core.dll" target="lib\net7.0\" /> <!--Does this need to be here?-->
+	<file src="bin\Release\net7.0\Appium.Net.dll" target="lib\net7.0\" />
+    <!--<file src="bin\Release\net7.0\nunit.framework.dll" target="lib\net7.0\" /> --><!--Got to do this to make it work-->
+    <file src="bin\Release\net7.0\testhost.dll" target="lib\net7.0\" />
+    <file src="bin\Release\net7.0\Microsoft.TestPlatform.PlatformAbstractions.dll" target="lib\net7.0\" />
+    <file src="Images\SauceryNUnit.png" target="images\" />
+    <!--<file src="bin\Release\NuGet.Core.dll" target="lib\net452\" />--> <!--Got to do this to make it work-->
+    <!--<file src="bin\Release\Microsoft.Web.XmlTransform.dll" target="lib\net452\" />--> <!--Got to do this to make it work-->
+  </files>
+</package>
