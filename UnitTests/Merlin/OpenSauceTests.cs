@@ -1,7 +1,7 @@
 ﻿using Merlin.PageObjects;
 using NUnit.Framework;
+using Saucery;
 using Saucery.Core.Dojo;
-using Saucery.Tests;
 using Shouldly;
 
 //[assembly: LevelOfParallelism(3)]

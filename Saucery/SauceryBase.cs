@@ -9,37 +9,45 @@ using Saucery.Core.RestAPI.TestStatus;
 using Saucery.Core.Util;
 using System;
 
-namespace Saucery.Tests;
+namespace Saucery;
 
-public class SauceryBase {
+public class SauceryBase
+{
     protected string TestName;
     protected SauceryRemoteWebDriver Driver;
     protected readonly BrowserVersion BrowserVersion;
     internal static SauceLabsStatusNotifier SauceLabsStatusNotifier;
     internal static SauceLabsFlowController SauceLabsFlowController;
 
-    static SauceryBase() {
+    static SauceryBase()
+    {
         SauceLabsStatusNotifier = new SauceLabsStatusNotifier();
         SauceLabsFlowController = new SauceLabsFlowController();
     }
 
-    protected SauceryBase(BrowserVersion browserVersion) {
+    protected SauceryBase(BrowserVersion browserVersion)
+    {
         BrowserVersion = browserVersion;
     }
 
-    public bool InitialiseDriver(DriverOptions opts, int waitSecs) {
+    public bool InitialiseDriver(DriverOptions opts, int waitSecs)
+    {
         SauceLabsFlowController.ControlFlow();
-        try {
+        try
+        {
             Driver = new SauceryRemoteWebDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, waitSecs);
             return true;
-        } catch(Exception ex) {
+        }
+        catch (Exception ex)
+        {
             Console.WriteLine(ex.Message);
             return false;
         }
     }
 
     [SetUp]
-    public void Setup() {
+    public void Setup()
+    {
         BrowserVersion.SetTestName(TestContext.CurrentContext.Test.Name);
         TestName = BrowserVersion.TestName;
 
@@ -59,9 +67,12 @@ public class SauceryBase {
     }
 
     [TearDown]
-    public void Cleanup() {
-        try {
-            if (Driver != null) {
+    public void Cleanup()
+    {
+        try
+        {
+            if (Driver != null)
+            {
                 var passed = Equals(TestContext.CurrentContext.Result.Outcome, ResultState.Success);
                 // log the result to SauceLabs
                 var sessionId = Driver.GetSessionId();
@@ -69,7 +80,9 @@ public class SauceryBase {
                 Console.WriteLine(@"SessionID={0} job-name={1}", sessionId, TestName);
                 Driver.Quit();
             }
-        } catch (WebDriverException) {
+        }
+        catch (WebDriverException)
+        {
             Console.WriteLine(@"Caught WebDriverException, quitting driver.");
             Driver.Quit();
         }
