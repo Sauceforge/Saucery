@@ -22,26 +22,15 @@ public static class PlatformClassifer
         }
 
         //Desktop
-        switch (platform.Browser.ToLower())
+        platform.PlatformType = platform.Browser.ToLower() switch
         {
-            case SauceryConstants.BROWSER_CHROME:
-                platform.PlatformType = PlatformType.Chrome;
-                break;
-            case SauceryConstants.BROWSER_FIREFOX:
-                platform.PlatformType = PlatformType.Firefox;
-                break;
-            case SauceryConstants.BROWSER_IE:
-                platform.PlatformType = PlatformType.IE;
-                break;
-            case SauceryConstants.BROWSER_EDGE_LOWER:
-                platform.PlatformType = PlatformType.Edge;
-                break;
-            case SauceryConstants.BROWSER_SAFARI:
-                platform.PlatformType = PlatformType.Safari;
-                break;
-            default:
-                break;
-        }
+            SauceryConstants.BROWSER_CHROME => PlatformType.Chrome,
+            SauceryConstants.BROWSER_FIREFOX => PlatformType.Firefox,
+            SauceryConstants.BROWSER_IE => PlatformType.IE,
+            SauceryConstants.BROWSER_EDGE_LOWER => PlatformType.Edge,
+            SauceryConstants.BROWSER_SAFARI => PlatformType.Safari,
+            _ => platform.PlatformType
+        };
 
         return platform;
     }

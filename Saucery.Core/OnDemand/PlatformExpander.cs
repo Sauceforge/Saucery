@@ -12,7 +12,7 @@ public class PlatformExpander
 
     public PlatformExpander(PlatformConfigurator platformConfigurator, List<SaucePlatform> platforms)
     {
-        ExpandedSet = new();
+        ExpandedSet = new List<SaucePlatform>();
         Platforms = platforms;
         PlatformConfigurator = platformConfigurator;
     }
@@ -92,7 +92,7 @@ public class PlatformExpander
         }
     }
 
-    private void AddPlatform(SaucePlatform platform, string browserVersion) => ExpandedSet.Add(new()
+    private void AddPlatform(SaucePlatform platform, string browserVersion) => ExpandedSet.Add(new SaucePlatform
     {
         Os = platform.Os,
         Browser = platform.Browser,

@@ -13,9 +13,9 @@ public abstract class BrowserBase : IBrowser
     internal string RecommendedAppiumVersion { get; set; }
     internal List<string> ScreenResolutions { get; set; }
     internal List<BrowserVersion> BrowserVersions { get; set; }
-    
 
-    public BrowserBase(SupportedPlatform sp, List<string> screenResolutions, string platformNameForOption)
+
+    protected BrowserBase(SupportedPlatform sp, List<string> screenResolutions, string platformNameForOption)
     {
         Os = sp.os;
         PlatformNameForOption = platformNameForOption;

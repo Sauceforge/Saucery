@@ -25,7 +25,7 @@ internal static class SeleniumExtensions {
     public static void LoadJQuery(this RemoteWebDriver driver, string version = "any", TimeSpan? timeout = null) {
         //Get the url to load jQuery from
         string jQueryUrl;
-        if(String.IsNullOrEmpty(version) || version.ToLower() == "latest") {
+        if(string.IsNullOrEmpty(version) || version.ToLower() == "latest") {
             jQueryUrl = "http://code.jquery.com/jquery-latest.min.js";
         } else {
             jQueryUrl = "https://ajax.googleapis.com/ajax/libs/jquery/" + version + "/jquery.min.js";
@@ -33,8 +33,7 @@ internal static class SeleniumExtensions {
 
         //Script to load jQuery from external site
         var versionEnforceScript = version != null && version.ToLower() != "any"
-            ? string.Format(
-                "if (typeof jQuery == 'function' && jQuery.fn.jquery != '{0}') jQuery.noConflict(true);", version)
+            ? $"if (typeof jQuery == 'function' && jQuery.fn.jquery != '{version}') jQuery.noConflict(true);"
             : string.Empty;
         var loadingScript =
             @"if (typeof jQuery != 'function')
@@ -52,9 +51,7 @@ internal static class SeleniumExtensions {
         if(!loaded) {
             //Wait for the script to load
             //Verify library loaded
-            if(!timeout.HasValue) {
-                timeout = new TimeSpan(0, 0, 30);
-            }
+            timeout ??= new TimeSpan(0, 0, 30);
 
             var timePassed = 0;
             while(!driver.JQueryLoaded()) {
@@ -78,9 +75,8 @@ internal static class SeleniumExtensions {
         driver.LoadJQuery();
 
         //Execute the jQuery selector as a script
-        var element = driver.ExecuteScript("return $(\"" + by.Selector + "\").get(0)") as IWebElement;
 
-        if(element != null) {
+        if(driver.ExecuteScript("return $(\"" + by.Selector + "\").get(0)") is IWebElement element) {
             return element;
         }
         throw new NoSuchElementException("No element found with jQuery command: jQuery" + by.Selector);
