@@ -20,14 +20,14 @@ public class IOSFactoryVersionTests
         PlatformConfigurator = new(PlatformFilter.ALL);
     }
 
-    [Test, TestCaseSource(typeof(IOSDataClass), "NotSupportedTestCases")]
+    [Test, TestCaseSource(typeof(IOSDataClass), nameof(IOSDataClass.NotSupportedTestCases))]
     public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform)
     {
         var validPlatform = PlatformConfigurator.Filter(saucePlatform);
         validPlatform.ShouldBeNull();
     }
 
-    [Test, TestCaseSource(typeof(IOSDataClass), "SupportedTestCases")]
+    [Test, TestCaseSource(typeof(IOSDataClass), nameof(IOSDataClass.SupportedTestCases))]
     public void AppiumIOSOptionTest(SaucePlatform saucePlatform)
     {
         var validPlatform = PlatformConfigurator.Filter(saucePlatform);

@@ -4,6 +4,6 @@ namespace Saucery.Core.Dojo.Browsers.Base;
 
 public interface IBrowser
 {
-    abstract BrowserVersion FindVersion(SupportedPlatform sp);
-    abstract bool IsSupportedVersion(SupportedPlatform sp);
+    BrowserVersion FindVersion(SupportedPlatform sp);
+    bool IsSupportedVersion(SupportedPlatform sp);
 }

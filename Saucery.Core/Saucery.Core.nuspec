@@ -5,18 +5,18 @@
     <title>Saucery.Core</title>
     <authors>SauceForge</authors>
     <owners>Andrew Gray</owners>
-    <description>Sourcery for SauceLabs - Unlocking SauceLabs capability</description>
+    <description>Sorcery for SauceLabs - Unlocking SauceLabs capability</description>
     <releaseNotes>
       ChangeLog:
       v4.0.0
         - Initial Release
     </releaseNotes>
-    <summary>Sourcery for SauceLabs - Unlocking SauceLabs capability</summary>
+    <summary>Sorcery for SauceLabs - Unlocking SauceLabs capability</summary>
     <projectUrl>https://sauceforge.github.io</projectUrl>
     <repository type="git" url="https://github.com/Sauceforge/Saucery.git"/>
-    <icon>images/SauceryNUnit.png</icon>
+    <icon>images/Saucery.Core.png</icon>
 	<license type="expression">GPL-3.0-or-later</license>
-    <copyright>Copyright (c) Andrew Gray 2014-2022</copyright>
+    <copyright>Copyright (c) Andrew Gray 2014-2023</copyright>
     <tags>nunit saucelabs test testing tdd framework assert</tags>
     <!--<frameworkAssemblies>
       <frameworkAssembly assemblyName="System.Core" targetFramework="net452" />
@@ -45,7 +45,7 @@
     <!--<file src="bin\Release\net7.0\nunit.framework.dll" target="lib\net7.0\" /> --><!--Got to do this to make it work-->
     <file src="bin\Release\net7.0\testhost.dll" target="lib\net7.0\" />
     <file src="bin\Release\net7.0\Microsoft.TestPlatform.PlatformAbstractions.dll" target="lib\net7.0\" />
-    <file src="Images\SauceryNUnit.png" target="images\" />
+    <file src="Images\Saucery.Core.png" target="images\" />
     <!--<file src="bin\Release\NuGet.Core.dll" target="lib\net452\" />--> <!--Got to do this to make it work-->
     <!--<file src="bin\Release\Microsoft.Web.XmlTransform.dll" target="lib\net452\" />--> <!--Got to do this to make it work-->
   </files>

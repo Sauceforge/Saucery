@@ -84,7 +84,7 @@ public class SauceryBase
         catch (WebDriverException)
         {
             Console.WriteLine(@"Caught WebDriverException, quitting driver.");
-            Driver.Quit();
+            Driver?.Quit();
         }
     }
 }

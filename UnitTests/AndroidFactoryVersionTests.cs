@@ -17,17 +17,17 @@ public class AndroidFactoryVersionTests
     [OneTimeSetUp]
     public void OneTimeSetUp()
     {
-        PlatformConfigurator = new(PlatformFilter.ALL);
+        PlatformConfigurator = new PlatformConfigurator(PlatformFilter.ALL);
     }
 
-    [Test, TestCaseSource(typeof(AndroidDataClass), "NotSupportedTestCases")]
+    [Test, TestCaseSource(typeof(AndroidDataClass), nameof(AndroidDataClass.NotSupportedTestCases))]
     public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform)
     {
         var validPlatform = PlatformConfigurator.Filter(saucePlatform);
         validPlatform.ShouldBeNull();
     }
 
-    [Test, TestCaseSource(typeof(AndroidDataClass), "SupportedTestCases")]
+    [Test, TestCaseSource(typeof(AndroidDataClass), nameof(AndroidDataClass.SupportedTestCases))]
     public void AppiumAndroidOptionTest(SaucePlatform saucePlatform)
     {
         var validPlatform = PlatformConfigurator.Filter(saucePlatform);

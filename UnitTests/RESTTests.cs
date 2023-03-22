@@ -19,7 +19,7 @@ public class RestTests
     [OneTimeSetUp]
     public void Setup()
     {
-        _configurator = new(PlatformFilter.ALL);
+        _configurator = new PlatformConfigurator(PlatformFilter.ALL);
     }
 
     [Test]

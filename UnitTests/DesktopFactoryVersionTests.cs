@@ -12,21 +12,21 @@ namespace UnitTests;
 [TestFixture]
 public class DesktopFactoryVersionTests
 {
-    static PlatformConfigurator PlatformConfigurator { get; set; }
+    private static PlatformConfigurator PlatformConfigurator { get; set; }
 
     static DesktopFactoryVersionTests()
     {
-        PlatformConfigurator = new(PlatformFilter.ALL);
+        PlatformConfigurator = new PlatformConfigurator(PlatformFilter.ALL);
     }
 
-    [Test, TestCaseSource(typeof(DesktopDataClass), "NotSupportedTestCases")]
+    [Test, TestCaseSource(typeof(DesktopDataClass), nameof(DesktopDataClass.NotSupportedTestCases))]
     public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform)
     {
         var validplatform = PlatformConfigurator.Validate(saucePlatform);
         validplatform.ShouldBeNull();
     }
 
-    [Test, TestCaseSource(typeof(DesktopDataClass), "SupportedTestCases")]
+    [Test, TestCaseSource(typeof(DesktopDataClass), nameof(DesktopDataClass.SupportedTestCases))]
     public void DesktopOptionTest(SaucePlatform saucePlatform)
     {
         var validplatform = PlatformConfigurator.Validate(saucePlatform);

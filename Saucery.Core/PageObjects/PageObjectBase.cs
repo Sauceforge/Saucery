@@ -9,7 +9,7 @@ public class PageObjectBase {
     internal string PageUrl;
     internal string Name;
     internal string Title;
-    internal WebDriverWait wait;
+    internal WebDriverWait Wait;
 
     public PageObjectBase(string url, string name, string title)
     {
@@ -24,8 +24,8 @@ public class PageObjectBase {
     }
 
     public void CheckTitle(SauceryRemoteWebDriver driver) {
-        wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
-        while (!wait.Until(ExpectedConditions.TitleIs(Title)))
+        Wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
+        while (!Wait.Until(ExpectedConditions.TitleIs(Title)))
         {
             GetPage(driver);
         }

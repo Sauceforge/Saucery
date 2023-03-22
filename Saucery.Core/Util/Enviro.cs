@@ -7,7 +7,7 @@ public static class Enviro {
 
     public static string SauceApiKey => GetStringVar(SauceryConstants.SAUCE_API_KEY);
 
-    internal static string BuildName => string.Format("Desktop_{0}", GetStringVar(SauceryConstants.BUILD_NUMBER) ?? IDGenerator.Id);
+    internal static string BuildName => $"Desktop_{GetStringVar(SauceryConstants.BUILD_NUMBER) ?? IdGenerator.Id}";
 
     private static string GetStringVar(string envVar) => envVar == null ? null : Environment.GetEnvironmentVariable(envVar);
 }

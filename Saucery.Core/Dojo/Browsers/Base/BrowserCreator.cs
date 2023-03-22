@@ -6,7 +6,7 @@ public abstract class BrowserCreator
 {
     internal readonly SupportedPlatform Platform;
 
-    public BrowserCreator(SupportedPlatform sp)
+    protected BrowserCreator(SupportedPlatform sp)
     {
         Platform = sp;
     }

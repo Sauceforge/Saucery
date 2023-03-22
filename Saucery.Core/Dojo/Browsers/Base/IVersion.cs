@@ -2,7 +2,7 @@
 
 namespace Saucery.Core.Dojo.Browsers.Base;
 
-interface IVersion
+internal interface IVersion
 {
     int MinimumVersion(SupportedPlatform sp);
 }

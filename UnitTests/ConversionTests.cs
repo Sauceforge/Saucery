@@ -11,7 +11,7 @@ public class ConversionTests
     [Test]
     public void SanitisedLongVersionTest()
     {
-        var longVersion = "10.0.";
+        const string longVersion = "10.0.";
         var result = longVersion.EndsWith(SauceryConstants.DOT)
                         ? longVersion.Trim().Remove(longVersion.Length - 1)
                         : longVersion.Trim();

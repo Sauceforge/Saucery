@@ -7,44 +7,30 @@ jobs:
     name: build, pack & publish
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-      # - name: Setup dotnet
-      #   uses: actions/setup-dotnet@v1
-      #   with:
-      #     dotnet-version: 3.1.200
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v1.0.5
 
-      # Publish
-      - name: publish on version change
-        id: publish_nuget
-        uses: rohith/publish-nuget@v2
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v2
         with:
-          # Filepath of the project to be packaged, relative to root of repository
-          PROJECT_FILE_PATH: Saucery.Core/Saucery.Core.csproj
-          
-          # NuGet package id, used for version detection & defaults to project name
-          PACKAGE_NAME: Saucery.Core
-          
-          # Filepath with version info, relative to root of repository & defaults to PROJECT_FILE_PATH
-          # VERSION_FILE_PATH: Directory.Build.props
+           # Check for latest at link at .NET 7 download page (https://dotnet.microsoft.com/download/dotnet/7.0)
+           dotnet-version: 7.0.x
+           #dotnet-version: | 
+           #  3.1.x
+           #  5.0.x
+      - name: Compile solution
+        run: dotnet build -c ${{ env.CONFIG }}
 
-          # Regex pattern to extract version info in a capturing group
-          # VERSION_REGEX: ^\s*<Version>(.*)<\/Version>\s*$
-          
-          # Useful with external providers like Nerdbank.GitVersioning, ignores VERSION_FILE_PATH & VERSION_REGEX
-          # VERSION_STATIC: 1.0.0
+    ## Run code analysis for all projects/solutions, such that code analysis violations break the build.
+    #- name: Run .NET Code Analysis
+    #  uses: dotnet/code-analysis@v1
+    #  id: code-analysis
+    #  with:
+    #    build-breaking: true
 
-          # Flag to toggle git tagging, enabled by default
-          # TAG_COMMIT: true
-
-          # Format of the git tag, [*] gets replaced with actual version
-          # TAG_FORMAT: v*
-
-          # API key to authenticate with NuGet server
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
-
-          # NuGet server uri hosting the packages, defaults to https://api.nuget.org
-          NUGET_SOURCE: https://api.nuget.org
-
-          # Flag to toggle pushing symbols along with nuget package to the server, disabled by default
-          # INCLUDE_SYMBOLS: false
+      - name: Publish
+        run: nuget push Saucery.Core\*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_API_KEY}}
+    #  run: dotnet nuget push **/*.nupkg --api-key ${{ secrets.NUGET_DEPLOY_KEY }} --source https://api.nuget.org/v3/index.json

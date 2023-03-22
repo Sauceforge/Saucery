@@ -15,7 +15,7 @@ public abstract class RestBase {
     internal static RestRequest Request;
     internal static RestAPILimitsChecker LimitChecker;
 
-    public RestBase() {
+    protected RestBase() {
         LimitChecker = new RestAPILimitsChecker();
     }
 
