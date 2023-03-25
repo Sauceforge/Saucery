@@ -34,4 +34,4 @@ jobs:
         run: dotnet pack -c ${{ env.CONFIG }} ${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj -o ${{ env.NUPKG_DIR }}
       
       - name: Push generated package to NuGet
-        run: dotnet nuget push ${{ env.NUPKG_DIR }}/*.nupkg -Source '${{ env.NUGET_SOURCE }}' --api-key ${{ env.NUGET_API_KEY }}
+        run: dotnet nuget push ${{ env.NUPKG_DIR }}/*.nupkg --source '${{ env.NUGET_SOURCE }}' --api-key ${{ env.NUGET_API_KEY }}
