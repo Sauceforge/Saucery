@@ -14,7 +14,7 @@ namespace Saucery;
 public class SauceryBase
 {
     protected string TestName;
-    protected SauceryRemoteWebDriver Driver;
+    public SauceryRemoteWebDriver Driver;
     protected readonly BrowserVersion BrowserVersion;
     internal static SauceLabsStatusNotifier SauceLabsStatusNotifier;
     internal static SauceLabsFlowController SauceLabsFlowController;

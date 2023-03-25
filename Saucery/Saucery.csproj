@@ -9,14 +9,14 @@
   <PropertyGroup>
 	  <IsPackable>true</IsPackable>
 	  <PackageId>Saucery</PackageId>
-      <PackageVersion>4.1.0</PackageVersion>
+      <PackageVersion>4.1.1</PackageVersion>
       <Authors>Andrew Gray</Authors>
       <Company>SauceForge</Company>
       <Copyright>Copyright Andrew Gray 2014-2023</Copyright>
       <Description>Sorcery for SauceLabs - Unlocking SauceLabs capability</Description>
       <PackageReleaseNotes>
         ChangeLog:
-        v4.1.0
+        v4.1.1
         - Initial Release with dependency on Saucery.Core
       </PackageReleaseNotes>
       <PackageProjectUrl>https://github.com/Sauceforge/Saucery</PackageProjectUrl>
@@ -28,6 +28,7 @@
   <ItemGroup>
     <PackageReference Include="NUnit" Version="3.13.3" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.4.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
     <PackageReference Include="Saucery.Core" Version="4.0.0" />
     <None Include="Images\Saucery.NUnit.128x128.png" Pack="true" PackagePath="\" />
   </ItemGroup>

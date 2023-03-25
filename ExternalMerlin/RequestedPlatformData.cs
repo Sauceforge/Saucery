@@ -1,7 +1,7 @@
-﻿using Saucery.DataSources;
-using Saucery.OnDemand;
-using Saucery.OnDemand.Base;
-using Saucery.Util;
+﻿using Saucery.Core.DataSources;
+using Saucery.Core.OnDemand;
+using Saucery.Core.OnDemand.Base;
+using Saucery.Core.Util;
 
 namespace ExternalMerlin;
 
