@@ -1,12 +1,12 @@
-﻿using OpenQA.Selenium;
+﻿using System;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using Saucery.Core.Driver;
 using Saucery.Core.PageObjects;
 using SeleniumExtras.PageObjects;
 using Shouldly;
-using System;
 
-namespace Merlin.PageObjects;
+namespace UnitTests.Merlin.PageObjects;
 
 public class GuineaPigPage : PageObjectBase {
     public GuineaPigPage(SauceryRemoteWebDriver driver, string urlRoot)

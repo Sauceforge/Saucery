@@ -112,57 +112,28 @@ public static class DojoExtensions
 
     public static BrowserVersion FindDesktopBrowser(this List<PlatformBase> platforms, SaucePlatform sp)
     {
-        PlatformBase platform = null;
-        switch (sp.Os)
+        PlatformBase platform = sp.Os switch
         {
-            case SauceryConstants.PLATFORM_WINDOWS_11:
-                platform = platforms.GetPlatform<Windows11Platform>()[0];
-                break;
-            case SauceryConstants.PLATFORM_WINDOWS_10:
-                platform = platforms.GetPlatform<Windows10Platform>()[0];
-                break;
-            case SauceryConstants.PLATFORM_WINDOWS_81:
-                platform = platforms.GetPlatform<Windows81Platform>()[0];
-                break;
-            case SauceryConstants.PLATFORM_WINDOWS_8:
-                platform = platforms.GetPlatform<Windows8Platform>()[0];
-                break;
-            case SauceryConstants.PLATFORM_WINDOWS_7:
-                platform = platforms.GetPlatform<Windows7Platform>()[0];
-                break;
-            case SauceryConstants.PLATFORM_MAC_13:
-                platform = platforms.GetPlatform<Mac13Platform>()[0];
-                break;
-            case SauceryConstants.PLATFORM_MAC_12:
-                platform = platforms.GetPlatform<Mac12Platform>()[0];
-                break;
-            case SauceryConstants.PLATFORM_MAC_11:
-                platform = platforms.GetPlatform<Mac11Platform>()[0];
-                break;
-            case SauceryConstants.PLATFORM_MAC_1015:
-                platform = platforms.GetPlatform<Mac1015Platform>()[0];
-                break;
-            case SauceryConstants.PLATFORM_MAC_1014:
-                platform = platforms.GetPlatform<Mac1014Platform>()[0];
-                break;
-            case SauceryConstants.PLATFORM_MAC_1013:
-                platform = platforms.GetPlatform<Mac1013Platform>()[0];
-                break;
-            case SauceryConstants.PLATFORM_MAC_1012:
-                platform = platforms.GetPlatform<Mac1012Platform>()[0];
-                break;
-            case SauceryConstants.PLATFORM_MAC_1011:
-                platform = platforms.GetPlatform<Mac1011Platform>()[0];
-                break;
-            case SauceryConstants.PLATFORM_MAC_1010:
-                platform = platforms.GetPlatform<Mac1010Platform>()[0];
-                break;
-        }
+            SauceryConstants.PLATFORM_WINDOWS_11 => platforms.GetPlatform<Windows11Platform>()[0],
+            SauceryConstants.PLATFORM_WINDOWS_10 => platforms.GetPlatform<Windows10Platform>()[0],
+            SauceryConstants.PLATFORM_WINDOWS_81 => platforms.GetPlatform<Windows81Platform>()[0],
+            SauceryConstants.PLATFORM_WINDOWS_8 => platforms.GetPlatform<Windows8Platform>()[0],
+            SauceryConstants.PLATFORM_WINDOWS_7 => platforms.GetPlatform<Windows7Platform>()[0],
+            SauceryConstants.PLATFORM_MAC_13 => platforms.GetPlatform<Mac13Platform>()[0],
+            SauceryConstants.PLATFORM_MAC_12 => platforms.GetPlatform<Mac12Platform>()[0],
+            SauceryConstants.PLATFORM_MAC_11 => platforms.GetPlatform<Mac11Platform>()[0],
+            SauceryConstants.PLATFORM_MAC_1015 => platforms.GetPlatform<Mac1015Platform>()[0],
+            SauceryConstants.PLATFORM_MAC_1014 => platforms.GetPlatform<Mac1014Platform>()[0],
+            SauceryConstants.PLATFORM_MAC_1013 => platforms.GetPlatform<Mac1013Platform>()[0],
+            SauceryConstants.PLATFORM_MAC_1012 => platforms.GetPlatform<Mac1012Platform>()[0],
+            SauceryConstants.PLATFORM_MAC_1011 => platforms.GetPlatform<Mac1011Platform>()[0],
+            SauceryConstants.PLATFORM_MAC_1010 => platforms.GetPlatform<Mac1010Platform>()[0],
+            _ => null
+        };
 
-        if (platform == null) { return null; }
-        var browsers = platform.Browsers.Find(b=>b.Os.Equals(sp.Os) && b.Name.ToLower().Equals(sp.Browser.ToLower()));
+        var browsers = platform?.Browsers.Find(b=>b.Os.Equals(sp.Os) && b.Name.ToLower().Equals(sp.Browser.ToLower()));
+        
         if (browsers == null) { return null; }
-
 
         return sp.ScreenResolution == string.Empty
             ? browsers.BrowserVersions.Find(v => v.Os.Equals(sp.Os) && v.BrowserName.ToLower().Equals(sp.Browser.ToLower()) && v.Name.ToLower().Equals(sp.BrowserVersion.ToLower()))
@@ -172,44 +143,26 @@ public static class DojoExtensions
     public static BrowserVersion FindAndroidBrowser(this List<PlatformBase> platforms, SaucePlatform sp)
     {
         PlatformBase platform = null;
-        var platformToSearchFor = string.Format("{0} {1}", sp.Os, sp.LongVersion);
-        switch (platformToSearchFor)
+        var platformToSearchFor = $"{sp.Os} {sp.LongVersion}";
+        platform = platformToSearchFor switch
         {
-            case "Linux 12.0":
-                platform = platforms.GetPlatform<Android12Platform>()[0];
-                break;
-            case "Linux 11.0":
-                platform = platforms.GetPlatform<Android11Platform>()[0];
-                break;
-            case "Linux 10.0":
-                platform = platforms.GetPlatform<Android10Platform>()[0];
-                break;
-            case "Linux 9.0":
-                platform = platforms.GetPlatform<Android9Platform>()[0];
-                break;
-            case "Linux 8.1":
-                platform = platforms.GetPlatform<Android81Platform>()[0];
-                break;
-            case "Linux 8.0":
-                platform = platforms.GetPlatform<Android8Platform>()[0];
-                break;
-            case "Linux 7.1":
-                platform = platforms.GetPlatform<Android71Platform>()[0];
-                break;
-            case "Linux 7.0":
-                platform = platforms.GetPlatform<Android7Platform>()[0];
-                break;
-            case "Linux 6.0":
-                platform = platforms.GetPlatform<Android6Platform>()[0];
-                break;
-            case "Linux 5.1":
-                platform = platforms.GetPlatform<Android51Platform>()[0];
-                break;
-        }
+            "Linux 12.0" => platforms.GetPlatform<Android12Platform>()[0],
+            "Linux 11.0" => platforms.GetPlatform<Android11Platform>()[0],
+            "Linux 10.0" => platforms.GetPlatform<Android10Platform>()[0],
+            "Linux 9.0" => platforms.GetPlatform<Android9Platform>()[0],
+            "Linux 8.1" => platforms.GetPlatform<Android81Platform>()[0],
+            "Linux 8.0" => platforms.GetPlatform<Android8Platform>()[0],
+            "Linux 7.1" => platforms.GetPlatform<Android71Platform>()[0],
+            "Linux 7.0" => platforms.GetPlatform<Android7Platform>()[0],
+            "Linux 6.0" => platforms.GetPlatform<Android6Platform>()[0],
+            "Linux 5.1" => platforms.GetPlatform<Android51Platform>()[0],
+            _ => platform
+        };
 
-        if (platform == null) { return null; }
-        var browsers = platform.Browsers.Find(b => b.Os.Equals(sp.Os) && b.DeviceName.Equals(sp.LongName));
+        var browsers = platform?.Browsers.Find(b => b.Os.Equals(sp.Os) && b.DeviceName.Equals(sp.LongName));
+        
         if (browsers == null) { return null; }
+        
         return browsers.BrowserVersions.Count == 1
             ? browsers.BrowserVersions[0]
             : browsers.BrowserVersions.Find(v => v.Os.Equals(sp.Os) && v.DeviceName.Equals(sp.LongName) && v.Name.Equals(sp.BrowserVersion));
@@ -218,91 +171,45 @@ public static class DojoExtensions
     public static BrowserVersion FindIOSBrowser(this List<PlatformBase> platforms, SaucePlatform sp)
     {
         PlatformBase platform = null;
-        var platformToSearchFor = string.Format("{0} {1}", sp.Os, sp.LongVersion);
-        switch (platformToSearchFor)
+        var platformToSearchFor = $"{sp.Os} {sp.LongVersion}";
+        platform = platformToSearchFor switch
         {
-            case "iOS 16.2":
-                platform = platforms.GetPlatform<IOS162Platform>()[0];
-                break;
-            case "iOS 16.1":
-                platform = platforms.GetPlatform<IOS161Platform>()[0];
-                break;
-            case "iOS 16.0":
-                platform = platforms.GetPlatform<IOS16Platform>()[0];
-                break;
-            case "iOS 15.4":
-                platform = platforms.GetPlatform<IOS154Platform>()[0];
-                break;
-            case "iOS 15.2":
-                platform = platforms.GetPlatform<IOS152Platform>()[0];
-                break;
-            case "iOS 15.0":
-                platform = platforms.GetPlatform<IOS15Platform>()[0];
-                break;
-            case "iOS 14.5":
-                platform = platforms.GetPlatform<IOS145Platform>()[0];
-                break;
-            case "iOS 14.4":
-                platform = platforms.GetPlatform<IOS144Platform>()[0];
-                break;
-            case "iOS 14.3":
-                platform = platforms.GetPlatform<IOS143Platform>()[0];
-                break;
-            case "iOS 14.0":
-                platform = platforms.GetPlatform<IOS14Platform>()[0];
-                break;
-            case "iOS 13.4":
-                platform = platforms.GetPlatform<IOS134Platform>()[0];
-                break;
-            case "iOS 13.2":
-                platform = platforms.GetPlatform<IOS132Platform>()[0];
-                break;
-            case "iOS 13.0":
-                platform = platforms.GetPlatform<IOS13Platform>()[0];
-                break;
-            case "iOS 12.4":
-                platform = platforms.GetPlatform<IOS124Platform>()[0];
-                break;
-            case "iOS 12.2":
-                platform = platforms.GetPlatform<IOS122Platform>()[0];
-                break;
-            case "iOS 12.0":
-                platform = platforms.GetPlatform<IOS12Platform>()[0];
-                break;
-            case "iOS 11.3":
-                platform = platforms.GetPlatform<IOS113Platform>()[0];
-                break;
-            case "iOS 11.2":
-                platform = platforms.GetPlatform<IOS112Platform>()[0];
-                break;
-            case "iOS 11.1":
-                platform = platforms.GetPlatform<IOS111Platform>()[0];
-                break;
-            case "iOS 11.0":
-                platform = platforms.GetPlatform<IOS11Platform>()[0];
-                break;
-            case "iOS 10.3":
-                platform = platforms.GetPlatform<IOS103Platform>()[0];
-                break;
-        }
+            "iOS 16.2" => platforms.GetPlatform<IOS162Platform>()[0],
+            "iOS 16.1" => platforms.GetPlatform<IOS161Platform>()[0],
+            "iOS 16.0" => platforms.GetPlatform<IOS16Platform>()[0],
+            "iOS 15.4" => platforms.GetPlatform<IOS154Platform>()[0],
+            "iOS 15.2" => platforms.GetPlatform<IOS152Platform>()[0],
+            "iOS 15.0" => platforms.GetPlatform<IOS15Platform>()[0],
+            "iOS 14.5" => platforms.GetPlatform<IOS145Platform>()[0],
+            "iOS 14.4" => platforms.GetPlatform<IOS144Platform>()[0],
+            "iOS 14.3" => platforms.GetPlatform<IOS143Platform>()[0],
+            "iOS 14.0" => platforms.GetPlatform<IOS14Platform>()[0],
+            "iOS 13.4" => platforms.GetPlatform<IOS134Platform>()[0],
+            "iOS 13.2" => platforms.GetPlatform<IOS132Platform>()[0],
+            "iOS 13.0" => platforms.GetPlatform<IOS13Platform>()[0],
+            "iOS 12.4" => platforms.GetPlatform<IOS124Platform>()[0],
+            "iOS 12.2" => platforms.GetPlatform<IOS122Platform>()[0],
+            "iOS 12.0" => platforms.GetPlatform<IOS12Platform>()[0],
+            "iOS 11.3" => platforms.GetPlatform<IOS113Platform>()[0],
+            "iOS 11.2" => platforms.GetPlatform<IOS112Platform>()[0],
+            "iOS 11.1" => platforms.GetPlatform<IOS111Platform>()[0],
+            "iOS 11.0" => platforms.GetPlatform<IOS11Platform>()[0],
+            "iOS 10.3" => platforms.GetPlatform<IOS103Platform>()[0],
+            _ => platform
+        };
 
-        if (platform == null) { return null; }
-        var browsers = platform.Browsers.Find(b => b.PlatformNameForOption.Equals(sp.Os) && b.DeviceName.Equals(sp.LongName));
+        var browsers = platform?.Browsers.Find(b => b.PlatformNameForOption.Equals(sp.Os) && b.DeviceName.Equals(sp.LongName));
+        
         if (browsers == null) { return null; }
+        
         return browsers.BrowserVersions.Count == 1
             ? browsers.BrowserVersions[0]
             : browsers.BrowserVersions.Find(v => v.PlatformNameForOption.Equals(sp.Os) && v.DeviceName.Equals(sp.LongName) && v.Name.Equals(sp.BrowserVersion));
     }
 
-    private static BrowserBase FindBrowser(this List<BrowserBase> browsers, SupportedPlatform sp) {
-        BrowserBase extant = null;
-        foreach (var b in browsers) {
-            if (b.Name.Equals(sp.api_name) && b.DeviceName.Equals(sp.long_name) && b.Os.Equals(sp.os)) {
-                extant = b;
-                break;
-            }
-        }
-        return extant;
+    private static BrowserBase FindBrowser(this IEnumerable<BrowserBase> browsers, SupportedPlatform sp)
+    {
+        return browsers.FirstOrDefault(b => b.Name.Equals(sp.api_name) && b.DeviceName.Equals(sp.long_name) && b.Os.Equals(sp.os));
     }
 
     public static BrowserVersion Classify(this BrowserVersion browserVersion)
@@ -322,26 +229,16 @@ public static class DojoExtensions
         }
 
         //Desktop
-        switch (browserVersion.BrowserName.ToLower())
+        browserVersion.PlatformType = browserVersion.BrowserName.ToLower() switch
         {
-            case SauceryConstants.BROWSER_CHROME:
-                browserVersion.PlatformType = PlatformType.Chrome;
-                break;
-            case SauceryConstants.BROWSER_FIREFOX:
-                browserVersion.PlatformType = PlatformType.Firefox;
-                break;
-            case SauceryConstants.BROWSER_IE:
-                browserVersion.PlatformType = PlatformType.IE;
-                break;
-            case SauceryConstants.BROWSER_EDGE_LOWER:
-                browserVersion.PlatformType = PlatformType.Edge;
-                break;
-            case SauceryConstants.BROWSER_SAFARI:
-                browserVersion.PlatformType = PlatformType.Safari;
-                break;
-        }
+            SauceryConstants.BROWSER_CHROME => PlatformType.Chrome,
+            SauceryConstants.BROWSER_FIREFOX => PlatformType.Firefox,
+            SauceryConstants.BROWSER_IE => PlatformType.IE,
+            SauceryConstants.BROWSER_EDGE_LOWER => PlatformType.Edge,
+            SauceryConstants.BROWSER_SAFARI => PlatformType.Safari,
+            _ => browserVersion.PlatformType
+        };
 
         return browserVersion;
     }
-
 }

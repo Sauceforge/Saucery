@@ -23,7 +23,7 @@ public class SupportedPlatform {
 
     public bool IsMobilePlatform() => automation_backend.Equals("appium") &&
                                       recommended_backend_version != null &&
-                                      (api_name == "iphone" || api_name == "ipad" || api_name.Equals("android"));
+                                      api_name is "iphone" or "ipad" or "android";
 }
 /*
 * Copyright Andrew Gray, SauceForge

@@ -6,7 +6,7 @@ public abstract class PlatformCreator
 {
     internal readonly SupportedPlatform Platform;
 
-    public PlatformCreator(SupportedPlatform sp)
+    protected PlatformCreator(SupportedPlatform sp)
     {
         Platform = sp;
     }

@@ -101,5 +101,8 @@ public class BrowserVersion
     }
 
     //private static StringBuilder AppendPlatformField(this StringBuilder testName, string fieldToAdd) => testName.Append(SauceryConstants.UNDERSCORE).Append(fieldToAdd);
-    private StringBuilder AppendPlatformField(string fieldToAdd) => TestNameBuilder.Append($"{SauceryConstants.UNDERSCORE}{fieldToAdd}");
+    private void AppendPlatformField(string fieldToAdd)
+    {
+        TestNameBuilder.Append($"{SauceryConstants.UNDERSCORE}{fieldToAdd}");
+    }
 }

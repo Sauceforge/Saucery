@@ -18,7 +18,7 @@ public abstract class PlatformBase : IPlatform
 
     public List<BrowserBase> Browsers { get; set; }
 
-    public PlatformBase(SupportedPlatform sp)
+    protected PlatformBase(SupportedPlatform sp)
     {
         Name = sp.os;
         AutomationBackend = sp.automation_backend;

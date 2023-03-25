@@ -7,28 +7,29 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <IsPackable>true</IsPackable>
-    <!--<PackageId>Saucery</PackageId>
-    <PackageVersion>4.0.0</PackageVersion>
-    <Authors>Andrew Gray</Authors>
-    <Company>SauceForge</Company>
-    <Copyright>Copyright Andrew Gray 2014-2022</Copyright>
-    <Description>Sourcery for SauceLabs - Unlocking SauceLabs capability</Description>
-    <PackageReleaseNotes>
-      ChangeLog:
-      v4.0.0
-      - Initial Release
-    </PackageReleaseNotes>
-    <PackageProjectUrl>https://github.com/Sauceforge/Saucery</PackageProjectUrl>
-    <PackageIconUrl>http://sauceforge.github.io/Images/SauceryNUnit3_New.png</PackageIconUrl>
-    <PackageIcon>SauceryNUnit.png</PackageIcon>
-    <PackageTags>nunit saucelabs test testing tdd framework assert</PackageTags>-->
+	  <IsPackable>true</IsPackable>
+	  <PackageId>Saucery</PackageId>
+      <PackageVersion>4.0.0</PackageVersion>
+      <Authors>Andrew Gray</Authors>
+      <Company>SauceForge</Company>
+      <Copyright>Copyright Andrew Gray 2014-2023</Copyright>
+      <Description>Sorcery for SauceLabs - Unlocking SauceLabs capability</Description>
+      <PackageReleaseNotes>
+        ChangeLog:
+        v4.0.0
+        - Initial Release
+      </PackageReleaseNotes>
+      <PackageProjectUrl>https://github.com/Sauceforge/Saucery</PackageProjectUrl>
+	  <PackageIcon>Saucery.NUnit.128x128.png</PackageIcon>
+      <PackageTags>nunit saucelabs test testing tdd framework assert</PackageTags>
+	  <Title>Sorcery for SauceLabs and NUnit</Title>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="NUnit" Version="3.13.3" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.4.2" />
-    <None Include="Images\SauceryNUnit.png" Pack="true" PackagePath="\" />
+    <PackageReference Include="Saucery.Core" Version="4.0.0" />
+    <None Include="Images\Saucery.NUnit.128x128.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -15,7 +15,7 @@ namespace UnitTests;
 public class TestBuilder {
     #region Build Tests
 
-    public static TestSuite MakeSuite(string name) => new TestSuite(name);
+    public static TestSuite MakeSuite(string name) => new(name);
 
     public static TestSuite MakeFixture(Type type) => new DefaultSuiteBuilder().BuildFrom(new TypeWrapper(type));
 

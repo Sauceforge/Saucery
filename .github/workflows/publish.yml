@@ -11,15 +11,14 @@ env:
 
 jobs:
   publish:
-    name: build, pack & publish
+    name: build, pack & push Saucery
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-      # - name: Setup dotnet
-      #   uses: actions/setup-dotnet@v1
-      #   with:
-      #     dotnet-version: 3.1.200
+      #- name: Setup NuGet
+      #  uses: NuGet/setup-nuget@v1.0.5
 
       - name: Pack NuGet package
         run: dotnet pack -c ${{ env.CONFIG }} ${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj -o ${{ env.NUPKG_DIR }}
