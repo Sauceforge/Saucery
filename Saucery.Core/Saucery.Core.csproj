@@ -9,14 +9,14 @@
 	<PropertyGroup>
 		<IsPackable>true</IsPackable>
 		<PackageId>Saucery.Core</PackageId>
-	    <PackageVersion>4.0.0</PackageVersion>
+	    <PackageVersion>4.0.1</PackageVersion>
 	    <Authors>Andrew Gray</Authors>
 	    <Company>SauceForge</Company>
 	    <Copyright>Copyright Andrew Gray 2014-2023</Copyright>
 	    <Description>Sorcery for SauceLabs - Unlocking SauceLabs capability</Description>
 	    <PackageReleaseNotes>
 	      ChangeLog:
-	      v4.0.0
+	      v4.0.1
 	      - Initial Release
 	    </PackageReleaseNotes>
 	    <PackageProjectUrl>https://github.com/Sauceforge/Saucery</PackageProjectUrl>
