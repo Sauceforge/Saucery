@@ -1,17 +1,17 @@
-name: publish saucery.core to nuget
+name: Publish Saucery.Core to NuGet
 on: 
     workflow_dispatch:
 
 jobs:
   publish:
-    name: build, pack & publish
+    name: build, pack & push Saucery.Core
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Setup NuGet
-        uses: NuGet/setup-nuget@v1.0.5
+      #- name: Setup NuGet
+      #  uses: NuGet/setup-nuget@v1.0.5
 
       - name: Setup dotnet
         uses: actions/setup-dotnet@v2
@@ -31,6 +31,7 @@ jobs:
     #  with:
     #    build-breaking: true
 
-      - name: Publish
-        run: nuget push Saucery.Core\*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_API_KEY}}
-    #  run: dotnet nuget push **/*.nupkg --api-key ${{ secrets.NUGET_DEPLOY_KEY }} --source https://api.nuget.org/v3/index.json
+      - name: Pack NuGet package
+        run: dotnet pack -c Release Saucery.Core\Saucery.Core.csproj -o out
+      - name: Push generated package to NuGet
+        run: dotnet nuget push out\*.nupkg -Source 'https://api.nuget.org/v3/index.json' --api-key ${{secrets.NUGET_API_KEY}}

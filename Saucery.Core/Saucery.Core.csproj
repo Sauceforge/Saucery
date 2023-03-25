@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -8,21 +8,21 @@
 
 	<PropertyGroup>
 		<IsPackable>true</IsPackable>
-		<!--<PackageId>Saucery</PackageId>
-    <PackageVersion>4.0.0</PackageVersion>
-    <Authors>Andrew Gray</Authors>
-    <Company>SauceForge</Company>
-    <Copyright>Copyright Andrew Gray 2014-2022</Copyright>
-    <Description>Sourcery for SauceLabs - Unlocking SauceLabs capability</Description>
-    <PackageReleaseNotes>
-      ChangeLog:
-      v4.0.0
-      - Initial Release
-    </PackageReleaseNotes>
-    <PackageProjectUrl>https://github.com/Sauceforge/Saucery</PackageProjectUrl>
-    <PackageIconUrl>http://sauceforge.github.io/Images/SauceryNUnit3_New.png</PackageIconUrl>
-    <PackageIcon>SauceryNUnit.png</PackageIcon>
-    <PackageTags>nunit saucelabs test testing tdd framework assert</PackageTags>-->
+		<PackageId>Saucery.Core</PackageId>
+	    <PackageVersion>4.0.0</PackageVersion>
+	    <Authors>Andrew Gray</Authors>
+	    <Company>SauceForge</Company>
+	    <Copyright>Copyright Andrew Gray 2014-2023</Copyright>
+	    <Description>Sorcery for SauceLabs - Unlocking SauceLabs capability</Description>
+	    <PackageReleaseNotes>
+	      ChangeLog:
+	      v4.0.0
+	      - Initial Release
+	    </PackageReleaseNotes>
+	    <PackageProjectUrl>https://github.com/Sauceforge/Saucery</PackageProjectUrl>
+	    <PackageIcon>Saucery.Core.128x128.png</PackageIcon>
+	    <PackageTags>saucelabs test testing tdd framework assert</PackageTags>
+	    <Title>The Official Saucery Library</Title>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -35,6 +35,13 @@
 		<PackageReference Include="Selenium.Support" Version="4.8.1" />
 		<PackageReference Include="Selenium.WebDriver" Version="4.8.1" />
 		<PackageReference Include="Shouldly" Version="4.1.0" />
+		<None Include="Images\Saucery.Core.128x128.png" Pack="true" PackagePath="\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="Images\Saucery.Core.png">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 </Project>
