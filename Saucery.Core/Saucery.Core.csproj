@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -20,9 +20,9 @@
 	      - Initial Release
 	    </PackageReleaseNotes>
 	    <PackageProjectUrl>https://github.com/Sauceforge/Saucery</PackageProjectUrl>
-	    <PackageIconUrl>http://sauceforge.github.io/Images/SauceryNUnit3_New.png</PackageIconUrl>
-	    <PackageIcon>Images/Saucery.Core.png</PackageIcon>
-	    <PackageTags>nunit saucelabs test testing tdd framework assert</PackageTags>
+	    <PackageIconUrl>http://sauceforge.github.io/Images/Saucery.Core.png</PackageIconUrl>
+		<PackageTags>nunit saucelabs test testing tdd framework assert</PackageTags>
+	    <Title>The Official Saucery Library</Title>
 	</PropertyGroup>
 
 	<ItemGroup>
