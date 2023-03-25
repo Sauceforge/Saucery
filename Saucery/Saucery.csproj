@@ -20,7 +20,7 @@
         - Initial Release
       </PackageReleaseNotes>
       <PackageProjectUrl>https://github.com/Sauceforge/Saucery</PackageProjectUrl>
-      <PackageIconUrl>http://sauceforge.github.io/Images/SauceryNUnit3_New.png</PackageIconUrl>
+	  <PackageIcon>Saucery.NUnit.png</PackageIcon>
       <PackageTags>nunit saucelabs test testing tdd framework assert</PackageTags>
 	  <Title>Sorcery for SauceLabs and NUnit</Title>
   </PropertyGroup>
@@ -28,7 +28,7 @@
   <ItemGroup>
     <PackageReference Include="NUnit" Version="3.13.3" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.4.2" />
-    <None Include="Images\SauceryNUnit.png" Pack="true" PackagePath="\" />
+    <None Include="Images\Saucery.NUnit.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>
