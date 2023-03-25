@@ -7,8 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-	  <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
-	  <PackageReference Include="Saucery" Version="4.1.0" />
+    <PackageReference Include="DotNetSeleniumExtras.PageObjects.Core" Version="4.3.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
+    <PackageReference Include="Saucery" Version="4.1.0" />
   </ItemGroup>
 
 </Project>
