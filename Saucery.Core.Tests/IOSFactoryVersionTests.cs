@@ -1,13 +1,13 @@
-﻿using NUnit.Framework;
+﻿using System.Collections;
+using NUnit.Framework;
 using Saucery.Core.Dojo;
 using Saucery.Core.OnDemand;
 using Saucery.Core.OnDemand.Base;
 using Saucery.Core.Options;
 using Saucery.Core.Util;
 using Shouldly;
-using System.Collections;
 
-namespace UnitTests;
+namespace Saucery.Core.Tests;
 
 [TestFixture]
 public class IOSFactoryVersionTests

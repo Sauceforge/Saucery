@@ -1,4 +1,4 @@
-﻿using ExternalMerlin.PageObjects;
+﻿using ExternalMerlin.NUnit.PageObjects;
 using NUnit.Framework;
 using Saucery;
 using Saucery.Core.Dojo;
@@ -6,7 +6,7 @@ using Shouldly;
 
 //[assembly: LevelOfParallelism(3)]
 
-namespace ExternalMerlin;
+namespace ExternalMerlin.NUnit;
 
 //[Parallelizable(ParallelScope.All)]
 [TestFixtureSource(typeof(RequestedPlatformData))]

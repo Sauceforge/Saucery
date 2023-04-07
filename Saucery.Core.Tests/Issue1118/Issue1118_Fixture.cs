@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace UnitTests.Issue1118; 
+namespace Saucery.Core.Tests.Issue1118; 
 
 public class Issue1118_Fixture : Issue1118_Base {
     public Issue1118_Fixture(string browser) : base(browser) {

@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Reflection;
 
-namespace UnitTests;
+namespace Saucery.Core.Tests;
 
 internal static class Extensions
 {

@@ -5,7 +5,7 @@ using Saucery.Core.PageObjects;
 using SeleniumExtras.PageObjects;
 using Shouldly;
 
-namespace ExternalMerlin.PageObjects;
+namespace ExternalMerlin.NUnit.PageObjects;
 
 public class GuineaPigPage : PageObjectBase {
     public GuineaPigPage(SauceryRemoteWebDriver driver, string urlRoot)

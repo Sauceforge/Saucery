@@ -9,10 +9,12 @@ namespace Saucery.Core.RestAPI.FlowControl;
 public class SauceLabsFlowController : FlowController {
     public SauceLabsFlowController()
     {
-        Client = new RestClient(SauceryConstants.SAUCE_REST_BASE)
+        RestClientOptions clientOptions = new(SauceryConstants.SAUCE_REST_BASE)
         {
             Authenticator = new HttpBasicAuthenticator(UserName, AccessKey)
         };
+
+        Client = new RestClient(clientOptions);
     }
 
     public override void ControlFlow() {

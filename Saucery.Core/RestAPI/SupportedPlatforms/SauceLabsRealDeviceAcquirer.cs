@@ -9,10 +9,12 @@ namespace Saucery.Core.RestAPI.SupportedPlatforms;
 public class SauceLabsRealDeviceAcquirer : RealDeviceAcquirer {
     public SauceLabsRealDeviceAcquirer()
     {
-        Client = new RestClient(SauceryConstants.SAUCE_REAL_DEVICE_REST_BASE)
+        RestClientOptions clientOptions = new(SauceryConstants.SAUCE_REAL_DEVICE_REST_BASE)
         {
             Authenticator = new HttpBasicAuthenticator(UserName, AccessKey)
         };
+
+        Client = new RestClient(clientOptions);
     }
 
     public override List<SupportedRealDevicePlatform> AcquireRealDevicePlatforms()
