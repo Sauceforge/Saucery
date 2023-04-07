@@ -1,9 +1,9 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
 using Saucery.Core.Util;
 using Shouldly;
-using System;
 
-namespace UnitTests;
+namespace Saucery.Core.Tests;
 
 [TestFixture]
 public class ConversionTests

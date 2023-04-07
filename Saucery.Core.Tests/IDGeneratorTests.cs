@@ -2,7 +2,7 @@
 using Saucery.Core.Util;
 using Shouldly;
 
-namespace UnitTests;
+namespace Saucery.Core.Tests;
 
 [TestFixture]
 internal class IdGeneratorTests

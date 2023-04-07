@@ -1,8 +1,8 @@
 ﻿using NUnit.Framework;
 using NUnit.Framework.Interfaces;
-using UnitTests.Issue1118;
+using Saucery.Core.Tests.Issue1118;
 
-namespace UnitTests; 
+namespace Saucery.Core.Tests; 
 
 [TestFixture]
 public class TestFixtureSourceTests {

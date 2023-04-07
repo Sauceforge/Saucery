@@ -1,10 +1,10 @@
-﻿using NUnit.Framework;
+﻿using System;
+using System.Collections.Generic;
+using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
-using System;
-using System.Collections.Generic;
 
-namespace UnitTests.Util;
+namespace Saucery.Core.Tests.Util;
 
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
 public class GenericTestCaseAttribute : TestCaseAttribute, ITestBuilder

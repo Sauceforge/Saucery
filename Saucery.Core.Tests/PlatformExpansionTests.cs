@@ -1,12 +1,12 @@
-﻿using NUnit.Framework;
+﻿using System.Collections.Generic;
+using NUnit.Framework;
 using Saucery.Core.Dojo;
 using Saucery.Core.OnDemand;
 using Saucery.Core.OnDemand.Base;
 using Saucery.Core.Util;
 using Shouldly;
-using System.Collections.Generic;
 
-namespace UnitTests;
+namespace Saucery.Core.Tests;
 
 [TestFixture]
 public class PlatformExpansionTests

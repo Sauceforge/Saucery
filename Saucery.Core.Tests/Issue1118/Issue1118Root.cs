@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace UnitTests.Issue1118;
+namespace Saucery.Core.Tests.Issue1118;
 
 [TestFixture]
 [Parallelizable(ParallelScope.All)]

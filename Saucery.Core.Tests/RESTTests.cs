@@ -1,15 +1,15 @@
-﻿using NUnit.Framework;
+﻿using System.Collections.Generic;
+using NUnit.Framework;
 using Saucery.Core.Dojo;
 using Saucery.Core.Dojo.Platforms.Base;
 using Saucery.Core.Dojo.Platforms.ConcreteProducts.Apple;
 using Saucery.Core.Dojo.Platforms.ConcreteProducts.Google;
 using Saucery.Core.Dojo.Platforms.ConcreteProducts.PC;
 using Saucery.Core.RestAPI.FlowControl;
+using Saucery.Core.Tests.Util;
 using Shouldly;
-using System.Collections.Generic;
-using UnitTests.Util;
 
-namespace UnitTests;
+namespace Saucery.Core.Tests;
 
 [TestFixture]
 public class RestTests 

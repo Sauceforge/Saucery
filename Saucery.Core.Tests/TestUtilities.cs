@@ -1,13 +1,13 @@
-﻿using NUnit.Framework;
+﻿using System;
+using System.Reflection;
+using System.Threading;
+using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
 using NUnit.Framework.Internal.Builders;
 using NUnit.Framework.Internal.Execution;
-using System;
-using System.Reflection;
-using System.Threading;
 
-namespace UnitTests;
+namespace Saucery.Core.Tests;
 
 /// <summary>
 /// Utility Class used to build and run NUnit tests used as test data
