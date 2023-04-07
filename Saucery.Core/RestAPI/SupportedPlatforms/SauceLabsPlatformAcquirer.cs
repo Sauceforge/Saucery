@@ -9,10 +9,12 @@ namespace Saucery.Core.RestAPI.SupportedPlatforms;
 public class SauceLabsPlatformAcquirer : PlatformAcquirer {
     public SauceLabsPlatformAcquirer()
     {
-        Client = new RestClient(SauceryConstants.SAUCE_REST_BASE)
+        RestClientOptions clientOptions = new(SauceryConstants.SAUCE_REST_BASE)
         {
             Authenticator = new HttpBasicAuthenticator(UserName, AccessKey)
         };
+
+        Client = new RestClient(clientOptions);
     }
     public override List<SupportedPlatform> AcquirePlatforms() {
         var json = GetJsonResponse(SauceryConstants.SUPPORTED_PLATFORMS_REQUEST);
