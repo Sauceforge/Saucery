@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup dotnet
-        uses: actions/setup-dotnet@v2
+        uses: actions/setup-dotnet@v3
         with:
           # Check for latest at link at .NET 7 download page (https://dotnet.microsoft.com/download/dotnet/7.0)
           dotnet-version: 7.0.x
