@@ -3,7 +3,7 @@ using Saucery.Core.OnDemand;
 using Saucery.Core.OnDemand.Base;
 using Saucery.Core.Util;
 
-namespace Merlin.NUnit.Merlin;
+namespace Merlin.NUnit;
 
 public class RequestedPlatformData : SauceryTestData
 {

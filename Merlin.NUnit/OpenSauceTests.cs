@@ -1,4 +1,4 @@
-﻿using Merlin.NUnit.Merlin.PageObjects;
+﻿using Merlin.NUnit.PageObjects;
 using NUnit.Framework;
 using Saucery;
 using Saucery.Core.Dojo;
@@ -6,18 +6,21 @@ using Shouldly;
 
 //[assembly: LevelOfParallelism(3)]
 
-namespace Merlin.NUnit.Merlin;
+namespace Merlin.NUnit;
 
 //[Parallelizable(ParallelScope.All)]
 [TestFixtureSource(typeof(RequestedPlatformData))]
-public class OpenSauceTests : SauceryBase {
-    public OpenSauceTests(BrowserVersion browserVersion) : base(browserVersion) {
+public class OpenSauceTests : SauceryBase
+{
+    public OpenSauceTests(BrowserVersion browserVersion) : base(browserVersion)
+    {
     }
 
     [Test]
     [TestCase(5)]
     [TestCase(4)]
-    public void DataDrivenTitleTest(int data) {
+    public void DataDrivenTitleTest(int data)
+    {
         var guineaPigPage = new GuineaPigPage(Driver, "https://saucelabs.com/");
 
         guineaPigPage.TypeField(Driver, "comments", data.ToString());
@@ -26,9 +29,10 @@ public class OpenSauceTests : SauceryBase {
     }
 
     [Test]
-    public void ClickLinkTest() {
+    public void ClickLinkTest()
+    {
         var guineaPigPage = new GuineaPigPage(Driver, "https://saucelabs.com/");
-        
+
         // find and click the link on the page
         guineaPigPage.ClickLink(Driver);
 
@@ -37,7 +41,8 @@ public class OpenSauceTests : SauceryBase {
     }
 
     [Test]
-    public void UserAgentTest() {
+    public void UserAgentTest()
+    {
         var guineaPigPage = new GuineaPigPage(Driver, "https://saucelabs.com/");
 
         // read the useragent string off the page
