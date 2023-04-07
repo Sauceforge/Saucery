@@ -1,0 +1,37 @@
+name: Publish Saucery.XUnit to NuGet
+on: 
+    workflow_dispatch:
+
+env:
+  PROJECT_NAME: Saucery.XUnit
+  NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+  CONFIG: Release
+  NUPKG_DIR: out
+  NUGET_SOURCE: https://api.nuget.org/v3/index.json
+
+jobs:
+  publish:
+    name: build, pack & push Saucery.XUnit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v2
+        with:
+          # Check for latest at link at .NET 7 download page (https://dotnet.microsoft.com/download/dotnet/7.0)
+          dotnet-version: 7.0.x
+          #dotnet-version: | 
+          #  3.1.x
+          #  5.0.x
+      
+      - name: Compile solution
+        run: dotnet build -c ${{ env.CONFIG }}
+
+      - name: Pack NuGet package
+        run: dotnet pack -c ${{ env.CONFIG }} ${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj -o ${{ env.NUPKG_DIR }}
+
+      - name: Push generated package to NuGet
+        run: dotnet nuget push ${{ env.NUPKG_DIR }}/*.nupkg --source '${{ env.NUGET_SOURCE }}' --api-key ${{ env.NUGET_API_KEY }}

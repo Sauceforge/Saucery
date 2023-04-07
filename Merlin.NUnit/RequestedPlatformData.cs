@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using Saucery.Core.DataSources;
+﻿using Saucery.Core.DataSources;
 using Saucery.Core.OnDemand;
 using Saucery.Core.OnDemand.Base;
 using Saucery.Core.Util;
 
-namespace UnitTests.Merlin;
+namespace Merlin.NUnit;
 
 public class RequestedPlatformData : SauceryTestData
 {

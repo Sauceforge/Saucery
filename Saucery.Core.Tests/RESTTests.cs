@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Saucery.Core.Dojo;
 using Saucery.Core.Dojo.Platforms.Base;
 using Saucery.Core.Dojo.Platforms.ConcreteProducts.Apple;

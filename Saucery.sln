@@ -11,6 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\pipeline.yml = .github\workflows\pipeline.yml
 		.github\workflows\publish-core.yml = .github\workflows\publish-core.yml
+		.github\workflows\publish-xunit.yml = .github\workflows\publish-xunit.yml
 		.github\workflows\publish.yml = .github\workflows\publish.yml
 		README.md = README.md
 	EndProjectSection
@@ -27,9 +28,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FrontEnd", "FrontEnd", "{BB
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NUnit", "NUnit", "{05DF8070-648C-4FBA-8576-D80A882C599C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Merlin.NUnit", "Merlin.NUnit\Merlin.NUnit.csproj", "{355840EE-B9DD-43F6-8FE9-D9C45A7BB53A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Merlin.NUnit", "Merlin.NUnit\Merlin.NUnit.csproj", "{355840EE-B9DD-43F6-8FE9-D9C45A7BB53A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{CF280516-B466-4694-B96B-09149CA9A5CF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XUnit", "XUnit", "{17FFF611-BBBB-4B19-BEC2-5C6EFB68A358}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Saucery.XUnit", "Saucery.XUnit\Saucery.XUnit.csproj", "{A606192B-8C20-4122-8506-51157BA39121}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +62,10 @@ Global
 		{355840EE-B9DD-43F6-8FE9-D9C45A7BB53A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{355840EE-B9DD-43F6-8FE9-D9C45A7BB53A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{355840EE-B9DD-43F6-8FE9-D9C45A7BB53A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A606192B-8C20-4122-8506-51157BA39121}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A606192B-8C20-4122-8506-51157BA39121}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A606192B-8C20-4122-8506-51157BA39121}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A606192B-8C20-4122-8506-51157BA39121}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -69,6 +78,8 @@ Global
 		{05DF8070-648C-4FBA-8576-D80A882C599C} = {34E82214-CDA9-4CD5-9AE6-A5DAD5411F5F}
 		{355840EE-B9DD-43F6-8FE9-D9C45A7BB53A} = {05DF8070-648C-4FBA-8576-D80A882C599C}
 		{CF280516-B466-4694-B96B-09149CA9A5CF} = {34E82214-CDA9-4CD5-9AE6-A5DAD5411F5F}
+		{17FFF611-BBBB-4B19-BEC2-5C6EFB68A358} = {34E82214-CDA9-4CD5-9AE6-A5DAD5411F5F}
+		{A606192B-8C20-4122-8506-51157BA39121} = {BB2F463B-7D69-4C48-B301-FCFCFA77439B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B287ECB9-947E-4E9C-B745-27048D5CC522}

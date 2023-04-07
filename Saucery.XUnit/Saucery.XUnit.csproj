@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+	<PropertyGroup>
+		<IsPackable>true</IsPackable>
+		<PackageId>Saucery.XUnit</PackageId>
+		<PackageVersion>4.0.0</PackageVersion>
+		<Authors>Andrew Gray</Authors>
+		<Company>SauceForge</Company>
+		<Copyright>Copyright Andrew Gray 2014-2023</Copyright>
+		<Description>Sorcery for SauceLabs - Unlocking SauceLabs capability</Description>
+		<PackageReleaseNotes>
+			ChangeLog:
+			v4.0.0
+			- Initial Release with dependency on Saucery.Core
+		</PackageReleaseNotes>
+		<PackageProjectUrl>https://github.com/Sauceforge/Saucery</PackageProjectUrl>
+		<PackageIcon>Saucery.XUnit.128x128.png</PackageIcon>
+		<PackageTags>xunit saucelabs test testing tdd framework assert</PackageTags>
+		<Title>Sorcery for SauceLabs and XUnit</Title>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="XUnit" Version="2.4.2" />
+		<PackageReference Include="Saucery.Core" Version="4.0.1" />
+		<None Include="Images\Saucery.XUnit.128x128.png" Pack="true" PackagePath="\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Saucery.Core\Saucery.Core.csproj" />
+	</ItemGroup>
+
+</Project>

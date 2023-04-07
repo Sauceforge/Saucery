@@ -3,6 +3,8 @@
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <IncludeBuildOutput>true</IncludeBuildOutput>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
     <!--<GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
   </PropertyGroup>
 

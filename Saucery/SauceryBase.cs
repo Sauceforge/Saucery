@@ -7,7 +7,6 @@ using Saucery.Core.Options;
 using Saucery.Core.RestAPI.FlowControl;
 using Saucery.Core.RestAPI.TestStatus;
 using Saucery.Core.Util;
-using System;
 
 namespace Saucery;
 
