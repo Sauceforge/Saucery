@@ -1,12 +1,12 @@
-﻿using NUnit.Framework;
+﻿using Merlin.NUnit.Merlin.PageObjects;
+using NUnit.Framework;
 using Saucery;
 using Saucery.Core.Dojo;
 using Shouldly;
-using UnitTests.Merlin.PageObjects;
 
 //[assembly: LevelOfParallelism(3)]
 
-namespace UnitTests.Merlin;
+namespace Merlin.NUnit.Merlin;
 
 //[Parallelizable(ParallelScope.All)]
 [TestFixtureSource(typeof(RequestedPlatformData))]
