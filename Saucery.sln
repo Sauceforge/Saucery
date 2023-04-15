@@ -34,7 +34,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{CF280516-B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XUnit", "XUnit", "{17FFF611-BBBB-4B19-BEC2-5C6EFB68A358}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Saucery.XUnit", "Saucery.XUnit\Saucery.XUnit.csproj", "{A606192B-8C20-4122-8506-51157BA39121}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Saucery.XUnit", "Saucery.XUnit\Saucery.XUnit.csproj", "{A606192B-8C20-4122-8506-51157BA39121}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
