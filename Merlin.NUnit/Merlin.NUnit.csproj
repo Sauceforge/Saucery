@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Saucery.Tests.Common\Saucery.Tests.Common.csproj" />
     <ProjectReference Include="..\Saucery\Saucery.csproj" />
   </ItemGroup>
 

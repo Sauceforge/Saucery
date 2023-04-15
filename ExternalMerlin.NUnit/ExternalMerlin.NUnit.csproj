@@ -13,4 +13,8 @@
 	  <PackageReference Include="Saucery" Version="4.1.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Saucery.Tests.Common\Saucery.Tests.Common.csproj" />
+  </ItemGroup>
+
 </Project>

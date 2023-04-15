@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Saucery.Core\Saucery.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="SeleniumExtras.PageObjects">
+      <HintPath>..\..\..\Users\apg\.nuget\packages\dotnetseleniumextras.pageobjects.core\4.3.0\lib\net5.0\SeleniumExtras.PageObjects.dll</HintPath>
+    </Reference>
+    <Reference Include="Shouldly">
+      <HintPath>..\..\..\Users\apg\.nuget\packages\shouldly\4.1.0\lib\netstandard2.0\Shouldly.dll</HintPath>
+    </Reference>
+    <Reference Include="WebDriver">
+      <HintPath>..\..\..\Users\apg\.nuget\packages\selenium.webdriver\4.8.2\lib\net6.0\WebDriver.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
