@@ -22,4 +22,9 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Saucery.Core\Saucery.Core.csproj" />
+    <ProjectReference Include="..\Saucery.XUnit\Saucery.XUnit.csproj" />
+  </ItemGroup>
+
 </Project>
