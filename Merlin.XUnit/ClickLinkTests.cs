@@ -1,8 +1,10 @@
+using Microsoft.VisualStudio.TestPlatform.Utilities;
 using Saucery.Core.Dojo;
 using Saucery.Core.OnDemand;
 using Saucery.Tests.Common.PageObjects;
 using Saucery.XUnit;
 using Shouldly;
+using Xunit.Abstractions;
 
 //[assembly: CollectionBehavior(MaxParallelThreads = 4)]
 
@@ -10,7 +12,9 @@ namespace Merlin.XUnit;
 
 public class ClickLinkTests : SauceryXBase
 {
-    public ClickLinkTests(BaseFixture baseFixture) : base(baseFixture)
+    //private static ITestOutputHelper output;
+
+    public ClickLinkTests(ITestOutputHelper output, BaseFixture baseFixture) : base(output, baseFixture)
     {
     }
 

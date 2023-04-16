@@ -1,25 +1,24 @@
 ﻿using OpenQA.Selenium;
 using Saucery.Core.Dojo;
 using Saucery.Core.Options;
-using Saucery.Core.RestAPI.TestStatus;
-using Xunit;
+using System.Reflection;
 
 //[assembly: CollectionBehavior(MaxParallelThreads = 4)]
 
 namespace Saucery.XUnit;
 
-public class SauceryXBase : IClassFixture<BaseFixture>, IDisposable
+public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>, IDisposable
 {
     protected readonly BaseFixture BaseFixture;
     private string _testName;
     private BrowserVersion _browserVersion;
+    private readonly ITestOutputHelper _outputHelper;
 
     protected bool InitialiseDriver(BrowserVersion browserVersion)
     {
         _browserVersion = browserVersion;
 
-        //_browserVersion.SetTestName(TestContext.CurrentContext.Test.Name);
-        _browserVersion.SetTestName("_testName");
+        _browserVersion.SetTestName(GetTestName());
         _testName = _browserVersion.TestName;
 
         //DebugMessages.PrintPlatformDetails(platform);
@@ -31,20 +30,18 @@ public class SauceryXBase : IClassFixture<BaseFixture>, IDisposable
 
         while (!driverInitialised)
         {
-            //Console.WriteLine($"Driver failed to initialise: {TestContext.CurrentContext.Test.Name}.");
-            Console.WriteLine($"Driver failed to initialise: _testName.");
+            Console.WriteLine($"Driver failed to initialise: {_testName}.");
             driverInitialised = BaseFixture.InitialiseDriver(opts, 400);
         }
-        //Console.WriteLine($"Driver successfully initialised: {TestContext.CurrentContext.Test.Name}.");
-        Console.WriteLine($"Driver successfully initialised: _testName.");
-
+        Console.WriteLine($"Driver successfully initialised: {_testName}.");
+        
         return driverInitialised;
     }
 
-    protected SauceryXBase(BaseFixture baseFixture)
-    {
-        BaseFixture = baseFixture;
-    }
+    //protected SauceryXBase(BaseFixture baseFixture)
+    //{
+    //    BaseFixture = baseFixture;
+    //}
 
     public void Dispose()
     {
@@ -52,8 +49,7 @@ public class SauceryXBase : IClassFixture<BaseFixture>, IDisposable
         {
             if (BaseFixture.Driver != null)
             {
-                //var passed = Equals(TestContext.CurrentContext.Result.Outcome, ResultState.Success);
-                var passed = true;
+                var passed = Context.TestException == null;
                 // log the result to SauceLabs
                 var sessionId = BaseFixture.Driver.GetSessionId();
                 BaseFixture.SauceLabsStatusNotifier.NotifyStatus(sessionId, passed);
@@ -66,5 +62,18 @@ public class SauceryXBase : IClassFixture<BaseFixture>, IDisposable
             Console.WriteLine(@"Caught WebDriverException, quitting driver.");
             BaseFixture.Driver?.Quit();
         }
+    }
+
+    protected SauceryXBase(ITestOutputHelper outputHelper, BaseFixture baseFixture) : base(outputHelper)
+    {
+        BaseFixture = baseFixture;
+        _outputHelper = outputHelper;
+    }
+
+    private string GetTestName()
+    {
+        var type = _outputHelper.GetType();
+        var testMember = type.GetField("test", BindingFlags.Instance | BindingFlags.NonPublic);
+        return ((ITest)testMember.GetValue(_outputHelper)).TestCase.TestMethod.Method.Name;
     }
 }

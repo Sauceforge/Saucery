@@ -3,6 +3,7 @@ using Saucery.Core.OnDemand;
 using Saucery.Tests.Common.PageObjects;
 using Saucery.XUnit;
 using Shouldly;
+using Xunit.Abstractions;
 
 //[assembly: CollectionBehavior(MaxParallelThreads = 4)]
 
@@ -10,7 +11,7 @@ namespace Merlin.XUnit;
 
 public class UserAgentTests : SauceryXBase
 {
-    public UserAgentTests(BaseFixture baseFixture) : base(baseFixture)
+    public UserAgentTests(ITestOutputHelper output, BaseFixture baseFixture) : base(output, baseFixture)
     {
     }
 
