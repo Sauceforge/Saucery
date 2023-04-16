@@ -1,9 +1,10 @@
 ﻿using NUnit.Framework;
+using Saucery.Core.Tests.Issue1118.Base;
 
-namespace Saucery.Core.Tests.Issue1118; 
+namespace Saucery.Core.Tests.Issue1118;
 
-public class Issue1118_Fixture2 : Issue1118_Base {
-    public Issue1118_Fixture2(string browser) : base(browser) {
+public class Fixture2 : BaseClass {
+    public Fixture2(string browser) : base(browser) {
     }
 
     [Test]
