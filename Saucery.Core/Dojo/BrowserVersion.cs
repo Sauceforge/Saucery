@@ -12,11 +12,11 @@ public class BrowserVersion
     public string PlatformNameForOption { get; set; }
     public string BrowserName { get; set; }
     public string Name { get; set; }
-    public string AutomationBackend { get; set; }
+    private string AutomationBackend { get; set; }
     public string DeviceName { get; set; }
     public string RecommendedAppiumVersion { get; set; }
-    public List<string> SupportedBackendVersions { get; set; }
-    public List<string> DeprecatedBackendVersions { get; set; }
+    private List<string> SupportedBackendVersions { get; set; }
+    private List<string> DeprecatedBackendVersions { get; set; }
     public string TestName { get; private set; }
     public string DeviceOrientation { get; set; }
     public string ScreenResolution { get; set; }
@@ -59,6 +59,58 @@ public class BrowserVersion
         ScreenResolutions = b.ScreenResolutions;
         TestNameBuilder = new StringBuilder();
     }
+
+    public BrowserVersion(
+        string os,
+        string platformNameForOption,
+        string browserName,
+        string name,
+        string automationBackend,
+        string deviceName,
+        string recommendedAppiumVersion,
+        List<string> supportedBackendVersions,
+        List<string> deprecatedBackendVersions,
+        string testName,
+        string deviceOrientation,
+        string screenResolution,
+        PlatformType platformType,
+        List<string> screenResolutions)
+    {
+        Os = os;
+        PlatformNameForOption = platformNameForOption;
+        BrowserName = browserName; 
+        Name = name;
+        AutomationBackend = automationBackend;
+        DeviceName = deviceName;
+        RecommendedAppiumVersion = recommendedAppiumVersion;
+        SupportedBackendVersions = supportedBackendVersions;
+        DeprecatedBackendVersions = deprecatedBackendVersions;
+        TestName = testName;
+        DeviceOrientation = deviceOrientation;
+        ScreenResolution = screenResolution;
+        PlatformType = platformType;
+        ScreenResolutions = screenResolutions;
+        TestNameBuilder = new StringBuilder();
+    }
+
+    public object[] ToObjectArray() =>
+        new object[]
+        {
+            Os,
+            PlatformNameForOption,
+            BrowserName,
+            Name,
+            AutomationBackend,
+            DeviceName,
+            RecommendedAppiumVersion,
+            SupportedBackendVersions,
+            DeprecatedBackendVersions,
+            TestName,
+            DeviceOrientation,
+            ScreenResolution,
+            PlatformType,
+            ScreenResolutions
+        };
 
     public void SetTestName(string testName)
     {
