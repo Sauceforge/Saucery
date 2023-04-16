@@ -9,11 +9,11 @@ using System.Net;
 namespace Saucery.Core.RestAPI;
 
 public abstract class RestBase {
-    internal static string UserName = Enviro.SauceUserName;
-    internal static string AccessKey = Enviro.SauceApiKey;
+    internal static readonly string UserName = Enviro.SauceUserName;
+    internal static readonly string AccessKey = Enviro.SauceApiKey;
     internal RestClient Client;
-    internal static RestRequest Request;
-    internal static RestAPILimitsChecker LimitChecker;
+    private static RestRequest Request;
+    private static RestAPILimitsChecker LimitChecker;
 
     protected RestBase() {
         LimitChecker = new RestAPILimitsChecker();

@@ -17,7 +17,7 @@ public class BrowserVersion
     public string RecommendedAppiumVersion { get; set; }
     public List<string> SupportedBackendVersions { get; set; }
     public List<string> DeprecatedBackendVersions { get; set; }
-    public string TestName { get; set; }
+    public string TestName { get; private set; }
     public string DeviceOrientation { get; set; }
     public string ScreenResolution { get; set; }
 
@@ -43,19 +43,19 @@ public class BrowserVersion
 
     public BrowserVersion(BrowserBase b, 
                           string platformNameForOption,  
-                          string latest_stable_version, 
-                          List<string> supported_backend_versions,
-                          List<string> deprecated_backend_versions)
+                          string latestStableVersion, 
+                          List<string> supportedBackendVersions,
+                          List<string> deprecatedBackendVersions)
     {
         Os = b.Os;
         PlatformNameForOption = platformNameForOption;
         BrowserName = b.Name;
-        Name = latest_stable_version != string.Empty ? latest_stable_version : b.PlatformVersion;
+        Name = latestStableVersion != string.Empty ? latestStableVersion : b.PlatformVersion;
         AutomationBackend = b.AutomationBackend;
         DeviceName = b.DeviceName;
         RecommendedAppiumVersion = b.RecommendedAppiumVersion;
-        SupportedBackendVersions = supported_backend_versions;
-        DeprecatedBackendVersions = deprecated_backend_versions;
+        SupportedBackendVersions = supportedBackendVersions;
+        DeprecatedBackendVersions = deprecatedBackendVersions;
         ScreenResolutions = b.ScreenResolutions;
         TestNameBuilder = new StringBuilder();
     }
