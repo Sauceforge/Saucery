@@ -35,6 +35,7 @@
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
 		<PackageReference Include="Saucery.Core" Version="4.0.1" />
+		<PackageReference Include="XunitContext" Version="3.2.5" />
 		<None Include="Images\Saucery.XUnit.128x128.png" Pack="true" PackagePath="\" />
 	</ItemGroup>
 

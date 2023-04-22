@@ -38,7 +38,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Saucery.XUnit", "Saucery.XU
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{348E3876-64D8-4FED-84F1-978E3CDD8BE5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Saucery.Tests.Common", "Saucery.Tests.Common\Saucery.Tests.Common.csproj", "{8781400B-536C-4799-818C-F355B0B1B001}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Saucery.Tests.Common", "Saucery.Tests.Common\Saucery.Tests.Common.csproj", "{8781400B-536C-4799-818C-F355B0B1B001}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Merlin.XUnit", "Merlin.XUnit\Merlin.XUnit.csproj", "{A58CC05E-775D-4489-9357-3FDFBB1A9448}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -74,6 +76,10 @@ Global
 		{8781400B-536C-4799-818C-F355B0B1B001}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8781400B-536C-4799-818C-F355B0B1B001}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8781400B-536C-4799-818C-F355B0B1B001}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A58CC05E-775D-4489-9357-3FDFBB1A9448}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A58CC05E-775D-4489-9357-3FDFBB1A9448}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A58CC05E-775D-4489-9357-3FDFBB1A9448}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A58CC05E-775D-4489-9357-3FDFBB1A9448}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -90,6 +96,7 @@ Global
 		{A606192B-8C20-4122-8506-51157BA39121} = {BB2F463B-7D69-4C48-B301-FCFCFA77439B}
 		{348E3876-64D8-4FED-84F1-978E3CDD8BE5} = {34E82214-CDA9-4CD5-9AE6-A5DAD5411F5F}
 		{8781400B-536C-4799-818C-F355B0B1B001} = {348E3876-64D8-4FED-84F1-978E3CDD8BE5}
+		{A58CC05E-775D-4489-9357-3FDFBB1A9448} = {17FFF611-BBBB-4B19-BEC2-5C6EFB68A358}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B287ECB9-947E-4E9C-B745-27048D5CC522}

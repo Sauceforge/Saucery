@@ -12,11 +12,11 @@ namespace Saucery;
 
 public class SauceryBase
 {
-    protected string TestName;
-    public SauceryRemoteWebDriver Driver;
-    protected readonly BrowserVersion BrowserVersion;
-    internal static SauceLabsStatusNotifier SauceLabsStatusNotifier;
-    internal static SauceLabsFlowController SauceLabsFlowController;
+    private string _testName;
+    protected SauceryRemoteWebDriver Driver;
+    private readonly BrowserVersion _browserVersion;
+    private static readonly SauceLabsStatusNotifier SauceLabsStatusNotifier;
+    private static readonly SauceLabsFlowController SauceLabsFlowController;
 
     static SauceryBase()
     {
@@ -26,34 +26,19 @@ public class SauceryBase
 
     protected SauceryBase(BrowserVersion browserVersion)
     {
-        BrowserVersion = browserVersion;
-    }
-
-    public bool InitialiseDriver(DriverOptions opts, int waitSecs)
-    {
-        SauceLabsFlowController.ControlFlow();
-        try
-        {
-            Driver = new SauceryRemoteWebDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, waitSecs);
-            return true;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-            return false;
-        }
+        _browserVersion = browserVersion;
     }
 
     [SetUp]
     public void Setup()
     {
-        BrowserVersion.SetTestName(TestContext.CurrentContext.Test.Name);
-        TestName = BrowserVersion.TestName;
+        _browserVersion.SetTestName(TestContext.CurrentContext.Test.Name);
+        _testName = _browserVersion.TestName;
 
         //DebugMessages.PrintPlatformDetails(platform);
         // set up the desired options
-        var factory = new OptionFactory(BrowserVersion);
-        var opts = factory.CreateOptions(TestName);
+        var factory = new OptionFactory(_browserVersion);
+        var opts = factory.CreateOptions(_testName);
 
         bool driverInitialised = InitialiseDriver(opts, 400);
 
@@ -76,7 +61,7 @@ public class SauceryBase
                 // log the result to SauceLabs
                 var sessionId = Driver.GetSessionId();
                 SauceLabsStatusNotifier.NotifyStatus(sessionId, passed);
-                Console.WriteLine(@"SessionID={0} job-name={1}", sessionId, TestName);
+                Console.WriteLine(@"SessionID={0} job-name={1}", sessionId, _testName);
                 Driver.Quit();
             }
         }
@@ -84,6 +69,21 @@ public class SauceryBase
         {
             Console.WriteLine(@"Caught WebDriverException, quitting driver.");
             Driver?.Quit();
+        }
+    }
+
+    private bool InitialiseDriver(DriverOptions opts, int waitSecs)
+    {
+        SauceLabsFlowController.ControlFlow();
+        try
+        {
+            Driver = new SauceryRemoteWebDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, waitSecs);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return false;
         }
     }
 }
