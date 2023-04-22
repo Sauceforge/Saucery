@@ -83,8 +83,11 @@ jobs:
         #threshold: ${{ env.COVERAGE_THRESHOLD }}
         excludes: '[Merlin.NUnit]Tests.*'
 
-    - name: Run External Integration Tests
+    - name: Run External NUnit Integration Tests
       run: dotnet test -c ${{ env.CONFIG }} ${{ env.EM_NUNIT_PROJECT }}
+
+    - name: Run External XUnit Integration Tests
+      run: dotnet test -c ${{ env.CONFIG }} ${{ env.EM_XUNIT_PROJECT }}
 
     - name: ReportGenerator
       uses: danielpalme/ReportGenerator-GitHub-Action@5.1.19

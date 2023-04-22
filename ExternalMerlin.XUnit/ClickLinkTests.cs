@@ -7,12 +7,10 @@ using Xunit.Abstractions;
 
 //[assembly: CollectionBehavior(MaxParallelThreads = 4)]
 
-namespace Merlin.XUnit;
+namespace ExternalMerlin.XUnit;
 
 public class ClickLinkTests : SauceryXBase
 {
-    //private static ITestOutputHelper output;
-
     public ClickLinkTests(ITestOutputHelper output, BaseFixture baseFixture) : base(output, baseFixture)
     {
     }
