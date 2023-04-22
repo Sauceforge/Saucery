@@ -3,9 +3,8 @@ using Saucery.Core.Driver;
 using Saucery.Core.RestAPI.FlowControl;
 using Saucery.Core.RestAPI.TestStatus;
 using Saucery.Core.Util;
-using Xunit;
 
-[assembly: CollectionBehavior(MaxParallelThreads = 4)]
+[assembly: CollectionBehavior(CollectionBehavior.CollectionPerAssembly, MaxParallelThreads = 4)]
 
 namespace Saucery.XUnit;
 
@@ -34,11 +33,6 @@ public class BaseFixture : IDisposable
             Console.WriteLine(ex.Message);
             return false;
         }
-    }
-
-    public BaseFixture()
-    {
-        //InitialiseDriver()
     }
 
     public void Dispose()

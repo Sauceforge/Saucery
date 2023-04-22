@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace Saucery.XUnit;
 
-public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>, IDisposable
+public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>
 {
     protected readonly BaseFixture BaseFixture;
     private string _testName;
@@ -38,12 +38,7 @@ public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>, IDispo
         return driverInitialised;
     }
 
-    //protected SauceryXBase(BaseFixture baseFixture)
-    //{
-    //    BaseFixture = baseFixture;
-    //}
-
-    public void Dispose()
+    public override void Dispose()
     {
         try
         {
@@ -77,3 +72,9 @@ public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>, IDispo
         return ((ITest)testMember.GetValue(_outputHelper)).TestCase.TestMethod.Method.Name;
     }
 }
+
+/*
+* Copyright Andrew Gray, SauceForge
+* Date: 16th April 2023
+* 
+*/
