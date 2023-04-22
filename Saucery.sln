@@ -42,6 +42,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Saucery.Tests.Common", "Sau
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Merlin.XUnit", "Merlin.XUnit\Merlin.XUnit.csproj", "{A58CC05E-775D-4489-9357-3FDFBB1A9448}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExternalMerlin.XUnit", "ExternalMerlin.XUnit\ExternalMerlin.XUnit.csproj", "{0803A991-EB0F-4590-880E-914C488239FD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -80,6 +82,10 @@ Global
 		{A58CC05E-775D-4489-9357-3FDFBB1A9448}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A58CC05E-775D-4489-9357-3FDFBB1A9448}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A58CC05E-775D-4489-9357-3FDFBB1A9448}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0803A991-EB0F-4590-880E-914C488239FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0803A991-EB0F-4590-880E-914C488239FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0803A991-EB0F-4590-880E-914C488239FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0803A991-EB0F-4590-880E-914C488239FD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -97,6 +103,7 @@ Global
 		{348E3876-64D8-4FED-84F1-978E3CDD8BE5} = {34E82214-CDA9-4CD5-9AE6-A5DAD5411F5F}
 		{8781400B-536C-4799-818C-F355B0B1B001} = {348E3876-64D8-4FED-84F1-978E3CDD8BE5}
 		{A58CC05E-775D-4489-9357-3FDFBB1A9448} = {17FFF611-BBBB-4B19-BEC2-5C6EFB68A358}
+		{0803A991-EB0F-4590-880E-914C488239FD} = {17FFF611-BBBB-4B19-BEC2-5C6EFB68A358}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B287ECB9-947E-4E9C-B745-27048D5CC522}

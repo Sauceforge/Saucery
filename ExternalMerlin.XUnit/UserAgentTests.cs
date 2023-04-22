@@ -7,18 +7,17 @@ using Xunit.Abstractions;
 
 //[assembly: CollectionBehavior(MaxParallelThreads = 4)]
 
-namespace Merlin.XUnit;
+namespace ExternalMerlin.XUnit;
 
-public class ClickLinkTests : SauceryXBase
+public class UserAgentTests : SauceryXBase
 {
-    //private static ITestOutputHelper output;
-
-    public ClickLinkTests(ITestOutputHelper output, BaseFixture baseFixture) : base(output, baseFixture)
+    public UserAgentTests(ITestOutputHelper output, BaseFixture baseFixture) : base(output, baseFixture)
     {
     }
 
+    //[Theory, ClassData(typeof(RequestedPlatformData))]
     [Theory, MemberData(nameof(RequestedPlatformData.Platforms), MemberType = typeof(RequestedPlatformData))]
-    public void ClickLinkTest(string os,
+    public void UserAgentTest(string os,
                               string platformNameForOption,
                               string browserName,
                               string name,
@@ -39,10 +38,10 @@ public class ClickLinkTests : SauceryXBase
 
         var guineaPigPage = new GuineaPigPage(BaseFixture.Driver, "https://saucelabs.com/");
 
-        guineaPigPage.ClickLink(BaseFixture.Driver);
+        // read the useragent string off the page
+        var useragent = guineaPigPage.GetUserAgent(BaseFixture.Driver);
 
-        // verify the browser was navigated to the correct page
-        BaseFixture.Driver.Url.ShouldContain("saucelabs.com/test-guinea-pig2.html");
+        useragent.ShouldNotBeNull();
     }
 
 
