@@ -41,7 +41,12 @@ internal abstract class BaseOptions {
 
         if (type.IsApple())
         {
-            ((AppiumOptions)Opts).AutomationName = SauceryConstants.AUTOMATION_NAME;
+            ((AppiumOptions)Opts).AutomationName = SauceryConstants.IOS_AUTOMATION_NAME;
+        }
+
+        if (type.IsAndroid())
+        {
+            ((AppiumOptions)Opts).AutomationName = SauceryConstants.ANDROID_AUTOMATION_NAME;
         }
 
         return Opts;

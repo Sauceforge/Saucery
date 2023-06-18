@@ -38,7 +38,8 @@ public class SauceryConstants {
     //CAPABILITIES
     internal const string SCREEN_RESOLUTION_CAPABILITY = "screenResolution";
     public const string LATEST_APPIUM_VERSION = "2.0.0";
-    internal const string AUTOMATION_NAME = "XCUITest";
+    internal const string IOS_AUTOMATION_NAME = "XCUITest";
+    internal const string ANDROID_AUTOMATION_NAME = "UiAutomator2";
     internal const string SAUCE_APPIUM_VERSION_CAPABILITY = "appiumVersion";
     internal const string SELENIUM_VERSION_CAPABILITY = "seleniumVersion";
     internal const string LATEST_SELENIUM_VERSION = "3.141.1";  //"latest" does not work.
@@ -74,7 +75,7 @@ public class SauceryConstants {
     internal const string BUILD_NUMBER = "BUILD_BUILDNUMBER";
     internal const string RECOMMENDED_APPIUM_VERSION = "RECOMMENDED_APPIUM_VERSION";
 
-    //TUNNELLING
+    //TUNNELING
     internal const int TUNNEL_CONNECT_RETRY_COUNT = 3;
 
     //REST
