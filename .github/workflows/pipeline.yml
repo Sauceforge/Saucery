@@ -72,7 +72,7 @@ jobs:
         output: ${{ env.XUNIT_INTEGRATION_COVERAGE_FILENAME }}
         outputFormat: ${{ env.COVERAGE_FORMAT }}
         #threshold: ${{ env.COVERAGE_THRESHOLD }}
-        excludes: '[Merlin.XUnit]Tests.*'
+        excludes: '[Merlin.XUnit]Tests.*,[Saucery.Tests.Common]Tests.*'
 
     - name: Run NUnit Integration Tests
       uses: b3b00/coverlet-action@1.2.5

@@ -14,7 +14,7 @@ public class RequestedPlatformData : SauceryTestData
             //Mobile Platforms
             new AndroidPlatform("Google Pixel 6 Pro GoogleAPI Emulator", "12.0", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT),
             new IOSPlatform("iPhone 13 Pro Max Simulator", "15.4", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
-            new IOSPlatform("iPhone 14 Pro Max Simulator", "16.2", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
+            new IOSPlatform("iPhone 14 Pro Max Simulator", "16.1", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
 
             //Desktop Platforms
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "75->110", SauceryConstants.SCREENRES_2560_1600),
