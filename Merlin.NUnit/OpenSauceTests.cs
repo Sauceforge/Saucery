@@ -21,9 +21,9 @@ public class OpenSauceTests : SauceryBase
     [TestCase(4)]
     public void DataDrivenTitleTest(int data)
     {
-        var guineaPigPage = new GuineaPigPage(Driver, "https://saucelabs.com/");
+        var guineaPigPage = new GuineaPigPage(SauceryDriver(), "https://saucelabs.com/");
 
-        guineaPigPage.TypeField(Driver, "comments", data.ToString());
+        guineaPigPage.TypeField(SauceryDriver(), "comments", data.ToString());
         // verify the page title is correct - this is actually checked as part of the constructor above.
         Driver.Title.ShouldContain("I am a page title - Sauce Labs");
     }
@@ -31,10 +31,10 @@ public class OpenSauceTests : SauceryBase
     [Test]
     public void ClickLinkTest()
     {
-        var guineaPigPage = new GuineaPigPage(Driver, "https://saucelabs.com/");
+        var guineaPigPage = new GuineaPigPage(SauceryDriver(), "https://saucelabs.com/");
 
         // find and click the link on the page
-        guineaPigPage.ClickLink(Driver);
+        guineaPigPage.ClickLink(SauceryDriver());
 
         // verify the browser was navigated to the correct page
         Driver.Url.ShouldContain("saucelabs.com/test-guinea-pig2.html");
@@ -43,10 +43,10 @@ public class OpenSauceTests : SauceryBase
     [Test]
     public void UserAgentTest()
     {
-        var guineaPigPage = new GuineaPigPage(Driver, "https://saucelabs.com/");
+        var guineaPigPage = new GuineaPigPage(SauceryDriver(), "https://saucelabs.com/");
 
         // read the useragent string off the page
-        var useragent = guineaPigPage.GetUserAgent(Driver);
+        var useragent = guineaPigPage.GetUserAgent(SauceryDriver());
 
         useragent.ShouldNotBeNull();
     }

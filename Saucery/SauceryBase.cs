@@ -13,7 +13,7 @@ namespace Saucery;
 public class SauceryBase
 {
     private string _testName;
-    protected SauceryRemoteWebDriver Driver;
+    protected WebDriver Driver;
     private readonly BrowserVersion _browserVersion;
     private static readonly SauceLabsStatusNotifier SauceLabsStatusNotifier;
     private static readonly SauceLabsFlowController SauceLabsFlowController;
@@ -59,7 +59,7 @@ public class SauceryBase
             {
                 var passed = Equals(TestContext.CurrentContext.Result.Outcome, ResultState.Success);
                 // log the result to SauceLabs
-                var sessionId = Driver.GetSessionId();
+                var sessionId = Driver.SessionId.ToString();
                 SauceLabsStatusNotifier.NotifyStatus(sessionId, passed);
                 Console.WriteLine(@"SessionID={0} job-name={1}", sessionId, _testName);
                 Driver.Quit();
@@ -86,6 +86,8 @@ public class SauceryBase
             return false;
         }
     }
+
+    public SauceryRemoteWebDriver SauceryDriver() => (SauceryRemoteWebDriver)Driver!;
 }
 /*
 * Copyright Andrew Gray, SauceForge
