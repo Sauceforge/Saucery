@@ -1,5 +1,4 @@
 ﻿using OpenQA.Selenium;
-using OpenQA.Selenium.Remote;
 using Saucery.Core.Driver;
 using Saucery.Core.RestAPI.FlowControl;
 using Saucery.Core.RestAPI.TestStatus;
@@ -44,6 +43,8 @@ public class BaseFixture : IDisposable
             Driver.Dispose();
         }
     }
+
+    public SauceryRemoteWebDriver SauceryDriver() => (SauceryRemoteWebDriver)Driver!;
 }
 /*
 * Copyright Andrew Gray, SauceForge

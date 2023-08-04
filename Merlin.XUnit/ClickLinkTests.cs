@@ -39,9 +39,9 @@ public class ClickLinkTests : SauceryXBase
                                             supportedBackendVersions, deprecatedBackendVersions, testName, deviceOrientation, screenResolution,
                                             platformType, screenResolutions));
 
-        var guineaPigPage = new GuineaPigPage((SauceryRemoteWebDriver)BaseFixture.Driver, "https://saucelabs.com/");
+        var guineaPigPage = new GuineaPigPage(BaseFixture.SauceryDriver(), "https://saucelabs.com/");
 
-        guineaPigPage.ClickLink((SauceryRemoteWebDriver)BaseFixture.Driver);
+        guineaPigPage.ClickLink(BaseFixture.SauceryDriver());
 
         // verify the browser was navigated to the correct page
         BaseFixture.Driver.Url.ShouldContain("saucelabs.com/test-guinea-pig2.html");
