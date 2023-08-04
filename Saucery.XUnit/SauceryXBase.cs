@@ -1,4 +1,5 @@
 ﻿using OpenQA.Selenium;
+using OpenQA.Selenium.Remote;
 using Saucery.Core.Dojo;
 using Saucery.Core.Options;
 using System.Reflection;
@@ -46,7 +47,7 @@ public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>
             {
                 var passed = Context.TestException == null;
                 // log the result to SauceLabs
-                var sessionId = BaseFixture.Driver.GetSessionId();
+                var sessionId = ((RemoteWebDriver)BaseFixture.Driver).SessionId; //BaseFixture.Driver.GetSessionId();
                 BaseFixture.SauceLabsStatusNotifier.NotifyStatus(sessionId, passed);
                 Console.WriteLine(@"SessionID={0} job-name={1}", sessionId, _testName);
                 BaseFixture.Driver.Quit();
