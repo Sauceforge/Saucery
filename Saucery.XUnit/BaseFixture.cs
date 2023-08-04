@@ -10,7 +10,7 @@ namespace Saucery.XUnit;
 
 public class BaseFixture : IDisposable
 {
-    public SauceryRemoteWebDriver? Driver;
+    public WebDriver? Driver;
     internal static readonly SauceLabsStatusNotifier SauceLabsStatusNotifier;
     private static readonly SauceLabsFlowController SauceLabsFlowController;
 
