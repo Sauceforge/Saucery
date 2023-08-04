@@ -1,4 +1,5 @@
 using Saucery.Core.Dojo;
+using Saucery.Core.Driver;
 using Saucery.Core.OnDemand;
 using Saucery.Tests.Common.PageObjects;
 using Saucery.XUnit;
@@ -36,10 +37,10 @@ public class UserAgentTests : SauceryXBase
                                             supportedBackendVersions, deprecatedBackendVersions, testName, deviceOrientation, screenResolution,
                                             platformType, screenResolutions));
 
-        var guineaPigPage = new GuineaPigPage(BaseFixture.Driver, "https://saucelabs.com/");
+        var guineaPigPage = new GuineaPigPage((SauceryRemoteWebDriver)BaseFixture.Driver, "https://saucelabs.com/");
 
         // read the useragent string off the page
-        var useragent = guineaPigPage.GetUserAgent(BaseFixture.Driver);
+        var useragent = guineaPigPage.GetUserAgent((SauceryRemoteWebDriver)BaseFixture.Driver);
 
         useragent.ShouldNotBeNull();
     }
