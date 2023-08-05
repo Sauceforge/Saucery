@@ -1,7 +1,7 @@
 ﻿<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Saucery.Core</id>
-    <version>4.0.0</version>
+    <version>4.1.0</version>
     <title>Saucery.Core</title>
     <authors>SauceForge</authors>
     <owners>Andrew Gray</owners>
@@ -10,6 +10,9 @@
       ChangeLog:
       v4.0.0
         - Initial Release
+	  v4.1.0
+	    - Appium 2 support
+		- Android 13 support
     </releaseNotes>
     <summary>Sorcery for SauceLabs - Unlocking SauceLabs capability</summary>
     <projectUrl>https://sauceforge.github.io</projectUrl>

@@ -146,6 +146,7 @@ public static class DojoExtensions
         var platformToSearchFor = $"{sp.Os} {sp.LongVersion}";
         platform = platformToSearchFor switch
         {
+            "Linux 13.0" => platforms.GetPlatform<Android13Platform>()[0],
             "Linux 12.0" => platforms.GetPlatform<Android12Platform>()[0],
             "Linux 11.0" => platforms.GetPlatform<Android11Platform>()[0],
             "Linux 10.0" => platforms.GetPlatform<Android10Platform>()[0],
