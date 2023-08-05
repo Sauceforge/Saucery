@@ -8,6 +8,7 @@ public class AndroidPlatformFactory
 {
     public static PlatformBase CreatePlatform(SupportedPlatform sp) => sp.short_version switch
     {
+        "13.0" => new Android13PlatformCreator(sp).Create(),
         "12.0" => new Android12PlatformCreator(sp).Create(),
         "11.0" => new Android11PlatformCreator(sp).Create(),
         "10.0" => new Android10PlatformCreator(sp).Create(),
