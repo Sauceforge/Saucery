@@ -12,6 +12,7 @@
         - Initial Release
 	  v4.1.0
 	    - Appium 2 support
+		- Android 13 support
     </releaseNotes>
     <summary>Sorcery for SauceLabs - Unlocking SauceLabs capability</summary>
     <projectUrl>https://sauceforge.github.io</projectUrl>

@@ -1,7 +1,7 @@
 ﻿<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Saucery</id>
-    <version>4.1.0</version>
+    <version>4.2.0</version>
     <title>Saucery</title>
     <authors>SauceForge</authors>
     <owners>Andrew Gray</owners>
