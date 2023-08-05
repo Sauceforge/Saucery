@@ -13,7 +13,7 @@
   <PropertyGroup>
 	  <IsPackable>true</IsPackable>
 	  <PackageId>Saucery</PackageId>
-      <PackageVersion>4.1.1</PackageVersion>
+      <PackageVersion>4.2.0</PackageVersion>
       <Authors>Andrew Gray</Authors>
       <Company>SauceForge</Company>
       <Copyright>Copyright Andrew Gray 2014-2023</Copyright>
