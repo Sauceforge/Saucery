@@ -46,6 +46,7 @@ public class AndroidDataClass
     {
         get
         {
+            yield return new AndroidPlatform("Google Pixel 7a GoogleAPI Emulator", "13.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE);
             yield return new AndroidPlatform("Google Pixel 5 GoogleAPI Emulator", "12.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE);
             yield return new AndroidPlatform("Google Pixel 4a GoogleAPI Emulator", "11.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE);
             yield return new AndroidPlatform("Google Pixel 3a GoogleAPI Emulator", "10.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE);
