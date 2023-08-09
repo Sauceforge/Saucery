@@ -36,10 +36,10 @@ public class UserAgentTests : SauceryXBase
                                             supportedBackendVersions, deprecatedBackendVersions, testName, deviceOrientation, screenResolution,
                                             platformType, screenResolutions));
 
-        var guineaPigPage = new GuineaPigPage(BaseFixture.Driver, "https://saucelabs.com/");
+        var guineaPigPage = new GuineaPigPage(BaseFixture.SauceryDriver(), "https://saucelabs.com/");
 
         // read the useragent string off the page
-        var useragent = guineaPigPage.GetUserAgent(BaseFixture.Driver);
+        var useragent = guineaPigPage.GetUserAgent(BaseFixture.SauceryDriver());
 
         useragent.ShouldNotBeNull();
     }
