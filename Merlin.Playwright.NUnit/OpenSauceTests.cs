@@ -12,14 +12,14 @@ namespace Merlin.Playwright.NUnit;
 //public class OpenSauceTests : PageTest
 public class OpenSauceTests : SauceryBase
 {
+    public OpenSauceTests(BrowserVersion browserVersion) : base(browserVersion)
+    {
+    }
+
     //public OpenSauceTests()
     //{
 
     //}
-
-    public OpenSauceTests(BrowserVersion browserVersion) : base(browserVersion)
-    {
-    }
 
     [Test]
     public async Task HomepageHasPlaywrightInTitleAndGetStartedLinkLinkingtoTheIntroPage()
@@ -55,5 +55,20 @@ public class OpenSauceTests : SauceryBase
 
         // verify the page title is correct - this is actually checked as part of the constructor above.
         await Expect(Page).ToHaveTitleAsync("I am a page title - Sauce Labs");
+    }
+
+    public override BrowserNewContextOptions ContextOptions()
+    {
+        return new BrowserNewContextOptions()
+        {
+            ColorScheme = ColorScheme.Dark,
+            //ViewportSize = new()
+            //{
+            //    Width = 1920,
+            //    Height = 1080
+            //},
+            //BaseURL = "https://github.com",
+            
+        };
     }
 }
