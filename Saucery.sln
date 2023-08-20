@@ -42,7 +42,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Saucery.Tests.Common", "Sau
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Merlin.XUnit", "Merlin.XUnit\Merlin.XUnit.csproj", "{A58CC05E-775D-4489-9357-3FDFBB1A9448}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExternalMerlin.XUnit", "ExternalMerlin.XUnit\ExternalMerlin.XUnit.csproj", "{0803A991-EB0F-4590-880E-914C488239FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExternalMerlin.XUnit", "ExternalMerlin.XUnit\ExternalMerlin.XUnit.csproj", "{0803A991-EB0F-4590-880E-914C488239FD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Merlin.Playwright.NUnit", "Merlin.Playwright.NUnit\Merlin.Playwright.NUnit.csproj", "{AC3DB92B-3C8C-4934-A6B4-2FCB00927C0B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -86,6 +88,10 @@ Global
 		{0803A991-EB0F-4590-880E-914C488239FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0803A991-EB0F-4590-880E-914C488239FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0803A991-EB0F-4590-880E-914C488239FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC3DB92B-3C8C-4934-A6B4-2FCB00927C0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC3DB92B-3C8C-4934-A6B4-2FCB00927C0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC3DB92B-3C8C-4934-A6B4-2FCB00927C0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC3DB92B-3C8C-4934-A6B4-2FCB00927C0B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -104,6 +110,7 @@ Global
 		{8781400B-536C-4799-818C-F355B0B1B001} = {348E3876-64D8-4FED-84F1-978E3CDD8BE5}
 		{A58CC05E-775D-4489-9357-3FDFBB1A9448} = {17FFF611-BBBB-4B19-BEC2-5C6EFB68A358}
 		{0803A991-EB0F-4590-880E-914C488239FD} = {17FFF611-BBBB-4B19-BEC2-5C6EFB68A358}
+		{AC3DB92B-3C8C-4934-A6B4-2FCB00927C0B} = {05DF8070-648C-4FBA-8576-D80A882C599C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B287ECB9-947E-4E9C-B745-27048D5CC522}
