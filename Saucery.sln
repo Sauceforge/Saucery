@@ -46,6 +46,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExternalMerlin.XUnit", "Ext
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Merlin.Playwright.NUnit", "Merlin.Playwright.NUnit\Merlin.Playwright.NUnit.csproj", "{AC3DB92B-3C8C-4934-A6B4-2FCB00927C0B}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Saucery.Playwright.NUnit", "Saucery.Playwright.NUnit\Saucery.Playwright.NUnit.csproj", "{26C4BFDA-2446-4F30-8D01-E23BD4640851}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -92,6 +94,10 @@ Global
 		{AC3DB92B-3C8C-4934-A6B4-2FCB00927C0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC3DB92B-3C8C-4934-A6B4-2FCB00927C0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC3DB92B-3C8C-4934-A6B4-2FCB00927C0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26C4BFDA-2446-4F30-8D01-E23BD4640851}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26C4BFDA-2446-4F30-8D01-E23BD4640851}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26C4BFDA-2446-4F30-8D01-E23BD4640851}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26C4BFDA-2446-4F30-8D01-E23BD4640851}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -111,6 +117,7 @@ Global
 		{A58CC05E-775D-4489-9357-3FDFBB1A9448} = {17FFF611-BBBB-4B19-BEC2-5C6EFB68A358}
 		{0803A991-EB0F-4590-880E-914C488239FD} = {17FFF611-BBBB-4B19-BEC2-5C6EFB68A358}
 		{AC3DB92B-3C8C-4934-A6B4-2FCB00927C0B} = {05DF8070-648C-4FBA-8576-D80A882C599C}
+		{26C4BFDA-2446-4F30-8D01-E23BD4640851} = {BB2F463B-7D69-4C48-B301-FCFCFA77439B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B287ECB9-947E-4E9C-B745-27048D5CC522}

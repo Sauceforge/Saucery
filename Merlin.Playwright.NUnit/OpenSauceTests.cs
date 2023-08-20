@@ -1,13 +1,26 @@
 using Microsoft.Playwright;
 using Microsoft.Playwright.NUnit;
+using Saucery.Core.Dojo;
+using Saucery.Playwright;
 using System.Text.RegularExpressions;
 
-namespace PlaywrightTests;
+namespace Merlin.Playwright.NUnit;
 
 [Parallelizable(ParallelScope.Self)]
-[TestFixture]
-public class Tests : PageTest
+//[Parallelizable(ParallelScope.All)]
+[TestFixtureSource(typeof(RequestedPlatformData))]
+//public class OpenSauceTests : PageTest
+public class OpenSauceTests : SauceryBase
 {
+    //public OpenSauceTests()
+    //{
+
+    //}
+
+    public OpenSauceTests(BrowserVersion browserVersion) : base(browserVersion)
+    {
+    }
+
     [Test]
     public async Task HomepageHasPlaywrightInTitleAndGetStartedLinkLinkingtoTheIntroPage()
     {
