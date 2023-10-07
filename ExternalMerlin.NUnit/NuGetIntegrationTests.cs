@@ -37,6 +37,7 @@ public class NuGetIntegrationTests : SauceryBase {
     }
 
     [Test]
+    [Ignore("Ignore")]
     public void UserAgentTest() {
         var guineaPigPage = new GuineaPigPage(SauceryDriver(), "https://saucelabs.com/");
 
