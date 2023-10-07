@@ -23,7 +23,7 @@ public class DataDrivenTests : SauceryXBase
         guineaPigPage.TypeField(BaseFixture.SauceryDriver(), "comments", data.ToString());
 
         // verify the browser was navigated to the correct page
-        BaseFixture.Driver.Url.ShouldContain("saucelabs.com/test-guinea-pig2.html");
+        BaseFixture.Driver.Url.ShouldContain("saucelabs.com/test-guinea-pig.html");
     }
 
     public static IEnumerable<object[]> AllCombinations

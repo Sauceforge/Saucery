@@ -75,6 +75,9 @@ public class SauceryConstants {
     internal const string BUILD_NUMBER = "BUILD_BUILDNUMBER";
     internal const string RECOMMENDED_APPIUM_VERSION = "RECOMMENDED_APPIUM_VERSION";
 
+    //TIMEOUT
+    public const int SELENIUM_COMMAND_TIMEOUT = 500;
+
     //TUNNELLING
     internal const int TUNNEL_CONNECT_RETRY_COUNT = 3;
 

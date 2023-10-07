@@ -2,6 +2,7 @@
 using OpenQA.Selenium.Remote;
 using Saucery.Core.Dojo;
 using Saucery.Core.Options;
+using Saucery.Core.Util;
 using System.Reflection;
 
 //[assembly: CollectionBehavior(MaxParallelThreads = 4)]
@@ -27,12 +28,12 @@ public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>
         var factory = new OptionFactory(_browserVersion);
         var opts = factory.CreateOptions(_testName);
 
-        bool driverInitialised = BaseFixture.InitialiseDriver(opts, 400);
+        bool driverInitialised = BaseFixture.InitialiseDriver(opts, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
 
         while (!driverInitialised)
         {
             Console.WriteLine($"Driver failed to initialise: {_testName}.");
-            driverInitialised = BaseFixture.InitialiseDriver(opts, 400);
+            driverInitialised = BaseFixture.InitialiseDriver(opts, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
         }
         Console.WriteLine($"Driver successfully initialised: {_testName}.");
         

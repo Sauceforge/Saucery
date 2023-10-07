@@ -40,12 +40,12 @@ public class SauceryBase
         var factory = new OptionFactory(_browserVersion);
         var opts = factory.CreateOptions(_testName);
 
-        bool driverInitialised = InitialiseDriver(opts, 400);
+        bool driverInitialised = InitialiseDriver(opts, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
 
         while (!driverInitialised)
         {
             Console.WriteLine($"Driver failed to initialise: {TestContext.CurrentContext.Test.Name}.");
-            driverInitialised = InitialiseDriver(opts, 400);
+            driverInitialised = InitialiseDriver(opts, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
         }
         Console.WriteLine($"Driver successfully initialised: {TestContext.CurrentContext.Test.Name}.");
     }
