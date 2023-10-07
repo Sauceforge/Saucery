@@ -9,19 +9,31 @@ namespace Saucery.Core.Dojo;
 public class BrowserVersion
 {
     public string Os { get; set; }
+
     public string PlatformNameForOption { get; set; }
+
     public string BrowserName { get; set; }
+
     public string Name { get; set; }
+
     private string AutomationBackend { get; set; }
+
     public string DeviceName { get; set; }
+
     public string RecommendedAppiumVersion { get; set; }
+
     private List<string> SupportedBackendVersions { get; set; }
+
     private List<string> DeprecatedBackendVersions { get; set; }
+
     public string TestName { get; private set; }
+
     public string DeviceOrientation { get; set; }
+
     public string ScreenResolution { get; set; }
 
     public PlatformType PlatformType { get; set; }
+
     public List<string> ScreenResolutions { get; set; }
 
     private StringBuilder TestNameBuilder { get; set; }
@@ -44,8 +56,8 @@ public class BrowserVersion
     public BrowserVersion(BrowserBase b, 
                           string platformNameForOption,  
                           string latestStableVersion, 
-                          List<string> supportedBackendVersions,
-                          List<string> deprecatedBackendVersions)
+                          List<string>? supportedBackendVersions,
+                          List<string>? deprecatedBackendVersions)
     {
         Os = b.Os;
         PlatformNameForOption = platformNameForOption;

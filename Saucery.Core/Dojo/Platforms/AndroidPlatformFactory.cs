@@ -6,8 +6,9 @@ namespace Saucery.Core.Dojo.Platforms;
 
 public class AndroidPlatformFactory
 {
-    public static PlatformBase CreatePlatform(SupportedPlatform sp) => sp.short_version switch
+    public static PlatformBase? CreatePlatform(SupportedPlatform sp) => sp.short_version switch
     {
+        "14.0" => new Android14PlatformCreator(sp).Create(),
         "13.0" => new Android13PlatformCreator(sp).Create(),
         "12.0" => new Android12PlatformCreator(sp).Create(),
         "11.0" => new Android11PlatformCreator(sp).Create(),
