@@ -1,6 +1,4 @@
-using OpenQA.Selenium.Remote;
 using Saucery.Core.Dojo;
-using Saucery.Core.Driver;
 using Saucery.Core.OnDemand;
 using Saucery.Tests.Common.PageObjects;
 using Saucery.XUnit;
@@ -19,7 +17,8 @@ public class ClickLinkTests : SauceryXBase
     {
     }
 
-    [Theory, MemberData(nameof(RequestedPlatformData.Platforms), MemberType = typeof(RequestedPlatformData))]
+    [Theory]
+    [MemberData(nameof(RequestedPlatformData.Platforms), MemberType = typeof(RequestedPlatformData))]
     public void ClickLinkTest(string os,
                               string platformNameForOption,
                               string browserName,

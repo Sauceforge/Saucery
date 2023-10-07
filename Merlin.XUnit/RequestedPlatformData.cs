@@ -1,4 +1,5 @@
 ﻿using Saucery.Core.DataSources;
+using Saucery.Core.Dojo;
 using Saucery.Core.OnDemand;
 using Saucery.Core.OnDemand.Base;
 using Saucery.Core.Util;
@@ -35,6 +36,8 @@ public class RequestedPlatformData : SauceryTestData
     }
 
     public static IEnumerable<object[]> Platforms => BrowserVersions.Select(x => x.ToObjectArray()).AsEnumerable();
+
+    public static IEnumerable<BrowserVersion> Items => BrowserVersions.Select(x => x).AsEnumerable();
 }
 /*
 * Copyright Andrew Gray, SauceForge

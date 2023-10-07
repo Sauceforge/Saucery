@@ -16,7 +16,7 @@ public class UserAgentTests : SauceryXBase
     }
 
     //[Theory, ClassData(typeof(RequestedPlatformData))]
-    
+
     //[Theory, MemberData(nameof(RequestedPlatformData.Platforms), MemberType = typeof(RequestedPlatformData))]
     //public void UserAgentTest(string os,
     //                          string platformNameForOption,
@@ -43,19 +43,6 @@ public class UserAgentTests : SauceryXBase
     //    var useragent = guineaPigPage.GetUserAgent(BaseFixture.SauceryDriver());
 
     //    useragent.ShouldNotBeNull();
-    //}
-
-
-    //[Test]
-    //[TestCase(5)]
-    //[TestCase(4)]
-    //public void DataDrivenTitleTest(int data)
-    //{
-    //    var guineaPigPage = new GuineaPigPage(Driver, "https://saucelabs.com/");
-
-    //    guineaPigPage.TypeField(Driver, "comments", data.ToString());
-    //    // verify the page title is correct - this is actually checked as part of the constructor above.
-    //    Driver.Title.ShouldContain("I am a page title - Sauce Labs");
     //}
 }
 /*
