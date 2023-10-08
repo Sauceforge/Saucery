@@ -15,7 +15,8 @@ public class ClickLinkTests : SauceryXBase
     {
     }
 
-    [Theory, MemberData(nameof(RequestedPlatformData.Platforms), MemberType = typeof(RequestedPlatformData))]
+    [Theory] 
+    [MemberData(nameof(RequestedPlatformData.Platforms), MemberType = typeof(RequestedPlatformData))]
     public void ClickLinkTest(string os,
                               string platformNameForOption,
                               string browserName,

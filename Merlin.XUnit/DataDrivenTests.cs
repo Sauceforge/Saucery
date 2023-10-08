@@ -35,8 +35,10 @@ public class DataDrivenTests : SauceryXBase
                 allCombinations.Add(new object[] { platform, 5 });
             }
 
-            return from c in allCombinations
-                   select c;
+            foreach (var c in allCombinations)
+            {
+                yield return c;
+            }
         }
     }
 }
