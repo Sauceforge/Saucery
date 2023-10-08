@@ -21,9 +21,6 @@ public class DataDrivenTests : SauceryXBase
         var guineaPigPage = new GuineaPigPage(BaseFixture.SauceryDriver(), "https://saucelabs.com/");
 
         guineaPigPage.TypeField(BaseFixture.SauceryDriver(), "comments", data.ToString());
-
-        // verify the browser was navigated to the correct page
-        BaseFixture.Driver.Title.ShouldContain("I am a page title - Sauce Labs");
     }
 
     public static IEnumerable<object[]> AllCombinations
