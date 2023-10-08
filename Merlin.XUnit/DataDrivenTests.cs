@@ -29,7 +29,9 @@ public class DataDrivenTests : SauceryXBase
         {
             List<object[]> allCombinations = new();
 
-            foreach (var platform in RequestedPlatformData.Items)
+            //.ToList() needed to avoid InvalidOperationException
+            //Collection was modified; enumeration operation may not execute.
+            foreach (var platform in RequestedPlatformData.Items.ToList())
             {
                 allCombinations.Add(new object[] { platform, 4 });
                 allCombinations.Add(new object[] { platform, 5 });
