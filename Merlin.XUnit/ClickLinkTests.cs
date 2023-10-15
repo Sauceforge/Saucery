@@ -5,7 +5,7 @@ using Saucery.XUnit;
 using Shouldly;
 using Xunit.Abstractions;
 
-//[assembly: CollectionBehavior(MaxParallelThreads = 4)]
+[assembly: CollectionBehavior(CollectionBehavior.CollectionPerAssembly, MaxParallelThreads = 4)]
 
 namespace Merlin.XUnit;
 

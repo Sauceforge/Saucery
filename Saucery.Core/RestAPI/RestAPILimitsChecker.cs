@@ -5,7 +5,7 @@ namespace Saucery.Core.RestAPI;
 
 internal class RestAPILimitsChecker {
     private RestResponse _response;
-    private readonly Dictionary<string, string> _headers;
+    private Dictionary<string, string> _headers;
 
     public RestAPILimitsChecker() {
         _headers = new Dictionary<string, string>();
@@ -14,12 +14,16 @@ internal class RestAPILimitsChecker {
     public void Update(RestResponse response) {
         _response = response;
         foreach(var p in response.Headers) {
+            var newHeaders = _headers
+                    .ToDictionary(entry => entry.Key,
+                                  entry => entry.Value);
             if (!_headers.ContainsKey(p.Name)) {
-                _headers.Add(p.Name, p.Value.ToString());
+                newHeaders.Add(p.Name, p.Value.ToString());
             } else {
-                _headers.Remove(p.Name);
-                _headers.Add(p.Name, p.Value.ToString());
+                newHeaders.Remove(p.Name);
+                newHeaders.Add(p.Name, p.Value.ToString());
             }
+            _headers = newHeaders;
         }
     }
 

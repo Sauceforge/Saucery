@@ -1,7 +1,6 @@
 ﻿using Saucery.Core.Dojo;
 using Saucery.Tests.Common.PageObjects;
 using Saucery.XUnit;
-using Shouldly;
 using Xunit.Abstractions;
 
 namespace Merlin.XUnit;
