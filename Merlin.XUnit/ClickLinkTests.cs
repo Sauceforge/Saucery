@@ -5,11 +5,11 @@ using Saucery.XUnit;
 using Shouldly;
 using Xunit.Abstractions;
 
-[assembly: CollectionBehavior(CollectionBehavior.CollectionPerAssembly, MaxParallelThreads = 4)]
+//[assembly: CollectionBehavior(CollectionBehavior.CollectionPerAssembly, MaxParallelThreads = 4)]
 
 namespace Merlin.XUnit;
 
-public class ClickLinkTests : SauceryXBase
+public class ClickLinkTests : SauceryXBase //, IClassFixture<ConcurrencyFixture>
 {
     //private static ITestOutputHelper output;
 
