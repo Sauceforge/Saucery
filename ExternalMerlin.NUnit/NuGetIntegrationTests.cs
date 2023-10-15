@@ -8,7 +8,7 @@ using Shouldly;
 
 namespace ExternalMerlin.NUnit;
 
-[Parallelizable(ParallelScope.All)]
+//[Parallelizable(ParallelScope.All)]
 [TestFixtureSource(typeof(RequestedPlatformData))]
 public class NuGetIntegrationTests : SauceryBase {
     public NuGetIntegrationTests(BrowserVersion browserVersion) : base(browserVersion) {

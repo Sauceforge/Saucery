@@ -9,7 +9,7 @@ using Shouldly;
 namespace Merlin.NUnit;
 
 //[Parallelizable(ParallelScope.Self)]
-[Parallelizable(ParallelScope.All)]
+//[Parallelizable(ParallelScope.All)]
 [TestFixtureSource(typeof(RequestedPlatformData))]
 public class OpenSauceTests : SauceryBase
 {
