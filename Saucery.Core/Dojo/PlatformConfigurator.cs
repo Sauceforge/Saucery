@@ -159,6 +159,12 @@ public class PlatformConfigurator
                 break;
         }
 
-        return browserVersion != null ? browserVersion.Classify() : browserVersion;
+        if (browserVersion == null)
+        {
+            Console.WriteLine("Requested Platform Not Found: {0}", requested.LongName);
+            return null;
+        }
+
+        return browserVersion.Classify();
     }
 }
