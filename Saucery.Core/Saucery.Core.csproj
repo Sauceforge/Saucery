@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -28,7 +28,7 @@
 	<ItemGroup>
 		<PackageReference Include="Appium.WebDriver" Version="5.0.0-rc.1" />
 		<PackageReference Include="Castle.Core" Version="5.1.1" />
-		<PackageReference Include="DotNetSeleniumExtras.PageObjects.Core" Version="4.3.0" />
+		<PackageReference Include="DotNetSeleniumExtras.PageObjects.Core" Version="4.14.1" />
 		<PackageReference Include="DotNetSeleniumExtras.WaitHelpers" Version="3.11.0" />
 		<!--<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />-->
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
