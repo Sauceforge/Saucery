@@ -11,7 +11,7 @@ internal class AppiumIOSOptions : BaseOptions {
         DebugMessages.PrintiOSOptionValues(browserVersion);
         Console.WriteLine("Creating iOS Options");
 
-        AddSauceLabsOptions(Enviro.SauceNativeApp);
+        AddSauceLabsOptions(Enviro.SauceNativeApp!);
 
         var options = new AppiumOptions
         {

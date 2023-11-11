@@ -26,7 +26,7 @@ public class SaucePlatform {
 
     public PlatformType PlatformType { get; set; }
 
-    public string TestName { get; set; }
+    public string? TestName { get; set; }
 
     #endregion
 
@@ -40,13 +40,13 @@ public class SaucePlatform {
                          string longName = "",
                          string longVersion = "", 
                          string deviceOrientation = "") {
-        Os = Sanitiser.SanitisePlatformField(desktopPlatformName);
-        Browser = Sanitiser.SanitisePlatformField(browser);
-        BrowserVersion = Sanitiser.SanitisePlatformField(browserVersion);
-        ScreenResolution = Sanitiser.SanitisePlatformField(screenResolution);
-        Platform = Sanitiser.SanitisePlatformField(platform);
-        LongName = Sanitiser.SanitisePlatformField(longName);
-        LongVersion = Sanitiser.SanitisePlatformField(longVersion);
+        Os = Sanitiser.SanitisePlatformField(desktopPlatformName)!;
+        Browser = Sanitiser.SanitisePlatformField(browser)!;
+        BrowserVersion = Sanitiser.SanitisePlatformField(browserVersion)!;
+        ScreenResolution = Sanitiser.SanitisePlatformField(screenResolution)!;
+        Platform = Sanitiser.SanitisePlatformField(platform)!;
+        LongName = Sanitiser.SanitisePlatformField(longName)!;
+        LongVersion = Sanitiser.SanitisePlatformField(longVersion)!;
         DeviceOrientation = deviceOrientation ?? SauceryConstants.NULL_STRING;
     }
 

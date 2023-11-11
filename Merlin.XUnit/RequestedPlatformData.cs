@@ -35,9 +35,9 @@ public class RequestedPlatformData : SauceryTestData
         SetPlatforms(platforms);
     }
 
-    public static IEnumerable<object[]> Platforms => BrowserVersions.Select(x => x.ToObjectArray()).AsEnumerable();
+    public static IEnumerable<object[]> Platforms => BrowserVersions!.Select(x => x.ToObjectArray()).AsEnumerable();
 
-    public static IEnumerable<BrowserVersion> Items => BrowserVersions.Select(x => x).AsEnumerable();
+    public static IEnumerable<BrowserVersion> Items => BrowserVersions!.Select(x => x).AsEnumerable();
 }
 /*
 * Copyright Andrew Gray, SauceForge

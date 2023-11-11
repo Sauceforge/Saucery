@@ -26,13 +26,13 @@ public class TestBuilder {
     public static TestSuite MakeParameterizedMethodSuite(Type type, string methodName) {
         var suite = MakeTestFromMethod(type, methodName) as TestSuite;
         Assert.That(suite != null, "Unable to create parameterized suite - most likely there is no data provided");
-        return suite;
+        return suite!;
     }
 
     public static TestMethod MakeTestCase(Type type, string methodName) {
         var test = MakeTestFromMethod(type, methodName) as TestMethod;
         Assert.That(test != null, "Unable to create TestMethod from {0}", methodName);
-        return test;
+        return test!;
     }
 
     // Will return either a ParameterizedMethodSuite or an NUnitTestMethod
@@ -44,7 +44,7 @@ public class TestBuilder {
             Assert.Fail("Method not found: " + methodName);
         }
 
-        return new DefaultTestCaseBuilder().BuildFrom(new MethodWrapper(type, method));
+        return new DefaultTestCaseBuilder().BuildFrom(new MethodWrapper(type, method!));
     }
 
     #endregion
@@ -93,7 +93,7 @@ public class TestBuilder {
     {
         var suite = MakeParameterizedMethodSuite(type, methodName);
 
-        object testObject = null;
+        object? testObject = null;
         if (!type.IsStatic())
         {
             testObject = Reflect.Construct(type);
@@ -106,13 +106,13 @@ public class TestBuilder {
     {
         var testMethod = MakeTestCase(type, methodName);
 
-        object testObject = null;
+        object? testObject = null;
         if (!type.IsStatic())
         {
             testObject = Reflect.Construct(type);
         }
 
-        return RunTest(testMethod, testObject);
+        return RunTest(testMethod, testObject!);
     }
 
     public static ITestResult RunTestCase(object fixture, string methodName)
@@ -125,13 +125,13 @@ public class TestBuilder {
     public static ITestResult RunAsTestCase(Action action)
     {
         var method = action.GetMethodInfo();
-        var testMethod = MakeTestCase(method.DeclaringType, method.Name);
+        var testMethod = MakeTestCase(method.DeclaringType!, method.Name);
         return RunTest(testMethod);
     }
 
     public static ITestResult RunTest(Test test) => RunTest(test, null);
 
-    public static ITestResult RunTest(Test test, object testObject) => ExecuteWorkItem(CreateWorkItem(test, testObject));
+    public static ITestResult RunTest(Test test, object? testObject) => ExecuteWorkItem(CreateWorkItem(test, testObject!));
 
     public static ITestResult ExecuteWorkItem(WorkItem work)
     {

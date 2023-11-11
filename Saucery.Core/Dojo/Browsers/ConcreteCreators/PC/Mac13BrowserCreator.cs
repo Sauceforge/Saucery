@@ -11,7 +11,7 @@ internal class Mac13BrowserCreator : BrowserCreator
     {
     }
 
-    public override BrowserBase Create(string platformNameForOption, List<string> screenResolutions) => Platform.api_name switch
+    public override BrowserBase? Create(string platformNameForOption, List<string> screenResolutions) => Platform.api_name switch
     {
         SauceryConstants.BROWSER_CHROME => new ChromeBrowser(Platform, screenResolutions, platformNameForOption),
         SauceryConstants.BROWSER_EDGE => new EdgeBrowser(Platform, screenResolutions, platformNameForOption),

@@ -13,7 +13,7 @@ public class GenericTestCaseAttribute : TestCaseAttribute, ITestBuilder
         _type = type;
     }
 
-    IEnumerable<TestMethod> ITestBuilder.BuildFrom(IMethodInfo method, Test suite)
+    IEnumerable<TestMethod> ITestBuilder.BuildFrom(IMethodInfo method, Test? suite)
     {
         if (method.IsGenericMethodDefinition && _type != null)
         {

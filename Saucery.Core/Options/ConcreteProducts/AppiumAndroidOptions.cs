@@ -10,7 +10,7 @@ internal class AppiumAndroidOptions : BaseOptions {
         : base(testName)
     {
         Console.WriteLine(SauceryConstants.SETTING_UP, testName, SauceryConstants.ANDROID_ON_APPIUM);
-        AddSauceLabsOptions(Enviro.SauceNativeApp);
+        AddSauceLabsOptions(Enviro.SauceNativeApp!);
 
         DebugMessages.PrintAndroidOptionValues(browserVersion);
 

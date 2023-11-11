@@ -1,7 +1,7 @@
 ﻿namespace Saucery.Core.RestAPI.FlowControl;
 
 public class FlowControl {
-    public Remaining remaining { get; set; }
+    public Remaining? remaining { get; set; }
 }
 
 public class Remaining {

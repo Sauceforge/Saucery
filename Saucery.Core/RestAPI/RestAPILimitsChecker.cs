@@ -8,20 +8,21 @@ internal class RestAPILimitsChecker {
     private Dictionary<string, string> _headers;
 
     public RestAPILimitsChecker() {
+        _response = new();
         _headers = new Dictionary<string, string>();
     }
 
     public void Update(RestResponse response) {
         _response = response;
-        foreach(var p in response.Headers) {
+        foreach(var p in response.Headers!) {
             var newHeaders = _headers
                     .ToDictionary(entry => entry.Key,
                                   entry => entry.Value);
-            if (!_headers.ContainsKey(p.Name)) {
-                newHeaders.Add(p.Name, p.Value.ToString());
+            if (!_headers.ContainsKey(p.Name!)) {
+                newHeaders.Add(p.Name!, p.Value!.ToString()!);
             } else {
-                newHeaders.Remove(p.Name);
-                newHeaders.Add(p.Name, p.Value.ToString());
+                newHeaders.Remove(p.Name!);
+                newHeaders.Add(p.Name!, p.Value!.ToString()!);
             }
             _headers = newHeaders;
         }

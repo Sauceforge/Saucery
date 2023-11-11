@@ -15,7 +15,7 @@ public class OptionFactory
         BrowserVersion = browserVersion;
     }
 
-    public DriverOptions CreateOptions(string testName) {
+    public DriverOptions? CreateOptions(string testName) {
         if (!BrowserVersion.IsAMobileDevice()) {
             DebugMessages.PrintHaveDesktopPlatform();
             return GetDesktopOptions(testName);
@@ -33,7 +33,7 @@ public class OptionFactory
         }
     }
 
-    private DriverOptions GetDesktopOptions(string testName) => BrowserVersion.BrowserName.ToLower() switch
+    private DriverOptions? GetDesktopOptions(string testName) => BrowserVersion.BrowserName.ToLower() switch
     {
         SauceryConstants.BROWSER_FIREFOX => new FirefoxCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType),
         SauceryConstants.BROWSER_IE => new IECreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType),

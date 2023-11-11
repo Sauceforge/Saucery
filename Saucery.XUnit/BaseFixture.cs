@@ -4,7 +4,8 @@ using Saucery.Core.RestAPI.FlowControl;
 using Saucery.Core.RestAPI.TestStatus;
 using Saucery.Core.Util;
 
-[assembly: CollectionBehavior(CollectionBehavior.CollectionPerAssembly, MaxParallelThreads = 4)]
+//Needs XunitContext NuGet Package
+//[assembly: CollectionBehavior(CollectionBehavior.CollectionPerAssembly, MaxParallelThreads = 4)]
 
 namespace Saucery.XUnit;
 

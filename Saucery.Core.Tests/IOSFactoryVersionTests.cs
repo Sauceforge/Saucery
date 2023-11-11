@@ -12,7 +12,7 @@ namespace Saucery.Core.Tests;
 [TestFixture]
 public class IOSFactoryVersionTests
 {
-    private PlatformConfigurator PlatformConfigurator { get; set; }
+    private PlatformConfigurator? PlatformConfigurator { get; set; }
 
     [OneTimeSetUp]
     public void OneTimeSetUp()
@@ -23,14 +23,14 @@ public class IOSFactoryVersionTests
     [Test, TestCaseSource(typeof(IOSDataClass), nameof(IOSDataClass.NotSupportedTestCases))]
     public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform)
     {
-        var validPlatform = PlatformConfigurator.Filter(saucePlatform);
+        var validPlatform = PlatformConfigurator!.Filter(saucePlatform);
         validPlatform.ShouldBeNull();
     }
 
     [Test, TestCaseSource(typeof(IOSDataClass), nameof(IOSDataClass.SupportedTestCases))]
     public void AppiumIOSOptionTest(SaucePlatform saucePlatform)
     {
-        var validPlatform = PlatformConfigurator.Filter(saucePlatform);
+        var validPlatform = PlatformConfigurator!.Filter(saucePlatform);
         validPlatform.ShouldNotBeNull();
 
         var factory = new OptionFactory(validPlatform);

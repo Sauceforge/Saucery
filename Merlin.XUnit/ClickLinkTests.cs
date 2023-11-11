@@ -43,7 +43,7 @@ public class ClickLinkTests : SauceryXBase //, IClassFixture<ConcurrencyFixture>
         guineaPigPage.ClickLink(BaseFixture.SauceryDriver());
 
         // verify the browser was navigated to the correct page
-        BaseFixture.Driver.Url.ShouldContain("saucelabs.com/test-guinea-pig2.html");
+        BaseFixture.Driver!.Url.ShouldContain("saucelabs.com/test-guinea-pig2.html");
     }
 
 

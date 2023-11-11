@@ -10,5 +10,5 @@ internal class AndroidBrowserCreator : BrowserCreator
     {
     }
 
-    public override BrowserBase Create(string platformNameForOption, List<string> screenResolutions) => new AndroidBrowser(Platform, platformNameForOption);
+    public override BrowserBase? Create(string platformNameForOption, List<string> screenResolutions) => new AndroidBrowser(Platform, platformNameForOption);
 }

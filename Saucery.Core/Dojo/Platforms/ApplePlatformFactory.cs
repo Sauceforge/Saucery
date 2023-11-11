@@ -6,7 +6,7 @@ namespace Saucery.Core.Dojo.Platforms;
 
 public class ApplePlatformFactory
 {
-    public static PlatformBase CreatePlatform(SupportedPlatform sp) => sp.short_version switch
+    public static PlatformBase? CreatePlatform(SupportedPlatform sp) => sp.short_version switch
     {
         "16.2" => new IOS162PlatformCreator(sp).Create(),
         "16.1" => new IOS161PlatformCreator(sp).Create(),

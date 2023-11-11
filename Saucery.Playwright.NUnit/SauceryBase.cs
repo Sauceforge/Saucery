@@ -13,9 +13,9 @@ namespace Saucery.Playwright;
 
 public class SauceryBase : PageTest
 {
-    private string _testName;
-    protected WebDriver Driver;
-    private readonly BrowserVersion _browserVersion;
+    private string? _testName;
+    protected WebDriver? Driver;
+    private readonly BrowserVersion? _browserVersion;
     private static readonly SauceLabsStatusNotifier SauceLabsStatusNotifier;
     private static readonly SauceLabsFlowController SauceLabsFlowController;
 
@@ -38,20 +38,20 @@ public class SauceryBase : PageTest
     [SetUp]
     public void Setup()
     {
-        _browserVersion.SetTestName(TestContext.CurrentContext.Test.Name);
-        _testName = _browserVersion.TestName;
+        _browserVersion!.SetTestName(TestContext.CurrentContext.Test.Name);
+        _testName = _browserVersion.TestName!;
 
         //DebugMessages.PrintPlatformDetails(platform);
         // set up the desired options
         var factory = new OptionFactory(_browserVersion);
         var opts = factory.CreateOptions(_testName);
 
-        bool driverInitialised = InitialiseDriver(opts, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
+        bool driverInitialised = InitialiseDriver(opts!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
 
         while (!driverInitialised)
         {
             Console.WriteLine($"Driver failed to initialise: {TestContext.CurrentContext.Test.Name}.");
-            driverInitialised = InitialiseDriver(opts, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
+            driverInitialised = InitialiseDriver(opts!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
         }
         Console.WriteLine($"Driver successfully initialised: {TestContext.CurrentContext.Test.Name}.");
     }

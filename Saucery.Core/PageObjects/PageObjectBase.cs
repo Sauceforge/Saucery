@@ -9,7 +9,7 @@ public class PageObjectBase {
     internal string PageUrl;
     internal string Name;
     internal string Title;
-    internal WebDriverWait Wait;
+    internal WebDriverWait? Wait;
 
     public PageObjectBase(string url, string name, string title)
     {

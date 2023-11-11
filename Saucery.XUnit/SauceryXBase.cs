@@ -12,8 +12,8 @@ namespace Saucery.XUnit;
 public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>
 {
     protected readonly BaseFixture BaseFixture;
-    private string _testName;
-    private BrowserVersion _browserVersion;
+    private string? _testName;
+    private BrowserVersion? _browserVersion;
     private readonly ITestOutputHelper _outputHelper;
 
     protected bool InitialiseDriver(BrowserVersion browserVersion)
@@ -26,14 +26,14 @@ public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>
         //DebugMessages.PrintPlatformDetails(platform);
         // set up the desired options
         var factory = new OptionFactory(_browserVersion);
-        var opts = factory.CreateOptions(_testName);
+        var opts = factory.CreateOptions(_testName!);
 
-        bool driverInitialised = BaseFixture.InitialiseDriver(opts, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
+        bool driverInitialised = BaseFixture.InitialiseDriver(opts!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
 
         while (!driverInitialised)
         {
             Console.WriteLine($"Driver failed to initialise: {_testName}.");
-            driverInitialised = BaseFixture.InitialiseDriver(opts, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
+            driverInitialised = BaseFixture.InitialiseDriver(opts!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
         }
         Console.WriteLine($"Driver successfully initialised: {_testName}.");
         
@@ -71,7 +71,7 @@ public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>
     {
         var type = _outputHelper.GetType();
         var testMember = type.GetField("test", BindingFlags.Instance | BindingFlags.NonPublic);
-        return ((ITest)testMember.GetValue(_outputHelper)).TestCase.TestMethod.Method.Name;
+        return ((ITest)testMember!.GetValue(_outputHelper)!).TestCase.TestMethod.Method.Name;
     }
 }
 
