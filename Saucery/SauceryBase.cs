@@ -29,7 +29,7 @@ public class SauceryBase
         SauceLabsFlowController = new SauceLabsFlowController();
     }
 
-    protected SauceryBase(BrowserVersion browserVersion)
+    protected SauceryBase(BrowserVersion browserVersion) : this()
     {
         _browserVersion = browserVersion;
     }
