@@ -42,6 +42,16 @@ public class OptionFactory
         SauceryConstants.BROWSER_SAFARI => new SafariCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType),
         _ => new ChromeCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType),
     };
+
+    public bool IsApple()
+    {
+        return BrowserVersion.PlatformType.Equals(OnDemand.PlatformType.Apple);
+    }
+
+    public bool IsAndroid()
+    {
+        return BrowserVersion.PlatformType.Equals(OnDemand.PlatformType.Android);
+    }
 }
 /*
 * Copyright Andrew Gray, SauceForge

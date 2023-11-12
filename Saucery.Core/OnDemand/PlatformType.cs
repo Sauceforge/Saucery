@@ -14,6 +14,8 @@ public enum PlatformType
 public static class Extensions
 {
     public static bool IsAndroid(this PlatformType type) => (int)type == (int)PlatformType.Android;
+
     public static bool IsApple(this PlatformType type) => (int)type == (int)PlatformType.Apple;
+
     public static bool IsMobile(this PlatformType type) => type.IsAndroid() || type.IsApple();
 }

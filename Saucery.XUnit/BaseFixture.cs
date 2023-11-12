@@ -1,5 +1,8 @@
 ﻿using OpenQA.Selenium;
+using OpenQA.Selenium.Appium.Android;
+using OpenQA.Selenium.Appium.iOS;
 using Saucery.Core.Driver;
+using Saucery.Core.Options;
 using Saucery.Core.RestAPI.FlowControl;
 using Saucery.Core.RestAPI.TestStatus;
 using Saucery.Core.Util;
@@ -12,8 +15,12 @@ namespace Saucery.XUnit;
 public class BaseFixture : IDisposable
 {
     public WebDriver? Driver;
+    
     internal static readonly SauceLabsStatusNotifier SauceLabsStatusNotifier;
+    
     private static readonly SauceLabsFlowController SauceLabsFlowController;
+    
+    public OptionFactory? OptionFactory;
 
     static BaseFixture()
     {
@@ -26,7 +33,22 @@ public class BaseFixture : IDisposable
         SauceLabsFlowController.ControlFlow();
         try
         {
-            Driver = new SauceryRemoteWebDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, waitSecs);
+            if (OptionFactory!.IsApple())
+            {
+                Driver = new IOSDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, TimeSpan.FromSeconds(waitSecs));
+            }
+            else
+            {
+                if (OptionFactory!.IsAndroid())
+                {
+                    Driver = new AndroidDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, TimeSpan.FromSeconds(waitSecs));
+                }
+                else
+                {
+                    Driver = new SauceryRemoteWebDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, waitSecs);
+                }
+            }
+
             return true;
         }
         catch (Exception ex)

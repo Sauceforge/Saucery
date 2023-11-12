@@ -1,6 +1,8 @@
 ﻿using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Appium.Android;
+using OpenQA.Selenium.Appium.iOS;
 using Saucery.Core.Dojo;
 using Saucery.Core.Driver;
 using Saucery.Core.Options;
@@ -17,6 +19,7 @@ public class SauceryBase
     private readonly BrowserVersion _browserVersion;
     private static readonly SauceLabsStatusNotifier SauceLabsStatusNotifier;
     private static readonly SauceLabsFlowController SauceLabsFlowController;
+    private OptionFactory? _optionFactory;
 
     static SauceryBase()
     {
@@ -37,8 +40,8 @@ public class SauceryBase
 
         //DebugMessages.PrintPlatformDetails(platform);
         // set up the desired options
-        var factory = new OptionFactory(_browserVersion);
-        var opts = factory.CreateOptions(_testName!);
+        _optionFactory = new OptionFactory(_browserVersion);
+        var opts = _optionFactory.CreateOptions(_testName!);
 
         bool driverInitialised = InitialiseDriver(opts!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
 
@@ -77,7 +80,22 @@ public class SauceryBase
         SauceLabsFlowController.ControlFlow();
         try
         {
-            Driver = new SauceryRemoteWebDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, waitSecs);
+            if (_optionFactory!.IsApple())
+            {
+               Driver = new IOSDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, TimeSpan.FromSeconds(waitSecs));
+            }
+            else
+            {
+                if (_optionFactory!.IsAndroid())
+                {
+                    Driver = new AndroidDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, TimeSpan.FromSeconds(waitSecs));
+                }
+                else
+                {
+                    Driver = new SauceryRemoteWebDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, waitSecs);
+                }
+            }
+            
             return true;
         }
         catch (Exception ex)

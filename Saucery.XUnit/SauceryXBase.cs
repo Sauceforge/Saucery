@@ -25,8 +25,8 @@ public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>
 
         //DebugMessages.PrintPlatformDetails(platform);
         // set up the desired options
-        var factory = new OptionFactory(_browserVersion);
-        var opts = factory.CreateOptions(_testName!);
+        BaseFixture.OptionFactory = new OptionFactory(_browserVersion);
+        var opts = BaseFixture.OptionFactory.CreateOptions(_testName!);
 
         bool driverInitialised = BaseFixture.InitialiseDriver(opts!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
 
