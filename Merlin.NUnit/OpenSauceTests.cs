@@ -4,12 +4,12 @@ using Saucery.Core.Dojo;
 using Saucery.Tests.Common.PageObjects;
 using Shouldly;
 
-[assembly: LevelOfParallelism(3)]
+[assembly: LevelOfParallelism(2)]
 
 namespace Merlin.NUnit;
 
 //[Parallelizable(ParallelScope.Self)]
-//[Parallelizable(ParallelScope.All)]
+[Parallelizable(ParallelScope.All)]
 [TestFixtureSource(typeof(RequestedPlatformData))]
 public class OpenSauceTests : SauceryBase
 {

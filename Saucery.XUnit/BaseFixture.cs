@@ -17,15 +17,15 @@ public class BaseFixture : IDisposable
 {
     public WebDriver? Driver;
     
-    internal static readonly SauceLabsStatusNotifier SauceLabsStatusNotifier;
+    internal readonly SauceLabsStatusNotifier SauceLabsStatusNotifier;
     
-    private static readonly SauceLabsFlowController SauceLabsFlowController;
+    private readonly SauceLabsFlowController SauceLabsFlowController;
     
     public OptionFactory? OptionFactory;
 
     private readonly AppiumClientConfig AppiumClientConfig = new() { DirectConnect = true };
 
-    static BaseFixture()
+    public BaseFixture()
     {
         SauceLabsStatusNotifier = new SauceLabsStatusNotifier();
         SauceLabsFlowController = new SauceLabsFlowController();
