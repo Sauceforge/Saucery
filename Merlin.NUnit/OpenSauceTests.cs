@@ -40,16 +40,4 @@ public class OpenSauceTests : SauceryBase
         // verify the browser was navigated to the correct page
         Driver!.Url.ShouldContain("saucelabs.com/test-guinea-pig2.html");
     }
-
-    [Test]
-    [Ignore("Ignore")]
-    public void UserAgentTest()
-    {
-        var guineaPigPage = new GuineaPigPage(SauceryDriver(), "https://saucelabs.com/");
-
-        // read the useragent string off the page
-        var useragent = guineaPigPage.GetUserAgent(SauceryDriver());
-
-        useragent.ShouldNotBeNull();
-    }
 }
