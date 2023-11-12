@@ -69,11 +69,17 @@ public class SauceryBase
                 Console.WriteLine(@"SessionID={0} job-name={1}", sessionId, _testName);
                 Driver.Quit();
             }
+
+            if(_optionFactory != null)
+            {
+                _optionFactory!.Dispose();
+            }
         }
         catch (WebDriverException)
         {
             Console.WriteLine(@"Caught WebDriverException, quitting driver.");
             Driver?.Quit();
+            _optionFactory!.Dispose();
         }
     }
 
@@ -82,21 +88,22 @@ public class SauceryBase
         SauceLabsFlowController.ControlFlow();
         try
         {
-            if (_optionFactory!.IsApple())
-            {
-               Driver = new IOSDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, TimeSpan.FromSeconds(waitSecs), AppiumClientConfig);
-            }
-            else
-            {
-                if (_optionFactory!.IsAndroid())
-                {
-                    Driver = new AndroidDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, TimeSpan.FromSeconds(waitSecs), AppiumClientConfig);
-                }
-                else
-                {
+            //TODO: Why does IOSDriver not work with NUnit?  SessionId not set
+            //if (_optionFactory!.IsApple())
+            //{
+            //   Driver = new IOSDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, TimeSpan.FromSeconds(waitSecs), AppiumClientConfig);
+            //}
+            //else
+            //{
+            //    if (_optionFactory!.IsAndroid())
+            //    {
+            //        Driver = new AndroidDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, TimeSpan.FromSeconds(waitSecs), AppiumClientConfig);
+            //    }
+            //    else
+            //    {
                     Driver = new SauceryRemoteWebDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, waitSecs);
-                }
-            }
+            //    }
+            //}
             
             return true;
         }
@@ -107,7 +114,7 @@ public class SauceryBase
         }
     }
 
-    public SauceryRemoteWebDriver SauceryDriver() => (SauceryRemoteWebDriver)Driver!;
+    public WebDriver SauceryDriver() => Driver!;
 }
 /*
 * Copyright Andrew Gray, SauceForge
