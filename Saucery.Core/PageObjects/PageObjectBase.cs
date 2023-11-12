@@ -1,5 +1,5 @@
-﻿using OpenQA.Selenium.Support.UI;
-using Saucery.Core.Driver;
+﻿using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
 using Shouldly;
 
@@ -18,12 +18,12 @@ public class PageObjectBase {
         Title = title;
     }
 
-    public void GetPage(SauceryRemoteWebDriver driver) {
+    public void GetPage(WebDriver driver) {
         driver.Navigate().GoToUrl(PageUrl);
         CheckTitle(driver);
     }
 
-    public void CheckTitle(SauceryRemoteWebDriver driver) {
+    public void CheckTitle(WebDriver driver) {
         Wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
         while (!Wait.Until(ExpectedConditions.TitleIs(Title)))
         {

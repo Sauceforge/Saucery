@@ -1,6 +1,7 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Appium.Android;
 using OpenQA.Selenium.Appium.iOS;
+using OpenQA.Selenium.Appium.Service;
 using Saucery.Core.Driver;
 using Saucery.Core.Options;
 using Saucery.Core.RestAPI.FlowControl;
@@ -22,6 +23,8 @@ public class BaseFixture : IDisposable
     
     public OptionFactory? OptionFactory;
 
+    private readonly AppiumClientConfig AppiumClientConfig = new() { DirectConnect = true };
+
     static BaseFixture()
     {
         SauceLabsStatusNotifier = new SauceLabsStatusNotifier();
@@ -35,13 +38,13 @@ public class BaseFixture : IDisposable
         {
             if (OptionFactory!.IsApple())
             {
-                Driver = new IOSDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, TimeSpan.FromSeconds(waitSecs));
+                Driver = new IOSDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, TimeSpan.FromSeconds(waitSecs), AppiumClientConfig);
             }
             else
             {
                 if (OptionFactory!.IsAndroid())
                 {
-                    Driver = new AndroidDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, TimeSpan.FromSeconds(waitSecs));
+                    Driver = new AndroidDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, TimeSpan.FromSeconds(waitSecs), AppiumClientConfig);
                 }
                 else
                 {
@@ -65,9 +68,14 @@ public class BaseFixture : IDisposable
             Driver.Quit();
             Driver.Dispose();
         }
+
+        if(OptionFactory is not null)
+        {
+            OptionFactory.Dispose();
+        }
     }
 
-    public SauceryRemoteWebDriver SauceryDriver() => (SauceryRemoteWebDriver)Driver!;
+    public WebDriver SauceryDriver() => Driver!;
 }
 /*
 * Copyright Andrew Gray, SauceForge

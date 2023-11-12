@@ -3,6 +3,7 @@ using NUnit.Framework.Interfaces;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Appium.Android;
 using OpenQA.Selenium.Appium.iOS;
+using OpenQA.Selenium.Appium.Service;
 using Saucery.Core.Dojo;
 using Saucery.Core.Driver;
 using Saucery.Core.Options;
@@ -20,6 +21,7 @@ public class SauceryBase
     private static readonly SauceLabsStatusNotifier SauceLabsStatusNotifier;
     private static readonly SauceLabsFlowController SauceLabsFlowController;
     private OptionFactory? _optionFactory;
+    private readonly AppiumClientConfig AppiumClientConfig = new() { DirectConnect = true };
 
     static SauceryBase()
     {
@@ -82,13 +84,13 @@ public class SauceryBase
         {
             if (_optionFactory!.IsApple())
             {
-               Driver = new IOSDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, TimeSpan.FromSeconds(waitSecs));
+               Driver = new IOSDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, TimeSpan.FromSeconds(waitSecs), AppiumClientConfig);
             }
             else
             {
                 if (_optionFactory!.IsAndroid())
                 {
-                    Driver = new AndroidDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, TimeSpan.FromSeconds(waitSecs));
+                    Driver = new AndroidDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, TimeSpan.FromSeconds(waitSecs), AppiumClientConfig);
                 }
                 else
                 {

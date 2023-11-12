@@ -6,7 +6,7 @@ using Saucery.Core.Util;
 
 namespace Saucery.Core.Options;
 
-public class OptionFactory
+public class OptionFactory : IDisposable
 {
     private BrowserVersion BrowserVersion { get; set; }
 
@@ -15,8 +15,10 @@ public class OptionFactory
         BrowserVersion = browserVersion;
     }
 
-    public DriverOptions? CreateOptions(string testName) {
-        if (!BrowserVersion.IsAMobileDevice()) {
+    public DriverOptions? CreateOptions(string testName)
+    {
+        if (!BrowserVersion.IsAMobileDevice())
+        {
             DebugMessages.PrintHaveDesktopPlatform();
             return GetDesktopOptions(testName);
         }
@@ -51,6 +53,11 @@ public class OptionFactory
     public bool IsAndroid()
     {
         return BrowserVersion.PlatformType.Equals(OnDemand.PlatformType.Android);
+    }
+
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
     }
 }
 /*

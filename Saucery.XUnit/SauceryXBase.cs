@@ -48,7 +48,7 @@ public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>
             {
                 var passed = Context.TestException == null;
                 // log the result to SauceLabs
-                var sessionId = ((RemoteWebDriver)BaseFixture.Driver).SessionId.ToString(); //BaseFixture.Driver.GetSessionId();
+                var sessionId = BaseFixture.Driver.SessionId.ToString(); //BaseFixture.Driver.GetSessionId();
                 BaseFixture.SauceLabsStatusNotifier.NotifyStatus(sessionId, passed);
                 Console.WriteLine(@"SessionID={0} job-name={1}", sessionId, _testName);
                 BaseFixture.Driver.Quit();
