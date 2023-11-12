@@ -26,12 +26,12 @@ public static class DojoExtensions
                 //SauceLabs may have just added it to the platform cornfigurato. Don't fall over.
                 return;
             }
-            p.Browsers.AddBrowser(sp, p.ScreenResolutions);
+            p.Browsers.AddBrowser(sp, p.ScreenResolutions!);
             platforms.Add(p);
         }
         else
         {
-            p.Browsers.AddBrowser(sp, p.ScreenResolutions);
+            p.Browsers.AddBrowser(sp, p.ScreenResolutions!);
         }
     }
 
@@ -46,7 +46,7 @@ public static class DojoExtensions
         {
             foreach(var m in mobilePlatforms)
             {
-                result = mobilePlatforms.Find(mp => mp.Name.Equals(sp.os, StringComparison.Ordinal) && mp.PlatformVersion.Equals(sp.short_version, StringComparison.Ordinal));
+                result = mobilePlatforms.Find(mp => mp.Name.Equals(sp.os, StringComparison.Ordinal) && mp.PlatformVersion!.Equals(sp.short_version, StringComparison.Ordinal));
                 if(result != null)
                 {
                     break;
@@ -136,8 +136,8 @@ public static class DojoExtensions
         if (browsers == null) { return null; }
 
         return sp.ScreenResolution == string.Empty
-            ? browsers.BrowserVersions.Find(v => v.Os.Equals(sp.Os, StringComparison.Ordinal) && v.BrowserName.ToLower().Equals(sp.Browser.ToLower()) && v.Name.ToLower().Equals(sp.BrowserVersion.ToLower()))
-            : browsers.BrowserVersions.Find(v => v.Os.Equals(sp.Os, StringComparison.Ordinal) && v.BrowserName.ToLower().Equals(sp.Browser.ToLower()) && v.Name.ToLower().Equals(sp.BrowserVersion.ToLower()) && v.ScreenResolutions.Contains(sp.ScreenResolution));
+            ? browsers.BrowserVersions.Find(v => v.Os.Equals(sp.Os, StringComparison.Ordinal) && v.BrowserName.ToLower().Equals(sp.Browser.ToLower()) && v.Name!.ToLower().Equals(sp.BrowserVersion.ToLower()))
+            : browsers.BrowserVersions.Find(v => v.Os.Equals(sp.Os, StringComparison.Ordinal) && v.BrowserName.ToLower().Equals(sp.Browser.ToLower()) && v.Name!.ToLower().Equals(sp.BrowserVersion.ToLower()) && v.ScreenResolutions.Contains(sp.ScreenResolution));
     }
 
     public static BrowserVersion? FindAndroidBrowser(this List<PlatformBase> platforms, SaucePlatform sp)
@@ -170,7 +170,7 @@ public static class DojoExtensions
             : browsers.BrowserVersions
             .Find(v => v.Os.Equals(sp.Os, StringComparison.Ordinal) && 
             v.DeviceName.Equals(sp.LongName, StringComparison.Ordinal) 
-            && v.Name.Equals(sp.BrowserVersion, StringComparison.Ordinal));
+            && v.Name!.Equals(sp.BrowserVersion, StringComparison.Ordinal));
     }
 
     public static BrowserVersion? FindIOSBrowser(this List<PlatformBase> platforms, SaucePlatform sp)
@@ -213,7 +213,7 @@ public static class DojoExtensions
             .Find(v => v.PlatformNameForOption
             .Equals(sp.Os, StringComparison.Ordinal) && 
             v.DeviceName.Equals(sp.LongName, StringComparison.Ordinal) && 
-            v.Name.Equals(sp.BrowserVersion, StringComparison.Ordinal));
+            v.Name!.Equals(sp.BrowserVersion, StringComparison.Ordinal));
     }
 
     private static BrowserBase? FindBrowser(this IEnumerable<BrowserBase> browsers, SupportedPlatform sp) => browsers

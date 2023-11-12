@@ -13,8 +13,8 @@ public class RequestedPlatformData : SauceryTestData
         var platforms = new List<SaucePlatform>
         {
             //Mobile Platforms
-            //new AndroidPlatform("Google Pixel 6 Pro GoogleAPI Emulator", "12.0", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT),
-            new IOSPlatform("iPhone 13 Pro Max Simulator", "15.4", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
+            //new AndroidPlatform("Google Pixel 8 Pro GoogleAPI Emulator", "14.0", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT),
+            //new IOSPlatform("iPhone 13 Pro Max Simulator", "15.4", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
 
             //Desktop Platforms
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "75->114", SauceryConstants.SCREENRES_2560_1600),
@@ -35,9 +35,9 @@ public class RequestedPlatformData : SauceryTestData
         SetPlatforms(platforms);
     }
 
-    public static IEnumerable<object[]> Platforms => BrowserVersions.Select(x => x.ToObjectArray()).AsEnumerable();
+    public static IEnumerable<object[]> Platforms => BrowserVersions!.Select(x => x.ToObjectArray()).AsEnumerable();
 
-    public static IEnumerable<BrowserVersion> Items => BrowserVersions.Select(x => x).AsEnumerable();
+    public static IEnumerable<BrowserVersion> Items => BrowserVersions!.Select(x => x).AsEnumerable();
 }
 /*
 * Copyright Andrew Gray, SauceForge

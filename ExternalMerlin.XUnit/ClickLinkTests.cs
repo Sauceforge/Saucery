@@ -5,8 +5,6 @@ using Saucery.XUnit;
 using Shouldly;
 using Xunit.Abstractions;
 
-//[assembly: CollectionBehavior(CollectionBehavior.CollectionPerAssembly, MaxParallelThreads = 4)]
-
 namespace ExternalMerlin.XUnit;
 
 public class ClickLinkTests : SauceryXBase
@@ -41,21 +39,8 @@ public class ClickLinkTests : SauceryXBase
         guineaPigPage.ClickLink(BaseFixture.SauceryDriver());
 
         // verify the browser was navigated to the correct page
-        BaseFixture.Driver.Url.ShouldContain("saucelabs.com/test-guinea-pig2.html");
+        BaseFixture.Driver!.Url.ShouldContain("saucelabs.com/test-guinea-pig2.html");
     }
-
-
-    //[Test]
-    //[TestCase(5)]
-    //[TestCase(4)]
-    //public void DataDrivenTitleTest(int data)
-    //{
-    //    var guineaPigPage = new GuineaPigPage(Driver, "https://saucelabs.com/");
-
-    //    guineaPigPage.TypeField(Driver, "comments", data.ToString());
-    //    // verify the page title is correct - this is actually checked as part of the constructor above.
-    //    Driver.Title.ShouldContain("I am a page title - Sauce Labs");
-    //}
 }
 /*
 * Copyright Andrew Gray, SauceForge

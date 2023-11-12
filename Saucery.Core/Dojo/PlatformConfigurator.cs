@@ -46,7 +46,7 @@ public class PlatformConfigurator
     private void ConstructEmulatedPlatforms()
     {
         var supportedPlatforms = PlatformAcquirer.AcquirePlatforms();
-        var filteredSupportedPlatforms = FilterSupportedPlatforms(supportedPlatforms);
+        var filteredSupportedPlatforms = FilterSupportedPlatforms(supportedPlatforms!);
 
         foreach (var sp in filteredSupportedPlatforms)
         {
@@ -61,7 +61,7 @@ public class PlatformConfigurator
     {
         var supportedRealDevices = RealDeviceAcquirer.AcquireRealDevicePlatforms();
 
-        AvailableRealDevices.AddRange(supportedRealDevices);
+        AvailableRealDevices.AddRange(supportedRealDevices!);
 
         //foreach (var rd in supportedRealDevices)
         //{
@@ -95,17 +95,17 @@ public class PlatformConfigurator
         //Desktop Platform Only
         var availablePlatform = AvailablePlatforms.Find(p => p.Name.Equals(platform.Os));
         var browser = availablePlatform?.Browsers.Find(b => b.Name.Equals(platform.Browser));
-        var numericBrowserVersions = browser.BrowserVersions.Where(x => x.Name.Any(char.IsNumber));
-        var browserVersion = numericBrowserVersions.Aggregate((maxItem, nextItem) => (int.Parse(maxItem.Name) > int.Parse(nextItem.Name)) ? maxItem : nextItem);
+        var numericBrowserVersions = browser?.BrowserVersions.Where(x => x.Name!.Any(char.IsNumber));
+        var browserVersion = numericBrowserVersions?.Aggregate((maxItem, nextItem) => (int.Parse(maxItem.Name!) > int.Parse(nextItem.Name!)) ? maxItem : nextItem);
 
-        return int.Parse(browserVersion.Name);
+        return int.Parse(browserVersion?.Name!);
     }
 
-    private static IEnumerable<SupportedPlatform> FindWindowsPlatforms(List<SupportedPlatform> platforms) => platforms.FindAll(p => p.os.Contains("Windows") && p.automation_backend.Equals("webdriver"));
+    private static IEnumerable<SupportedPlatform> FindWindowsPlatforms(List<SupportedPlatform> platforms) => platforms.FindAll(p => p.os!.Contains("Windows") && p.automation_backend!.Equals("webdriver"));
 
-    private static IEnumerable<SupportedPlatform> FindMacPlatforms(List<SupportedPlatform> platforms, IReadOnlyCollection<string> oses) => platforms.FindAll(p => oses.Any(o => o.Equals(p.os)) && p.automation_backend.Equals("webdriver") && !p.api_name.Equals("ipad") && !p.api_name.Equals("iphone"));
+    private static IEnumerable<SupportedPlatform> FindMacPlatforms(List<SupportedPlatform> platforms, IReadOnlyCollection<string> oses) => platforms.FindAll(p => oses.Any(o => o.Equals(p.os)) && p.automation_backend!.Equals("webdriver") && !p.api_name!.Equals("ipad") && !p.api_name.Equals("iphone"));
 
-    private static IEnumerable<SupportedPlatform> FindMobilePlatforms(List<SupportedPlatform> platforms, IReadOnlyCollection<string> apis) => platforms.FindAll(p => apis.Any(a => a.Equals(p.api_name)) && p.automation_backend.Equals("appium"));
+    private static IEnumerable<SupportedPlatform> FindMobilePlatforms(List<SupportedPlatform> platforms, IReadOnlyCollection<string> apis) => platforms.FindAll(p => apis.Any(a => a.Equals(p.api_name)) && p.automation_backend!.Equals("appium"));
 
     public void AddLatestBrowserVersion(string version)
     {
@@ -125,7 +125,7 @@ public class PlatformConfigurator
         return bvs;
     }
 
-    public BrowserVersion Filter(SaucePlatform platform)
+    public BrowserVersion? Filter(SaucePlatform platform)
     {
         var bv = Validate(platform);
         if (bv != null)
@@ -136,9 +136,9 @@ public class PlatformConfigurator
         return bv;
     }
 
-    public BrowserVersion Validate(SaucePlatform requested)
+    public BrowserVersion? Validate(SaucePlatform requested)
     {
-        BrowserVersion browserVersion = null;
+        BrowserVersion? browserVersion = null;
         requested.Classify();
         switch (requested.PlatformType)
         {

@@ -9,17 +9,17 @@ using System.Net;
 namespace Saucery.Core.RestAPI;
 
 public abstract class RestBase {
-    internal static readonly string UserName = Enviro.SauceUserName;
-    internal static readonly string AccessKey = Enviro.SauceApiKey;
-    internal RestClient Client;
-    private static RestRequest Request;
-    private static RestAPILimitsChecker LimitChecker;
+    internal static readonly string UserName = Enviro.SauceUserName!;
+    internal static readonly string AccessKey = Enviro.SauceApiKey!;
+    internal RestClient? Client;
+    private static RestRequest? Request;
+    private static RestAPILimitsChecker? LimitChecker;
 
     protected RestBase() {
         LimitChecker = new RestAPILimitsChecker();
     }
 
-    protected string GetJsonResponse(string requestProforma)
+    protected string? GetJsonResponse(string requestProforma)
     {
         var request = BuildRequest(requestProforma, Method.Get);
         var response = GetResponse(request);
@@ -36,13 +36,13 @@ public abstract class RestBase {
 
     protected void EnsureExecution(RestRequest request)
     {
-        var response = Client.Execute(request);
-        LimitChecker.Update(response);
+        var response = Client!.Execute(request);
+        LimitChecker?.Update(response);
 
-        while (LimitChecker.IsLimitExceeded())
+        while (LimitChecker!.IsLimitExceeded())
         {
             Thread.Sleep(LimitChecker.GetReset());
-            response = Client.Execute(request);
+            response = Client!.Execute(request);
             LimitChecker.Update(response);
         }
     }
@@ -56,19 +56,19 @@ public abstract class RestBase {
 
     private RestResponse GetResponse(RestRequest request)
     {
-        var response = Client.Execute(request);
+        var response = Client!.Execute(request);
         if (response.StatusCode.Equals(HttpStatusCode.OK))
         {
             return response;
         }
 
-        LimitChecker.Update(response);
+        LimitChecker!.Update(response);
 
         while (LimitChecker.IsLimitExceeded())
         {
             Console.WriteLine(SauceryConstants.RESTAPI_LIMIT_EXCEEDED_MSG);
             Thread.Sleep(LimitChecker.GetReset());
-            response = Client.Execute(request);
+            response = Client!.Execute(request);
             LimitChecker.Update(response);
         }
 

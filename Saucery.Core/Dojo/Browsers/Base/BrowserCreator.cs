@@ -11,5 +11,5 @@ public abstract class BrowserCreator
         Platform = sp;
     }
 
-    public abstract BrowserBase Create(string platformNameForOption, List<string> screenResolutions);
+    public abstract BrowserBase? Create(string platformNameForOption, List<string> screenResolutions);
 }

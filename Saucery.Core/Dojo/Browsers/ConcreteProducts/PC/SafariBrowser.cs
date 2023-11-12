@@ -10,7 +10,7 @@ internal class SafariBrowser : BrowserBase, IVersion
     {
     }
 
-    public override BrowserVersion FindVersion(SupportedPlatform sp) => BrowserVersions.Find(bv => bv.Name.Equals(sp.latest_stable_version) || bv.Name.Equals(sp.short_version));
+    public override BrowserVersion? FindVersion(SupportedPlatform sp) => BrowserVersions.Find(bv => bv.Name!.Equals(sp.latest_stable_version) || bv.Name.Equals(sp.short_version));
 
     public int MinimumVersion(SupportedPlatform sp) => sp.os switch
     {

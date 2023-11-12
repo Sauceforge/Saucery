@@ -13,7 +13,7 @@ namespace Saucery.Core.Tests;
 [TestFixture]
 public class RestTests 
 {
-    private PlatformConfigurator _configurator;
+    private PlatformConfigurator? _configurator;
 
     [OneTimeSetUp]
     public void Setup()
@@ -104,7 +104,7 @@ public class RestTests
     [GenericTestCase(typeof(Android51Platform), TestName = "Android51SupportedPlatformTest")]
     public void SupportedPlatformTheory<T>() where T : PlatformBase
     {
-        var availablePlatforms = _configurator.AvailablePlatforms;
+        var availablePlatforms = _configurator!.AvailablePlatforms;
         var realDevices = _configurator.AvailableRealDevices;
 
         availablePlatforms.ShouldNotBeNull();
@@ -144,7 +144,7 @@ public class RestTests
         //var windows10platforms = platforms.FindAll(w => w.os.Equals(SauceryConstants.PLATFORM_WINDOWS_10));
         //var windows10platformbrowsers = windows10platforms.GroupBy(w => w.api_name);
 
-        var availablePlatforms = _configurator.AvailablePlatforms;
+        var availablePlatforms = _configurator!.AvailablePlatforms;
                 
         //var browsers = availablePlatforms.SelectMany(i => i.Browsers).Distinct().ToList();
         //var iosBrowsers = browsers.FindAll(x => x.DeviceName.Equals("iPhone XS Max Simulator") || x.DeviceName.Equals("iPhone 5s Simulator")).OrderBy(o=>o.DeviceName).ThenBy(o=>o.PlatformVersion);
@@ -152,6 +152,6 @@ public class RestTests
         var platform = availablePlatforms.GetPlatform<T>();
 
         //Browser Count Checks
-        platform[0].Browsers.Count.ShouldBeEquivalentTo(platform[0].Selenium4BrowserNames.Count);
+        platform[0].Browsers.Count.ShouldBeEquivalentTo(platform[0].Selenium4BrowserNames!.Count);
     }
 }

@@ -1,6 +1,9 @@
 ﻿using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Appium.Android;
+using OpenQA.Selenium.Appium.iOS;
+using OpenQA.Selenium.Appium.Service;
 using Saucery.Core.Dojo;
 using Saucery.Core.Driver;
 using Saucery.Core.Options;
@@ -12,11 +15,13 @@ namespace Saucery;
 
 public class SauceryBase
 {
-    private string _testName;
-    protected WebDriver Driver;
+    private string? _testName;
+    protected WebDriver? Driver;
     private readonly BrowserVersion _browserVersion;
     private static readonly SauceLabsStatusNotifier SauceLabsStatusNotifier;
     private static readonly SauceLabsFlowController SauceLabsFlowController;
+    private OptionFactory? _optionFactory;
+    private readonly AppiumClientConfig AppiumClientConfig = new() { DirectConnect = true };
 
     static SauceryBase()
     {
@@ -37,15 +42,15 @@ public class SauceryBase
 
         //DebugMessages.PrintPlatformDetails(platform);
         // set up the desired options
-        var factory = new OptionFactory(_browserVersion);
-        var opts = factory.CreateOptions(_testName);
+        _optionFactory = new OptionFactory(_browserVersion);
+        var opts = _optionFactory.CreateOptions(_testName!);
 
-        bool driverInitialised = InitialiseDriver(opts, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
+        bool driverInitialised = InitialiseDriver(opts!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
 
         while (!driverInitialised)
         {
             Console.WriteLine($"Driver failed to initialise: {TestContext.CurrentContext.Test.Name}.");
-            driverInitialised = InitialiseDriver(opts, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
+            driverInitialised = InitialiseDriver(opts!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
         }
         Console.WriteLine($"Driver successfully initialised: {TestContext.CurrentContext.Test.Name}.");
     }
@@ -64,11 +69,17 @@ public class SauceryBase
                 Console.WriteLine(@"SessionID={0} job-name={1}", sessionId, _testName);
                 Driver.Quit();
             }
+
+            if(_optionFactory != null)
+            {
+                _optionFactory!.Dispose();
+            }
         }
         catch (WebDriverException)
         {
             Console.WriteLine(@"Caught WebDriverException, quitting driver.");
             Driver?.Quit();
+            _optionFactory!.Dispose();
         }
     }
 
@@ -77,7 +88,23 @@ public class SauceryBase
         SauceLabsFlowController.ControlFlow();
         try
         {
-            Driver = new SauceryRemoteWebDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, waitSecs);
+            //TODO: Why does IOSDriver not work with NUnit?  SessionId not set
+            //if (_optionFactory!.IsApple())
+            //{
+            //   Driver = new IOSDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, TimeSpan.FromSeconds(waitSecs), AppiumClientConfig);
+            //}
+            //else
+            //{
+            //    if (_optionFactory!.IsAndroid())
+            //    {
+            //        Driver = new AndroidDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, TimeSpan.FromSeconds(waitSecs), AppiumClientConfig);
+            //    }
+            //    else
+            //    {
+                    Driver = new SauceryRemoteWebDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, waitSecs);
+            //    }
+            //}
+            
             return true;
         }
         catch (Exception ex)
@@ -87,7 +114,7 @@ public class SauceryBase
         }
     }
 
-    public SauceryRemoteWebDriver SauceryDriver() => (SauceryRemoteWebDriver)Driver!;
+    public WebDriver SauceryDriver() => Driver!;
 }
 /*
 * Copyright Andrew Gray, SauceForge

@@ -6,7 +6,7 @@ using Saucery.Core.Util;
 
 namespace Saucery.Core.Options;
 
-public class OptionFactory
+public class OptionFactory : IDisposable
 {
     private BrowserVersion BrowserVersion { get; set; }
 
@@ -15,8 +15,10 @@ public class OptionFactory
         BrowserVersion = browserVersion;
     }
 
-    public DriverOptions CreateOptions(string testName) {
-        if (!BrowserVersion.IsAMobileDevice()) {
+    public DriverOptions? CreateOptions(string testName)
+    {
+        if (!BrowserVersion.IsAMobileDevice())
+        {
             DebugMessages.PrintHaveDesktopPlatform();
             return GetDesktopOptions(testName);
         }
@@ -33,7 +35,7 @@ public class OptionFactory
         }
     }
 
-    private DriverOptions GetDesktopOptions(string testName) => BrowserVersion.BrowserName.ToLower() switch
+    private DriverOptions? GetDesktopOptions(string testName) => BrowserVersion.BrowserName.ToLower() switch
     {
         SauceryConstants.BROWSER_FIREFOX => new FirefoxCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType),
         SauceryConstants.BROWSER_IE => new IECreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType),
@@ -42,6 +44,21 @@ public class OptionFactory
         SauceryConstants.BROWSER_SAFARI => new SafariCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType),
         _ => new ChromeCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType),
     };
+
+    public bool IsApple()
+    {
+        return BrowserVersion.PlatformType.Equals(OnDemand.PlatformType.Apple);
+    }
+
+    public bool IsAndroid()
+    {
+        return BrowserVersion.PlatformType.Equals(OnDemand.PlatformType.Android);
+    }
+
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+    }
 }
 /*
 * Copyright Andrew Gray, SauceForge

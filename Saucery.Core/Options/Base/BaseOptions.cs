@@ -6,14 +6,14 @@ using Saucery.Core.Util;
 namespace Saucery.Core.Options.Base;
 
 internal abstract class BaseOptions {
-    protected DriverOptions Opts = null;
-    protected Dictionary<string, object> SauceOptions = null;
+    protected DriverOptions? Opts;
+    protected Dictionary<string, object> SauceOptions;
 
     protected BaseOptions(string testName) {
         SauceOptions = new Dictionary<string, object>
         {
-            { SauceryConstants.SAUCE_USERNAME_CAPABILITY, Enviro.SauceUserName },
-            { SauceryConstants.SAUCE_ACCESSKEY_CAPABILITY, Enviro.SauceApiKey },
+            { SauceryConstants.SAUCE_USERNAME_CAPABILITY, Enviro.SauceUserName! },
+            { SauceryConstants.SAUCE_ACCESSKEY_CAPABILITY, Enviro.SauceApiKey! },
             //{ SauceryConstants.SELENIUM_VERSION_CAPABILITY, SauceryConstants.LATEST_SELENIUM_VERSION },
             //This sets the Session column
             { SauceryConstants.SAUCE_SESSIONNAME_CAPABILITY, testName },
@@ -32,21 +32,21 @@ internal abstract class BaseOptions {
         }
     }
 
-    public DriverOptions GetOpts(OnDemand.PlatformType type) {
+    public DriverOptions? GetOpts(OnDemand.PlatformType type) {
         if (type.IsMobile())
         {
-            ((AppiumOptions)Opts).AddAdditionalAppiumOption(SauceryConstants.SAUCE_USERNAME_CAPABILITY, Enviro.SauceUserName);
+            ((AppiumOptions)Opts!).AddAdditionalAppiumOption(SauceryConstants.SAUCE_USERNAME_CAPABILITY, Enviro.SauceUserName);
             ((AppiumOptions)Opts).AddAdditionalAppiumOption(SauceryConstants.SAUCE_ACCESSKEY_CAPABILITY, Enviro.SauceApiKey);
         }
 
         if (type.IsApple())
         {
-            ((AppiumOptions)Opts).AutomationName = SauceryConstants.APPLE_AUTOMATION_NAME;
+            ((AppiumOptions)Opts!).AutomationName = SauceryConstants.APPLE_AUTOMATION_NAME;
         }
 
         if (type.IsAndroid())
         {
-            ((AppiumOptions)Opts).AutomationName = SauceryConstants.ANDROID_AUTOMATION_NAME;
+            ((AppiumOptions)Opts!).AutomationName = SauceryConstants.ANDROID_AUTOMATION_NAME;
         }
 
         return Opts;

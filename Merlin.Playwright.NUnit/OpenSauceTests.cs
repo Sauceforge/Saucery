@@ -1,5 +1,4 @@
 using Microsoft.Playwright;
-using Microsoft.Playwright.NUnit;
 using Saucery.Core.Dojo;
 using Saucery.Playwright;
 using System.Text.RegularExpressions;
@@ -57,18 +56,19 @@ public class OpenSauceTests : SauceryBase
         await Expect(Page).ToHaveTitleAsync("I am a page title - Sauce Labs");
     }
 
-    public override BrowserNewContextOptions ContextOptions()
-    {
-        return new BrowserNewContextOptions()
-        {
-            ColorScheme = ColorScheme.Dark,
-            //ViewportSize = new()
-            //{
-            //    Width = 1920,
-            //    Height = 1080
-            //},
-            //BaseURL = "https://github.com",
-            
-        };
-    }
+    //Needs: Meziantou.Xunit.ParallelTestFramework NuGet package
+    //private override BrowserNewContextOptions ContextOptions()
+    //{
+    //    return new BrowserNewContextOptions()
+    //    {
+    //        ColorScheme = ColorScheme.Dark,
+    //        //ViewportSize = new()
+    //        //{
+    //        //    Width = 1920,
+    //        //    Height = 1080
+    //        //},
+    //        //BaseURL = "https://github.com",
+
+    //    };
+    //}
 }
