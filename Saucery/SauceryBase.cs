@@ -18,18 +18,18 @@ public class SauceryBase
     private string? _testName;
     protected WebDriver? Driver;
     private readonly BrowserVersion _browserVersion;
-    private static readonly SauceLabsStatusNotifier SauceLabsStatusNotifier;
-    private static readonly SauceLabsFlowController SauceLabsFlowController;
+    private readonly SauceLabsStatusNotifier SauceLabsStatusNotifier;
+    private readonly SauceLabsFlowController SauceLabsFlowController;
     private OptionFactory? _optionFactory;
     private readonly AppiumClientConfig AppiumClientConfig = new() { DirectConnect = true };
 
-    static SauceryBase()
+    public SauceryBase()
     {
         SauceLabsStatusNotifier = new SauceLabsStatusNotifier();
         SauceLabsFlowController = new SauceLabsFlowController();
     }
 
-    protected SauceryBase(BrowserVersion browserVersion)
+    protected SauceryBase(BrowserVersion browserVersion) : this()
     {
         _browserVersion = browserVersion;
     }
@@ -89,22 +89,22 @@ public class SauceryBase
         try
         {
             //TODO: Why does IOSDriver not work with NUnit?  SessionId not set
-            //if (_optionFactory!.IsApple())
-            //{
-            //   Driver = new IOSDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, TimeSpan.FromSeconds(waitSecs), AppiumClientConfig);
-            //}
-            //else
-            //{
-            //    if (_optionFactory!.IsAndroid())
-            //    {
-            //        Driver = new AndroidDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, TimeSpan.FromSeconds(waitSecs), AppiumClientConfig);
-            //    }
-            //    else
-            //    {
+            if (_optionFactory!.IsApple())
+            {
+                Driver = new IOSDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, TimeSpan.FromSeconds(waitSecs), AppiumClientConfig);
+            }
+            else
+            {
+                if (_optionFactory!.IsAndroid())
+                {
+                    Driver = new AndroidDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, TimeSpan.FromSeconds(waitSecs), AppiumClientConfig);
+                }
+                else
+                {
                     Driver = new SauceryRemoteWebDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, waitSecs);
-            //    }
-            //}
-            
+                }
+            }
+
             return true;
         }
         catch (Exception ex)
