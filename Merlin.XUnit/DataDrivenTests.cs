@@ -28,18 +28,14 @@ public class DataDrivenTests : SauceryXBase
         {
             List<object[]> allCombinations = new();
 
-            //.ToList() needed to avoid InvalidOperationException
-            //Collection was modified; enumeration operation may not execute.
-            foreach (var platform in RequestedPlatformData.Items.ToList())
-            {
-                allCombinations.Add(new object[] { platform, 4 });
-                allCombinations.Add(new object[] { platform, 5 });
-            }
-
-            foreach (var c in allCombinations)
-            {
-                yield return c;
-            }
+            //.ToList() needed to avoid InvalidOperationException: Collection was modified; enumeration operation may not execute.
+            allCombinations.AddRange(from platform 
+                                     in RequestedPlatformData.Items.ToList()
+                                     select new object[] { platform, 4 });
+            
+            return from c 
+                   in allCombinations
+                   select c;
         }
     }
 }

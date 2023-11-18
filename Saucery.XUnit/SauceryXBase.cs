@@ -4,8 +4,6 @@ using Saucery.Core.Options;
 using Saucery.Core.Util;
 using System.Reflection;
 
-//[assembly: CollectionBehavior(MaxParallelThreads = 4)]
-
 namespace Saucery.XUnit;
 
 public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>
