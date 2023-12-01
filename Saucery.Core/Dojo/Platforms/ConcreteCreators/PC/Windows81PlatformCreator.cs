@@ -4,11 +4,7 @@ using Saucery.Core.RestAPI;
 
 namespace Saucery.Core.Dojo.Platforms.ConcreteCreators.PC;
 
-internal class Windows81PlatformCreator : PlatformCreator
+internal class Windows81PlatformCreator(SupportedPlatform sp) : PlatformCreator(sp)
 {
-    public Windows81PlatformCreator(SupportedPlatform sp) : base(sp)
-    {
-    }
-
     public override PlatformBase Create() => new Windows81Platform(Platform);
 }

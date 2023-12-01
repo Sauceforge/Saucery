@@ -3,10 +3,7 @@ using Saucery.Core.Tests.Issue1118.Base;
 
 namespace Saucery.Core.Tests.Issue1118;
 
-public class Fixture2 : BaseClass {
-    public Fixture2(string browser) : base(browser) {
-    }
-
+public class Fixture2(string browser) : BaseClass(browser) {
     [Test]
     //[Ignore("Only needs to exist for Issue1118 Test")]
     public void Test3() {

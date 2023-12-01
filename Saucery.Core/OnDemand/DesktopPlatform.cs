@@ -2,10 +2,6 @@
 
 namespace Saucery.Core.OnDemand;
 
-public class DesktopPlatform : SaucePlatform
+public class DesktopPlatform(string desktopPlatformName, string browser, string browserVersion, string screenResolution = "") : SaucePlatform(desktopPlatformName, browser, browserVersion, screenResolution)
 {
-    public DesktopPlatform(string desktopPlatformName, string browser, string browserVersion, string screenResolution = "") 
-        : base(desktopPlatformName, browser, browserVersion, screenResolution)
-    {
-    }
 }

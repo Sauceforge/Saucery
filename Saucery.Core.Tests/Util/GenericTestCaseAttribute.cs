@@ -5,13 +5,9 @@ using NUnit.Framework.Internal;
 namespace Saucery.Core.Tests.Util;
 
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
-public class GenericTestCaseAttribute : TestCaseAttribute, ITestBuilder
+public class GenericTestCaseAttribute(Type type, params object[] arguments) : TestCaseAttribute(arguments), ITestBuilder
 {
-    private readonly Type _type;
-    public GenericTestCaseAttribute(Type type, params object[] arguments) : base(arguments)
-    {
-        _type = type;
-    }
+    private readonly Type _type = type;
 
     IEnumerable<TestMethod> ITestBuilder.BuildFrom(IMethodInfo method, Test? suite)
     {

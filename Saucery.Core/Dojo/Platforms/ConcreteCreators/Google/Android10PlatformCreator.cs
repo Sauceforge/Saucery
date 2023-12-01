@@ -4,11 +4,7 @@ using Saucery.Core.RestAPI;
 
 namespace Saucery.Core.Dojo.Platforms.ConcreteCreators.Google;
 
-internal class Android10PlatformCreator : PlatformCreator
+internal class Android10PlatformCreator(SupportedPlatform sp) : PlatformCreator(sp)
 {
-    public Android10PlatformCreator(SupportedPlatform sp) : base(sp)
-    {
-    }
-
     public override PlatformBase Create() => new Android10Platform(Platform);
 }

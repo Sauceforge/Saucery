@@ -4,18 +4,11 @@ using Saucery.Core.Util;
 
 namespace Saucery.Core.OnDemand;
 
-public class PlatformExpander
+public class PlatformExpander(PlatformConfigurator platformConfigurator, List<SaucePlatform> platforms)
 {
-    private List<SaucePlatform> ExpandedSet { get; set; }
-    private List<SaucePlatform> Platforms { get; set; }
-    private PlatformConfigurator PlatformConfigurator { get; set; }
-
-    public PlatformExpander(PlatformConfigurator platformConfigurator, List<SaucePlatform> platforms)
-    {
-        ExpandedSet = new List<SaucePlatform>();
-        Platforms = platforms;
-        PlatformConfigurator = platformConfigurator;
-    }
+    private List<SaucePlatform> ExpandedSet { get; set; } = new List<SaucePlatform>();
+    private List<SaucePlatform> Platforms { get; set; } = platforms;
+    private PlatformConfigurator PlatformConfigurator { get; set; } = platformConfigurator;
 
     public List<SaucePlatform> Expand()
     {

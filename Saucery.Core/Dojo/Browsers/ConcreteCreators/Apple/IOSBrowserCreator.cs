@@ -4,11 +4,7 @@ using Saucery.Core.RestAPI;
 
 namespace Saucery.Core.Dojo.Browsers.ConcreteCreators.Apple;
 
-internal class IOSBrowserCreator : BrowserCreator
+internal class IOSBrowserCreator(SupportedPlatform sp) : BrowserCreator(sp)
 {
-    public IOSBrowserCreator(SupportedPlatform sp) : base(sp)
-    {
-    }
-
     public override BrowserBase? Create(string platformNameForOption, List<string> screenResolutions) => new IOSBrowser(Platform, screenResolutions, platformNameForOption);
 }

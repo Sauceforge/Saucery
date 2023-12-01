@@ -4,12 +4,8 @@ using Saucery.Core.Util;
 
 namespace Saucery.Core.Dojo.Browsers.ConcreteProducts.PC;
 
-internal class ChromeBrowser : BrowserBase, IVersion
+internal class ChromeBrowser(SupportedPlatform sp, List<string> screenResolutions, string platformNameForOption) : BrowserBase(sp, screenResolutions, platformNameForOption), IVersion
 {
-    public ChromeBrowser(SupportedPlatform sp, List<string> screenResolutions, string platformNameForOption) : base(sp, screenResolutions, platformNameForOption)
-    {
-    }
-
     public override BrowserVersion? FindVersion(SupportedPlatform sp) => BrowserVersions.Find(bv => bv.Name!.Equals(sp.latest_stable_version) || bv.Name.Equals(sp.short_version));
 
     public int MinimumVersion(SupportedPlatform sp) => sp.os switch

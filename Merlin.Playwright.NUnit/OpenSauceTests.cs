@@ -9,11 +9,8 @@ namespace Merlin.Playwright.NUnit;
 //[Parallelizable(ParallelScope.All)]
 [TestFixtureSource(typeof(RequestedPlatformData))]
 //public class OpenSauceTests : PageTest
-public partial class OpenSauceTests : SauceryBase
+public partial class OpenSauceTests(BrowserVersion browserVersion) : SauceryBase(browserVersion)
 {
-    public OpenSauceTests(BrowserVersion browserVersion) : base(browserVersion)
-    {
-    }
 
     //public OpenSauceTests()
     //{

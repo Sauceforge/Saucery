@@ -6,14 +6,9 @@ using Saucery.Core.Util;
 
 namespace Saucery.Core.Options;
 
-public class OptionFactory : IDisposable
+public class OptionFactory(BrowserVersion browserVersion) : IDisposable
 {
-    private BrowserVersion BrowserVersion { get; set; }
-
-    public OptionFactory(BrowserVersion browserVersion)
-    {
-        BrowserVersion = browserVersion;
-    }
+    private BrowserVersion BrowserVersion { get; set; } = browserVersion;
 
     public DriverOptions? CreateOptions(string testName)
     {

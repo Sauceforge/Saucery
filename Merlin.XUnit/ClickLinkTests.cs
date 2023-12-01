@@ -7,14 +7,8 @@ using Xunit.Abstractions;
 
 namespace Merlin.XUnit;
 
-public class ClickLinkTests : SauceryXBase //, IClassFixture<ConcurrencyFixture>
+public class ClickLinkTests(ITestOutputHelper output, BaseFixture baseFixture) : SauceryXBase(output, baseFixture) //, IClassFixture<ConcurrencyFixture>
 {
-    //private static ITestOutputHelper output;
-
-    public ClickLinkTests(ITestOutputHelper output, BaseFixture baseFixture) : base(output, baseFixture)
-    {
-    }
-
     [Theory]
     [MemberData(nameof(RequestedPlatformData.Platforms), MemberType = typeof(RequestedPlatformData))]
     public void ClickLinkTest(string os,

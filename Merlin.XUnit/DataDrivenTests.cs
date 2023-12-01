@@ -5,12 +5,8 @@ using Xunit.Abstractions;
 
 namespace Merlin.XUnit;
 
-public class DataDrivenTests : SauceryXBase
+public class DataDrivenTests(ITestOutputHelper output, BaseFixture baseFixture) : SauceryXBase(output, baseFixture)
 {
-    public DataDrivenTests(ITestOutputHelper output, BaseFixture baseFixture) : base(output, baseFixture)
-    {
-    }
-
     [Theory]
     [MemberData(nameof(AllCombinations))]
     public void DataDrivenTest(BrowserVersion requestedPlatform, int data)
@@ -26,12 +22,13 @@ public class DataDrivenTests : SauceryXBase
     {
         get
         {
-            List<object[]> allCombinations = new();
-
-            //.ToList() needed to avoid InvalidOperationException: Collection was modified; enumeration operation may not execute.
-            allCombinations.AddRange(from platform 
-                                     in RequestedPlatformData.Items.ToList()
-                                     select new object[] { platform, 4 });
+            List<object[]> allCombinations =
+            [
+                //.ToList() needed to avoid InvalidOperationException: Collection was modified; enumeration operation may not execute.
+                .. from platform
+                   in RequestedPlatformData.Items.ToList()
+                   select new object[] { platform, 4 },
+            ];
             
             return from c 
                    in allCombinations
