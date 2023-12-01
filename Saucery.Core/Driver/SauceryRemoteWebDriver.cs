@@ -3,11 +3,7 @@ using OpenQA.Selenium.Remote;
 
 namespace Saucery.Core.Driver;
 
-public class SauceryRemoteWebDriver : RemoteWebDriver {
-    public SauceryRemoteWebDriver(Uri remoteAddress, DriverOptions options, int secs)
-        : base(remoteAddress, options.ToCapabilities(), TimeSpan.FromSeconds(secs)) {
-    }
-
+public class SauceryRemoteWebDriver(Uri remoteAddress, DriverOptions options, int secs) : RemoteWebDriver(remoteAddress, options.ToCapabilities(), TimeSpan.FromSeconds(secs)) {
     public string GetSessionId() => SessionId.ToString();
 }
 /*

@@ -6,12 +6,9 @@ internal class By : OpenQA.Selenium.By {
     /// <summary>
     /// Specialized "By" class for jQuery selector
     /// </summary>
-    public class JQueryBy {
-        public string Selector { get; set; }
-
-        public JQueryBy(string selector) {
-            Selector = selector;
-        }
+    public class JQueryBy(string selector)
+    {
+        public string Selector { get; set; } = selector;
 
         #region ----Tree Traversal----
 

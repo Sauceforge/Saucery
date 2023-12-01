@@ -5,12 +5,8 @@ using Xunit.Abstractions;
 
 namespace ExternalMerlin.XUnit;
 
-public class DataDrivenTests : SauceryXBase
+public class DataDrivenTests(ITestOutputHelper output, BaseFixture baseFixture) : SauceryXBase(output, baseFixture)
 {
-    public DataDrivenTests(ITestOutputHelper output, BaseFixture baseFixture) : base(output, baseFixture)
-    {
-    }
-
     [Theory]
     [MemberData(nameof(AllCombinations))]
     public void DataDrivenTest(BrowserVersion requestedPlatform, int data)
@@ -26,12 +22,12 @@ public class DataDrivenTests : SauceryXBase
     {
         get
         {
-            List<object[]> allCombinations = new();
+            List<object[]> allCombinations = [];
 
             foreach (var platform in RequestedPlatformData.Items)
             {
-                allCombinations.Add(new object[] { platform, 4 });
-                allCombinations.Add(new object[] { platform, 5 });
+                allCombinations.Add([platform, 4]);
+                allCombinations.Add([platform, 5]);
             }
 
             return from c in allCombinations

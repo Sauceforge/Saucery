@@ -5,18 +5,12 @@ using Shouldly;
 
 namespace Saucery.Core.PageObjects;
 
-public class PageObjectBase {
-    internal string PageUrl;
-    internal string Name;
-    internal string Title;
+public class PageObjectBase(string url, string name, string title)
+{
+    internal string PageUrl = url;
+    internal string Name = name;
+    internal string Title = title;
     internal WebDriverWait? Wait;
-
-    public PageObjectBase(string url, string name, string title)
-    {
-        PageUrl = url;
-        Name = name;
-        Title = title;
-    }
 
     public void GetPage(WebDriver driver) {
         driver.Navigate().GoToUrl(PageUrl);

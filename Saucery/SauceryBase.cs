@@ -17,7 +17,7 @@ public class SauceryBase
 {
     private string? _testName;
     protected WebDriver? Driver;
-    private readonly BrowserVersion _browserVersion;
+    private readonly BrowserVersion? _browserVersion;
     private readonly SauceLabsStatusNotifier SauceLabsStatusNotifier;
     private readonly SauceLabsFlowController SauceLabsFlowController;
     private OptionFactory? _optionFactory;
@@ -37,12 +37,12 @@ public class SauceryBase
     [SetUp]
     public void Setup()
     {
-        _browserVersion.SetTestName(TestContext.CurrentContext.Test.Name);
-        _testName = _browserVersion.TestName;
+        _browserVersion?.SetTestName(TestContext.CurrentContext.Test.Name);
+        _testName = _browserVersion?.TestName;
 
         //DebugMessages.PrintPlatformDetails(platform);
         // set up the desired options
-        _optionFactory = new OptionFactory(_browserVersion);
+        _optionFactory = new OptionFactory(_browserVersion!);
         var opts = _optionFactory.CreateOptions(_testName!);
 
         bool driverInitialised = InitialiseDriver(opts!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);

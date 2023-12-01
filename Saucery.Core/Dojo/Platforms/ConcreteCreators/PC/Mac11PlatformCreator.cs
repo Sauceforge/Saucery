@@ -4,11 +4,7 @@ using Saucery.Core.RestAPI;
 
 namespace Saucery.Core.Dojo.Platforms.ConcreteCreators.PC;
 
-internal class Mac11PlatformCreator : PlatformCreator
+internal class Mac11PlatformCreator(SupportedPlatform sp) : PlatformCreator(sp)
 {
-    public Mac11PlatformCreator(SupportedPlatform sp) : base(sp)
-    {
-    }
-
     public override PlatformBase Create() => new Mac11Platform(Platform);
 }

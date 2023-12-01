@@ -8,11 +8,10 @@ using Shouldly;
 
 namespace ExternalMerlin.NUnit;
 
-//[Parallelizable(ParallelScope.All)]
 [TestFixtureSource(typeof(RequestedPlatformData))]
-public class NuGetIntegrationTests : SauceryBase {
-    public NuGetIntegrationTests(BrowserVersion browserVersion) : base(browserVersion) {
-    }
+//[Parallelizable(ParallelScope.Self)]
+//[Parallelizable(ParallelScope.All)]
+public class NuGetIntegrationTestsS(BrowserVersion browserVersion) : SauceryBase(browserVersion) {
 
     [Test]
     [TestCase(5)]
@@ -22,7 +21,7 @@ public class NuGetIntegrationTests : SauceryBase {
 
         guineaPigPage.TypeField(SauceryDriver(), "comments", data.ToString());
         // verify the page title is correct - this is actually checked as part of the constructor above.
-        Driver.Title.ShouldContain("I am a page title - Sauce Labs");
+        Driver?.Title.ShouldContain("I am a page title - Sauce Labs");
     }
 
     [Test]
@@ -33,6 +32,6 @@ public class NuGetIntegrationTests : SauceryBase {
         guineaPigPage.ClickLink(SauceryDriver());
 
         // verify the browser was navigated to the correct page
-        Driver.Url.ShouldContain("saucelabs.com/test-guinea-pig2.html");
+        Driver?.Url.ShouldContain("saucelabs.com/test-guinea-pig2.html");
     }
 }

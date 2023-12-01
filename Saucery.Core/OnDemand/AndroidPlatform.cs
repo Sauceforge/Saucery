@@ -2,10 +2,6 @@
 
 namespace Saucery.Core.OnDemand;
 
-public class AndroidPlatform : MobilePlatform
+public class AndroidPlatform(string longName, string longVersion = "", string deviceOrientation = "") : MobilePlatform(SauceryConstants.PLATFORM_LINUX, "", "", "", longName, longVersion, deviceOrientation)
 {
-    public AndroidPlatform(string longName, string longVersion = "", string deviceOrientation = "") 
-        : base (SauceryConstants.PLATFORM_LINUX, "", "", "", longName, longVersion, deviceOrientation)
-    {
-    }
 }

@@ -1,12 +1,7 @@
 ﻿namespace Saucery.Core.RestAPI
 {
-    public class SupportedRealDevicePlatform
+    public class SupportedRealDevicePlatform(string osVersion)
     {
-        public SupportedRealDevicePlatform(string osVersion)
-        {
-            OsVersion = osVersion;
-        }
-
         public string? AbiType { get; set; }
         public int ApiLevel { get; set; }
         public int CpuCores { get; set; }
@@ -26,7 +21,7 @@
         public string? ModelNumber { get; set; }
         public string? Name { get; set; }
         public string? Os { get; set; }
-        public string OsVersion { get; set; }
+        public string OsVersion { get; set; } = osVersion;
         public int PixelsPerPoint { get; set; }
         public int RamSize { get; set; }
         public int ResolutionHeight { get; set; }

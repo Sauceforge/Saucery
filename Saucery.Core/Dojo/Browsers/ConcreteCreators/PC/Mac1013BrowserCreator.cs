@@ -5,12 +5,8 @@ using Saucery.Core.Util;
 
 namespace Saucery.Core.Dojo.Browsers.ConcreteCreators.PC;
 
-internal class Mac1013BrowserCreator : BrowserCreator
+internal class Mac1013BrowserCreator(SupportedPlatform sp) : BrowserCreator(sp)
 {
-    public Mac1013BrowserCreator(SupportedPlatform sp) : base(sp)
-    {
-    }
-
     public override BrowserBase? Create(string platformNameForOption, List<string> screenResolutions) => Platform.api_name switch
     {
         SauceryConstants.BROWSER_CHROME => new ChromeBrowser(Platform, screenResolutions, platformNameForOption),

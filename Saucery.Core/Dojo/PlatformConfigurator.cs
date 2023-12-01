@@ -138,8 +138,8 @@ public class PlatformConfigurator
 
     public BrowserVersion? Validate(SaucePlatform requested)
     {
-        BrowserVersion? browserVersion = null;
         requested.Classify();
+        BrowserVersion? browserVersion;
         switch (requested.PlatformType)
         {
             case PlatformType.Chrome:
@@ -156,15 +156,10 @@ public class PlatformConfigurator
                 browserVersion = AvailablePlatforms.FindIOSBrowser(requested);
                 break;
             default:
-                break;
+                Console.WriteLine($"Requested Platform Not Found: {0}", requested.LongName);
+                return null;
         }
 
-        if (browserVersion == null)
-        {
-            Console.WriteLine("Requested Platform Not Found: {0}", requested.LongName);
-            return null;
-        }
-
-        return browserVersion.Classify();
+        return browserVersion?.Classify();
     }
 }

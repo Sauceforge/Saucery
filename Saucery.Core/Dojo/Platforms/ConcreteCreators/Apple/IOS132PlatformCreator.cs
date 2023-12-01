@@ -4,11 +4,7 @@ using Saucery.Core.RestAPI;
 
 namespace Saucery.Core.Dojo.Platforms.ConcreteCreators.Apple; 
 
-internal class IOS132PlatformCreator : PlatformCreator
+internal class IOS132PlatformCreator(SupportedPlatform sp) : PlatformCreator(sp)
 {
-    public IOS132PlatformCreator(SupportedPlatform sp) : base(sp)
-    {
-    }
-
     public override PlatformBase Create() => new IOS132Platform(Platform);
 }

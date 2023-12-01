@@ -7,12 +7,8 @@ using Xunit.Abstractions;
 
 namespace ExternalMerlin.XUnit;
 
-public class ClickLinkTests : SauceryXBase
+public class ClickLinkTests(ITestOutputHelper output, BaseFixture baseFixture) : SauceryXBase(output, baseFixture)
 {
-    public ClickLinkTests(ITestOutputHelper output, BaseFixture baseFixture) : base(output, baseFixture)
-    {
-    }
-
     [Theory] 
     [MemberData(nameof(RequestedPlatformData.Platforms), MemberType = typeof(RequestedPlatformData))]
     public void ClickLinkTest(string os,
