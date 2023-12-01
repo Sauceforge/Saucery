@@ -76,9 +76,9 @@ public class TestBuilder {
 
     public static WorkItem CreateWorkItem(Test test, TestExecutionContext context) {
         var work = WorkItemBuilder.CreateWorkItem(test, TestFilter.Empty, true);
-        work.InitializeContext(context);
+        work?.InitializeContext(context);
 
-        return work;
+        return work!;
     }
 
     #endregion

@@ -9,8 +9,8 @@ using Shouldly;
 namespace Merlin.NUnit;
 
 //[Parallelizable(ParallelScope.Self)]
-[Parallelizable(ParallelScope.All)]
 [TestFixtureSource(typeof(RequestedPlatformData))]
+[Parallelizable(ParallelScope.All)]
 public class OpenSauceTests : SauceryBase
 {
     public OpenSauceTests(BrowserVersion browserVersion) : base(browserVersion)

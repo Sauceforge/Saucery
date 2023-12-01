@@ -9,7 +9,7 @@ namespace Merlin.Playwright.NUnit;
 //[Parallelizable(ParallelScope.All)]
 [TestFixtureSource(typeof(RequestedPlatformData))]
 //public class OpenSauceTests : PageTest
-public class OpenSauceTests : SauceryBase
+public partial class OpenSauceTests : SauceryBase
 {
     public OpenSauceTests(BrowserVersion browserVersion) : base(browserVersion)
     {
@@ -26,7 +26,7 @@ public class OpenSauceTests : SauceryBase
         await Page.GotoAsync("https://playwright.dev");
 
         // Expect a title "to contain" a substring.
-        await Expect(Page).ToHaveTitleAsync(new Regex("Playwright"));
+        await Expect(Page).ToHaveTitleAsync(PlayWrightRegEx());
 
         // create a locator
         var getStarted = Page.GetByRole(AriaRole.Link, new() { Name = "Get started" });
@@ -38,7 +38,7 @@ public class OpenSauceTests : SauceryBase
         await getStarted.ClickAsync();
 
         // Expects the URL to contain intro.
-        await Expect(Page).ToHaveURLAsync(new Regex(".*intro"));
+        await Expect(Page).ToHaveURLAsync(IntroRegex());
     }
 
     [Test]
@@ -50,11 +50,16 @@ public class OpenSauceTests : SauceryBase
 
         var comments = Page.GetByRole(AriaRole.Textbox, new() { Name = "comments" });
 
-        await comments.TypeAsync(data.ToString());
+        await comments.FillAsync(data.ToString());
 
         // verify the page title is correct - this is actually checked as part of the constructor above.
         await Expect(Page).ToHaveTitleAsync("I am a page title - Sauce Labs");
     }
+
+    [GeneratedRegex("Playwright")]
+    private static partial Regex PlayWrightRegEx();
+    [GeneratedRegex(".*intro")]
+    private static partial Regex IntroRegex();
 
     //Needs: Meziantou.Xunit.ParallelTestFramework NuGet package
     //private override BrowserNewContextOptions ContextOptions()
