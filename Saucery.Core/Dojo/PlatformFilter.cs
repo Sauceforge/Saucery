@@ -1,9 +1,8 @@
-﻿namespace Saucery.Core.Dojo
+﻿namespace Saucery.Core.Dojo;
+
+public enum PlatformFilter
 {
-    public enum PlatformFilter
-    {
-        ALL = 0,
-        EMULATED = 1,
-        REALDEVICE = 2
-    }
+    ALL = 0,
+    EMULATED = 1,
+    REALDEVICE = 2
 }

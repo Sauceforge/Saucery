@@ -64,7 +64,7 @@ internal static class SeleniumExtensions {
             }
         }
 
-        var s = driver.ExecuteScript("return jQuery.fn.jquery").ToString();
+        _ = driver.ExecuteScript("return jQuery.fn.jquery").ToString();
     }
 
     /// <summary>

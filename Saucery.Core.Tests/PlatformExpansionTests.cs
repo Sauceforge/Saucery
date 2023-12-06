@@ -21,10 +21,10 @@ public class PlatformExpansionTests
     [Test]
     public void NumericNonNumericRangeTest()
     {
-        var platforms = new List<SaucePlatform>
-        {
+        List<SaucePlatform> platforms =
+        [
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, $"75->{SauceryConstants.BROWSER_VERSION_DEV}", SauceryConstants.SCREENRES_2560_1600)
-        };
+        ];
 
         //PlatformConfigurator configurator = new();
         PlatformExpander expander = new(PlatformConfigurator!, platforms);
@@ -36,8 +36,8 @@ public class PlatformExpansionTests
     [Test]
     public void NoExpansionTest()
     {
-        var platforms = new List<SaucePlatform>
-        {
+        List<SaucePlatform> platforms =
+        [
             //Mobile Platforms
             new AndroidPlatform("Google Pixel 6 Pro GoogleAPI Emulator", "12.0", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT),
             new IOSPlatform("iPhone 13 Pro Max Simulator", "15.4", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
@@ -51,7 +51,7 @@ public class PlatformExpansionTests
             new DesktopPlatform(SauceryConstants.PLATFORM_MAC_1015, SauceryConstants.BROWSER_SAFARI, "13"),
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_IE, "11"),
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_EDGE, "99")
-        };
+        ];
 
         PlatformExpander expander = new(PlatformConfigurator!, platforms);
         var expandedSet = expander.Expand();
@@ -61,8 +61,8 @@ public class PlatformExpansionTests
     [Test]
     public void NumericOnlyRangeTest()
     {
-        var platforms = new List<SaucePlatform>
-        {
+        List<SaucePlatform> platforms =
+        [
             //Mobile Platforms
             new AndroidPlatform("Google Pixel 6 Pro GoogleAPI Emulator", "12.0", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT),
             new IOSPlatform("iPhone 13 Pro Max Simulator", "15.4", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
@@ -75,7 +75,7 @@ public class PlatformExpansionTests
             new DesktopPlatform(SauceryConstants.PLATFORM_MAC_1015, SauceryConstants.BROWSER_SAFARI, "13"),
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_IE, "11"),
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_EDGE, "79->101")
-        };
+        ];
 
         PlatformExpander expander = new(PlatformConfigurator!, platforms);
         List<SaucePlatform> expandedSet = expander.Expand();
@@ -85,8 +85,8 @@ public class PlatformExpansionTests
     [Test]
     public void NonNumericOnlyRangeTest()
     {
-        var platforms = new List<SaucePlatform>
-        {
+        List<SaucePlatform> platforms =
+        [
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, $"{SauceryConstants.BROWSER_VERSION_LATEST_MINUS1}->{SauceryConstants.BROWSER_VERSION_LATEST_MINUS1}", SauceryConstants.SCREENRES_2560_1600), //1
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, $"{SauceryConstants.BROWSER_VERSION_LATEST}->{SauceryConstants.BROWSER_VERSION_LATEST}", SauceryConstants.SCREENRES_2560_1600),               //1
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, $"{SauceryConstants.BROWSER_VERSION_BETA}->{SauceryConstants.BROWSER_VERSION_BETA}", SauceryConstants.SCREENRES_2560_1600),                   //1
@@ -97,7 +97,7 @@ public class PlatformExpansionTests
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, $"{SauceryConstants.BROWSER_VERSION_LATEST}->{SauceryConstants.BROWSER_VERSION_DEV}", SauceryConstants.SCREENRES_2560_1600),                  //3
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, $"{SauceryConstants.BROWSER_VERSION_LATEST}->{SauceryConstants.BROWSER_VERSION_BETA}", SauceryConstants.SCREENRES_2560_1600),                 //2
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, $"{SauceryConstants.BROWSER_VERSION_BETA}->{SauceryConstants.BROWSER_VERSION_DEV}", SauceryConstants.SCREENRES_2560_1600)                     //2
-        };
+        ];
 
         PlatformExpander expander = new(PlatformConfigurator!, platforms);
         List<SaucePlatform> expandedSet = expander.Expand();
@@ -107,11 +107,11 @@ public class PlatformExpansionTests
     [Test]
     public void BadRangeTest()
     {
-        var platforms = new List<SaucePlatform>
-        {
+        List<SaucePlatform> platforms =
+        [
             //Desktop Platforms
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "75->100->latest", SauceryConstants.SCREENRES_2560_1600),
-        };
+        ];
 
         PlatformExpander expander = new(PlatformConfigurator!, platforms);
         List<SaucePlatform> expandedSet = expander.Expand();
@@ -121,11 +121,11 @@ public class PlatformExpansionTests
     [Test]
     public void MobileExpansionTest()
     {
-        var platforms = new List<SaucePlatform>
-        {
+        List<SaucePlatform> platforms =
+        [
             //Mobile Platforms - Not supported.  This should never be done
             new IOSPlatform("iPhone 13 Pro Max Simulator", "15.2->15.4", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
-        };
+        ];
 
         PlatformExpander expander = new(PlatformConfigurator!, platforms);
         List<SaucePlatform> expandedSet = expander.Expand();

@@ -75,9 +75,7 @@ public static class DojoExtensions
         if (b == null) {
             //first one
             b = BrowserFactory.CreateBrowser(sp, screenResolutions);
-            if (b != null) {
-                b.AddVersion(browsers, sp, false);
-            }
+            b?.AddVersion(browsers, sp, false);
         } else
         {
             b.AddVersion(browsers, sp, true);

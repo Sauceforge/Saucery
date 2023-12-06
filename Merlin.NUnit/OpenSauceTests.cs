@@ -4,17 +4,17 @@ using Saucery.Core.Dojo;
 using Saucery.Tests.Common.PageObjects;
 using Shouldly;
 
-[assembly: LevelOfParallelism(3)]
+[assembly: LevelOfParallelism(5)]
 
 namespace Merlin.NUnit;
 
+[TestFixture]
+[Parallelizable]
 [TestFixtureSource(typeof(RequestedPlatformData))]
-//[Parallelizable(ParallelScope.Self)]
-//[Parallelizable(ParallelScope.All)]
 public class OpenSauceTests(BrowserVersion browserVersion) : SauceryBase(browserVersion)
 {
     [Test]
-    //[TestCase(5)]
+    [TestCase(5)]
     [TestCase(4)]
     public void DataDrivenTitleTest(int data)
     {

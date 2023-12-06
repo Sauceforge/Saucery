@@ -29,6 +29,6 @@ public abstract class PlatformBase : IPlatform
         {
             PlatformVersion = sp.short_version;
         }
-        Browsers = new List<BrowserBase>();
+        Browsers = [];
     }
 }

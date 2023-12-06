@@ -1,10 +1,9 @@
-﻿namespace Saucery.Core.OnDemand
+﻿namespace Saucery.Core.OnDemand;
+
+public enum PlatformRange
 {
-    public enum PlatformRange
-    {
-        NumericOnly,
-        NumericNonNumeric,
-        NonNumericOnly,
-        Invalid
-    }
+    NumericOnly,
+    NumericNonNumeric,
+    NonNumericOnly,
+    Invalid
 }

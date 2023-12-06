@@ -61,18 +61,14 @@ public class BaseFixture : IDisposable
         }
     }
 
-    public void Dispose()
-    {
+    public void Dispose() {
         if (Driver is not null)
         {
             Driver.Quit();
             Driver.Dispose();
         }
 
-        if(OptionFactory is not null)
-        {
-            OptionFactory.Dispose();
-        }
+        OptionFactory?.Dispose();
     }
 
     public WebDriver SauceryDriver() => Driver!;

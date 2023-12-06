@@ -9,8 +9,8 @@ public class RequestedPlatformData : SauceryTestData
 {
     static RequestedPlatformData()
     {
-        var platforms = new List<SaucePlatform>
-        {
+        List<SaucePlatform> platforms =
+        [
             //Mobile Platforms
             //new AndroidPlatform("Google Pixel 6 Pro GoogleAPI Emulator", "12.0", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT),
             new IOSPlatform("iPhone 13 Pro Max Simulator", "15.4", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
@@ -29,7 +29,7 @@ public class RequestedPlatformData : SauceryTestData
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_IE, "11", SauceryConstants.SCREENRES_800_600),
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_EDGE, "99"),
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_EDGE, "99", SauceryConstants.SCREENRES_800_600)
-        };
+        ];
 
         SetPlatforms(platforms);
     }

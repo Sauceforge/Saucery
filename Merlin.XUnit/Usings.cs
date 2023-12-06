@@ -1,3 +1,3 @@
 global using Xunit;
 
-[assembly: CollectionBehavior(MaxParallelThreads = 4)]
+[assembly: CollectionBehavior(MaxParallelThreads = 5)]

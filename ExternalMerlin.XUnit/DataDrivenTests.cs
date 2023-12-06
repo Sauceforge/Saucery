@@ -24,8 +24,7 @@ public class DataDrivenTests(ITestOutputHelper output, BaseFixture baseFixture) 
         {
             List<object[]> allCombinations = [];
 
-            foreach (var platform in RequestedPlatformData.Items)
-            {
+            foreach(var platform in RequestedPlatformData.Items) {
                 allCombinations.Add([platform, 4]);
                 allCombinations.Add([platform, 5]);
             }

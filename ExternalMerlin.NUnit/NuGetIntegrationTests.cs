@@ -4,13 +4,13 @@ using Saucery.Core.Dojo;
 using Saucery.Tests.Common.PageObjects;
 using Shouldly;
 
-[assembly: LevelOfParallelism(3)]
+[assembly: LevelOfParallelism(5)]
 
 namespace ExternalMerlin.NUnit;
 
+[TestFixture]
+[Parallelizable]
 [TestFixtureSource(typeof(RequestedPlatformData))]
-//[Parallelizable(ParallelScope.Self)]
-//[Parallelizable(ParallelScope.All)]
 public class NuGetIntegrationTestsS(BrowserVersion browserVersion) : SauceryBase(browserVersion) {
 
     [Test]
