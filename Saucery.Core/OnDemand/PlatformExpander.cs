@@ -6,7 +6,7 @@ namespace Saucery.Core.OnDemand;
 
 public class PlatformExpander(PlatformConfigurator platformConfigurator, List<SaucePlatform> platforms)
 {
-    private List<SaucePlatform> ExpandedSet { get; set; } = new List<SaucePlatform>();
+    private List<SaucePlatform> ExpandedSet { get; set; } = [];
     private List<SaucePlatform> Platforms { get; set; } = platforms;
     private PlatformConfigurator PlatformConfigurator { get; set; } = platformConfigurator;
 

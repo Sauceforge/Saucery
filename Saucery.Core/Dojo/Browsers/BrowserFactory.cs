@@ -10,9 +10,9 @@ namespace Saucery.Core.Dojo.Browsers;
 public class BrowserFactory
 {
     public static BrowserBase? CreateBrowser(SupportedPlatform sp, List<string> screenResolutions) => sp.IsAndroidPlatform()
-            ? new AndroidBrowserCreator(sp).Create("Android", null)
+            ? new AndroidBrowserCreator(sp).Create("Android", null!)
             : sp.IsIOSPlatform()
-            ? new IOSBrowserCreator(sp).Create("iOS", null)
+            ? new IOSBrowserCreator(sp).Create("iOS", null!)
             : sp.os switch
             {
                 SauceryConstants.PLATFORM_WINDOWS_11 => new Windows11BrowserCreator(sp).Create("Windows 11", screenResolutions),

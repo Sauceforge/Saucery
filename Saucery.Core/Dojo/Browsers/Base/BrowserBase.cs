@@ -37,7 +37,7 @@ public abstract class BrowserBase : IBrowser
             RecommendedAppiumVersion = sp.recommended_backend_version;
         }
         ScreenResolutions = screenResolutions;
-        BrowserVersions = new List<BrowserVersion>();
+        BrowserVersions = [];
     }
 
     public abstract BrowserVersion? FindVersion(SupportedPlatform sp);
