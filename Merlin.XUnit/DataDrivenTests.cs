@@ -1,4 +1,5 @@
-﻿using Saucery.Core.Dojo;
+﻿using OpenQA.Selenium;
+using Saucery.Core.Dojo;
 using Saucery.Tests.Common.PageObjects;
 using Saucery.XUnit;
 using Xunit.Abstractions;
@@ -22,16 +23,14 @@ public class DataDrivenTests(ITestOutputHelper output, BaseFixture baseFixture) 
     {
         get
         {
-            List<object[]> allCombinations =
-            [
-                //.ToList() needed to avoid InvalidOperationException: Collection was modified; enumeration operation may not execute.
-                .. from platform
-                   in RequestedPlatformData.Items.ToList()
-                   select new object[] { platform, 4 },
-            ];
-            
-            return from c 
-                   in allCombinations
+            List<object[]> allCombinations = [];
+
+            foreach(var platform in RequestedPlatformData.Items) {
+                allCombinations.Add([platform, 4]);
+                allCombinations.Add([platform, 5]);
+            }
+
+            return from c in allCombinations
                    select c;
         }
     }
