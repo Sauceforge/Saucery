@@ -9,7 +9,7 @@ internal class RestAPILimitsChecker {
 
     public RestAPILimitsChecker() {
         _response = new();
-        _headers = new Dictionary<string, string>();
+        _headers = [];
     }
 
     public void Update(RestResponse response) {
