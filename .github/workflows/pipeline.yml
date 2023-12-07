@@ -67,7 +67,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: unit-test-results
-        path: ${{ env.UNIT_COVERAGE_FILENAME }}
+        path: ${{ env.UT_PROJECT }}/${{ env.UNIT_COVERAGE_FILENAME }}
 
   xunit-integration-tests:
     runs-on: ubuntu-latest
@@ -99,7 +99,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: xunit-integration-test-results
-        path: ${{ env.XUNIT_INTEGRATION_COVERAGE_FILENAME }}
+        path: ${{ env.M_XUNIT_PROJECT }}/${{ env.XUNIT_INTEGRATION_COVERAGE_FILENAME }}
 
   nunit-integration-tests:
     runs-on: ubuntu-latest
@@ -130,8 +130,8 @@ jobs:
     - name: Publish Artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: nunit--integration-test-results
-        path: ${{ env.NUNIT_INTEGRATION_COVERAGE_FILENAME }}
+        name: nunit-integration-test-results
+        path: ${{ env.M_NUNIT_PROJECT }}/${{ env.NUNIT_INTEGRATION_COVERAGE_FILENAME }}
 
   xunit-external-tests:
     runs-on: ubuntu-latest
