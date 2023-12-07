@@ -17,9 +17,12 @@ env:
   XUNIT_INT_DIR: Merlin.XUnit
   UT_PROJECT: Saucery.Core.Tests/Saucery.Core.Tests.csproj           # full path to your unit test project file
   M_NUNIT_PROJECT: Merlin.NUnit/Merlin.NUnit.csproj                  # full path to nunit internal integration test project file
+  
   EM_NUNIT_PROJECT: ExternalMerlin.NUnit/ExternalMerlin.NUnit.csproj # full path to nunit external integration test project file
+  
   M_XUNIT_PROJECT: Merlin.XUnit/Merlin.XUnit.csproj                  # full path to xunit internal integration test project file
   EM_XUNIT_PROJECT: ExternalMerlin.XUnit/ExternalMerlin.XUnit.csproj # full path to xunit external integration test project file
+  
   SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
   SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
   CONFIG: Release
@@ -99,7 +102,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: xunit-integration-test-results
-        path: ${{ env.M_XUNIT_PROJECT }}/${{ env.XUNIT_INTEGRATION_COVERAGE_FILENAME }}
+        path: ${{ env.XUNIT_INT_DIR }}/${{ env.XUNIT_INTEGRATION_COVERAGE_FILENAME }}
 
   nunit-integration-tests:
     runs-on: ubuntu-latest
@@ -131,7 +134,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: nunit-integration-test-results
-        path: ${{ env.M_NUNIT_PROJECT }}/${{ env.NUNIT_INTEGRATION_COVERAGE_FILENAME }}
+        path: ${{ env.NUNIT_INT_DIR }}/${{ env.NUNIT_INTEGRATION_COVERAGE_FILENAME }}
 
   xunit-external-tests:
     runs-on: ubuntu-latest
@@ -185,19 +188,19 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: unit-test-results
-        path: ${{ env.UNIT_COVERAGE_FILENAME }}
+        path: ${{ env.UT_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}
 
     - name: Download xunit-integration-test results
       uses: actions/download-artifact@v3
       with:
         name: xunit-integration-test-results
-        path: ${{ env.XUNIT_INTEGRATION_COVERAGE_FILENAME }}
+        path: ${{ env.XUNIT_INT_DIR }}/${{ env.XUNIT_INTEGRATION_COVERAGE_FILENAME }}
 
     - name: Download nunit-integration-test results
       uses: actions/download-artifact@v3
       with:
         name: nunit-integration-test-results
-        path: ${{ env.NUNIT_INTEGRATION_COVERAGE_FILENAME }}
+        path: ${{ env.NUNIT_INT_DIR }}/${{ env.NUNIT_INTEGRATION_COVERAGE_FILENAME }}
 
     - name: ReportGenerator
       uses: danielpalme/ReportGenerator-GitHub-Action@5.2.0
