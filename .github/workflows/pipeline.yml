@@ -175,7 +175,8 @@ jobs:
 
   generate-report:
     runs-on: ubuntu-latest
-    needs: [build, xunit-integration-tests, nunit-integration-tests, xunit-external-tests, nunit-external-tests]
+    #needs: [build, xunit-integration-tests, nunit-integration-tests, xunit-external-tests, nunit-external-tests]
+    needs: build
 
     steps:
     - name: Download unit-test results
