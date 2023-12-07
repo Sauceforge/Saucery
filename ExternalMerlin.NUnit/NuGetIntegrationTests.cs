@@ -4,7 +4,7 @@ using Saucery.Core.Dojo;
 using Saucery.Tests.Common.PageObjects;
 using Shouldly;
 
-[assembly: LevelOfParallelism(5)]
+[assembly: LevelOfParallelism(4)]
 
 namespace ExternalMerlin.NUnit;
 
