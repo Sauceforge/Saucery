@@ -67,7 +67,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: unit-test-results
-        path: ${{ env.UT_PROJECT }}/${{ env.UNIT_COVERAGE_FILENAME }}
+        path: ${{ env.UT_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}
 
   xunit-integration-tests:
     runs-on: ubuntu-latest
