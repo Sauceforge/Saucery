@@ -17,7 +17,7 @@ env:
   XUNIT_INT_DIR: Merlin.XUnit
   UT_PROJECT: Saucery.Core.Tests/Saucery.Core.Tests.csproj           # full path to your unit test project file
   M_NUNIT_PROJECT: Merlin.NUnit/Merlin.NUnit.csproj                  # full path to nunit internal integration test project file
-  EM_NUNIT_PROJECT: ExternalMerlin.NUnit/ExternalMerlin.NUnit.csproj # full path to nunit external integration test project file  
+  EM_NUNIT_PROJECT: ExternalMerlin.NUnit/ExternalMerlin.NUnit.csproj # full path to nunit external integration test project file
   M_XUNIT_PROJECT: Merlin.XUnit/Merlin.XUnit.csproj                  # full path to xunit internal integration test project file
   EM_XUNIT_PROJECT: ExternalMerlin.XUnit/ExternalMerlin.XUnit.csproj # full path to xunit external integration test project file
   SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
@@ -155,7 +155,7 @@ jobs:
 
   nunit-external-tests:
     runs-on: ubuntu-latest
-    needs: xunit-external-tests
+    needs: nunit-integration-tests
 
     steps:
     - name: Checkout Code
