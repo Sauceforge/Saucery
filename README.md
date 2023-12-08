@@ -14,8 +14,10 @@ The DesiredOption Factory for SauceLabs
 
 ### Download statistics
 ![Nuget](https://img.shields.io/nuget/dt/Saucery.svg?label=Saucery%40nuget&style=for-the-badge)
+
 ![Nuget](https://img.shields.io/nuget/dt/Saucery.XUnit.svg?label=Saucery.XUnit%40nuget&style=for-the-badge)
 
 ### Trends
 [Nuget downloads](https://nugettrends.com/packages?months=24&ids=Saucery&ids=Saucery.XUnit)
+
 [GitHub stars](https://star-history.com/#sauceforge/Saucery)
