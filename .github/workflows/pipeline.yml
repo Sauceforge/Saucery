@@ -183,7 +183,9 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: unit-test-results
-        path: ${{ github.workspace }}/${{ env.UT_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}
+        #path: ${{ github.workspace }}/${{ env.UT_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}
+    - name: Display structure of downloaded files
+      run: ls -R
 
     # - name: Download xunit-integration-test results
     #   uses: actions/download-artifact@v3
@@ -201,7 +203,8 @@ jobs:
       uses: danielpalme/ReportGenerator-GitHub-Action@5.2.0
       with:
         #reports: ${{ env.UT_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }};${{ env.NUNIT_INT_DIR }}/${{ env.NUNIT_INTEGRATION_COVERAGE_FILENAME }};${{ env.XUNIT_INT_DIR }}/${{ env.XUNIT_INTEGRATION_COVERAGE_FILENAME }} # REQUIRED # The coverage reports that should be parsed (separated by semicolon). Globbing is supported.
-        reports: ${{ github.workspace }}/${{ env.UT_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }} # REQUIRED # The coverage reports that should be parsed (separated by semicolon). Globbing is supported.
+        #reports: ${{ github.workspace }}/${{ env.UT_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }} # REQUIRED # The coverage reports that should be parsed (separated by semicolon). Globbing is supported.
+        reports: ${{ env.UNIT_COVERAGE_FILENAME }} # REQUIRED # The coverage reports that should be parsed (separated by semicolon). Globbing is supported.
         targetdir: 'coveragereport' # REQUIRED # The directory where the generated report should be saved.
         reporttypes: 'HtmlInline;Cobertura' # The output formats and scope (separated by semicolon) Values: Badges, Clover, Cobertura, CsvSummary, Html, HtmlChart, HtmlInline, HtmlInline_AzurePipelines, HtmlInline_AzurePipelines_Dark, HtmlSummary, JsonSummary, Latex, LatexSummary, lcov, MarkdownSummary, MHtml, PngChart, SonarQube, TeamCitySummary, TextSummary, Xml, XmlSummary
 
