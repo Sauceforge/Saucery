@@ -183,7 +183,7 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: unit-test-results
-        path: ${{ env.UT_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}
+        path: ${{ github.workspace }}/${{ env.UT_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}
 
     # - name: Download xunit-integration-test results
     #   uses: actions/download-artifact@v3
