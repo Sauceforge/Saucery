@@ -177,6 +177,7 @@ public static class DojoExtensions
         var platformToSearchFor = $"{sp.Os} {sp.LongVersion}";
         platform = platformToSearchFor switch
         {
+            "iOS 17.0" => platforms.GetPlatform<IOS17Platform>()[0],
             "iOS 16.2" => platforms.GetPlatform<IOS162Platform>()[0],
             "iOS 16.1" => platforms.GetPlatform<IOS161Platform>()[0],
             "iOS 16.0" => platforms.GetPlatform<IOS16Platform>()[0],
