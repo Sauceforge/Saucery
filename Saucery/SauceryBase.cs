@@ -88,22 +88,11 @@ public class SauceryBase
         SauceLabsFlowController.ControlFlow();
         try
         {
-            //TODO: Why does IOSDriver not work with NUnit?  SessionId not set
-            if (_optionFactory!.IsApple())
-            {
-                Driver = new IOSDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, TimeSpan.FromSeconds(waitSecs), AppiumClientConfig);
-            }
-            else
-            {
-                if (_optionFactory!.IsAndroid())
-                {
-                    Driver = new AndroidDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, TimeSpan.FromSeconds(waitSecs), AppiumClientConfig);
-                }
-                else
-                {
-                    Driver = new SauceryRemoteWebDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, waitSecs);
-                }
-            }
+            Driver = _optionFactory!.IsApple()
+                ? new IOSDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, TimeSpan.FromSeconds(waitSecs), AppiumClientConfig)
+                : _optionFactory!.IsAndroid()
+                    ? new AndroidDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, TimeSpan.FromSeconds(waitSecs), AppiumClientConfig)
+                    : new SauceryRemoteWebDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, waitSecs);
 
             return true;
         }

@@ -14,7 +14,6 @@ internal abstract class BaseOptions {
         {
             { SauceryConstants.SAUCE_USERNAME_CAPABILITY, Enviro.SauceUserName! },
             { SauceryConstants.SAUCE_ACCESSKEY_CAPABILITY, Enviro.SauceApiKey! },
-            //{ SauceryConstants.SELENIUM_VERSION_CAPABILITY, SauceryConstants.LATEST_SELENIUM_VERSION },
             //This sets the Session column
             { SauceryConstants.SAUCE_SESSIONNAME_CAPABILITY, testName },
             //This sets the Build column
