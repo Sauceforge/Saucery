@@ -15,8 +15,8 @@ internal class ChromeBrowserOptions : BaseOptions {
         var o = new ChromeOptions
         {
             BrowserVersion = browserVersion.Name,
-            PlatformName = browserVersion.Os,
-            UseSpecCompliantProtocol = true
+            PlatformName = browserVersion.Os //,
+            //UseSpecCompliantProtocol = true
         };
 
         if (!string.IsNullOrEmpty(browserVersion.ScreenResolution))
