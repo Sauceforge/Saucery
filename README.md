@@ -9,16 +9,15 @@ Saucery
     
 <b>Automated testing made more awesome</b>
 
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)](https://raw.githubusercontent.com/SauceForge/Saucery/master/LICENSE)
 [![CI-CD](https://img.shields.io/github/actions/workflow/status/SauceForge/Saucery/pipeline.yml?style=for-the-badge)](https://github.com/SauceForge/Saucery/actions/workflows/pipeline.yml)
 
 </div>
 
-*Saucery* handles all the plumbing required to talk to SauceLabs making writing tests a breeze.
-
-Saucery comes in multiple flavors supporting commonly used test frameworks.
+*Saucery* handles all the plumbing required to integrate with SauceLabs, making writing tests a breeze. Saucery comes in multiple flavors supporting popular test frameworks.
 
 ### Dog food Status
-We test Saucery on SauceLabs ourselves!
+We test Saucery itself on SauceLabs!
 
 [![Build Status](https://app.saucelabs.com/buildstatus/saucefauge)](https://app.saucelabs.com/u/saucefauge)
 
@@ -43,6 +42,7 @@ We test Saucery on SauceLabs ourselves!
 
 ### Trends
 [Nuget downloads](https://nugettrends.com/packages?months=24&ids=Saucery&ids=Saucery.XUnit)
+
 [GitHub stars](https://star-history.com/#sauceforge/Saucery)
 
 ## Contact
