@@ -42,10 +42,10 @@ We test Saucery itself on SauceLabs!
 ![Nuget](https://img.shields.io/nuget/dt/Saucery.XUnit.svg?label=Saucery.XUnit%40nuget&style=for-the-badge)
 
 ### Trends
-[Nuget downloads](https://nugettrends.com/packages?months=24&ids=Saucery&ids=Saucery.XUnit)
+[Nuget downloads](https://nugettrends.com/packages?months=24&ids=Saucery&ids=Saucery.XUnit)  
 [GitHub stars](https://star-history.com/#sauceforge/Saucery)
 
 ## Contact
 
-Author: Andrew Gray
+Author: Andrew Gray  
 Twitter: [@agrayz](https://twitter.com/agrayz) 
