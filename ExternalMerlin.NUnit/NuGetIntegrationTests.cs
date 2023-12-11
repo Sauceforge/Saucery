@@ -11,7 +11,7 @@ namespace ExternalMerlin.NUnit;
 [TestFixture]
 [Parallelizable]
 [TestFixtureSource(typeof(RequestedPlatformData))]
-public class NuGetIntegrationTestsS(BrowserVersion browserVersion) : SauceryBase(browserVersion) {
+public class NuGetIntegrationTests(BrowserVersion browserVersion) : SauceryBase(browserVersion) {
 
     [Test]
     [TestCase(5)]

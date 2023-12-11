@@ -24,6 +24,131 @@ We test Saucery itself on SauceLabs!
 
 ## Getting Started
 
+Saucery takes care of the plumbing required to talk to SauceLabs, so you only need to tell Saucery *what* you want. Saucery takes care of the *how*.
+
+### NUnit
+
+1. In your solution create a simple class library.
+1. Add a NuGet Reference to [Saucery](https://www.nuget.org/packages/Saucery).
+1. Start with the following template:
+
+```
+using NUnit.Framework;
+using Saucery;
+using Saucery.Core.Dojo;
+using Saucery.Tests.Common.PageObjects;
+using Shouldly;
+
+[assembly: LevelOfParallelism(4)]
+
+namespace ExternalMerlin.NUnit;
+
+[TestFixture]
+[Parallelizable]
+[TestFixtureSource(typeof(RequestedPlatformData))]
+public class NuGetIntegrationTests(BrowserVersion browserVersion) : SauceryBase(browserVersion) 
+{
+    [Test]
+    [TestCase(5)]
+    [TestCase(4)]
+    public void DataDrivenTitleTest(int data) {
+        var guineaPigPage = new GuineaPigPage(SauceryDriver(), "https://saucelabs.com/");
+
+        guineaPigPage.TypeField(SauceryDriver(), "comments", data.ToString());
+        Driver?.Title.ShouldContain("I am a page title - Sauce Labs");
+    }
+
+    [Test]
+    public void ClickLinkTest() {
+        var guineaPigPage = new GuineaPigPage(SauceryDriver(), "https://saucelabs.com/");
+    
+        // find and click the link on the page
+        guineaPigPage.ClickLink(SauceryDriver());
+
+        // verify the browser was navigated to the correct page
+        Driver?.Url.ShouldContain("saucelabs.com/test-guinea-pig2.html");
+    }
+}
+
+```
+
+The above code will run 3 unit tests (1 ClickLink test and 2 DataDrivenTitle tests) on all the platforms you specify, in parallel.
+
+The Level of Parallelism is determined by the number of parallel threads you have paid for in your SauceLabs account.
+
+We recommend 1 less than your limit. Our OpenSauce account has 5 so we specify 4 in our internal testing.
+
+Parallism is optional so you can exclude the `[assembly: LevelOfParallelism(4)]` and `[Parallelizable]` lines if you wish.
+
+The other lines are mandatory. Let's break this down.
+
+```
+[TestFixture]
+[Parallelizable]
+[TestFixtureSource(typeof(RequestedPlatformData))]
+public class NuGetIntegrationTests(BrowserVersion browserVersion) : SauceryBase(browserVersion)
+```
+
+You can call the class what you like but it must take a `BrowserVersion` as a parameter and subclass `SauceryBase`.
+
+The tests themselves, of course, will be specific to your System Under Test. The ones specified are only provided as examples.
+
+`[TestFixtureSource(typeof(RequestedPlatformData))]` is how you tell Saucery what platforms you want to test on. You need to specify a class to do that. In this example it called `RequestedPlatformData` but you can call it anything you like.
+
+Let's look at what it should contain.
+
+```
+using Saucery.Core.DataSources;
+using Saucery.Core.OnDemand;
+using Saucery.Core.OnDemand.Base;
+using Saucery.Core.Util;
+
+namespace Merlin.NUnit;
+
+public class RequestedPlatformData : SauceryTestData
+{
+    static RequestedPlatformData()
+    {
+        var platforms = new List<SaucePlatform>
+        {
+            //Mobile Platforms
+            new IOSPlatform("iPhone 14 Pro Max Simulator", "16.2", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
+
+            //Desktop Platforms
+            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "100->119", SauceryConstants.SCREENRES_2560_1600),
+            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_VERSION_LATEST, SauceryConstants.SCREENRES_2560_1600),
+            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_81, SauceryConstants.BROWSER_CHROME, "100", SauceryConstants.SCREENRES_800_600),
+            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_7, SauceryConstants.BROWSER_FIREFOX, "78"),
+            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_7, SauceryConstants.BROWSER_FIREFOX, "78", SauceryConstants.SCREENRES_800_600),
+            new DesktopPlatform(SauceryConstants.PLATFORM_MAC_11, SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_VERSION_LATEST),
+            new DesktopPlatform(SauceryConstants.PLATFORM_MAC_12, SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_VERSION_LATEST),
+            new DesktopPlatform(SauceryConstants.PLATFORM_MAC_13, SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_VERSION_LATEST),
+            new DesktopPlatform(SauceryConstants.PLATFORM_MAC_1015, SauceryConstants.BROWSER_SAFARI, "16", SauceryConstants.SCREENRES_800_600),
+            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_IE, "11"),
+            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_IE, "11", SauceryConstants.SCREENRES_800_600),
+            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_EDGE, "99"),
+            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_EDGE, "99", SauceryConstants.SCREENRES_800_600)
+        };
+
+        SetPlatforms(platforms);
+    }
+}
+```
+
+
+The `List<SaucePlatform>` is what you will specify. The rest of the class is mandatory. Check out `SauceryConstants` for all the platform, browser and screenres enums.
+
+### XUnit
+
+1. In your solution create a simple class library.
+1. Add a NuGet Reference to [Saucery.XUnit](https://www.nuget.org/packages/saucery.xunit)
+1. Start with the following template:
+
+
+```
+
+```
+
 
 
 ## Flavors
