@@ -146,10 +146,93 @@ The `List<SaucePlatform>` is what you will specify. The rest of the class is man
 
 
 ```
+using Saucery.Core.Dojo;
+using Saucery.Tests.Common.PageObjects;
+using Saucery.XUnit;
+using Xunit.Abstractions;
 
+namespace ExternalMerlin.XUnit;
+
+public class DataDrivenTests(ITestOutputHelper output, BaseFixture baseFixture) : SauceryXBase(output, baseFixture)
+{
+    [Theory]
+    [MemberData(nameof(AllCombinations))]
+    public void DataDrivenTest(BrowserVersion requestedPlatform, int data)
+    {
+        InitialiseDriver(requestedPlatform);
+
+        var guineaPigPage = new GuineaPigPage(BaseFixture.SauceryDriver(), "https://saucelabs.com/");
+
+        guineaPigPage.TypeField(BaseFixture.SauceryDriver(), "comments", data.ToString());
+    }
+
+    public static IEnumerable<object[]> AllCombinations
+    {
+        get
+        {
+            List<object[]> allCombinations = [];
+
+            foreach(var platform in RequestedPlatformData.Items) {
+                allCombinations.Add([platform, 4]);
+                allCombinations.Add([platform, 5]);
+            }
+
+            return from c in allCombinations
+                   select c;
+        }
+    }
+}
 ```
 
+The above code will run 2 unit tests (2 DataDrivenTitle tests) on all the platforms you specify.
 
+Parallelism in XUnit is currently achieved by having tests in another TestFixture.
+
+The other lines are mandatory. Let's break this down.
+
+```
+public class DataDrivenTests(ITestOutputHelper output, BaseFixture baseFixture) : SauceryXBase(output, baseFixture)
+```
+
+Your class must subclass SauceryXBase and pass an ITestOutputHelper and a BaseFixture. Saucery will take care of the rest.
+
+The tests themselves, of course, will be specific to your System Under Test. The ones specified are only provided as examples.
+
+You need to specify a class to tell Saucery what platforms you want to test on. In this example it called `RequestedPlatformData` but you can call it anything you like.
+
+Let's look at what it should contain.
+
+```
+using Saucery.Core.DataSources;
+using Saucery.Core.Dojo;
+using Saucery.Core.OnDemand;
+using Saucery.Core.OnDemand.Base;
+using Saucery.Core.Util;
+
+namespace ExternalMerlin.XUnit;
+
+public class RequestedPlatformData : SauceryTestData
+{
+    static RequestedPlatformData()
+    {
+        List<SaucePlatform> platforms =
+        [
+            //Mobile Platforms
+            new IOSPlatform("iPhone 14 Pro Max Simulator", "16.2", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
+
+            //Desktop Platforms
+            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "75", SauceryConstants.SCREENRES_2560_1600),
+            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_CHROME, "76", SauceryConstants.SCREENRES_2560_1600)
+        ];
+
+        SetPlatforms(platforms);
+    }
+
+    public static IEnumerable<BrowserVersion> Items => BrowserVersions!.Select(x => x).AsEnumerable();
+}
+```
+
+The `List<SaucePlatform>` is what you will specify. The rest of the class is mandatory. Check out `SauceryConstants` for all the platform, browser and screenres enums.
 
 ## Flavors
 
