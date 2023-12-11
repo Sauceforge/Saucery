@@ -26,6 +26,8 @@ We test Saucery itself on SauceLabs!
 
 Saucery takes care of the plumbing required to talk to SauceLabs, so you only need to tell Saucery *what* you want. Saucery takes care of the *how*.
 
+Your tests, of course, will be specific to your System Under Test. The ones specified below are only provided as examples only.
+
 ### NUnit
 
 1. In your solution create a simple class library.
@@ -80,7 +82,7 @@ We recommend 1 less than your limit. Our OpenSauce account has 5 so we specify 4
 
 Parallism is optional so you can exclude the `[assembly: LevelOfParallelism(4)]` and `[Parallelizable]` lines if you wish.
 
-The other lines are mandatory. Let's break this down.
+The other lines are mandatory. Let's break the key lines down.
 
 ```
 [TestFixture]
@@ -91,9 +93,7 @@ public class NuGetIntegrationTests(BrowserVersion browserVersion) : SauceryBase(
 
 You can call the class what you like but it must take a `BrowserVersion` as a parameter and subclass `SauceryBase`.
 
-The tests themselves, of course, will be specific to your System Under Test. The ones specified are only provided as examples.
-
-`[TestFixtureSource(typeof(RequestedPlatformData))]` is how you tell Saucery what platforms you want to test on. You need to specify a class to do that. In this example it called `RequestedPlatformData` but you can call it anything you like.
+`[TestFixtureSource(typeof(RequestedPlatformData))]` is how you tell Saucery what platforms you want to test on. You need to specify a class to do that. In this example its called `RequestedPlatformData` but you can call it anything you like.
 
 Let's look at what it should contain.
 
@@ -103,32 +103,22 @@ using Saucery.Core.OnDemand;
 using Saucery.Core.OnDemand.Base;
 using Saucery.Core.Util;
 
-namespace Merlin.NUnit;
+namespace ExternalMerlin.NUnit;
 
 public class RequestedPlatformData : SauceryTestData
 {
     static RequestedPlatformData()
     {
-        var platforms = new List<SaucePlatform>
-        {
+        List<SaucePlatform> platforms =
+        [
             //Mobile Platforms
+            //new AndroidPlatform("Google Pixel 8 Pro GoogleAPI Emulator", "14.0", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT),
             new IOSPlatform("iPhone 14 Pro Max Simulator", "16.2", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
 
             //Desktop Platforms
-            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "100->119", SauceryConstants.SCREENRES_2560_1600),
-            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_VERSION_LATEST, SauceryConstants.SCREENRES_2560_1600),
-            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_81, SauceryConstants.BROWSER_CHROME, "100", SauceryConstants.SCREENRES_800_600),
-            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_7, SauceryConstants.BROWSER_FIREFOX, "78"),
-            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_7, SauceryConstants.BROWSER_FIREFOX, "78", SauceryConstants.SCREENRES_800_600),
-            new DesktopPlatform(SauceryConstants.PLATFORM_MAC_11, SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_VERSION_LATEST),
-            new DesktopPlatform(SauceryConstants.PLATFORM_MAC_12, SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_VERSION_LATEST),
-            new DesktopPlatform(SauceryConstants.PLATFORM_MAC_13, SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_VERSION_LATEST),
-            new DesktopPlatform(SauceryConstants.PLATFORM_MAC_1015, SauceryConstants.BROWSER_SAFARI, "16", SauceryConstants.SCREENRES_800_600),
-            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_IE, "11"),
-            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_IE, "11", SauceryConstants.SCREENRES_800_600),
-            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_EDGE, "99"),
-            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_EDGE, "99", SauceryConstants.SCREENRES_800_600)
-        };
+            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "75"),
+            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_CHROME, "76", SauceryConstants.SCREENRES_2560_1600)
+        ];
 
         SetPlatforms(platforms);
     }
@@ -186,19 +176,17 @@ public class DataDrivenTests(ITestOutputHelper output, BaseFixture baseFixture) 
 
 The above code will run 2 unit tests (2 DataDrivenTitle tests) on all the platforms you specify.
 
-Parallelism in XUnit is currently achieved by having tests in another TestFixture.
+Parallelism in XUnit is currently achieved by having tests in multiple TestFixtures.
 
-The other lines are mandatory. Let's break this down.
+Let's look at the key line.
 
 ```
 public class DataDrivenTests(ITestOutputHelper output, BaseFixture baseFixture) : SauceryXBase(output, baseFixture)
 ```
 
-Your class must subclass SauceryXBase and pass an ITestOutputHelper and a BaseFixture. Saucery will take care of the rest.
+Your class must subclass `SauceryXBase` and pass an `ITestOutputHelper` and a `BaseFixture`. SauceryX will take care of the rest.
 
-The tests themselves, of course, will be specific to your System Under Test. The ones specified are only provided as examples.
-
-You need to specify a class to tell Saucery what platforms you want to test on. In this example it called `RequestedPlatformData` but you can call it anything you like.
+You need to specify a class to tell SauceryX what platforms you want to test on. In this example its called `RequestedPlatformData` but you can call it anything you like.
 
 Let's look at what it should contain.
 
@@ -221,7 +209,7 @@ public class RequestedPlatformData : SauceryTestData
             new IOSPlatform("iPhone 14 Pro Max Simulator", "16.2", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
 
             //Desktop Platforms
-            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "75", SauceryConstants.SCREENRES_2560_1600),
+            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "75"),
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_CHROME, "76", SauceryConstants.SCREENRES_2560_1600)
         ];
 
@@ -256,4 +244,4 @@ The `List<SaucePlatform>` is what you will specify. The rest of the class is man
 ## Contact
 
 Author: Andrew Gray  
-Twitter: [@agrayz](https://twitter.com/agrayz) 
+Twitter: [@agrayz](https://twitter.com/agrayz)
