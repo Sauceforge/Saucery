@@ -1,5 +1,4 @@
 using Saucery.Core.Dojo;
-using Saucery.Core.OnDemand;
 using Saucery.Tests.Common.PageObjects;
 using Saucery.XUnit;
 using Shouldly;
@@ -9,26 +8,11 @@ namespace ExternalMerlin.XUnit;
 
 public class ClickLinkTests(ITestOutputHelper output, BaseFixture baseFixture) : SauceryXBase(output, baseFixture)
 {
-    [Theory] 
-    [MemberData(nameof(RequestedPlatformData.Platforms), MemberType = typeof(RequestedPlatformData))]
-    public void ClickLinkTest(string os,
-                              string platformNameForOption,
-                              string browserName,
-                              string name,
-                              string automationBackend,
-                              string deviceName,
-                              string recommendedAppiumVersion,
-                              List<string> supportedBackendVersions,
-                              List<string> deprecatedBackendVersions,
-                              string testName,
-                              string deviceOrientation,
-                              string screenResolution,
-                              PlatformType platformType,
-                              List<string> screenResolutions)
+    [Theory]
+    [MemberData(nameof(AllPlatforms))]
+    public void ClickLinkTest(BrowserVersion requestedPlatform)
     {
-        InitialiseDriver(new BrowserVersion(os, platformNameForOption, browserName, name, automationBackend, deviceName, recommendedAppiumVersion,
-                                            supportedBackendVersions, deprecatedBackendVersions, testName, deviceOrientation, screenResolution,
-                                            platformType, screenResolutions));
+        InitialiseDriver(requestedPlatform);
 
         var guineaPigPage = new GuineaPigPage(BaseFixture.SauceryDriver(), "https://saucelabs.com/");
 
@@ -36,6 +20,21 @@ public class ClickLinkTests(ITestOutputHelper output, BaseFixture baseFixture) :
 
         // verify the browser was navigated to the correct page
         BaseFixture.Driver!.Url.ShouldContain("saucelabs.com/test-guinea-pig2.html");
+    }
+
+    public static IEnumerable<object[]> AllPlatforms
+    {
+        get
+        {
+            List<object[]> allPlatforms = [];
+
+            foreach(var platform in RequestedPlatformData.Items) {
+                allPlatforms.Add([platform]);
+            }
+
+            return from c in allPlatforms
+                   select c;
+        }
     }
 }
 /*
