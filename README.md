@@ -14,7 +14,7 @@ Saucery
 
 </div>
 
-*Saucery* handles all the plumbing required to integrate with SauceLabs, making writing tests a breeze. Saucery comes in multiple flavors supporting popular test frameworks.
+Saucery handles all the plumbing required to integrate with SauceLabs, making writing tests a breeze. Saucery comes in multiple flavors supporting popular test frameworks.
 
 ### Dog food Status
 We test Saucery itself on SauceLabs!
@@ -74,7 +74,7 @@ public class NuGetIntegrationTests(BrowserVersion browserVersion) : SauceryBase(
 
 ```
 
-The above code will run 3 unit tests (1 ClickLink test and 2 DataDrivenTitle tests) on all the platforms you specify, in parallel.
+The above code will run *3* unit tests (1 ClickLink test and 2 DataDrivenTitle tests) on *all* the platforms you specify, in parallel.
 
 The Level of Parallelism is determined by the number of parallel threads you have paid for in your SauceLabs account.
 
@@ -141,6 +141,8 @@ using Saucery.Tests.Common.PageObjects;
 using Saucery.XUnit;
 using Xunit.Abstractions;
 
+[assembly: CollectionBehavior(MaxParallelThreads = 5)]
+
 namespace ExternalMerlin.XUnit;
 
 public class DataDrivenTests(ITestOutputHelper output, BaseFixture baseFixture) : SauceryXBase(output, baseFixture)
@@ -174,11 +176,15 @@ public class DataDrivenTests(ITestOutputHelper output, BaseFixture baseFixture) 
 }
 ```
 
-The above code will run 2 unit tests (2 DataDrivenTitle tests) on all the platforms you specify.
+The above code will run *2* unit tests (2 DataDrivenTitle tests) on *all* the platforms you specify.
 
-Parallelism in XUnit is currently achieved by having tests in multiple TestFixtures.
+Parallelism in XUnit is currently achieved by having tests in multiple classes.
 
-Let's look at the key line.
+The Level of Parallelism is determined by the number of parallel threads you have paid for in your SauceLabs account.
+
+Parallism is optional so you can exclude `[assembly: CollectionBehavior(MaxParallelThreads = 5)]` lines if you wish. We recommend placing this line in a `Usings.cs` as it will apply to all your TestFixtures.
+
+Next, let's break down the key line.
 
 ```
 public class DataDrivenTests(ITestOutputHelper output, BaseFixture baseFixture) : SauceryXBase(output, baseFixture)
@@ -223,7 +229,6 @@ public class RequestedPlatformData : SauceryTestData
 The `List<SaucePlatform>` is what you will specify. The rest of the class is mandatory. Check out `SauceryConstants` for all the platform, browser and screenres enums.
 
 ## Flavors
-
 ### Saucery
 [![NuGet version (Saucery)](https://img.shields.io/nuget/v/Saucery.svg?style=for-the-badge)](https://www.nuget.org/packages/Saucery/)
 
@@ -231,8 +236,6 @@ The `List<SaucePlatform>` is what you will specify. The rest of the class is man
 [![NuGet version (Saucery)](https://img.shields.io/nuget/v/Saucery.XUnit.svg?style=for-the-badge)](https://www.nuget.org/packages/Saucery.XUnit/)
 
 ## Resources
-
-
 ### Download statistics
 ![Nuget](https://img.shields.io/nuget/dt/Saucery.svg?label=Saucery%40nuget&style=for-the-badge)
 ![Nuget](https://img.shields.io/nuget/dt/Saucery.XUnit.svg?label=Saucery.XUnit%40nuget&style=for-the-badge)
@@ -242,6 +245,5 @@ The `List<SaucePlatform>` is what you will specify. The rest of the class is man
 [GitHub stars](https://star-history.com/#sauceforge/Saucery)
 
 ## Contact
-
 Author: Andrew Gray  
 Twitter: [@agrayz](https://twitter.com/agrayz)
