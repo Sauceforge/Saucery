@@ -28,6 +28,13 @@ Saucery takes care of the plumbing required to talk to SauceLabs, so you only ne
 
 Your tests, of course, will be specific to your System Under Test. The ones specified below are only provided as examples only.
 
+### Initial Setup
+
+These steps apply to all flavors:
+1. You'll need a SauceLabs account. You can get a free trial account [here](https://saucelabs.com/sign-up).
+1. If you want to run your tests locally you need to set 2 environment variables, SAUCE_USER_NAME and SAUCE_API_KEY
+1. To run your test suite from your GitHub Actions pipeline you need to set two secrets SAUCE_USER_NAME and SAUCE_API_KEY. Instructions on how to set Gihub Secrets are [here](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository).
+
 ### NUnit
 
 1. In your solution create a simple class library.
@@ -124,7 +131,6 @@ public class RequestedPlatformData : SauceryTestData
 }
 ```
 
-
 The `List<SaucePlatform>` is what you will specify. The rest of the class is mandatory. Check out `SauceryConstants` for all the platform, browser and screenres enums.
 
 ### XUnit
@@ -132,7 +138,6 @@ The `List<SaucePlatform>` is what you will specify. The rest of the class is man
 1. In your solution create a simple class library.
 1. Add a NuGet Reference to [Saucery.XUnit](https://www.nuget.org/packages/saucery.xunit)
 1. Start with the following template:
-
 
 ```
 using Saucery.Core.Dojo;
