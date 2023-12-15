@@ -5,7 +5,8 @@ using System.Collections;
 
 namespace Saucery.Core.DataSources;
 
-public class SauceryTestData : IEnumerable {
+public class SauceryTestData : IEnumerable 
+{
     protected static List<BrowserVersion>? BrowserVersions { get; private set; }
 
     public IEnumerator GetEnumerator() => BrowserVersions?.GetEnumerator()!;
@@ -17,6 +18,8 @@ public class SauceryTestData : IEnumerable {
         List<SaucePlatform> expandedPlatforms = expander.Expand();
         BrowserVersions = platformConfigurator.FilterAll(expandedPlatforms);
     }
+
+    public static IEnumerable<BrowserVersion> Items => BrowserVersions!.Select(x => x).AsEnumerable();
 }
 /*
 * Copyright Andrew Gray, SauceForge

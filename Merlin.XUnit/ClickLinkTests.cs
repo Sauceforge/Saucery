@@ -6,10 +6,10 @@ using Xunit.Abstractions;
 
 namespace Merlin.XUnit;
 
-public class ClickLinkTests(ITestOutputHelper output, BaseFixture baseFixture) : SauceryXBase(output, baseFixture) //, IClassFixture<ConcurrencyFixture>
+public class ClickLinkTests(ITestOutputHelper output, BaseFixture baseFixture) : SauceryXBase(output, baseFixture)
 {
     [Theory]
-    [MemberData(nameof(AllPlatforms))]
+    [MemberData(nameof(RequestedPlatformData.AllPlatforms), MemberType = typeof(RequestedPlatformData))]
     public void ClickLinkTest(BrowserVersion requestedPlatform) {
         InitialiseDriver(requestedPlatform);
 
@@ -19,21 +19,6 @@ public class ClickLinkTests(ITestOutputHelper output, BaseFixture baseFixture) :
 
         // verify the browser was navigated to the correct page
         BaseFixture.Driver!.Url.ShouldContain("saucelabs.com/test-guinea-pig2.html");
-    }
-
-    public static IEnumerable<object[]> AllPlatforms
-    {
-        get
-        {
-            List<object[]> allPlatforms = [];
-
-            foreach(var platform in RequestedPlatformData.Items) {
-                allPlatforms.Add([platform]);
-            }
-
-            return from c in allPlatforms
-                   select c;
-        }
     }
 }
 /*
