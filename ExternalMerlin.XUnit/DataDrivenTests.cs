@@ -22,15 +22,16 @@ public class DataDrivenTests(ITestOutputHelper output, BaseFixture baseFixture) 
     {
         get
         {
-            List<object[]> allCombinations = [];
+            object[] data = [4, 5];
+            IEnumerable<object[]> allCombinations = [];
 
             foreach(var platform in RequestedPlatformData.Items) {
-                allCombinations.Add([platform, 4]);
-                allCombinations.Add([platform, 5]);
+                foreach(var datum in data) {
+                    allCombinations.Concat([platform, datum]);
+                }
             }
 
-            return from c in allCombinations
-                   select c;
+            return allCombinations;
         }
     }
 }

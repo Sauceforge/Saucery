@@ -17,6 +17,23 @@ public class SauceryTestData : IEnumerable {
         List<SaucePlatform> expandedPlatforms = expander.Expand();
         BrowserVersions = platformConfigurator.FilterAll(expandedPlatforms);
     }
+
+    public static IEnumerable<object[]> AllPlatforms
+    {
+        get
+        {
+            List<object[]> allPlatforms = [];
+
+            foreach(var platform in Items) {
+                allPlatforms.Add([platform]);
+            }
+
+            return from c in allPlatforms
+                   select c;
+        }
+    }
+
+    public static IEnumerable<BrowserVersion> Items => BrowserVersions!.Select(x => x).AsEnumerable();
 }
 /*
 * Copyright Andrew Gray, SauceForge

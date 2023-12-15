@@ -1,14 +1,13 @@
 ﻿using Saucery.Core.DataSources;
-using Saucery.Core.Dojo;
 using Saucery.Core.OnDemand;
 using Saucery.Core.OnDemand.Base;
 using Saucery.Core.Util;
 
 namespace ExternalMerlin.XUnit;
 
-public class RequestedPlatformData : SauceryTestData
+public class RequestedPlatformData : SauceryTestData 
 {
-    static RequestedPlatformData()
+    static RequestedPlatformData() 
     {
         List<SaucePlatform> platforms =
         [
@@ -23,10 +22,6 @@ public class RequestedPlatformData : SauceryTestData
 
         SetPlatforms(platforms);
     }
-
-    public static IEnumerable<object[]> Platforms => BrowserVersions!.Select(x => x.ToObjectArray()).AsEnumerable();
-
-    public static IEnumerable<BrowserVersion> Items => BrowserVersions!.Select(x => x).AsEnumerable();
 }
 /*
 * Copyright Andrew Gray, SauceForge
