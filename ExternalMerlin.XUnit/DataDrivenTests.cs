@@ -1,4 +1,5 @@
-﻿using Saucery.Core.Dojo;
+﻿using Saucery.Core.DataSources;
+using Saucery.Core.Dojo;
 using Saucery.Tests.Common.PageObjects;
 using Saucery.XUnit;
 using Xunit.Abstractions;
@@ -23,11 +24,11 @@ public class DataDrivenTests(ITestOutputHelper output, BaseFixture baseFixture) 
         get
         {
             object[] data = [4, 5];
-            IEnumerable<object[]> allCombinations = [];
+            List<object[]> allCombinations = [];
 
-            foreach(var platform in RequestedPlatformData.Items) {
+            foreach(var platform in SauceryTestData.Items) {
                 foreach(var datum in data) {
-                    allCombinations.Concat([platform, datum]);
+                    allCombinations.Add([platform, datum]);
                 }
             }
 
