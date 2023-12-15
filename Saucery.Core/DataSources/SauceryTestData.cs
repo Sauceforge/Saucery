@@ -20,6 +20,28 @@ public class SauceryTestData : IEnumerable
     }
 
     public static IEnumerable<BrowserVersion> Items => BrowserVersions!.Select(x => x).AsEnumerable();
+
+    protected static IEnumerable<object[]> GetAllCombinations(object[] data) {
+        List<object[]> allCombinations = [];
+
+        foreach(var platform in Items) {
+            foreach(var datum in data) {
+                allCombinations.Add([platform, datum]);
+            }
+        }
+
+        return allCombinations;
+    }
+
+    protected static IEnumerable<object[]> GetAllPlatforms() {
+        List<object[]> allPlatforms = [];
+
+        foreach(var platform in Items) {
+            allPlatforms.Add([platform]);
+        }
+
+        return allPlatforms.AsEnumerable();
+    }
 }
 /*
 * Copyright Andrew Gray, SauceForge

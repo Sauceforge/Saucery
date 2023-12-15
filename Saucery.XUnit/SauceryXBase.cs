@@ -1,8 +1,10 @@
 ﻿using OpenQA.Selenium;
+using Saucery.Core.DataSources;
 using Saucery.Core.Dojo;
 using Saucery.Core.Options;
 using Saucery.Core.Util;
 using System.Reflection;
+using Xunit.Abstractions;
 
 namespace Saucery.XUnit;
 
@@ -69,6 +71,18 @@ public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>
         var type = _outputHelper.GetType();
         var testMember = type.GetField("test", BindingFlags.Instance | BindingFlags.NonPublic);
         return ((ITest)testMember!.GetValue(_outputHelper)!).TestCase.TestMethod.Method.Name;
+    }
+
+    public static IEnumerable<object[]> GetAllCombinations(object[] data) {
+        List<object[]> allCombinations = [];
+
+        foreach(var platform in SauceryTestData.Items) {
+            foreach(var datum in data) {
+                allCombinations.Add([platform, datum]);
+            }
+        }
+
+        return allCombinations;
     }
 }
 
