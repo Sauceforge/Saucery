@@ -23,6 +23,8 @@ public class RequestedPlatformData : SauceryTestData
         SetPlatforms(platforms);
     }
 
+    //public static IEnumerable<object[]> AllPlatforms => GetAllPlatforms();
+
     public static IEnumerable<object[]> AllPlatforms
     {
         get
