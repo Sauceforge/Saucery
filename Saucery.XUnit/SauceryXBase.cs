@@ -4,7 +4,6 @@ using Saucery.Core.Dojo;
 using Saucery.Core.Options;
 using Saucery.Core.Util;
 using System.Reflection;
-using Xunit.Abstractions;
 
 namespace Saucery.XUnit;
 

@@ -162,21 +162,7 @@ public class DataDrivenTests(ITestOutputHelper output, BaseFixture baseFixture) 
         guineaPigPage.TypeField(BaseFixture.SauceryDriver(), "comments", data.ToString());
     }
 
-    public static IEnumerable<object[]> AllCombinations
-    {
-        get
-        {
-            List<object[]> allCombinations = [];
-
-            foreach(var platform in RequestedPlatformData.Items) {
-                allCombinations.Add([platform, 4]);
-                allCombinations.Add([platform, 5]);
-            }
-
-            return from c in allCombinations
-                   select c;
-        }
-    }
+    public static IEnumerable<object[]> AllCombinations => GetAllCombinations([4, 5]);
 }
 ```
 
@@ -202,7 +188,6 @@ Let's look at what it should contain.
 
 ```
 using Saucery.Core.DataSources;
-using Saucery.Core.Dojo;
 using Saucery.Core.OnDemand;
 using Saucery.Core.OnDemand.Base;
 using Saucery.Core.Util;
@@ -226,7 +211,7 @@ public class RequestedPlatformData : SauceryTestData
         SetPlatforms(platforms);
     }
 
-    public static IEnumerable<BrowserVersion> Items => BrowserVersions!.Select(x => x).AsEnumerable();
+    public static IEnumerable<object[]> AllPlatforms => GetAllPlatforms();
 }
 ```
 
