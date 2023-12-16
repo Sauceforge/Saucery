@@ -19,22 +19,5 @@ public class DataDrivenTests(ITestOutputHelper output, BaseFixture baseFixture) 
         guineaPigPage.TypeField(BaseFixture.SauceryDriver(), "comments", data.ToString());
     }
 
-    //public static IEnumerable<object[]> AllCombinations => GetAllCombinations([4, 5]);
-
-    public static IEnumerable<object[]> AllCombinations
-    {
-        get
-        {
-            object[] data = [4, 5];
-            List<object[]> allCombinations = [];
-
-            foreach(var platform in SauceryTestData.Items) {
-                foreach(var datum in data) {
-                    allCombinations.Add([platform, datum]);
-                }
-            }
-
-            return allCombinations;
-        }
-    }
+    public static IEnumerable<object[]> AllCombinations => GetAllCombinations([4, 5]);
 }

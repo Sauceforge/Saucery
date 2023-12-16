@@ -23,21 +23,7 @@ public class RequestedPlatformData : SauceryTestData
         SetPlatforms(platforms);
     }
 
-    //public static IEnumerable<object[]> AllPlatforms => GetAllPlatforms();
-
-    public static IEnumerable<object[]> AllPlatforms
-    {
-        get
-        {
-            List<object[]> allPlatforms = [];
-
-            foreach(var platform in Items) {
-                allPlatforms.Add([platform]);
-            }
-
-            return allPlatforms.AsEnumerable();
-        }
-    }
+    public static IEnumerable<object[]> AllPlatforms => GetAllPlatforms();
 }
 /*
 * Copyright Andrew Gray, SauceForge
