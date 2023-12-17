@@ -36,16 +36,10 @@ internal abstract class BaseOptions {
         {
             ((AppiumOptions)Opts!).AddAdditionalAppiumOption(SauceryConstants.SAUCE_USERNAME_CAPABILITY, Enviro.SauceUserName);
             ((AppiumOptions)Opts).AddAdditionalAppiumOption(SauceryConstants.SAUCE_ACCESSKEY_CAPABILITY, Enviro.SauceApiKey);
-        }
 
-        if (type.IsApple())
-        {
-            ((AppiumOptions)Opts!).AutomationName = SauceryConstants.APPLE_AUTOMATION_NAME;
-        }
-
-        if (type.IsAndroid())
-        {
-            ((AppiumOptions)Opts!).AutomationName = SauceryConstants.ANDROID_AUTOMATION_NAME;
+            ((AppiumOptions)Opts!).AutomationName = type.IsApple()
+                ? SauceryConstants.APPLE_AUTOMATION_NAME
+                : SauceryConstants.ANDROID_AUTOMATION_NAME;
         }
 
         return Opts;
