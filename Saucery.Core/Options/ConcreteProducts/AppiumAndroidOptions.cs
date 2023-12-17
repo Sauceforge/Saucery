@@ -25,6 +25,8 @@ internal class AppiumAndroidOptions : BaseOptions {
         };
 
         SauceOptions.Add(SauceryConstants.SAUCE_APPIUM_VERSION_CAPABILITY, browserVersion.RecommendedAppiumVersion);
+        SauceOptions.Add("idleTimeout", 1000);
+
         if (!string.IsNullOrEmpty(browserVersion.DeviceOrientation))
         {
             SauceOptions.Add(SauceryConstants.SAUCE_DEVICE_ORIENTATION_CAPABILITY, browserVersion.DeviceOrientation);
