@@ -179,17 +179,17 @@ jobs:
     
     steps:
     - name: Download unit-test results
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: unit-test-results
 
     - name: Download xunit-integration-test results
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: xunit-integration-test-results
 
     - name: Download nunit-integration-test results
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: nunit-integration-test-results
     
