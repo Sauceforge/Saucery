@@ -9,7 +9,7 @@
 	<PropertyGroup>
 		<IsPackable>true</IsPackable>
 		<PackageId>Saucery.Core</PackageId>
-	    <PackageVersion>4.4.3</PackageVersion>
+	    <PackageVersion>4.4.4</PackageVersion>
 	    <Authors>Andrew Gray</Authors>
 	    <Company>SauceForge</Company>
 	    <Copyright>Copyright Andrew Gray 2014-2023</Copyright>
@@ -26,7 +26,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Appium.WebDriver" Version="5.0.0-rc.2" />
+		<PackageReference Include="Appium.WebDriver" Version="5.0.0-rc.4" />
 		<PackageReference Include="Castle.Core" Version="5.1.1" />
 		<PackageReference Include="DotNetSeleniumExtras.PageObjects.Core" Version="4.14.1" />
 		<PackageReference Include="DotNetSeleniumExtras.WaitHelpers" Version="3.11.0" />

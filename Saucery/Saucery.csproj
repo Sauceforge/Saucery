@@ -13,7 +13,7 @@
   <PropertyGroup>
 	  <IsPackable>true</IsPackable>
 	  <PackageId>Saucery</PackageId>
-      <PackageVersion>4.4.3</PackageVersion>
+      <PackageVersion>4.4.4</PackageVersion>
       <Authors>Andrew Gray</Authors>
       <Company>SauceForge</Company>
       <Copyright>Copyright Andrew Gray 2014-2023</Copyright>
@@ -30,7 +30,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Appium.WebDriver" Version="5.0.0-rc.2" />
+    <PackageReference Include="Appium.WebDriver" Version="5.0.0-rc.4" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageReference Include="NUnit" Version="4.0.1" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
