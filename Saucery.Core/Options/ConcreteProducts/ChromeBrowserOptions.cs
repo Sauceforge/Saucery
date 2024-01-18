@@ -24,6 +24,8 @@ internal class ChromeBrowserOptions : BaseOptions {
             SauceOptions.Add(SauceryConstants.SCREEN_RESOLUTION_CAPABILITY, browserVersion.ScreenResolution);
         }
 
+        o.AddArgument("no-sandbox");
+
         o.AddAdditionalOption(SauceryConstants.SAUCE_OPTIONS_CAPABILITY, SauceOptions);
         Opts = o;
     }
