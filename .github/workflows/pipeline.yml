@@ -197,7 +197,7 @@ jobs:
       run: ls -R
 
     - name: ReportGenerator
-      uses: danielpalme/ReportGenerator-GitHub-Action@5.2.2
+      uses: danielpalme/ReportGenerator-GitHub-Action@5.2.3
       with:
         reports: ${{ env.UNIT_COVERAGE_FILENAME }};${{ env.NUNIT_INTEGRATION_COVERAGE_FILENAME }};${{ env.XUNIT_INTEGRATION_COVERAGE_FILENAME }} # REQUIRED # The coverage reports that should be parsed (separated by semicolon). Globbing is supported.
         targetdir: 'coveragereport' # REQUIRED # The directory where the generated report should be saved.
@@ -214,6 +214,6 @@ jobs:
     - name: Bump version and push tag
       if: ${{ (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master') && success() }}
       id: tag_version
-      uses: mathieudutour/github-tag-action@v6.1
+      uses: mathieudutour/github-tag-action@v6.2
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
