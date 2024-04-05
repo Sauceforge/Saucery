@@ -19,7 +19,8 @@ internal class AppiumAndroidOptions : BaseOptions {
 
         AppiumOptions options = new();
         options.AddAdditionalAppiumOption("platformName", "Android");
-        options.DeviceName = "Android Emulator";
+        options.DeviceName = browserVersion.DeviceName;
+        options.BrowserName = SauceryConstants.CHROME_BROWSER;
         options.PlatformVersion = browserVersion.Name;
         //appiumOptions.AddAdditionalAppiumOption("app", "path/to/your/app.apk");
         //appiumOptions.AddAdditionalAppiumOption("name", "Your Test Name");
