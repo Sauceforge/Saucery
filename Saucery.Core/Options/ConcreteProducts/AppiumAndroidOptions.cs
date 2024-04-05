@@ -18,13 +18,13 @@ internal class AppiumAndroidOptions : BaseOptions {
         Console.WriteLine("Creating Appium Options");
 
         AppiumOptions options = new();
-        options.AddAdditionalOption("platformName", "Android");
-        options.AddAdditionalOption("deviceName", "Android Emulator");
-        options.AddAdditionalOption("platformVersion", browserVersion.Name);
-        //appiumOptions.AddAdditionalOption("app", "path/to/your/app.apk");
-        //appiumOptions.AddAdditionalOption("name", "Your Test Name");
-        options.AddAdditionalOption("appiumVersion", "1.21.0"); // Set the appropriate Appium version
-        options.AddAdditionalOption("autoGrantPermissions", true);
+        options.AddAdditionalAppiumOption("platformName", "Android");
+        options.DeviceName = "Android Emulator";
+        options.PlatformVersion = browserVersion.Name;
+        //appiumOptions.AddAdditionalAppiumOption("app", "path/to/your/app.apk");
+        //appiumOptions.AddAdditionalAppiumOption("name", "Your Test Name");
+        options.AddAdditionalAppiumOption("appiumVersion", "1.21.0"); // Set the appropriate Appium version
+        options.AddAdditionalAppiumOption("autoGrantPermissions", true);
 
         // Initialize the AndroidDriver with Sauce Labs capabilities
         //AndroidDriver<IWebElement> driver = new AndroidDriver<IWebElement>(sauceUrl, appiumOptions);
