@@ -18,7 +18,7 @@
     <PackageReference Include="NUnit" Version="4.1.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
     <PackageReference Include="RestSharp" Version="110.2.0" />
-    <PackageReference Include="Selenium.Support" Version="4.19.0" />
+    <PackageReference Include="Selenium.Support" Version="4.20.0" />
     <PackageReference Include="Shouldly" Version="4.2.1" />
   </ItemGroup>
 
