@@ -33,16 +33,16 @@ public abstract class RestBase {
         Request.RequestFormat = DataFormat.Json;
         return Request;
     }
-
+    
     protected void EnsureExecution(RestRequest request)
     {
-        var response = Client!.Execute(request);
+        var response = Client!.Execute<RestRequest>(request);
         LimitChecker?.Update(response);
 
         while (LimitChecker!.IsLimitExceeded())
         {
             Thread.Sleep(LimitChecker.GetReset());
-            response = Client!.Execute(request);
+            response = Client!.Execute<RestRequest>(request);
             LimitChecker.Update(response);
         }
     }
@@ -56,7 +56,7 @@ public abstract class RestBase {
 
     private RestResponse GetResponse(RestRequest request)
     {
-        var response = Client!.Execute(request);
+        var response = Client!.Execute<RestRequest>(request);
         if (response.StatusCode.Equals(HttpStatusCode.OK))
         {
             return response;
@@ -68,7 +68,7 @@ public abstract class RestBase {
         {
             Console.WriteLine(SauceryConstants.RESTAPI_LIMIT_EXCEEDED_MSG);
             Thread.Sleep(LimitChecker.GetReset());
-            response = Client!.Execute(request);
+            response = Client!.Execute<RestRequest>(request);
             LimitChecker.Update(response);
         }
 

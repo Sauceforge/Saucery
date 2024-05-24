@@ -10,7 +10,7 @@ public class SauceLabsStatusNotifier : StatusNotifier {
     {
         RestClientOptions clientOptions = new(SauceryConstants.SAUCE_REST_BASE)
         {
-            Authenticator = new HttpBasicAuthenticator(UserName, AccessKey)
+            Authenticator = new HttpBasicAuth(UserName, AccessKey)
         };
 
         Client = new RestClient(clientOptions);
