@@ -31,8 +31,8 @@ public class SauceryConstants {
     internal const string SOLUTION_FILE_PROJECT_LINE = "Project(";
 
     //TEST URL
-    public const string SAUCELABS_HUB = "http://ondemand.saucelabs.com:80/wd/hub";
-    
+    public const string SAUCELABS_HUB = "https://ondemand.us-west-1.saucelabs.com:443/wd/hub";
+
     public const int MISSING_CHROMIUM_VERSION = 82;
 
     //CAPABILITIES

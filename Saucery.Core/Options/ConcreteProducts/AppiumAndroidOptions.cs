@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium.Appium;
+﻿using OpenQA.Selenium;
+using OpenQA.Selenium.Appium;
 using Saucery.Core.Dojo;
 using Saucery.Core.Options.Base;
 using Saucery.Core.Util;
@@ -24,7 +25,7 @@ internal class AppiumAndroidOptions : BaseOptions {
         //appiumOptions.AddAdditionalAppiumOption("app", "path/to/your/app.apk");
         //options.AddAdditionalAppiumOption("appiumVersion", "1.21.0"); // Set the appropriate Appium version
         options.AddAdditionalAppiumOption("appiumVersion", browserVersion.RecommendedAppiumVersion);
-
+        options.AddAdditionalAppiumOption("w3c", true);
         options.AddAdditionalAppiumOption("autoGrantPermissions", true);
 
         // Initialize the AndroidDriver with Sauce Labs capabilities
