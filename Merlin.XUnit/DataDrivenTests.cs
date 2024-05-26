@@ -17,6 +17,9 @@ public class DataDrivenTests(ITestOutputHelper output, BaseFixture baseFixture) 
 
         guineaPigPage.TypeField(BaseFixture.SauceryDriver(), "comments", data.ToString());
     }
-
-    public static IEnumerable<object[]> AllCombinations => GetAllCombinations([4, 5]);
+    
+    public static IEnumerable<object[]> AllCombinations() {
+        var allPlatforms = RequestedPlatformData.AllPlatforms;
+        return GetAllCombinations([4, 5]);
+    }
 }
