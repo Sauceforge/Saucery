@@ -24,8 +24,6 @@ public class RequestedPlatformData : SauceryTestData
     }
 
     public static IEnumerable<object[]> AllPlatforms => GetAllPlatforms();
-
-    //public static IEnumerable<object[]> AllCombinations(object[] data) => GetAllCombinations(data);
 }
 /*
 * Copyright Andrew Gray, SauceForge
