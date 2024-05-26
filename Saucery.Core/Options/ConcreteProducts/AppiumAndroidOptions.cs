@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium.Appium;
+﻿using OpenQA.Selenium;
+using OpenQA.Selenium.Appium;
 using Saucery.Core.Dojo;
 using Saucery.Core.Options.Base;
 using Saucery.Core.Util;
@@ -16,17 +17,30 @@ internal class AppiumAndroidOptions : BaseOptions {
 
         Console.WriteLine("Creating Appium Options");
 
-        var options = new AppiumOptions
-        {
-            PlatformName = browserVersion.PlatformNameForOption,
-            BrowserName = SauceryConstants.CHROME_BROWSER,
-            DeviceName = browserVersion.DeviceName,
-            PlatformVersion = browserVersion.Name,
-        };
+        AppiumOptions options = new();
+        options.AddAdditionalAppiumOption("platformName", "Android");
+        options.DeviceName = browserVersion.DeviceName;
+        options.BrowserName = SauceryConstants.CHROME_BROWSER;
+        options.PlatformVersion = browserVersion.Name;
+        //appiumOptions.AddAdditionalAppiumOption("app", "path/to/your/app.apk");
+        //options.AddAdditionalAppiumOption("appiumVersion", "1.21.0"); // Set the appropriate Appium version
+        options.AddAdditionalAppiumOption("appiumVersion", browserVersion.RecommendedAppiumVersion);
+        options.AddAdditionalAppiumOption("w3c", true);
+        options.AddAdditionalAppiumOption("autoGrantPermissions", true);
 
-        SauceOptions.Add(SauceryConstants.SAUCE_APPIUM_VERSION_CAPABILITY, browserVersion.RecommendedAppiumVersion);
-        if (!string.IsNullOrEmpty(browserVersion.DeviceOrientation))
-        {
+        // Initialize the AndroidDriver with Sauce Labs capabilities
+        //AndroidDriver<IWebElement> driver = new AndroidDriver<IWebElement>(sauceUrl, appiumOptions);
+
+        //var options = new AppiumOptions
+        //{
+        //    PlatformName = browserVersion.PlatformNameForOption,
+        //    BrowserName = SauceryConstants.CHROME_BROWSER,
+        //    DeviceName = browserVersion.DeviceName,
+        //    PlatformVersion = browserVersion.Name,
+        //};
+
+        //SauceOptions.Add(SauceryConstants.SAUCE_APPIUM_VERSION_CAPABILITY, browserVersion.RecommendedAppiumVersion);
+        if(!string.IsNullOrEmpty(browserVersion.DeviceOrientation)) {
             SauceOptions.Add(SauceryConstants.SAUCE_DEVICE_ORIENTATION_CAPABILITY, browserVersion.DeviceOrientation);
         }
         options.AddAdditionalAppiumOption(SauceryConstants.SAUCE_OPTIONS_CAPABILITY, SauceOptions);
