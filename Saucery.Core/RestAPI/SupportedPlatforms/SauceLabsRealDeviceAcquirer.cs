@@ -11,7 +11,7 @@ public class SauceLabsRealDeviceAcquirer : RealDeviceAcquirer {
     {
         RestClientOptions clientOptions = new(SauceryConstants.SAUCE_REAL_DEVICE_REST_BASE)
         {
-            Authenticator = new HttpBasicAuth(UserName, AccessKey)
+            Authenticator = new HttpBasicAuthenticator(UserName, AccessKey)
         };
 
         Client = new RestClient(clientOptions);
