@@ -26,14 +26,14 @@ We test Saucery itself on SauceLabs!
 
 Saucery takes care of the plumbing required to talk to SauceLabs, so you only need to tell Saucery *what* you want. Saucery takes care of the *how*.
 
-Your tests, of course, will be specific to your System Under Test. The ones specified below are only provided as examples only.
+Your tests, of course, will be specific to your System Under Test. The ones specified below are provided as examples only.
 
 ### Initial Setup
 
 These steps apply to all flavors:
 1. You'll need a SauceLabs account. You can get a free trial account [here](https://saucelabs.com/sign-up).
 1. If you want to run your tests locally you need to set 2 environment variables, SAUCE_USER_NAME and SAUCE_API_KEY
-1. To run your test suite from your GitHub Actions pipeline you need to set two secrets SAUCE_USER_NAME and SAUCE_API_KEY. Instructions on how to set Gihub Secrets are [here](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository).
+1. To run your test suite from your GitHub Actions pipeline you need to set two secrets SAUCE_USER_NAME and SAUCE_API_KEY. Instructions on how to set Github Secrets are [here](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository).
 
 ### NUnit
 
