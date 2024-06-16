@@ -74,6 +74,7 @@ public class PlatformConfigurator
         List<SupportedPlatform> filteredPlatforms =
         [
             //Not filtered for Min and Max Versions yet
+            .. FindLinuxPlatforms(supportedPlatforms),
             .. FindWindowsPlatforms(supportedPlatforms),
             .. FindMacPlatforms(supportedPlatforms, [ SauceryConstants.PLATFORM_MAC_1010,
                                                       SauceryConstants.PLATFORM_MAC_1011,
@@ -101,6 +102,8 @@ public class PlatformConfigurator
 
         return int.Parse(browserVersion?.Name!);
     }
+
+    private static List<SupportedPlatform> FindLinuxPlatforms(List<SupportedPlatform> platforms) => platforms.FindAll(p => p.os! == "Linux" && p.automation_backend!.Equals("webdriver") && p.device! == null);
 
     private static List<SupportedPlatform> FindWindowsPlatforms(List<SupportedPlatform> platforms) => platforms.FindAll(p => p.os!.Contains("Windows") && p.automation_backend!.Equals("webdriver"));
 

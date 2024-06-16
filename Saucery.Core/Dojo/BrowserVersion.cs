@@ -106,8 +106,7 @@ public class BrowserVersion
     }
 
     public object[] ToObjectArray() =>
-        new object[]
-        {
+        [
             Os,
             PlatformNameForOption,
             BrowserName,
@@ -122,7 +121,7 @@ public class BrowserVersion
             ScreenResolution!,
             PlatformType,
             ScreenResolutions
-        };
+        ];
 
     public void SetTestName(string testName)
     {
