@@ -37,6 +37,8 @@ These steps apply to all flavors:
 
 ### NUnit
 
+<img src="https://raw.githubusercontent.com/SauceForge/Saucery/master/Saucery/Images/Saucery.NUnit.png" alt="Saucery" width="100"/>
+
 1. In your solution create a simple class library.
 1. Add a NuGet Reference to [Saucery](https://www.nuget.org/packages/Saucery).
 1. Start with the following template:
@@ -135,6 +137,8 @@ public class RequestedPlatformData : SauceryTestData
 The `List<SaucePlatform>` is what you will specify. The rest of the class is mandatory. Check out `SauceryConstants` for all the platform, browser and screenres enums.
 
 ### XUnit
+
+<img src="https://raw.githubusercontent.com/SauceForge/Saucery/master/Saucery.XUnit/Images/Saucery.XUnit.png" alt="Saucery.XUnit" width="100"/>
 
 1. In your solution create a simple class library.
 1. Add a NuGet Reference to [Saucery.XUnit](https://www.nuget.org/packages/saucery.xunit)
