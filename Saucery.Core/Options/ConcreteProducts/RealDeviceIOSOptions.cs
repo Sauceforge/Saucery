@@ -5,8 +5,8 @@ using Saucery.Core.Util;
 
 namespace Saucery.Core.Options.ConcreteProducts;
 
-internal class AppiumIOSOptions : BaseOptions {
-    public AppiumIOSOptions(BrowserVersion browserVersion, string testName) : base(testName) {
+internal class RealDeviceIOSOptions : BaseOptions {
+    public RealDeviceIOSOptions(BrowserVersion browserVersion, string testName) : base(testName) {
         Console.WriteLine(SauceryConstants.SETTING_UP, testName, SauceryConstants.IOS_ON_APPIUM);
         DebugMessages.PrintiOSOptionValues(browserVersion);
         Console.WriteLine("Creating iOS Options");

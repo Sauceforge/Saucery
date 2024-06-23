@@ -13,20 +13,20 @@ public class DebugMessages {
         }
     }
 
-    internal static void PrintHaveAndroidPlatform()
+    internal static void PrintHaveAndroidPlatform(bool isReal)
     {
         if (UserChecker.ItIsMe())
         {
-            Console.WriteLine("DEBUG MESSAGE: We have an Android platform");
+            Console.WriteLine(isReal ? "DEBUG MESSAGE: We have an Android Real Device" : "DEBUG MESSAGE: We have an emulated Android platform");
             Console.Out.Flush();
         }
     }
 
-    internal static void PrintHaveApplePlatform()
+    internal static void PrintHaveApplePlatform(bool isReal)
     {
         if (UserChecker.ItIsMe())
         {
-            Console.WriteLine("DEBUG MESSAGE: We have an Apple platform");
+            Console.WriteLine(isReal ? "DEBUG MESSAGE: We have an Apple Real Device" : "DEBUG MESSAGE: We have an emulated Apple platform");
             Console.Out.Flush();
         }
     }

@@ -17,17 +17,29 @@ public class OptionFactory(BrowserVersion browserVersion) : IDisposable
             DebugMessages.PrintHaveDesktopPlatform();
             return GetDesktopOptions(testName);
         }
-        //Mobile Platform
-        if (BrowserVersion.PlatformType.Equals(OnDemand.PlatformType.Apple))
-        {
-            DebugMessages.PrintHaveApplePlatform();
-            return new AppiumIOSCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType);
+
+        //Mobile Device
+        if(browserVersion.IsARealDevice()) {
+            if(BrowserVersion.PlatformType.Equals(OnDemand.PlatformType.Apple)) {
+                DebugMessages.PrintHaveApplePlatform(true);
+                return new RealDeviceIOSCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType);
+            } else {
+                DebugMessages.PrintHaveAndroidPlatform(true);
+                return new RealDeviceAndroidCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType);
+            }
         }
-        else
-        {
-            DebugMessages.PrintHaveAndroidPlatform();
-            return new AppiumAndroidCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType);
+        else {
+            //Emulated Mobile Platform
+            if(BrowserVersion.PlatformType.Equals(OnDemand.PlatformType.Apple)) {
+                DebugMessages.PrintHaveApplePlatform(false);
+                return new EmulatedIOSCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType);
+            } else {
+                DebugMessages.PrintHaveAndroidPlatform(false);
+                return new EmulatedAndroidCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType);
+            }
         }
+
+        
     }
 
     private DriverOptions? GetDesktopOptions(string testName) => BrowserVersion.BrowserName.ToLower() switch

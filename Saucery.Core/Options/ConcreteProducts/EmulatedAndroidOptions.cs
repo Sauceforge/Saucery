@@ -6,8 +6,8 @@ using Saucery.Core.Util;
 
 namespace Saucery.Core.Options.ConcreteProducts;
 
-internal class AppiumAndroidOptions : BaseOptions {
-    public AppiumAndroidOptions(BrowserVersion browserVersion, string testName)
+internal class EmulatedAndroidOptions : BaseOptions {
+    public EmulatedAndroidOptions(BrowserVersion browserVersion, string testName)
         : base(testName)
     {
         Console.WriteLine(SauceryConstants.SETTING_UP, testName, SauceryConstants.ANDROID_ON_APPIUM);
@@ -23,23 +23,10 @@ internal class AppiumAndroidOptions : BaseOptions {
         options.BrowserName = SauceryConstants.CHROME_BROWSER;
         options.PlatformVersion = browserVersion.Name;
         //appiumOptions.AddAdditionalAppiumOption("app", "path/to/your/app.apk");
-        //options.AddAdditionalAppiumOption("appiumVersion", "1.21.0"); // Set the appropriate Appium version
         options.AddAdditionalAppiumOption("appiumVersion", browserVersion.RecommendedAppiumVersion);
         options.AddAdditionalAppiumOption("w3c", true);
         options.AddAdditionalAppiumOption("autoGrantPermissions", true);
 
-        // Initialize the AndroidDriver with Sauce Labs capabilities
-        //AndroidDriver<IWebElement> driver = new AndroidDriver<IWebElement>(sauceUrl, appiumOptions);
-
-        //var options = new AppiumOptions
-        //{
-        //    PlatformName = browserVersion.PlatformNameForOption,
-        //    BrowserName = SauceryConstants.CHROME_BROWSER,
-        //    DeviceName = browserVersion.DeviceName,
-        //    PlatformVersion = browserVersion.Name,
-        //};
-
-        //SauceOptions.Add(SauceryConstants.SAUCE_APPIUM_VERSION_CAPABILITY, browserVersion.RecommendedAppiumVersion);
         if(!string.IsNullOrEmpty(browserVersion.DeviceOrientation)) {
             SauceOptions.Add(SauceryConstants.SAUCE_DEVICE_ORIENTATION_CAPABILITY, browserVersion.DeviceOrientation);
         }

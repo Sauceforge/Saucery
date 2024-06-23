@@ -12,7 +12,7 @@ public class PlatformConfigurator
     private SauceLabsPlatformAcquirer PlatformAcquirer { get; set; } = new();
     private SauceLabsRealDeviceAcquirer RealDeviceAcquirer { get; set; } = new();
     public List<PlatformBase> AvailablePlatforms { get; set; } = [];
-    public List<SupportedRealDevicePlatform> AvailableRealDevices { get; set; } = [];
+    public List<PlatformBase> AvailableRealDevices { get; set; } = [];
 
     public PlatformConfigurator(PlatformFilter filter)
     {
@@ -31,11 +31,6 @@ public class PlatformConfigurator
                 break;
         }
     }
-
-    //public PlatformConfigurator()
-    //{
-    //    ConstructAllPlatforms();
-    //}
 
     private void ConstructAllPlatforms()
     {
@@ -60,13 +55,11 @@ public class PlatformConfigurator
     private void ConstructRealDevices()
     {
         var supportedRealDevices = RealDeviceAcquirer.AcquireRealDevicePlatforms();
+        //var filteredSupportedPlatforms = FilterSupportedPlatforms(supportedPlatforms!);
 
-        AvailableRealDevices.AddRange(supportedRealDevices!);
-
-        //foreach (var rd in supportedRealDevices)
-        //{
-        //    AvailableRealDevices.AddPlatform(rd);
-        //}
+        foreach(var sp in supportedRealDevices!) {
+            AvailableRealDevices.AddRealPlatform(sp);
+        }
     }
 
     private static List<SupportedPlatform> FilterSupportedPlatforms(List<SupportedPlatform> supportedPlatforms)
@@ -154,10 +147,16 @@ public class PlatformConfigurator
                 browserVersion = AvailablePlatforms.FindDesktopBrowser(requested);
                 break;
             case PlatformType.Android:
-                browserVersion = AvailablePlatforms.FindAndroidBrowser(requested);
+                if(requested.IsARealDevice())
+                    browserVersion = AvailableRealDevices.FindAndroidBrowser(requested, true);
+                else
+                    browserVersion = AvailablePlatforms.FindAndroidBrowser(requested, false);
                 break;
             case PlatformType.Apple:
-                browserVersion = AvailablePlatforms.FindIOSBrowser(requested);
+                if(requested.IsARealDevice())
+                    browserVersion = AvailableRealDevices.FindIOSBrowser(requested, true);
+                else
+                    browserVersion = AvailablePlatforms.FindIOSBrowser(requested, false);
                 break;
             default:
                 Console.WriteLine($"Requested Platform Not Found: {0}", requested.LongName);

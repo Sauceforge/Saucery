@@ -30,13 +30,18 @@ public abstract class BrowserBase : IBrowser
         AutomationBackend = sp.automation_backend!;
         Name = sp.api_name!;
         DeviceName = sp.long_name!;
-        
-        if (sp.IsMobilePlatform())
-        {
-            PlatformVersion = sp.short_version;
-            RecommendedAppiumVersion = sp.recommended_backend_version;
+
+        if(sp.automation_backend == null) {
+            PlatformVersion = sp.OsVersion?.Split(".")[0];
         }
-        ScreenResolutions = screenResolutions;
+        else {
+            if(sp.IsMobilePlatform()) {
+                PlatformVersion = sp.short_version;
+                RecommendedAppiumVersion = sp.recommended_backend_version;
+            }
+            ScreenResolutions = screenResolutions;
+        }
+
         BrowserVersions = [];
     }
 

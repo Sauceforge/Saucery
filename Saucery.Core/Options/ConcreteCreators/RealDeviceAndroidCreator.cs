@@ -4,8 +4,8 @@ using Saucery.Core.Options.ConcreteProducts;
 
 namespace Saucery.Core.Options.ConcreteCreators;
 
-internal class AppiumIOSCreator : Creator {
-    public override BaseOptions Create(BrowserVersion browserVersion, string testName) => new AppiumIOSOptions(browserVersion, testName);
+internal class RealDeviceAndroidCreator : Creator {
+    public override BaseOptions Create(BrowserVersion browserVersion, string testName) => new RealDeviceAndroidOptions(browserVersion, testName);
 }
 /*
 * Copyright Andrew Gray, SauceForge

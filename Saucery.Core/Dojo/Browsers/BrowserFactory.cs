@@ -33,4 +33,8 @@ public class BrowserFactory
                 SauceryConstants.PLATFORM_MAC_1010 => new Mac1010BrowserCreator(sp).Create("OS X 10.10", screenResolutions),
                 _ => null,
             };
+
+    public static BrowserBase? CreateRealBrowser(SupportedPlatform sp) => sp.Manufacturer?[0] == "Apple"
+            ? new IOSBrowserCreator(sp).Create("iOS", null!)
+            : new AndroidBrowserCreator(sp).Create("Android", null!);
 }
