@@ -3,6 +3,7 @@ using Saucery.Core.Dojo;
 using Saucery.Core.Dojo.Platforms.Base;
 using Saucery.Core.Dojo.Platforms.ConcreteProducts.Apple;
 using Saucery.Core.Dojo.Platforms.ConcreteProducts.Google;
+using Saucery.Core.Dojo.Platforms.ConcreteProducts.Linux;
 using Saucery.Core.Dojo.Platforms.ConcreteProducts.PC;
 using Saucery.Core.RestAPI.FlowControl;
 using Saucery.Core.Tests.Util;
@@ -52,6 +53,7 @@ public class RestTests
     }
 
     [Test]
+    [GenericTestCase(typeof(LinuxPlatform), TestName = "LinuxSupportedPlatformTest")]
     [GenericTestCase(typeof(Windows11Platform), TestName = "Windows11SupportedPlatformTest")]
     [GenericTestCase(typeof(Windows10Platform), TestName = "Windows10SupportedPlatformTest")]
     [GenericTestCase(typeof(Windows81Platform), TestName = "Windows81SupportedPlatformTest")]
@@ -124,6 +126,7 @@ public class RestTests
     }
 
     [Test]
+    [GenericTestCase(typeof(LinuxPlatform), TestName = "LinuxBrowserCountTest")]
     [GenericTestCase(typeof(Windows11Platform), TestName = "Windows11BrowserCountTest")]
     [GenericTestCase(typeof(Windows10Platform), TestName = "Windows10BrowserCountTest")]
     [GenericTestCase(typeof(Windows81Platform), TestName = "Windows81BrowserCountTest")]
