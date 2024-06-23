@@ -124,13 +124,33 @@ public class PlatformConfigurator
 
     public BrowserVersion? Filter(SaucePlatform platform)
     {
-        var bv = Validate(platform);
-        if (bv != null)
-        {
-            bv.ScreenResolution = platform.ScreenResolution;
-            bv.DeviceOrientation = platform.DeviceOrientation;
+        if(platform.IsARealDevice()) {
+            if(ValidateReal(platform) != null)
+                return new BrowserVersion(platform.Os, 
+                                          platform.LongVersion, 
+                                          "", 
+                                          platform.LongName, 
+                                          "appium",
+                                          platform.LongName, 
+                                          "latest", 
+                                          [], 
+                                          [], 
+                                          "", 
+                                          "", 
+                                          "", 
+                                          platform.IsAnAndroidDevice() ? PlatformType.Android : PlatformType.Apple,
+                                          []);
+            else
+                return null;
+        } else {
+            var bv = Validate(platform);
+            if(bv != null) {
+                bv.ScreenResolution = platform.ScreenResolution;
+                bv.DeviceOrientation = platform.DeviceOrientation;
+            }
+
+            return bv;
         }
-        return bv;
     }
 
     public BrowserVersion? Validate(SaucePlatform requested)
@@ -147,16 +167,10 @@ public class PlatformConfigurator
                 browserVersion = AvailablePlatforms.FindDesktopBrowser(requested);
                 break;
             case PlatformType.Android:
-                if(requested.IsARealDevice())
-                    browserVersion = AvailableRealDevices.FindAndroidBrowser(requested, true);
-                else
-                    browserVersion = AvailablePlatforms.FindAndroidBrowser(requested, false);
+                browserVersion = AvailablePlatforms.FindAndroidBrowser(requested);
                 break;
             case PlatformType.Apple:
-                if(requested.IsARealDevice())
-                    browserVersion = AvailableRealDevices.FindIOSBrowser(requested, true);
-                else
-                    browserVersion = AvailablePlatforms.FindIOSBrowser(requested, false);
+                browserVersion = AvailablePlatforms.FindIOSBrowser(requested);
                 break;
             default:
                 Console.WriteLine($"Requested Platform Not Found: {0}", requested.LongName);
@@ -164,5 +178,22 @@ public class PlatformConfigurator
         }
 
         return browserVersion?.Classify();
+    }
+
+    public PlatformBase? ValidateReal(SaucePlatform requested) {
+        requested.Classify();
+        switch(requested.PlatformType) {
+            case PlatformType.Android:
+                return AvailableRealDevices.FindAndroidPlatform(requested);
+                //break;
+            case PlatformType.Apple:
+                return AvailableRealDevices.FindIOSPlatform(requested);
+                //break;
+            default:
+                Console.WriteLine($"Requested Real Platform Not Found: {0}", requested.LongName);
+                return null;
+        }
+
+        //return browserVersion?.Classify();
     }
 }

@@ -7,7 +7,7 @@ namespace Saucery.Core.Options.ConcreteProducts;
 
 internal class RealDeviceIOSOptions : BaseOptions {
     public RealDeviceIOSOptions(BrowserVersion browserVersion, string testName) : base(testName) {
-        Console.WriteLine(SauceryConstants.SETTING_UP, testName, SauceryConstants.IOS_ON_APPIUM);
+        Console.WriteLine(SauceryConstants.SETTING_UP, testName, SauceryConstants.REAL_IOS_ON_APPIUM);
         DebugMessages.PrintiOSOptionValues(browserVersion);
         Console.WriteLine("Creating iOS Options");
 
@@ -18,14 +18,14 @@ internal class RealDeviceIOSOptions : BaseOptions {
             PlatformName = browserVersion.PlatformNameForOption,
             BrowserName = SauceryConstants.SAFARI_BROWSER,
             DeviceName = browserVersion.DeviceName,
-            PlatformVersion = browserVersion.Name
+            PlatformVersion = browserVersion.PlatformNameForOption
         };
         
-        SauceOptions.Add(SauceryConstants.SAUCE_APPIUM_VERSION_CAPABILITY, browserVersion.RecommendedAppiumVersion);
-        if (!string.IsNullOrEmpty(browserVersion.DeviceOrientation))
-        {
-            SauceOptions.Add(SauceryConstants.SAUCE_DEVICE_ORIENTATION_CAPABILITY, browserVersion.DeviceOrientation);
-        }
+        SauceOptions.Add(SauceryConstants.SAUCE_APPIUM_VERSION_CAPABILITY, "latest");
+        //if (!string.IsNullOrEmpty(browserVersion.DeviceOrientation))
+        //{
+        //    SauceOptions.Add(SauceryConstants.SAUCE_DEVICE_ORIENTATION_CAPABILITY, browserVersion.DeviceOrientation);
+        //}
         options.AddAdditionalAppiumOption(SauceryConstants.SAUCE_OPTIONS_CAPABILITY, SauceOptions);
         Opts = options;
     }

@@ -194,24 +194,11 @@ public static class DojoExtensions
             : browsers.BrowserVersions.Find(v => v.Os.Equals(sp.Os, StringComparison.Ordinal) && v.BrowserName.ToLower().Equals(sp.Browser.ToLower()) && v.Name!.ToLower().Equals(sp.BrowserVersion.ToLower()) && v.ScreenResolutions.Contains(sp.ScreenResolution));
     }
 
-    public static BrowserVersion? FindAndroidBrowser(this List<PlatformBase> platforms, SaucePlatform sp, bool isReal)
+    public static BrowserVersion? FindAndroidBrowser(this List<PlatformBase> platforms, SaucePlatform sp)
     {
         PlatformBase? platform = null;
         var platformToSearchFor = $"{sp.Os} {sp.LongVersion}";
-        platform = isReal
-            ? platformToSearchFor switch {
-                "Linux 14" => platforms.GetPlatform<Android14Platform>()[0],
-                "Linux 13" => platforms.GetPlatform<Android13Platform>()[0],
-                "Linux 12" => platforms.GetPlatform<Android12Platform>()[0],
-                "Linux 11" => platforms.GetPlatform<Android11Platform>()[0],
-                "Linux 10" => platforms.GetPlatform<Android10Platform>()[0],
-                "Linux 9" => platforms.GetPlatform<Android9Platform>()[0],
-                "Linux 8" => platforms.GetPlatform<Android8Platform>()[0],
-                "Linux 7" => platforms.GetPlatform<Android7Platform>()[0],
-                "Linux 6" => platforms.GetPlatform<Android6Platform>()[0],
-                _ => platform
-            }
-            : platformToSearchFor switch {
+        platform = platformToSearchFor switch {
                 "Linux 14.0" => platforms.GetPlatform<Android14Platform>()[0],
                 "Linux 13.0" => platforms.GetPlatform<Android13Platform>()[0],
                 "Linux 12.0" => platforms.GetPlatform<Android12Platform>()[0],
@@ -239,50 +226,29 @@ public static class DojoExtensions
             && v.Name!.Equals(sp.BrowserVersion, StringComparison.Ordinal));
     }
 
-    //public static BrowserVersion? FindAndroidBrowser(this List<SupportedRealDevicePlatform> platforms, SaucePlatform sp) {
-    //    PlatformBase? platform = null;
-    //    var platformToSearchFor = $"{sp.Os} {sp.LongVersion}";
-    //    platform = platformToSearchFor switch {
-    //        "Linux 14" => platforms.GetPlatform<Android14Platform>()[0],
-    //        "Linux 13" => platforms.GetPlatform<Android13Platform>()[0],
-    //        "Linux 12" => platforms.GetPlatform<Android12Platform>()[0],
-    //        "Linux 11" => platforms.GetPlatform<Android11Platform>()[0],
-    //        "Linux 10" => platforms.GetPlatform<Android10Platform>()[0],
-    //        "Linux 9" => platforms.GetPlatform<Android9Platform>()[0],
-    //        "Linux 8" => platforms.GetPlatform<Android8Platform>()[0],
-    //        "Linux 7" => platforms.GetPlatform<Android7Platform>()[0],
-    //        "Linux 6" => platforms.GetPlatform<Android6Platform>()[0],
-    //        _ => platform
-    //    };
-
-    //    var browsers = platform?.Browsers.Find(b => b.Os.Equals(sp.Os, StringComparison.Ordinal) && b.DeviceName.Equals(sp.LongName, StringComparison.Ordinal));
-
-    //    return browsers == null
-    //        ? null
-    //        : browsers.BrowserVersions.Count == 1
-    //        ? browsers.BrowserVersions[0]
-    //        : browsers.BrowserVersions
-    //        .Find(v => v.Os.Equals(sp.Os, StringComparison.Ordinal) &&
-    //        v.DeviceName.Equals(sp.LongName, StringComparison.Ordinal)
-    //        && v.Name!.Equals(sp.BrowserVersion, StringComparison.Ordinal));
-    //}
-
-    public static BrowserVersion? FindIOSBrowser(this List<PlatformBase> platforms, SaucePlatform sp, bool isReal) {
+    public static PlatformBase FindAndroidPlatform(this List<PlatformBase> platforms, SaucePlatform sp) {
         PlatformBase? platform = null;
         var platformToSearchFor = $"{sp.Os} {sp.LongVersion}";
-        if(isReal) {
-            platform = platformToSearchFor switch {
-                "iOS 18" => platforms.GetPlatform<IOS18Platform>()[0],
-                "iOS 17" => platforms.GetPlatform<IOS17Platform>()[0],
-                "iOS 16" => platforms.GetPlatform<IOS16Platform>()[0],
-                "iOS 15" => platforms.GetPlatform<IOS15Platform>()[0],
-                "iOS 14" => platforms.GetPlatform<IOS14Platform>()[0],
-                "iOS 13" => platforms.GetPlatform<IOS13Platform>()[0],
-                "iOS 12" => platforms.GetPlatform<IOS12Platform>()[0],
-                _ => platform
-            };
-        } else {
-            platform = platformToSearchFor switch {
+        platform = platformToSearchFor switch {
+            "Linux 14" => platforms.GetPlatform<Android14Platform>()[0],
+            "Linux 13" => platforms.GetPlatform<Android13Platform>()[0],
+            "Linux 12" => platforms.GetPlatform<Android12Platform>()[0],
+            "Linux 11" => platforms.GetPlatform<Android11Platform>()[0],
+            "Linux 10" => platforms.GetPlatform<Android10Platform>()[0],
+            "Linux 9" => platforms.GetPlatform<Android9Platform>()[0],
+            "Linux 8" => platforms.GetPlatform<Android8Platform>()[0],
+            "Linux 7" => platforms.GetPlatform<Android7Platform>()[0],
+            "Linux 6" => platforms.GetPlatform<Android6Platform>()[0],
+            _ => platform
+        };
+
+        return platform!;
+    }
+
+    public static BrowserVersion? FindIOSBrowser(this List<PlatformBase> platforms, SaucePlatform sp) {
+        PlatformBase? platform = null;
+        var platformToSearchFor = $"{sp.Os} {sp.LongVersion}";
+        platform = platformToSearchFor switch {
                 "iOS 17.0" => platforms.GetPlatform<IOS17Platform>()[0],
                 "iOS 16.2" => platforms.GetPlatform<IOS162Platform>()[0],
                 "iOS 16.1" => platforms.GetPlatform<IOS161Platform>()[0],
@@ -307,7 +273,6 @@ public static class DojoExtensions
                 "iOS 10.3" => platforms.GetPlatform<IOS103Platform>()[0],
                 _ => platform
             };
-        }
 
         var browsers = platform?.Browsers.Find(b => b.PlatformNameForOption.Equals(sp.Os, StringComparison.Ordinal) && b.DeviceName.Equals(sp.LongName, StringComparison.Ordinal));
 
@@ -322,32 +287,22 @@ public static class DojoExtensions
             v.Name!.Equals(sp.BrowserVersion, StringComparison.Ordinal));
     }
 
-    //public static BrowserVersion? FindIOSBrowser(this List<SupportedRealDevicePlatform> platforms, SaucePlatform sp) {
-    //    RealDeviceBase? platform = null;
-    //    var platformToSearchFor = $"{sp.Os} {sp.LongVersion}";
-    //    platform = platformToSearchFor switch {
-    //        "iOS 18" => platforms.GetPlatform<IOS18Platform>()[0],
-    //        "iOS 17" => platforms.GetPlatform<IOS17Platform>()[0],
-    //        "iOS 16" => platforms.GetPlatform<IOS16Platform>()[0],
-    //        "iOS 15" => platforms.GetPlatform<IOS15Platform>()[0],
-    //        "iOS 14" => platforms.GetPlatform<IOS14Platform>()[0],
-    //        "iOS 13" => platforms.GetPlatform<IOS13Platform>()[0],
-    //        "iOS 12" => platforms.GetPlatform<IOS12Platform>()[0],
-    //        _ => platform
-    //    };
+    public static PlatformBase FindIOSPlatform(this List<PlatformBase> platforms, SaucePlatform sp) {
+        PlatformBase? platform = null;
+        var platformToSearchFor = $"{sp.Os} {sp.LongVersion}";
+        platform = platformToSearchFor switch {
+                "iOS 18" => platforms.GetPlatform<IOS18Platform>()[0],
+                "iOS 17" => platforms.GetPlatform<IOS17Platform>()[0],
+                "iOS 16" => platforms.GetPlatform<IOS16Platform>()[0],
+                "iOS 15" => platforms.GetPlatform<IOS15Platform>()[0],
+                "iOS 14" => platforms.GetPlatform<IOS14Platform>()[0],
+                "iOS 13" => platforms.GetPlatform<IOS13Platform>()[0],
+                "iOS 12" => platforms.GetPlatform<IOS12Platform>()[0],
+                _ => platform
+            };
 
-    //    var browsers = platform?.Browsers.Find(b => b.PlatformNameForOption.Equals(sp.Os, StringComparison.Ordinal) && b.DeviceName.Equals(sp.LongName, StringComparison.Ordinal));
-
-    //    return browsers == null
-    //        ? null
-    //        : browsers.BrowserVersions.Count == 1
-    //        ? browsers.BrowserVersions[0]
-    //        : browsers.BrowserVersions
-    //        .Find(v => v.PlatformNameForOption
-    //        .Equals(sp.Os, StringComparison.Ordinal) &&
-    //        v.DeviceName.Equals(sp.LongName, StringComparison.Ordinal) &&
-    //        v.Name!.Equals(sp.BrowserVersion, StringComparison.Ordinal));
-    //}
+        return platform!;
+    }
 
     private static BrowserBase? FindBrowser(this IEnumerable<BrowserBase> browsers, SupportedPlatform sp) => browsers
             .FirstOrDefault(b => b.Name
