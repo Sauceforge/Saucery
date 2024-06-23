@@ -4,6 +4,7 @@ using Saucery.Core.Dojo.Platforms;
 using Saucery.Core.Dojo.Platforms.Base;
 using Saucery.Core.Dojo.Platforms.ConcreteProducts.Apple;
 using Saucery.Core.Dojo.Platforms.ConcreteProducts.Google;
+using Saucery.Core.Dojo.Platforms.ConcreteProducts.Linux;
 using Saucery.Core.Dojo.Platforms.ConcreteProducts.PC;
 using Saucery.Core.OnDemand;
 using Saucery.Core.OnDemand.Base;
@@ -112,6 +113,7 @@ public static class DojoExtensions
     {
         PlatformBase? platform = sp.Os switch
         {
+            SauceryConstants.PLATFORM_LINUX => platforms.GetPlatform<LinuxPlatform>()[0],
             SauceryConstants.PLATFORM_WINDOWS_11 => platforms.GetPlatform<Windows11Platform>()[0],
             SauceryConstants.PLATFORM_WINDOWS_10 => platforms.GetPlatform<Windows10Platform>()[0],
             SauceryConstants.PLATFORM_WINDOWS_81 => platforms.GetPlatform<Windows81Platform>()[0],
