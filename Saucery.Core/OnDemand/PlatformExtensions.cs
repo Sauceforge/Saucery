@@ -7,7 +7,7 @@ namespace Saucery.Core.OnDemand;
 internal static class PlatformExtensions {
     public static bool IsAMobileDevice(this BrowserVersion browserVersion) => IsAnAndroidDevice(browserVersion) || IsAnAppleDevice(browserVersion);
 
-    public static bool IsAnAndroidDevice(this BrowserVersion browserVersion) => browserVersion.Os != null && browserVersion.Os.ToUpper().Contains(SauceryConstants.PLATFORM_LINUX.ToUpper());
+    public static bool IsAnAndroidDevice(this BrowserVersion browserVersion) => browserVersion.Os != null && browserVersion.Os.ToUpper().Contains(SauceryConstants.PLATFORM_LINUX.ToUpper()) && browserVersion.RecommendedAppiumVersion != null;
 
     public static bool IsAnAppleDevice(this BrowserVersion browserVersion) => IsAnIPhone(browserVersion) || IsAnIPad(browserVersion);
 
