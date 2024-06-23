@@ -1,6 +1,7 @@
 ﻿using Saucery.Core.Dojo.Browsers.Base;
 using Saucery.Core.Dojo.Browsers.ConcreteCreators.Apple;
 using Saucery.Core.Dojo.Browsers.ConcreteCreators.Google;
+using Saucery.Core.Dojo.Browsers.ConcreteCreators.Linux;
 using Saucery.Core.Dojo.Browsers.ConcreteCreators.PC;
 using Saucery.Core.RestAPI;
 using Saucery.Core.Util;
@@ -15,6 +16,7 @@ public class BrowserFactory
             ? new IOSBrowserCreator(sp).Create("iOS", null!)
             : sp.os switch
             {
+                SauceryConstants.PLATFORM_LINUX => new LinuxBrowserCreator(sp).Create("Linux", screenResolutions),
                 SauceryConstants.PLATFORM_WINDOWS_11 => new Windows11BrowserCreator(sp).Create("Windows 11", screenResolutions),
                 SauceryConstants.PLATFORM_WINDOWS_10 => new Windows10BrowserCreator(sp).Create("Windows 10", screenResolutions),
                 SauceryConstants.PLATFORM_WINDOWS_81 => new Windows81BrowserCreator(sp).Create("Windows 8.1", screenResolutions),

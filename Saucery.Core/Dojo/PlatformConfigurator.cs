@@ -97,7 +97,7 @@ public class PlatformConfigurator
         //Desktop Platform Only
         var availablePlatform = AvailablePlatforms.Find(p => p.Name.Equals(platform.Os));
         var browser = availablePlatform?.Browsers.Find(b => b.Name.Equals(platform.Browser));
-        var numericBrowserVersions = browser?.BrowserVersions.Where(x => x.Name!.Any(char.IsNumber));
+        var numericBrowserVersions = browser?.BrowserVersions.Where(x => x.Name!.Any(char.IsNumber) && x.Name != SauceryConstants.BROWSER_VERSION_LATEST_MINUS1);
         var browserVersion = numericBrowserVersions?.Aggregate((maxItem, nextItem) => (int.Parse(maxItem.Name!) > int.Parse(nextItem.Name!)) ? maxItem : nextItem);
 
         return int.Parse(browserVersion?.Name!);

@@ -19,7 +19,7 @@ public class DataDrivenTests(ITestOutputHelper output, BaseFixture baseFixture) 
     }
     
     public static IEnumerable<object[]> AllCombinations() {
-        var allPlatforms = RequestedPlatformData.AllPlatforms;
+        _ = RequestedPlatformData.AllPlatforms;
         return GetAllCombinations([4, 5]);
     }
 }

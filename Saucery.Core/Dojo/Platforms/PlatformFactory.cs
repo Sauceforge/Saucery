@@ -1,4 +1,5 @@
 ﻿using Saucery.Core.Dojo.Platforms.Base;
+using Saucery.Core.Dojo.Platforms.ConcreteCreators.Linux;
 using Saucery.Core.Dojo.Platforms.ConcreteCreators.PC;
 using Saucery.Core.RestAPI;
 using Saucery.Core.Util;
@@ -13,6 +14,7 @@ public class PlatformFactory
             ? ApplePlatformFactory.CreatePlatform(sp)
             : sp.os switch
             {
+                SauceryConstants.PLATFORM_LINUX => new LinuxPlatformCreator(sp).Create(),
                 SauceryConstants.PLATFORM_WINDOWS_11 => new Windows11PlatformCreator(sp).Create(),
                 SauceryConstants.PLATFORM_WINDOWS_10 => new Windows10PlatformCreator(sp).Create(),
                 SauceryConstants.PLATFORM_WINDOWS_81 => new Windows81PlatformCreator(sp).Create(),
