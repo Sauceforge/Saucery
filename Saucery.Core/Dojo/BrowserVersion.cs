@@ -163,7 +163,6 @@ public class BrowserVersion
         //        : AppendPlatformField(AppendPlatformField(AppendPlatformField(AppendPlatformField(Os), BrowserName), Name), ScreenResolution).ToString();
     }
 
-    //private static StringBuilder AppendPlatformField(this StringBuilder testName, string fieldToAdd) => testName.Append(SauceryConstants.UNDERSCORE).Append(fieldToAdd);
     private void AppendPlatformField(string fieldToAdd)
     {
         TestNameBuilder.Append($"{SauceryConstants.UNDERSCORE}{fieldToAdd}");

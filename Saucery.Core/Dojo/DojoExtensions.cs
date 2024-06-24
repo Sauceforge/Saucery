@@ -24,12 +24,8 @@ public static class DojoExtensions
                 //SauceLabs may have just added it to the platform cornfigurato. Don't fall over.
                 return;
             }
-            //p.Browsers.AddRealBrowser(sp);
             platforms.Add(p);
         }
-        //else {
-        //    p.Browsers.AddRealBrowser(sp);
-        //}
     }
 
     public static void AddPlatform(this List<PlatformBase> platforms, SupportedPlatform sp)
@@ -160,8 +156,6 @@ public static class DojoExtensions
     }
 
     public static IList<T> GetPlatform<T>(this List<PlatformBase> availablePlatforms) where T : PlatformBase => availablePlatforms.OfType<T>().ToList();
-
-    //public static IList<T> GetPlatform<T>(this List<SupportedRealDevicePlatform> availablePlatforms) where T : SupportedRealDevicePlatform => availablePlatforms.OfType<T>().ToList();
 
     public static BrowserVersion? FindDesktopBrowser(this List<PlatformBase> platforms, SaucePlatform sp)
     {

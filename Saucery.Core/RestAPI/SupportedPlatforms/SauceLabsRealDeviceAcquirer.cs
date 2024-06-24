@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using RestSharp;
 using RestSharp.Authenticators;
-using Saucery.Core.Dojo.Platforms.Base;
 using Saucery.Core.RestAPI.SupportedPlatforms.Base;
 using Saucery.Core.Util;
 
@@ -18,20 +17,10 @@ public class SauceLabsRealDeviceAcquirer : RealDeviceAcquirer {
         Client = new RestClient(clientOptions);
     }
 
-    //public override List<SupportedRealDevicePlatform>? AcquireRealDevicePlatforms()
-    //{
-    //    var json = GetJsonResponse(SauceryConstants.SUPPORTED_REALDEVICE_PLATFORMS_REQUEST);
-    //    var supportedRealDevicePlatforms = JsonConvert.DeserializeObject<List<SupportedRealDevicePlatform>>(json!);
-    //    return supportedRealDevicePlatforms;
-
-    //    //return new List<SupportedRealDevicePlatform>();
-    //}
-
     public override List<SupportedPlatform>? AcquireRealDevicePlatforms() {
         var json = GetJsonResponse(SauceryConstants.SUPPORTED_REALDEVICE_PLATFORMS_REQUEST);
         var supportedPlatforms = JsonConvert.DeserializeObject<List<SupportedPlatform>>(json!);
+        
         return supportedPlatforms;
-
-        //return new List<SupportedRealDevicePlatform>();
     }
 }

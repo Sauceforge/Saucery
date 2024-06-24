@@ -1,5 +1,4 @@
-﻿using OpenQA.Selenium;
-using OpenQA.Selenium.Appium;
+﻿using OpenQA.Selenium.Appium;
 using Saucery.Core.Dojo;
 using Saucery.Core.Options.Base;
 using Saucery.Core.Util;
