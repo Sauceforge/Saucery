@@ -30,12 +30,17 @@ internal class RestAPILimitsChecker {
 
     internal bool IsLimitExceeded() => NoRemaining() || IsIndicatorPresentInJson();
 
-    private bool IsIndicatorPresentInJson()
-    {
-        return _response.Content == null || _response.Content.Contains(SauceryConstants.RESTAPI_LIMIT_EXCEEDED_INDICATOR);
-    }
+    private bool IsIndicatorPresentInJson() => 
+        _response.Content == null || 
+        _response.Content.Contains(SauceryConstants.RESTAPI_LIMIT_EXCEEDED_INDICATOR);
 
-    private bool NoRemaining() => int.Parse(_headers["x-ratelimit-remaining"]) <= 0;
+    private bool NoRemaining() => 
+        _headers.ContainsKey("x-ratelimit-remaining") && 
+        int.Parse(_headers["x-ratelimit-remaining"]) <= 0;
 
-    internal int GetReset() => int.Parse(_headers["x-ratelimit-reset"]);
+    internal int GetReset() => 
+        _headers.TryGetValue("x-ratelimit-reset", out string? value) 
+            ? int.Parse(value)
+            : 0;
+
 }

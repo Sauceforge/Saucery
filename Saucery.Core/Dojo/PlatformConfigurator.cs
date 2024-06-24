@@ -12,7 +12,7 @@ public class PlatformConfigurator
     private SauceLabsPlatformAcquirer PlatformAcquirer { get; set; } = new();
     private SauceLabsRealDeviceAcquirer RealDeviceAcquirer { get; set; } = new();
     public List<PlatformBase> AvailablePlatforms { get; set; } = [];
-    public List<SupportedRealDevicePlatform> AvailableRealDevices { get; set; } = [];
+    public List<PlatformBase> AvailableRealDevices { get; set; } = [];
 
     public PlatformConfigurator(PlatformFilter filter)
     {
@@ -31,11 +31,6 @@ public class PlatformConfigurator
                 break;
         }
     }
-
-    //public PlatformConfigurator()
-    //{
-    //    ConstructAllPlatforms();
-    //}
 
     private void ConstructAllPlatforms()
     {
@@ -60,13 +55,11 @@ public class PlatformConfigurator
     private void ConstructRealDevices()
     {
         var supportedRealDevices = RealDeviceAcquirer.AcquireRealDevicePlatforms();
+        //var filteredSupportedPlatforms = FilterSupportedPlatforms(supportedPlatforms!);
 
-        AvailableRealDevices.AddRange(supportedRealDevices!);
-
-        //foreach (var rd in supportedRealDevices)
-        //{
-        //    AvailableRealDevices.AddPlatform(rd);
-        //}
+        foreach(var sp in supportedRealDevices!) {
+            AvailableRealDevices.AddRealPlatform(sp);
+        }
     }
 
     private static List<SupportedPlatform> FilterSupportedPlatforms(List<SupportedPlatform> supportedPlatforms)
@@ -131,13 +124,33 @@ public class PlatformConfigurator
 
     public BrowserVersion? Filter(SaucePlatform platform)
     {
-        var bv = Validate(platform);
-        if (bv != null)
-        {
-            bv.ScreenResolution = platform.ScreenResolution;
-            bv.DeviceOrientation = platform.DeviceOrientation;
+        if(platform.IsARealDevice()) {
+            if(ValidateReal(platform) != null)
+                return new BrowserVersion(platform.Os, 
+                                          platform.LongVersion, 
+                                          "", 
+                                          platform.LongName, 
+                                          "appium",
+                                          platform.LongName, 
+                                          "latest", 
+                                          [], 
+                                          [], 
+                                          "", 
+                                          "", 
+                                          "", 
+                                          platform.IsAnAndroidDevice() ? PlatformType.Android : PlatformType.Apple,
+                                          []);
+            else
+                return null;
+        } else {
+            var bv = Validate(platform);
+            if(bv != null) {
+                bv.ScreenResolution = platform.ScreenResolution;
+                bv.DeviceOrientation = platform.DeviceOrientation;
+            }
+
+            return bv;
         }
-        return bv;
     }
 
     public BrowserVersion? Validate(SaucePlatform requested)
@@ -165,5 +178,22 @@ public class PlatformConfigurator
         }
 
         return browserVersion?.Classify();
+    }
+
+    public PlatformBase? ValidateReal(SaucePlatform requested) {
+        requested.Classify();
+        switch(requested.PlatformType) {
+            case PlatformType.Android:
+                return AvailableRealDevices.FindAndroidPlatform(requested);
+                //break;
+            case PlatformType.Apple:
+                return AvailableRealDevices.FindIOSPlatform(requested);
+                //break;
+            default:
+                Console.WriteLine($"Requested Real Platform Not Found: {0}", requested.LongName);
+                return null;
+        }
+
+        //return browserVersion?.Classify();
     }
 }

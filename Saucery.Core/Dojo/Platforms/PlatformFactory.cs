@@ -31,4 +31,9 @@ public class PlatformFactory
                 SauceryConstants.PLATFORM_MAC_1010 => new Mac1010PlatformCreator(sp).Create(),
                 _ => null
             };
+
+    public static PlatformBase? CreateRealPlatform(SupportedPlatform sp) =>
+        sp.Manufacturer?[0] == "Apple" 
+            ? ApplePlatformFactory.CreateRealPlatform(sp)
+            : AndroidPlatformFactory.CreateRealPlatform(sp);
 }

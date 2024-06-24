@@ -3,7 +3,7 @@ using Saucery.Core.RestAPI;
 
 namespace Saucery.Core.Dojo.Platforms.Base;
 
-public abstract class PlatformBase : IPlatform
+public abstract class PlatformBase
 {
     public string Name { get; set; }
     public abstract string PlatformNameForOption {get;set;}
@@ -25,10 +25,15 @@ public abstract class PlatformBase : IPlatform
         RecommendedAppiumVersion = sp.recommended_backend_version!;
         SupportedBackendVersions = sp.supported_backend_versions!;
         DeprecatedBackendVersions = sp.deprecated_backend_versions!;
-        if (sp.IsMobilePlatform())
-        {
-            PlatformVersion = sp.short_version;
+
+        if(sp.automation_backend == null)
+            PlatformVersion = sp.OsVersion?.Split(".")[0];
+        else {
+            if(sp.IsMobilePlatform()) {
+                PlatformVersion = sp.short_version;
+            }
         }
+        
         Browsers = [];
     }
 }

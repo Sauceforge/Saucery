@@ -7,6 +7,10 @@ namespace Saucery.Core.OnDemand;
 internal static class PlatformExtensions {
     public static bool IsAMobileDevice(this BrowserVersion browserVersion) => IsAnAndroidDevice(browserVersion) || IsAnAppleDevice(browserVersion);
 
+    public static bool IsARealDevice(this BrowserVersion browserVersion) => !browserVersion.DeviceName.Contains("Simulator") && !browserVersion.DeviceName.Contains("Emulator");
+
+    public static bool IsARealDevice(this SaucePlatform platform) => !platform.LongName.Contains("Simulator") && !platform.LongName.Contains("Emulator");
+
     public static bool IsAnAndroidDevice(this BrowserVersion browserVersion) => browserVersion.Os != null && browserVersion.Os.Contains(SauceryConstants.PLATFORM_LINUX, StringComparison.CurrentCultureIgnoreCase) && browserVersion.RecommendedAppiumVersion != null;
 
     public static bool IsAnAppleDevice(this BrowserVersion browserVersion) => IsAnIPhone(browserVersion) || IsAnIPad(browserVersion);

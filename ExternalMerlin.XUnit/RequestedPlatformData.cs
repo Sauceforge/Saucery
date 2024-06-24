@@ -11,7 +11,7 @@ public class RequestedPlatformData : SauceryTestData
     {
         List<SaucePlatform> platforms =
         [
-            //Mobile Platforms
+            //Emulated Mobile Platforms
             new AndroidPlatform("Google Pixel 8 Pro GoogleAPI Emulator", "14.0", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT),
             new IOSPlatform("iPhone 14 Pro Max Simulator", "16.2", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
 

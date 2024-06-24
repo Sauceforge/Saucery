@@ -151,8 +151,10 @@ public class SauceryConstants {
     //SETTING UP
     internal const string SETTING_UP = "Setting up {0} for {1}";
     internal const string SETTING_UP_APPIUM = "Setting up {0} for {1} {2}";
-    internal const string ANDROID_ON_APPIUM = "Android on Appium";
-    internal const string IOS_ON_APPIUM = "IOS on Appium";
+    internal const string ANDROID_ON_APPIUM = "Android Emulator on Appium";
+    internal const string REAL_ANDROID_ON_APPIUM = "Android Real Device on Appium";
+    internal const string IOS_ON_APPIUM = "IOS Emulator on Appium";
+    internal const string REAL_IOS_ON_APPIUM = "IOS Real Device on Appium";
     internal const string ANDROID_ON_WEBDRIVER = "Android on WebDriver";
     internal const string IOS_ON_WEBDRIVER = "IOS on WebDriver";
     internal const string DESKTOP_ON_WEBDRIVER = "Desktop on WebDriver";

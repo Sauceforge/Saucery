@@ -22,4 +22,17 @@ public class AndroidPlatformFactory
         "5.1" => new Android51PlatformCreator(sp).Create(),
         _ => null
     };
+
+    public static PlatformBase? CreateRealPlatform(SupportedPlatform sp) => sp.OsVersion?.Split(".")[0] switch {
+        "14" => new Android14PlatformCreator(sp).Create(),
+        "13" => new Android13PlatformCreator(sp).Create(),
+        "12" => new Android12PlatformCreator(sp).Create(),
+        "11" => new Android11PlatformCreator(sp).Create(),
+        "10" => new Android10PlatformCreator(sp).Create(),
+        "9" => new Android9PlatformCreator(sp).Create(),
+        "8" => new Android8PlatformCreator(sp).Create(),
+        "7" => new Android7PlatformCreator(sp).Create(),
+        "6" => new Android6PlatformCreator(sp).Create(),
+        _ => null
+    };
 }
