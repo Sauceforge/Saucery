@@ -15,6 +15,8 @@ env:
   UT_DIR: Saucery.Core.Tests
   NUNIT_INT_DIR: Merlin.NUnit
   XUNIT_INT_DIR: Merlin.XUnit
+  NUNIT_RD_INT_DIR: Merlin.NUnit.RealDevices
+  XUNIT_RD_INT_DIR: Merlin.XUnit.RealDevices
   UT_PROJECT: Saucery.Core.Tests/Saucery.Core.Tests.csproj                                      # full path to your unit test project file
   M_NUNIT_PROJECT: Merlin.NUnit/Merlin.NUnit.csproj                                             # full path to nunit internal integration test project file
   M_RD_NUNIT_PROJECT: Merlin.NUnit.RealDevices/Merlin.NUnit.RealDevices.csproj                  # full path to nunit internal integration test project file
