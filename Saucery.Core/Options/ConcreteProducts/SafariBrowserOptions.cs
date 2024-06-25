@@ -12,7 +12,7 @@ internal class SafariBrowserOptions : BaseOptions {
         DebugMessages.PrintDesktopOptionValues(browserVersion);
         Console.WriteLine("Creating Safari Options");
 
-        var o = new SafariOptions
+        SafariOptions o = new()
         {
             PlatformName = browserVersion.Os,
             BrowserVersion = browserVersion.Name

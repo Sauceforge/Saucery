@@ -16,15 +16,17 @@ internal class EmulatedAndroidOptions : BaseOptions {
 
         Console.WriteLine("Creating Appium Options");
 
-        AppiumOptions options = new();
+        AppiumOptions options = new() {
+            DeviceName = browserVersion.DeviceName,
+            BrowserName = SauceryConstants.CHROME_BROWSER,
+            PlatformVersion = browserVersion.Name
+        };
+
         options.AddAdditionalAppiumOption("platformName", "Android");
-        options.DeviceName = browserVersion.DeviceName;
-        options.BrowserName = SauceryConstants.CHROME_BROWSER;
-        options.PlatformVersion = browserVersion.Name;
-        //appiumOptions.AddAdditionalAppiumOption("app", "path/to/your/app.apk");
         options.AddAdditionalAppiumOption("appiumVersion", browserVersion.RecommendedAppiumVersion);
         options.AddAdditionalAppiumOption("w3c", true);
         options.AddAdditionalAppiumOption("autoGrantPermissions", true);
+        //appiumOptions.AddAdditionalAppiumOption("app", "path/to/your/app.apk");
 
         if(!string.IsNullOrEmpty(browserVersion.DeviceOrientation)) {
             SauceOptions.Add(SauceryConstants.SAUCE_DEVICE_ORIENTATION_CAPABILITY, browserVersion.DeviceOrientation);

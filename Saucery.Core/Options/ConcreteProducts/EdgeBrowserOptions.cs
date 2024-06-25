@@ -11,8 +11,8 @@ internal class EdgeBrowserOptions : BaseOptions {
         Console.WriteLine(SauceryConstants.SETTING_UP, testName, SauceryConstants.DESKTOP_ON_WEBDRIVER);
         DebugMessages.PrintDesktopOptionValues(browserVersion);
         Console.WriteLine("Creating Edge Options");
-        
-        var o = new EdgeOptions
+
+        EdgeOptions o = new() 
         {
             PlatformName = browserVersion.Os,
             BrowserVersion = browserVersion.Name

@@ -11,8 +11,8 @@ internal class FirefoxBrowserOptions : BaseOptions {
         Console.WriteLine(SauceryConstants.SETTING_UP, testName, SauceryConstants.DESKTOP_ON_WEBDRIVER);
         DebugMessages.PrintDesktopOptionValues(browserVersion);
         Console.WriteLine("Creating Firefox Options");
-        
-        var o = new FirefoxOptions
+
+        FirefoxOptions o = new() 
         {
             PlatformName = browserVersion.Os,
             BrowserVersion = browserVersion.Name

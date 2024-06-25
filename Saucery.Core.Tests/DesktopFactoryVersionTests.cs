@@ -14,10 +14,8 @@ public class DesktopFactoryVersionTests
 {
     private static PlatformConfigurator PlatformConfigurator { get; set; }
 
-    static DesktopFactoryVersionTests()
-    {
+    static DesktopFactoryVersionTests() => 
         PlatformConfigurator = new PlatformConfigurator(PlatformFilter.ALL);
-    }
 
     [Test, TestCaseSource(typeof(DesktopDataClass), nameof(DesktopDataClass.NotSupportedTestCases))]
     public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform)

@@ -16,6 +16,7 @@ public class GenericTestCaseAttribute(Type type, params object[] arguments) : Te
             var gm = method.MakeGenericMethod(_type);
             return BuildFrom(gm, suite);
         }
+
         return BuildFrom(method, suite);
     }
 }

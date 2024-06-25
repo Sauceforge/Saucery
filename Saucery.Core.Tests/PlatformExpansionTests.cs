@@ -29,7 +29,9 @@ public class PlatformExpansionTests
         //PlatformConfigurator configurator = new();
         PlatformExpander expander = new(PlatformConfigurator!, platforms);
         var expandedSet = expander.Expand();
-        expandedSet.Find(e => e.BrowserVersion.Equals(82)).ShouldBeNull(); //Chrome didn't release version 82 due to Covid-19.
+        expandedSet
+            .Find(e => e.BrowserVersion.Equals(82))
+            .ShouldBeNull(); //Chrome didn't release version 82 due to Covid-19.
         expandedSet.Count.ShouldBeGreaterThanOrEqualTo(31);
     }
 

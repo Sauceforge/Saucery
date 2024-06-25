@@ -8,9 +8,11 @@ public class WebControl(By by)
 {
     private readonly By _by = by;
 
-    public IWebElement Find(RemoteWebDriver driver) => driver.FindElement(_by);
+    public IWebElement Find(RemoteWebDriver driver) => 
+        driver.FindElement(_by);
 
-    public ReadOnlyCollection<IWebElement> FindAll(RemoteWebDriver driver) => driver.FindElements(_by);
+    public ReadOnlyCollection<IWebElement> FindAll(RemoteWebDriver driver) => 
+        driver.FindElements(_by);
 }
 /*
 * Copyright Andrew Gray, SauceForge

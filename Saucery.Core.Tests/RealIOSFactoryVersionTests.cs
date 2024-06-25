@@ -46,10 +46,8 @@ public class RealIOSDataClass
         get
         {
             var versions = new [] { "12", "13", "14", "15", "16", "17", "18" };
-            foreach (var v in versions)
-            {
-                yield return new IOSRealDevice("iPhone.*", v);
-            }
+            return from v in versions
+                   select new IOSRealDevice("iPhone.*", v);
         }
     }
 

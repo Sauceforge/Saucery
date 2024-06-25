@@ -13,7 +13,7 @@ internal class RealDeviceIOSOptions : BaseOptions {
 
         AddSauceLabsOptions(Enviro.SauceNativeApp!);
 
-        var options = new AppiumOptions
+        AppiumOptions options = new()
         {
             PlatformName = browserVersion.PlatformNameForOption,
             BrowserName = SauceryConstants.SAFARI_BROWSER,

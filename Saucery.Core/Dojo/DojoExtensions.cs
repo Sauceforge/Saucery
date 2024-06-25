@@ -268,7 +268,10 @@ public static class DojoExtensions
                 _ => platform
             };
 
-        var browsers = platform?.Browsers.Find(b => b.PlatformNameForOption.Equals(sp.Os, StringComparison.Ordinal) && b.DeviceName.Equals(sp.LongName, StringComparison.Ordinal));
+        var browsers = platform?.Browsers
+            .Find(b => b.PlatformNameForOption
+                            .Equals(sp.Os, StringComparison.Ordinal) && 
+                                    b.DeviceName.Equals(sp.LongName, StringComparison.Ordinal));
 
         return browsers == null
             ? null
@@ -305,10 +308,9 @@ public static class DojoExtensions
             b.Os.Equals(sp.os, StringComparison.Ordinal));
 
     private static BrowserBase? FindRealBrowser(this IEnumerable<BrowserBase> browsers, SupportedPlatform sp) => browsers
-            .FirstOrDefault(b => b.Name
-            .Equals(sp.api_name, StringComparison.Ordinal) &&
-            b.DeviceName.Equals(sp.long_name, StringComparison.Ordinal) &&
-            b.Os.Equals(sp.os, StringComparison.Ordinal));
+            .FirstOrDefault(b => b.Name.Equals(sp.api_name, StringComparison.Ordinal) &&
+                                 b.DeviceName.Equals(sp.long_name, StringComparison.Ordinal) &&
+                                 b.Os.Equals(sp.os, StringComparison.Ordinal));
 
     public static BrowserVersion Classify(this BrowserVersion browserVersion)
     {

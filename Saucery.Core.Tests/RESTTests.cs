@@ -23,7 +23,6 @@ public class RestTests
     }
 
     [Test]
-    //[Ignore("Need OpenSauce")]
     public void FlowControlTest() {
         var flowController = new SauceLabsFlowController();
         //Console.WriteLine(@"RESTTests: About to call ControlFlow()");

@@ -76,7 +76,6 @@ public class BrowserVersion
     public BrowserVersion(SaucePlatform platform) {
         Os = platform.Os;
         PlatformNameForOption = platform.LongVersion;
-
         BrowserName = string.Empty;
         Name = platform.LongName;
         AutomationBackend = "appium";
@@ -91,38 +90,6 @@ public class BrowserVersion
         ScreenResolutions = [];
         TestNameBuilder = new StringBuilder(); 
     }
-
-    //public BrowserVersion(string os,
-    //                      string platformNameForOption,
-    //                      string browserName,
-    //                      string name,
-    //                      string automationBackend,
-    //                      string deviceName,
-    //                      string recommendedAppiumVersion,
-    //                      List<string> supportedBackendVersions,
-    //                      List<string> deprecatedBackendVersions,
-    //                      string testName,
-    //                      string deviceOrientation,
-    //                      string screenResolution,
-    //                      PlatformType platformType,
-    //                      List<string> screenResolutions)
-    //{
-    //    Os = os;
-    //    PlatformNameForOption = platformNameForOption;
-    //    BrowserName = browserName; 
-    //    Name = name;
-    //    AutomationBackend = automationBackend;
-    //    DeviceName = deviceName;
-    //    RecommendedAppiumVersion = recommendedAppiumVersion;
-    //    SupportedBackendVersions = supportedBackendVersions;
-    //    DeprecatedBackendVersions = deprecatedBackendVersions;
-    //    TestName = testName;
-    //    DeviceOrientation = deviceOrientation;
-    //    ScreenResolution = screenResolution;
-    //    PlatformType = platformType;
-    //    ScreenResolutions = screenResolutions;
-    //    TestNameBuilder = new StringBuilder();
-    //}
 
     public object[] ToObjectArray() =>
         [

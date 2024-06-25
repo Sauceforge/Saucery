@@ -14,7 +14,9 @@ public class PlatformExpander(PlatformConfigurator platformConfigurator, List<Sa
     {
         foreach (SaucePlatform platform in Platforms)
         {
-            if (!platform.NeedsExpansion() || platform.IsAnAndroidDevice() || platform.IsAnAppleDevice())
+            if (!platform.NeedsExpansion() || 
+                platform.IsAnAndroidDevice() || 
+                platform.IsAnAppleDevice())
             {
                 ExpandedSet.Add(platform);
                 continue;

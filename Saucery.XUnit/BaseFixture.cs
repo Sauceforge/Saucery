@@ -71,7 +71,8 @@ public class BaseFixture : IDisposable
         OptionFactory?.Dispose();
     }
 
-    public WebDriver SauceryDriver() => Driver!;
+    public WebDriver SauceryDriver() => 
+        Driver!;
 }
 /*
 * Copyright Andrew Gray, SauceForge

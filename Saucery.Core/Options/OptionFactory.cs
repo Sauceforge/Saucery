@@ -52,11 +52,14 @@ public class OptionFactory(BrowserVersion browserVersion) : IDisposable
         _ => new ChromeCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType),
     };
 
-    public bool IsApple() => BrowserVersion.PlatformType.Equals(OnDemand.PlatformType.Apple);
+    public bool IsApple() => 
+        BrowserVersion.PlatformType.Equals(OnDemand.PlatformType.Apple);
 
-    public bool IsAndroid() => BrowserVersion.PlatformType.Equals(OnDemand.PlatformType.Android);
+    public bool IsAndroid() => 
+        BrowserVersion.PlatformType.Equals(OnDemand.PlatformType.Android);
 
-    public void Dispose() => GC.SuppressFinalize(this);
+    public void Dispose() => 
+        GC.SuppressFinalize(this);
 }
 /*
 * Copyright Andrew Gray, SauceForge

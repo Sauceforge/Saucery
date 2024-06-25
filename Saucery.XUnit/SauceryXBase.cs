@@ -17,7 +17,6 @@ public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>
     protected bool InitialiseDriver(BrowserVersion browserVersion)
     {
         _browserVersion = browserVersion;
-
         _browserVersion.SetTestName(GetTestName());
         _testName = _browserVersion.TestName;
 

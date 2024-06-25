@@ -4,13 +4,13 @@ using Saucery.Core.Util;
 namespace Saucery.Core.OnDemand.Base;
 
 public class SaucePlatform(string desktopPlatformName = "",
-                     string browser = "",
-                     string browserVersion = "",
-                     string screenResolution = "",
-                     string platform = "",
-                     string longName = "",
-                     string longVersion = "",
-                     string deviceOrientation = "")
+                           string browser = "",
+                           string browserVersion = "",
+                           string screenResolution = "",
+                           string platform = "",
+                           string longName = "",
+                           string longVersion = "",
+                           string deviceOrientation = "")
 {
     #region Attributes
 
@@ -38,7 +38,8 @@ public class SaucePlatform(string desktopPlatformName = "",
 
     #endregion
 
-    public bool NeedsExpansion() => BrowserVersion.Replace(SauceryConstants.SPACE, string.Empty).Contains(SauceryConstants.PLATFORM_SEPARATOR);
+    public bool NeedsExpansion() => 
+        BrowserVersion.Replace(SauceryConstants.SPACE, string.Empty).Contains(SauceryConstants.PLATFORM_SEPARATOR);
 }
 /*
 * Copyright Andrew Gray, SauceForge
