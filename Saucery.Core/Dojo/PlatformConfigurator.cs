@@ -125,20 +125,7 @@ public class PlatformConfigurator
     {
         if(platform.IsARealDevice()) {
             if(ValidateReal(platform) != null)
-                return new BrowserVersion(platform.Os, 
-                                          platform.LongVersion, 
-                                          "", 
-                                          platform.LongName, 
-                                          "appium",
-                                          platform.LongName, 
-                                          "latest", 
-                                          [], 
-                                          [], 
-                                          "", 
-                                          "", 
-                                          "", 
-                                          platform.IsAnAndroidDevice() ? PlatformType.Android : PlatformType.Apple,
-                                          []);
+                return new BrowserVersion(platform);
             else
                 return null;
         } else {

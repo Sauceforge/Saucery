@@ -1,5 +1,6 @@
 ﻿using Saucery.Core.Dojo.Browsers.Base;
 using Saucery.Core.OnDemand;
+using Saucery.Core.OnDemand.Base;
 using Saucery.Core.RestAPI;
 using Saucery.Core.Util;
 using System.Text;
@@ -72,38 +73,56 @@ public class BrowserVersion
         TestNameBuilder = new StringBuilder();
     }
 
-    public BrowserVersion(
-        string os,
-        string platformNameForOption,
-        string browserName,
-        string name,
-        string automationBackend,
-        string deviceName,
-        string recommendedAppiumVersion,
-        List<string> supportedBackendVersions,
-        List<string> deprecatedBackendVersions,
-        string testName,
-        string deviceOrientation,
-        string screenResolution,
-        PlatformType platformType,
-        List<string> screenResolutions)
-    {
-        Os = os;
-        PlatformNameForOption = platformNameForOption;
-        BrowserName = browserName; 
-        Name = name;
-        AutomationBackend = automationBackend;
-        DeviceName = deviceName;
-        RecommendedAppiumVersion = recommendedAppiumVersion;
-        SupportedBackendVersions = supportedBackendVersions;
-        DeprecatedBackendVersions = deprecatedBackendVersions;
-        TestName = testName;
-        DeviceOrientation = deviceOrientation;
-        ScreenResolution = screenResolution;
-        PlatformType = platformType;
-        ScreenResolutions = screenResolutions;
-        TestNameBuilder = new StringBuilder();
+    public BrowserVersion(SaucePlatform platform) {
+        Os = platform.Os;
+        PlatformNameForOption = platform.LongVersion;
+
+        BrowserName = string.Empty;
+        Name = platform.LongName;
+        AutomationBackend = "appium";
+        DeviceName = platform.LongName;
+        RecommendedAppiumVersion = "latest";
+        SupportedBackendVersions = [];
+        DeprecatedBackendVersions = [];
+        TestName = string.Empty;
+        DeviceOrientation = string.Empty;
+        ScreenResolution = string.Empty;
+        PlatformType = platform.IsAnAndroidDevice() ? PlatformType.Android : PlatformType.Apple;
+        ScreenResolutions = [];
+        TestNameBuilder = new StringBuilder(); 
     }
+
+    //public BrowserVersion(string os,
+    //                      string platformNameForOption,
+    //                      string browserName,
+    //                      string name,
+    //                      string automationBackend,
+    //                      string deviceName,
+    //                      string recommendedAppiumVersion,
+    //                      List<string> supportedBackendVersions,
+    //                      List<string> deprecatedBackendVersions,
+    //                      string testName,
+    //                      string deviceOrientation,
+    //                      string screenResolution,
+    //                      PlatformType platformType,
+    //                      List<string> screenResolutions)
+    //{
+    //    Os = os;
+    //    PlatformNameForOption = platformNameForOption;
+    //    BrowserName = browserName; 
+    //    Name = name;
+    //    AutomationBackend = automationBackend;
+    //    DeviceName = deviceName;
+    //    RecommendedAppiumVersion = recommendedAppiumVersion;
+    //    SupportedBackendVersions = supportedBackendVersions;
+    //    DeprecatedBackendVersions = deprecatedBackendVersions;
+    //    TestName = testName;
+    //    DeviceOrientation = deviceOrientation;
+    //    ScreenResolution = screenResolution;
+    //    PlatformType = platformType;
+    //    ScreenResolutions = screenResolutions;
+    //    TestNameBuilder = new StringBuilder();
+    //}
 
     public object[] ToObjectArray() =>
         [
