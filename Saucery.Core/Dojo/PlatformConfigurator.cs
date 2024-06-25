@@ -55,7 +55,6 @@ public class PlatformConfigurator
     private void ConstructRealDevices()
     {
         var supportedRealDevices = RealDeviceAcquirer.AcquireRealDevicePlatforms();
-        //var filteredSupportedPlatforms = FilterSupportedPlatforms(supportedPlatforms!);
 
         foreach(var sp in supportedRealDevices!) {
             AvailableRealDevices.AddRealPlatform(sp);
@@ -126,20 +125,7 @@ public class PlatformConfigurator
     {
         if(platform.IsARealDevice()) {
             if(ValidateReal(platform) != null)
-                return new BrowserVersion(platform.Os, 
-                                          platform.LongVersion, 
-                                          "", 
-                                          platform.LongName, 
-                                          "appium",
-                                          platform.LongName, 
-                                          "latest", 
-                                          [], 
-                                          [], 
-                                          "", 
-                                          "", 
-                                          "", 
-                                          platform.IsAnAndroidDevice() ? PlatformType.Android : PlatformType.Apple,
-                                          []);
+                return new BrowserVersion(platform);
             else
                 return null;
         } else {
@@ -193,7 +179,5 @@ public class PlatformConfigurator
                 Console.WriteLine($"Requested Real Platform Not Found: {0}", requested.LongName);
                 return null;
         }
-
-        //return browserVersion?.Classify();
     }
 }

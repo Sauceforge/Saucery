@@ -2,7 +2,6 @@
 using OpenQA.Selenium.Support.UI;
 using Saucery.Core.PageObjects;
 using SeleniumExtras.PageObjects;
-using Shouldly;
 
 namespace Saucery.Tests.Common.PageObjects;
 

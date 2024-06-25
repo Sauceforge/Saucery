@@ -58,7 +58,7 @@ public class SupportedPlatform {
                                    recommended_backend_version != null && 
                                    (api_name!.Equals("iphone") || api_name.Equals("ipad"));
 
-    public bool IsAndroidPlatform() => api_name == "android";//return automation_backend.Equals("appium") &&//       recommended_backend_version != null &&//       api_name.Equals("android");
+    public bool IsAndroidPlatform() => api_name == "android";
 
     public bool IsMobilePlatform() => automation_backend!.Equals("appium") &&
                                       recommended_backend_version != null &&

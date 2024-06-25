@@ -37,9 +37,6 @@ public class SaucePlatform(string desktopPlatformName = "",
     public string? TestName { get; set; }
 
     #endregion
-    #region Constructors
-
-    #endregion
 
     public bool NeedsExpansion() => BrowserVersion.Replace(SauceryConstants.SPACE, string.Empty).Contains(SauceryConstants.PLATFORM_SEPARATOR);
 }
