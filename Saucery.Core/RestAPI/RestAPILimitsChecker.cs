@@ -28,7 +28,9 @@ internal class RestAPILimitsChecker {
         }
     }
 
-    internal bool IsLimitExceeded() => NoRemaining() || IsIndicatorPresentInJson();
+    internal bool IsLimitExceeded() => 
+        NoRemaining() || 
+        IsIndicatorPresentInJson();
 
     private bool IsIndicatorPresentInJson() => 
         _response.Content == null || 

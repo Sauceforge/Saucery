@@ -11,8 +11,8 @@ internal class IEBrowserOptions : BaseOptions {
         Console.WriteLine(SauceryConstants.SETTING_UP, testName, SauceryConstants.DESKTOP_ON_WEBDRIVER);
         DebugMessages.PrintDesktopOptionValues(browserVersion);
         Console.WriteLine("Creating Internet Explorer Options");
-        
-        var o = new InternetExplorerOptions
+
+        InternetExplorerOptions o = new() 
         {
             PlatformName = browserVersion.Os,
             BrowserVersion = browserVersion.Name

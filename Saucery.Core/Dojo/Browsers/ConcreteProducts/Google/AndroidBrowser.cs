@@ -10,7 +10,7 @@ internal class AndroidBrowser(SupportedPlatform sp, string platformNameForOption
         .Find(bv => 
               bv.DeviceName.Equals(sp.long_name) &&
              (bv.Name!.Equals(sp.latest_stable_version) || 
-                              bv.Name.Equals(sp.short_version)));
+              bv.Name.Equals(sp.short_version)));
 
     public override bool IsSupportedVersion(SupportedPlatform sp) => true;
 }

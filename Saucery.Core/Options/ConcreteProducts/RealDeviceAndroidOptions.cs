@@ -6,8 +6,7 @@ using Saucery.Core.Util;
 namespace Saucery.Core.Options.ConcreteProducts;
 
 internal class RealDeviceAndroidOptions : BaseOptions {
-    public RealDeviceAndroidOptions(BrowserVersion browserVersion, string testName)
-        : base(testName)
+    public RealDeviceAndroidOptions(BrowserVersion browserVersion, string testName) : base(testName)
     {
         Console.WriteLine(SauceryConstants.SETTING_UP, testName, SauceryConstants.REAL_ANDROID_ON_APPIUM);
         AddSauceLabsOptions(Enviro.SauceNativeApp!);
@@ -16,14 +15,16 @@ internal class RealDeviceAndroidOptions : BaseOptions {
 
         Console.WriteLine("Creating Appium Options");
 
-        AppiumOptions options = new();
+        AppiumOptions options = new() {
+            DeviceName = browserVersion.DeviceName,
+            BrowserName = SauceryConstants.CHROME_BROWSER,
+            PlatformVersion = browserVersion.PlatformNameForOption
+        };
+
         options.AddAdditionalAppiumOption("platformName", "Android");
-        options.DeviceName = browserVersion.DeviceName;
-        options.BrowserName = SauceryConstants.CHROME_BROWSER;
-        options.PlatformVersion = browserVersion.PlatformNameForOption;
-        //appiumOptions.AddAdditionalAppiumOption("app", "path/to/your/app.apk");
         options.AddAdditionalAppiumOption("w3c", true);
         options.AddAdditionalAppiumOption("autoGrantPermissions", true);
+        //appiumOptions.AddAdditionalAppiumOption("app", "path/to/your/app.apk");
 
         SauceOptions.Add("appiumVersion", "latest");
 

@@ -5,7 +5,8 @@ using Saucery.Core.Options.ConcreteProducts;
 namespace Saucery.Core.Options.ConcreteCreators;
 
 internal class EmulatedIOSCreator : Creator {
-    public override BaseOptions Create(BrowserVersion browserVersion, string testName) => new EmulatedIOSOptions(browserVersion, testName);
+    public override BaseOptions Create(BrowserVersion browserVersion, string testName) => 
+        new EmulatedIOSOptions(browserVersion, testName);
 }
 /*
 * Copyright Andrew Gray, SauceForge

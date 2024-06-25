@@ -30,7 +30,8 @@ public class SauceryBase : PageTest
 
     }
 
-    protected SauceryBase(BrowserVersion browserVersion) => _browserVersion = browserVersion;
+    protected SauceryBase(BrowserVersion browserVersion) => 
+        _browserVersion = browserVersion;
 
     [SetUp]
     public void Setup()

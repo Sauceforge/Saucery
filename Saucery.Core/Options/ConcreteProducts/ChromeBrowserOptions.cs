@@ -11,11 +11,11 @@ internal class ChromeBrowserOptions : BaseOptions {
         Console.WriteLine(SauceryConstants.SETTING_UP, testName, SauceryConstants.DESKTOP_ON_WEBDRIVER);
         DebugMessages.PrintDesktopOptionValues(browserVersion);
         Console.WriteLine("Creating Chrome Options");
-        
-        var o = new ChromeOptions
+
+        ChromeOptions o = new() 
         {
             BrowserVersion = browserVersion.Name,
-            PlatformName = browserVersion.Os //,
+            PlatformName = browserVersion.Os,
             //UseSpecCompliantProtocol = true
         };
 

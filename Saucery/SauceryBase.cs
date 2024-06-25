@@ -29,10 +29,8 @@ public class SauceryBase
         SauceLabsFlowController = new SauceLabsFlowController();
     }
 
-    protected SauceryBase(BrowserVersion browserVersion) : this()
-    {
+    protected SauceryBase(BrowserVersion browserVersion) : this() => 
         _browserVersion = browserVersion;
-    }
 
     [SetUp]
     public void Setup()
@@ -103,7 +101,8 @@ public class SauceryBase
         }
     }
 
-    public WebDriver SauceryDriver() => Driver!;
+    public WebDriver SauceryDriver() => 
+        Driver!;
 }
 /*
 * Copyright Andrew Gray, SauceForge

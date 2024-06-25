@@ -5,7 +5,8 @@ namespace Saucery.XUnit;
 public static class GlobalSetup
 {
     [ModuleInitializer]
-    public static void Setup() => XunitContext.EnableExceptionCapture();
+    public static void Setup() => 
+        XunitContext.EnableExceptionCapture();
 }
 
 /*
