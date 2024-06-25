@@ -48,13 +48,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Merlin.Playwright.NUnit", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Saucery.Playwright.NUnit", "Saucery.Playwright.NUnit\Saucery.Playwright.NUnit.csproj", "{26C4BFDA-2446-4F30-8D01-E23BD4640851}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Merlin.NUnit.RealDevices", "Merlin.NUnit.RealDevices\Merlin.NUnit.RealDevices.csproj", "{A79F6D80-C732-4E07-9ECA-BF4668C66E05}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Merlin.NUnit.RealDevices", "Merlin.NUnit.RealDevices\Merlin.NUnit.RealDevices.csproj", "{A79F6D80-C732-4E07-9ECA-BF4668C66E05}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Merlin.XUnit.RealDevices", "Merlin.XUnit.RealDevices\Merlin.XUnit.RealDevices.csproj", "{47B79C0D-CB5E-4158-B206-0A84517D0A82}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Merlin.XUnit.RealDevices", "Merlin.XUnit.RealDevices\Merlin.XUnit.RealDevices.csproj", "{47B79C0D-CB5E-4158-B206-0A84517D0A82}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExternalMerlin.NUnit.RealDevices", "ExternalMerlin.NUnit.RealDevices\ExternalMerlin.NUnit.RealDevices.csproj", "{CAD43779-244B-4112-BEF1-0AB920F41F77}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExternalMerlin.NUnit.RealDevices", "ExternalMerlin.NUnit.RealDevices\ExternalMerlin.NUnit.RealDevices.csproj", "{CAD43779-244B-4112-BEF1-0AB920F41F77}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExternalMerlin.XUnit.RealDevices", "ExternalMerlin.XUnit.RealDevices\ExternalMerlin.XUnit.RealDevices.csproj", "{937B6357-A96C-4B63-BE38-3A9DA703960E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExternalMerlin.XUnit.RealDevices", "ExternalMerlin.XUnit.RealDevices\ExternalMerlin.XUnit.RealDevices.csproj", "{937B6357-A96C-4B63-BE38-3A9DA703960E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
