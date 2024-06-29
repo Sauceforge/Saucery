@@ -30,6 +30,7 @@ public abstract class BrowserBase : IBrowser
         AutomationBackend = sp.automation_backend!;
         Name = sp.api_name!;
         DeviceName = sp.long_name!;
+        ScreenResolutions = screenResolutions;
 
         if(sp.automation_backend == null) {
             PlatformVersion = sp.OsVersion?.Split(".")[0];
@@ -39,7 +40,7 @@ public abstract class BrowserBase : IBrowser
                 PlatformVersion = sp.short_version;
                 RecommendedAppiumVersion = sp.recommended_backend_version;
             }
-            ScreenResolutions = screenResolutions;
+            //ScreenResolutions = screenResolutions; --might need to move back here
         }
 
         BrowserVersions = [];
