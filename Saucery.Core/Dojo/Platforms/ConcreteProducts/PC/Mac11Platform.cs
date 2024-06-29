@@ -4,7 +4,7 @@ using Saucery.Core.Util;
 
 namespace Saucery.Core.Dojo.Platforms.ConcreteProducts.PC;
 
-//BigSur
+//Big Sur
 public class Mac11Platform : PlatformBase
 {
     public override string PlatformNameForOption { get; set; }
