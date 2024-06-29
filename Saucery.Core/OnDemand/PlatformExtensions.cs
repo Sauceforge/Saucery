@@ -14,6 +14,8 @@ internal static class PlatformExtensions {
         !browserVersion.DeviceName.Contains("Emulator");
 
     public static bool IsARealDevice(this SaucePlatform platform) => 
+        (platform.IsAnAndroidDevice() ||
+        platform.IsAnAppleDevice()) &&
         !platform.LongName.Contains("Simulator") && 
         !platform.LongName.Contains("Emulator");
 
