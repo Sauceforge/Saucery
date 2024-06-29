@@ -4,7 +4,7 @@ using Saucery.Core.Util;
 
 namespace Saucery.Core.Dojo.Platforms.ConcreteProducts.PC;
 
-//Monterey
+//Ventura
 public class Mac13Platform : PlatformBase
 {
     public override string PlatformNameForOption { get; set; }

@@ -6,9 +6,9 @@ using Saucery.Core.Util;
 
 namespace Saucery.Core.Options;
 
-public class OptionFactory(BrowserVersion browserVersion) : IDisposable
+public class OptionFactory(BrowserVersion bv) : IDisposable
 {
-    private BrowserVersion BrowserVersion { get; set; } = browserVersion;
+    private BrowserVersion BrowserVersion { get; set; } = bv;
 
     public DriverOptions? CreateOptions(string testName)
     {
@@ -19,7 +19,7 @@ public class OptionFactory(BrowserVersion browserVersion) : IDisposable
         }
 
         //Mobile Device
-        if(browserVersion.IsARealDevice()) {
+        if(BrowserVersion.IsARealDevice()) {
             if(BrowserVersion.PlatformType.Equals(OnDemand.PlatformType.Apple)) {
                 DebugMessages.PrintHaveApplePlatform(true);
                 return new RealDeviceIOSCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType);

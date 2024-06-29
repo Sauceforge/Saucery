@@ -49,6 +49,7 @@ public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>
                 BaseFixture.SauceLabsStatusNotifier.NotifyStatus(sessionId, passed);
                 Console.WriteLine(@"SessionID={0} job-name={1}", sessionId, _testName);
                 BaseFixture.Driver.Quit();
+                GC.SuppressFinalize(this);
             }
         }
         catch (WebDriverException)
