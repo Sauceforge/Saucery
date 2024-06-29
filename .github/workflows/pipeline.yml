@@ -8,6 +8,7 @@ on:
       - 'releases/**'
       - 'feat/**'
       - 'feature/**'
+      - 'fix/**'
 
 env:
   PROJECT_NAME: Saucery
