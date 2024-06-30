@@ -290,14 +290,14 @@ jobs:
   generate-report:
     runs-on: ubuntu-latest
     needs: [build, 
+            nunit-integration-tests,        
             xunit-integration-tests, 
-            xunit-real-integration-tests, 
-            nunit-integration-tests, 
-            nunit-real-integration-tests, 
+            nunit-real-integration-tests,
+            xunit-real-integration-tests,
+            nunit-external-tests,
             xunit-external-tests, 
-            nunit-external-tests, 
-            xunit-real-external-tests, 
-            nunit-real-external-tests]
+            nunit-real-external-tests,
+            xunit-real-external-tests]
     
     steps:
     - name: Download unit-test results
@@ -305,38 +305,38 @@ jobs:
       with:
         name: unit-test-results
 
-    - name: Download xunit-integration-test results
-      uses: actions/download-artifact@v4
-      with:
-        name: xunit-integration-test-results
-
     - name: Download nunit-integration-test results
       uses: actions/download-artifact@v4
       with:
         name: nunit-integration-test-results
 
-    - name: Download xunit-real-integration-test results
+    - name: Download xunit-integration-test results
       uses: actions/download-artifact@v4
       with:
-        name: xunit-real-integration-test-results
+        name: xunit-integration-test-results
 
     - name: Download nunit-real-integration-test results
       uses: actions/download-artifact@v4
       with:
         name: nunit-real-integration-test-results
+
+    - name: Download xunit-real-integration-test results
+      uses: actions/download-artifact@v4
+      with:
+        name: xunit-real-integration-test-results
     
     - name: Display structure of downloaded files
       run: ls -R
 
     - name: ReportGenerator
-      uses: danielpalme/ReportGenerator-GitHub-Action@5.3.6
+      uses: danielpalme/ReportGenerator-GitHub-Action@5.3.7
       with:
-        # reports: ${{ env.UNIT_COVERAGE_FILENAME }};
-        #          ${{ env.NUNIT_INTEGRATION_COVERAGE_FILENAME }};
-        #          ${{ env.XUNIT_INTEGRATION_COVERAGE_FILENAME }};
-        #          ${{ env.XUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}
-        #          ${{ env.NUNIT_RD_INTEGRATION_COVERAGE_FILENAME }} # REQUIRED # The coverage reports that should be parsed (separated by semicolon). Globbing is supported.
-        reports: ' *.xml'
+        reports: ${{ env.UNIT_COVERAGE_FILENAME }};
+                 ${{ env.NUNIT_INTEGRATION_COVERAGE_FILENAME }};
+                 ${{ env.XUNIT_INTEGRATION_COVERAGE_FILENAME }};
+                 ${{ env.XUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}
+                 ${{ env.NUNIT_RD_INTEGRATION_COVERAGE_FILENAME }} # REQUIRED # The coverage reports that should be parsed (separated by semicolon). Globbing is supported.
+        #reports: '*.xml'
         targetdir: 'coveragereport' # REQUIRED # The directory where the generated report should be saved.
         reporttypes: 'HtmlInline;Cobertura' # The output formats and scope (separated by semicolon) Values: Badges, Clover, Cobertura, CsvSummary, Html, HtmlChart, HtmlInline, HtmlInline_AzurePipelines, HtmlInline_AzurePipelines_Dark, HtmlSummary, JsonSummary, Latex, LatexSummary, lcov, MarkdownSummary, MHtml, PngChart, SonarQube, TeamCitySummary, TextSummary, Xml, XmlSummary
 
