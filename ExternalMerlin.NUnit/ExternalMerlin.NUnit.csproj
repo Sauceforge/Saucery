@@ -6,15 +6,11 @@
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <!--<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>-->
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
   </PropertyGroup>
 
-  <ItemGroup>
-	  <!--<PackageReference Include="NUnit" Version="4.1.0" />
-	  <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
-	  <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />-->
-    
+  <ItemGroup> 
     <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
     <PackageReference Include="Saucery" Version="4.5.1" />
   </ItemGroup>
@@ -22,11 +18,5 @@
   <ItemGroup>
     <ProjectReference Include="..\Saucery.Tests.Common\Saucery.Tests.Common.csproj" />
   </ItemGroup>
-
-  <!--<ItemGroup>
-    <None Update="testhost.runtimeconfig.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>-->
 
 </Project>

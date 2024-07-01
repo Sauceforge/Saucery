@@ -40,7 +40,7 @@ These steps apply to all flavors:
 <img src="https://raw.githubusercontent.com/SauceForge/Saucery/master/Saucery/Images/Saucery.NUnit.png" alt="Saucery" width="100"/>
 
 1. In your solution create a simple class library.
-1. Add a NuGet Reference to [Saucery](https://www.nuget.org/packages/Saucery).
+1. Add a NuGet Reference to [Saucery](https://www.nuget.org/packages/Saucery) and [NUnit3TestAdapter](https://www.nuget.org/packages/NUnit3TestAdapter).
 1. Start with the following template:
 
 ```
