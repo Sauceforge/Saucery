@@ -7,7 +7,7 @@
     <IsPackable>false</IsPackable>
 	  <IsTestProject>true</IsTestProject>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <!--<GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>-->
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
   </PropertyGroup>
 
   <ItemGroup>
