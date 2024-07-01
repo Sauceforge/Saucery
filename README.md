@@ -146,7 +146,7 @@ The `List<SaucePlatform>` is what you will specify. The rest of the class is man
 <img src="https://raw.githubusercontent.com/SauceForge/Saucery/master/Saucery.XUnit/Images/Saucery.XUnit.png" alt="Saucery.XUnit" width="100"/>
 
 1. In your solution create a simple class library.
-1. Add a NuGet Reference to [Saucery.XUnit](https://www.nuget.org/packages/saucery.xunit)
+1. Add a NuGet Reference to [Saucery.XUnit](https://www.nuget.org/packages/saucery.xunit) and [xunit.runner.visualstudio](https://www.nuget.org/packages/xunit.runner.visualstudio).
 1. Start with the following template:
 
 ```
