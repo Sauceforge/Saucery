@@ -16,7 +16,6 @@
 	  <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />-->
     
     <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
-    <!--<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />-->
     <PackageReference Include="Saucery" Version="4.5.1" />
   </ItemGroup>
 
@@ -24,10 +23,10 @@
     <ProjectReference Include="..\Saucery.Tests.Common\Saucery.Tests.Common.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
+  <!--<ItemGroup>
     <None Update="testhost.runtimeconfig.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
+  </ItemGroup>-->
 
 </Project>
