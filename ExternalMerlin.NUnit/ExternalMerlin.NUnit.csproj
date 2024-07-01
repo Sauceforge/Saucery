@@ -21,4 +21,10 @@
     <ProjectReference Include="..\Saucery.Tests.Common\Saucery.Tests.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="testhost.runtimeconfig.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
