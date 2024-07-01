@@ -4,19 +4,18 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-	  
     <IsPackable>false</IsPackable>
-	<IsTestProject>true</IsTestProject>
+	  <IsTestProject>true</IsTestProject>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
   </PropertyGroup>
 
   <ItemGroup>
-	<PackageReference Include="Meziantou.Xunit.ParallelTestFramework" Version="2.2.0" />
-	<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
-	<PackageReference Include="xunit.runner.visualstudio" Version="2.8.1">
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.1">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-	  <PrivateAssets>all</PrivateAssets>
-	</PackageReference>
-	<PackageReference Include="Saucery.XUnit" Version="4.5.1" />
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+	  <PackageReference Include="Saucery.XUnit" Version="4.5.1" />
   </ItemGroup>
   
   <ItemGroup>

@@ -40,8 +40,33 @@ These steps apply to all flavors:
 <img src="https://raw.githubusercontent.com/SauceForge/Saucery/master/Saucery/Images/Saucery.NUnit.png" alt="Saucery" width="100"/>
 
 1. In your solution create a simple class library.
-1. Add a NuGet Reference to [Saucery](https://www.nuget.org/packages/Saucery).
-1. Start with the following template:
+1. Add properties CopyLocalLockFileAssemblies and GenerateRuntimeConfigurationFiles to the top PropertyGroup and set them both to true.
+1. Add a NuGet Reference to [Saucery](https://www.nuget.org/packages/Saucery) and [NUnit3TestAdapter](https://www.nuget.org/packages/NUnit3TestAdapter).
+
+Your Project file should look something like this:
+
+```
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+  </PropertyGroup>
+
+  <ItemGroup> 
+    <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
+    <PackageReference Include="Saucery" Version="4.5.1" />
+  </ItemGroup>
+
+</Project>
+```
+
+The ExternalMerlin dogfood integration tests use the following template:
 
 ```
 using NUnit.Framework;
@@ -146,8 +171,36 @@ The `List<SaucePlatform>` is what you will specify. The rest of the class is man
 <img src="https://raw.githubusercontent.com/SauceForge/Saucery/master/Saucery.XUnit/Images/Saucery.XUnit.png" alt="Saucery.XUnit" width="100"/>
 
 1. In your solution create a simple class library.
-1. Add a NuGet Reference to [Saucery.XUnit](https://www.nuget.org/packages/saucery.xunit)
-1. Start with the following template:
+1. Add properties CopyLocalLockFileAssemblies and GenerateRuntimeConfigurationFiles to the top PropertyGroup and set them both to true.
+1. Add a NuGet Reference to [Saucery.XUnit](https://www.nuget.org/packages/saucery.xunit) and [xunit.runner.visualstudio](https://www.nuget.org/packages/xunit.runner.visualstudio).
+
+Your Project file should look something like this:
+
+```
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+	<IsTestProject>true</IsTestProject>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.1">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+	<PackageReference Include="Saucery.XUnit" Version="4.5.1" />
+  </ItemGroup>
+
+</Project>
+```
+
+The ExternalMerlin dogfood integration tests use the following template:
 
 ```
 using Saucery.Core.Dojo;
