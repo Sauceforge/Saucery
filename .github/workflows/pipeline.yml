@@ -32,11 +32,11 @@ env:
   CONFIG: Release
   APP_PACKAGE_PATH: 'published'                                                                 # set this to the path to your web app project, defaults to the repository root
   COVERAGE_FORMAT: opencover
-  UNIT_COVERAGE_FILENAME: opencover.unit.xml
-  NUNIT_INTEGRATION_COVERAGE_FILENAME: opencover.nunit.integration.xml
-  XUNIT_INTEGRATION_COVERAGE_FILENAME: opencover.xunit.integration.xml
-  NUNIT_RD_INTEGRATION_COVERAGE_FILENAME: opencover.nunit.realdevice.integration.xml
-  XUNIT_RD_INTEGRATION_COVERAGE_FILENAME: opencover.xunit.realdevice.integration.xml
+  UNIT_COVERAGE_FILENAME: 'opencover.unit.xml'
+  NUNIT_INTEGRATION_COVERAGE_FILENAME: 'opencover.nunit.integration.xml'
+  XUNIT_INTEGRATION_COVERAGE_FILENAME: 'opencover.xunit.integration.xml'
+  NUNIT_RD_INTEGRATION_COVERAGE_FILENAME: 'opencover.nunit.realdevice.integration.xml'
+  XUNIT_RD_INTEGRATION_COVERAGE_FILENAME: 'opencover.xunit.realdevice.integration.xml'
   COVERAGE_THRESHOLD: 80
 
 jobs:
@@ -176,7 +176,8 @@ jobs:
 
   xunit-real-integration-tests:
     runs-on: ubuntu-latest
-    needs: xunit-integration-tests
+    # needs: xunit-integration-tests
+    needs: build
 
     steps:
     - name: Checkout Code
@@ -288,52 +289,55 @@ jobs:
 
   generate-report:
     runs-on: ubuntu-latest
-    needs: [build, xunit-integration-tests, 
-            xunit-real-integration-tests, 
-            nunit-integration-tests, 
-            nunit-real-integration-tests, 
+    needs: [build, 
+            nunit-integration-tests,        
+            xunit-integration-tests, 
+            nunit-real-integration-tests,
+            xunit-real-integration-tests,
+            nunit-external-tests,
             xunit-external-tests, 
-            nunit-external-tests, 
-            xunit-real-external-tests, 
-            nunit-real-external-tests]
+            nunit-real-external-tests,
+            xunit-real-external-tests]
     
     steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
     - name: Download unit-test results
       uses: actions/download-artifact@v4
       with:
         name: unit-test-results
-
-    - name: Download xunit-integration-test results
-      uses: actions/download-artifact@v4
-      with:
-        name: xunit-integration-test-results
 
     - name: Download nunit-integration-test results
       uses: actions/download-artifact@v4
       with:
         name: nunit-integration-test-results
 
-    - name: Download xunit-real-integration-test results
+    - name: Download xunit-integration-test results
       uses: actions/download-artifact@v4
       with:
-        name: xunit-real-integration-test-results
+        name: xunit-integration-test-results
 
     - name: Download nunit-real-integration-test results
       uses: actions/download-artifact@v4
       with:
         name: nunit-real-integration-test-results
+
+    - name: Download xunit-real-integration-test results
+      uses: actions/download-artifact@v4
+      with:
+        name: xunit-real-integration-test-results
     
+    - name: Present working directory
+      run: pwd
+
     - name: Display structure of downloaded files
       run: ls -R
 
     - name: ReportGenerator
-      uses: danielpalme/ReportGenerator-GitHub-Action@5.3.6
+      uses: danielpalme/ReportGenerator-GitHub-Action@5.3.7
       with:
-        reports: ${{ env.UNIT_COVERAGE_FILENAME }};
-                 ${{ env.NUNIT_INTEGRATION_COVERAGE_FILENAME }};
-                 ${{ env.XUNIT_INTEGRATION_COVERAGE_FILENAME }};
-                 ${{ env.XUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}
-                 ${{ env.NUNIT_RD_INTEGRATION_COVERAGE_FILENAME }} # REQUIRED # The coverage reports that should be parsed (separated by semicolon). Globbing is supported.
+        reports: ${{ env.UNIT_COVERAGE_FILENAME }};${{ env.NUNIT_INTEGRATION_COVERAGE_FILENAME }};${{ env.XUNIT_INTEGRATION_COVERAGE_FILENAME }};${{ env.XUNIT_RD_INTEGRATION_COVERAGE_FILENAME }};${{ env.NUNIT_RD_INTEGRATION_COVERAGE_FILENAME }} # REQUIRED # The coverage reports that should be parsed (separated by semicolon). Globbing is supported.
         targetdir: 'coveragereport' # REQUIRED # The directory where the generated report should be saved.
         reporttypes: 'HtmlInline;Cobertura' # The output formats and scope (separated by semicolon) Values: Badges, Clover, Cobertura, CsvSummary, Html, HtmlChart, HtmlInline, HtmlInline_AzurePipelines, HtmlInline_AzurePipelines_Dark, HtmlSummary, JsonSummary, Latex, LatexSummary, lcov, MarkdownSummary, MHtml, PngChart, SonarQube, TeamCitySummary, TextSummary, Xml, XmlSummary
 
