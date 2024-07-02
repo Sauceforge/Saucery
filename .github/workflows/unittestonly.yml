@@ -1,4 +1,4 @@
-name: Build Pipeline
+name: Unit Tests Only
 
 on: 
     workflow_dispatch:
