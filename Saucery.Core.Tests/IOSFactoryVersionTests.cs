@@ -1,11 +1,11 @@
-﻿using System.Collections;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Saucery.Core.Dojo;
 using Saucery.Core.OnDemand;
 using Saucery.Core.OnDemand.Base;
 using Saucery.Core.Options;
 using Saucery.Core.Util;
 using Shouldly;
+using System.Collections;
 
 namespace Saucery.Core.Tests;
 
@@ -52,7 +52,8 @@ public class IOSDataClass
                                     "13.0", "13.2", "13.4", 
                                     "14.0", "14.3", "14.4", "14.5", 
                                     "15.0", "15.2", "15.4", 
-                                    "16.0", "16.1", "16.2" };
+                                    "16.0", "16.1", "16.2",
+                                    "17.0"};
             foreach (var v in versions)
             {
                 yield return new IOSPlatform("iPhone Simulator", v, SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
