@@ -11,7 +11,7 @@
 	<PropertyGroup>
 		<IsPackable>true</IsPackable>
 		<PackageId>Saucery.XUnit</PackageId>
-		<PackageVersion>4.5.2</PackageVersion>
+		<PackageVersion>4.5.3</PackageVersion>
     <PackageReadmeFile>README.md</PackageReadmeFile>
 		<Authors>Andrew Gray</Authors>
 		<Company>SauceForge</Company>
@@ -36,7 +36,7 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
-		<!--<PackageReference Include="Saucery.Core" Version="4.3.0" />-->
+		<!--<PackageReference Include="Saucery.Core" Version="4.5.3" />-->
 		<PackageReference Include="XunitContext" Version="3.3.2" />
 		<None Include="Images\Saucery.XUnit.128x128.png" Pack="true" PackagePath="\" />
 	</ItemGroup>

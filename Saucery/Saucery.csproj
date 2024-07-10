@@ -7,13 +7,12 @@
     <Nullable>enable</Nullable>
 	  <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
 	  <GenerateRuntimeConfigDevFile>true</GenerateRuntimeConfigDevFile>
-	  <!--<GeneratePackageOnBuild>true</GeneratePackageOnBuild>-->
   </PropertyGroup>
 
   <PropertyGroup>
 	  <IsPackable>true</IsPackable>
 	  <PackageId>Saucery</PackageId>
-      <PackageVersion>4.5.2</PackageVersion>
+      <PackageVersion>4.5.3</PackageVersion>
       <PackageReadmeFile>README.md</PackageReadmeFile>
       <Authors>Andrew Gray</Authors>
       <Company>SauceForge</Company>
@@ -34,6 +33,7 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
     <PackageReference Include="NUnit" Version="4.1.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
+    <!--<PackageReference Include="Saucery.Core" Version="4.5.3" />-->
     <None Include="Images\Saucery.NUnit.128x128.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 
