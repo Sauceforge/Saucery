@@ -11,8 +11,8 @@ public class RequestedPlatformData : SauceryTestData
         var platforms = new List<SaucePlatform>
         {
             //Real Devices
-            new AndroidRealDevice("Google Pixel 8 Pro", "14"),
-            new IOSRealDevice("iPhone 14 Pro Max", "16")
+            new AndroidRealDevice("Google Pixel 8", "15"),
+            new IOSRealDevice("iPhone 15 Plus", "18"),
         };
 
         SetPlatforms(platforms);

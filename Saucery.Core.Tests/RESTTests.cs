@@ -92,6 +92,7 @@ public class RestTests
     [GenericTestCase(typeof(IOS162Platform), TestName = "IOS162SupportedPlatformTest")]
     [GenericTestCase(typeof(IOS17Platform), TestName = "IOS17SupportedPlatformTest")]
 
+    [GenericTestCase(typeof(Android15Platform), TestName = "Android14SupportedPlatformTest")]
     [GenericTestCase(typeof(Android14Platform), TestName = "Android14SupportedPlatformTest")]
     [GenericTestCase(typeof(Android13Platform), TestName = "Android13SupportedPlatformTest")]
     [GenericTestCase(typeof(Android12Platform), TestName = "Android12SupportedPlatformTest")]
