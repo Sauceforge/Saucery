@@ -87,15 +87,16 @@ public class PlatformExpander(PlatformConfigurator platformConfigurator, List<Sa
         }
     }
 
-    private void AddPlatform(SaucePlatform platform, string browserVersion) => ExpandedSet.Add(new SaucePlatform
-    {
-        Os = platform.Os,
-        Browser = platform.Browser,
-        BrowserVersion = browserVersion,
-        ScreenResolution = platform.ScreenResolution,
-        Platform = platform.Platform,
-        LongName = platform.LongName,
-        LongVersion = platform.LongVersion,
-        DeviceOrientation = platform.DeviceOrientation
-    });
+    private void AddPlatform(SaucePlatform platform, string browserVersion) => 
+        ExpandedSet.Add(new SaucePlatform
+        {
+            Os = platform.Os,
+            Browser = platform.Browser,
+            BrowserVersion = browserVersion,
+            ScreenResolution = platform.ScreenResolution,
+            Platform = platform.Platform,
+            LongName = platform.LongName,
+            LongVersion = platform.LongVersion,
+            DeviceOrientation = platform.DeviceOrientation
+        });
 }
