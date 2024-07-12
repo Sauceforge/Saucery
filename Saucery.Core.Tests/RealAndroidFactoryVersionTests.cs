@@ -45,6 +45,7 @@ public class RealAndroidDataClass
     {
         get
         {
+            yield return new AndroidRealDevice("Google Pixel 8", "15");
             yield return new AndroidRealDevice("Google Pixel 8 Pro", "14");
             yield return new AndroidRealDevice("Google Pixel 7 Pro", "13");
             yield return new AndroidRealDevice("Google Pixel 6a", "12");

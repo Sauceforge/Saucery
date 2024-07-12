@@ -50,7 +50,7 @@ public static class DojoExtensions
     }
 
     public static PlatformBase? FindRealPlatform(this List<PlatformBase> platforms, SupportedPlatform sp) {
-        if(!platforms.Any())
+        if(platforms.Count == 0)
             return null;
 
         PlatformBase? result = null;
@@ -70,7 +70,7 @@ public static class DojoExtensions
 
     public static PlatformBase? FindPlatform(this List<PlatformBase> platforms, SupportedPlatform sp)
     {
-        if(!platforms.Any())
+        if(platforms.Count == 0)
             return null;
 
         PlatformBase? result = null;
@@ -193,6 +193,7 @@ public static class DojoExtensions
         PlatformBase? platform = null;
         var platformToSearchFor = $"{sp.Os} {sp.LongVersion}";
         platform = platformToSearchFor switch {
+                "Linux 15.0" => platforms.GetPlatform<Android15Platform>()[0],
                 "Linux 14.0" => platforms.GetPlatform<Android14Platform>()[0],
                 "Linux 13.0" => platforms.GetPlatform<Android13Platform>()[0],
                 "Linux 12.0" => platforms.GetPlatform<Android12Platform>()[0],
@@ -224,6 +225,7 @@ public static class DojoExtensions
         PlatformBase? platform = null;
         var platformToSearchFor = $"{sp.Os} {sp.LongVersion}";
         platform = platformToSearchFor switch {
+            "Linux 15" => platforms.GetPlatform<Android15Platform>()[0],
             "Linux 14" => platforms.GetPlatform<Android14Platform>()[0],
             "Linux 13" => platforms.GetPlatform<Android13Platform>()[0],
             "Linux 12" => platforms.GetPlatform<Android12Platform>()[0],
