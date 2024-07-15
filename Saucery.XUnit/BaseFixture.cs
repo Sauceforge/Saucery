@@ -62,6 +62,7 @@ public class BaseFixture : IDisposable
     }
 
     public void Dispose() {
+        GC.SuppressFinalize(this);
         if (Driver is not null)
         {
             Driver.Quit();
