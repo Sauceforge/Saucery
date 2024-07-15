@@ -10,7 +10,7 @@ namespace Saucery.Core.Tests;
 [TestFixture]
 public class MerlinPlatformTests {
     private PlatformConfigurator? PlatformConfigurator { get; set; }
-    private int ValidCount, InvalidCount;
+    private int ValidCount;
 
     [OneTimeSetUp]
     public void OneTimeSetUp() {
@@ -20,7 +20,6 @@ public class MerlinPlatformTests {
     [SetUp]
     public void Setup() {
         ValidCount = 0;
-        InvalidCount = 0;
     }
 
     [Test]
@@ -30,9 +29,6 @@ public class MerlinPlatformTests {
         var bvs = PlatformConfigurator!.FilterAll(expandedPlatforms);
 
         ProcessBrowserVersions(bvs);
-
-        InvalidCount.ShouldBe(0);
-        ValidCount.ShouldBeEquivalentTo(bvs.Count);
     }
 
     [Test]
@@ -40,9 +36,6 @@ public class MerlinPlatformTests {
         var bvs = PlatformConfigurator!.FilterAll(PlatformDataClass.EmulatedAndroidPlatforms);
 
         ProcessBrowserVersions(bvs);
-
-        InvalidCount.ShouldBe(0);
-        ValidCount.ShouldBeEquivalentTo(bvs.Count);
     }
 
     [Test]
@@ -50,9 +43,6 @@ public class MerlinPlatformTests {
         var bvs = PlatformConfigurator!.FilterAll(PlatformDataClass.EmulatedIOSPlatforms);
 
         ProcessBrowserVersions(bvs);
-
-        InvalidCount.ShouldBe(0);
-        ValidCount.ShouldBeEquivalentTo(bvs.Count);
     }
 
     [Test]
@@ -60,9 +50,6 @@ public class MerlinPlatformTests {
         var bvs = PlatformConfigurator!.FilterAll(PlatformDataClass.RealAndroidDevices);
 
         ProcessBrowserVersions(bvs);
-
-        InvalidCount.ShouldBe(0);
-        ValidCount.ShouldBeEquivalentTo(bvs.Count);
     }
 
     [Test]
@@ -70,18 +57,15 @@ public class MerlinPlatformTests {
         var bvs = PlatformConfigurator!.FilterAll(PlatformDataClass.RealIOSDevices);
 
         ProcessBrowserVersions(bvs);
-
-        InvalidCount.ShouldBe(0);
-        ValidCount.ShouldBeEquivalentTo(bvs.Count);
     }
 
     private void ProcessBrowserVersions(List<BrowserVersion> browserVersions) {
         foreach(var bv in browserVersions) {
             if(bv != null)
                 ValidCount++;
-            else
-                InvalidCount++;
         }
+
+        ValidCount.ShouldBeEquivalentTo(browserVersions.Count);
     }
 
     public class PlatformDataClass {
@@ -91,12 +75,14 @@ public class MerlinPlatformTests {
             {
                 return
                 [
+                    new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "123"),
+                    new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_CHROME, "124", SauceryConstants.SCREENRES_2560_1600),
                     new DesktopPlatform(SauceryConstants.PLATFORM_LINUX, SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_VERSION_LATEST),
                     new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "100->119", SauceryConstants.SCREENRES_2560_1600),
                     new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_VERSION_LATEST, SauceryConstants.SCREENRES_2560_1600),
                     new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_81, SauceryConstants.BROWSER_CHROME, "100", SauceryConstants.SCREENRES_800_600),
-                    new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_8, SauceryConstants.BROWSER_FIREFOX, "latest"),
-                    new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_8, SauceryConstants.BROWSER_FIREFOX, "latest", SauceryConstants.SCREENRES_800_600),
+                    new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_8, SauceryConstants.BROWSER_FIREFOX, SauceryConstants.BROWSER_VERSION_LATEST),
+                    new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_8, SauceryConstants.BROWSER_FIREFOX, SauceryConstants.BROWSER_VERSION_LATEST, SauceryConstants.SCREENRES_800_600),
                     new DesktopPlatform(SauceryConstants.PLATFORM_MAC_11, SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_VERSION_LATEST),
                     new DesktopPlatform(SauceryConstants.PLATFORM_MAC_12, SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_VERSION_LATEST),
                     new DesktopPlatform(SauceryConstants.PLATFORM_MAC_13, SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_VERSION_LATEST),
@@ -137,6 +123,7 @@ public class MerlinPlatformTests {
             {
                 return 
                 [
+                    new AndroidRealDevice("Google.*", "15"),
                     new AndroidRealDevice("Google Pixel 8 | Android 15 Beta", "15"),
                     new AndroidRealDevice("Google Pixel 8 Pro", "14"),
                     new AndroidRealDevice("Google Pixel 7 Pro", "13"),
