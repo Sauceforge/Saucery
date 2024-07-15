@@ -24,8 +24,8 @@ public class MerlinPlatformTests {
     }
 
     [Test]
-    public void ValidMerlinPlatformTest() {
-        PlatformExpander expander = new(PlatformConfigurator!, PlatformDataClass.MerlinPlatforms);
+    public void ValidDesktopPlatformTest() {
+        PlatformExpander expander = new(PlatformConfigurator!, PlatformDataClass.DesktopPlatforms);
         List<SaucePlatform> expandedPlatforms = expander.Expand();
         var bvs = PlatformConfigurator!.FilterAll(expandedPlatforms);
 
@@ -36,8 +36,38 @@ public class MerlinPlatformTests {
     }
 
     [Test]
-    public void ValidRealDevicesTest() {
-        var bvs = PlatformConfigurator!.FilterAll(PlatformDataClass.RealDevices);
+    public void ValidEmulatedAndroidDevicesTest() {
+        var bvs = PlatformConfigurator!.FilterAll(PlatformDataClass.EmulatedAndroidPlatforms);
+
+        ProcessBrowserVersions(bvs);
+
+        InvalidCount.ShouldBe(0);
+        ValidCount.ShouldBeEquivalentTo(bvs.Count);
+    }
+
+    [Test]
+    public void ValidEmulatedIOSDevicesTest() {
+        var bvs = PlatformConfigurator!.FilterAll(PlatformDataClass.EmulatedIOSPlatforms);
+
+        ProcessBrowserVersions(bvs);
+
+        InvalidCount.ShouldBe(0);
+        ValidCount.ShouldBeEquivalentTo(bvs.Count);
+    }
+
+    [Test]
+    public void ValidRealAndroidDevicesTest() {
+        var bvs = PlatformConfigurator!.FilterAll(PlatformDataClass.RealAndroidDevices);
+
+        ProcessBrowserVersions(bvs);
+
+        InvalidCount.ShouldBe(0);
+        ValidCount.ShouldBeEquivalentTo(bvs.Count);
+    }
+
+    [Test]
+    public void ValidRealIOSDevicesTest() {
+        var bvs = PlatformConfigurator!.FilterAll(PlatformDataClass.RealIOSDevices);
 
         ProcessBrowserVersions(bvs);
 
@@ -55,17 +85,12 @@ public class MerlinPlatformTests {
     }
 
     public class PlatformDataClass {
-        public static List<SaucePlatform> MerlinPlatforms
+        public static List<SaucePlatform> DesktopPlatforms
         {
             get
             {
                 return
                 [
-                    //Emulated Mobile Platforms
-                    new AndroidPlatform("Google Pixel 8 Pro GoogleAPI Emulator", "15.0", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT),
-                    new IOSPlatform("iPhone XS Simulator", "17.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
-
-                    //Desktop Platforms
                     new DesktopPlatform(SauceryConstants.PLATFORM_LINUX, SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_VERSION_LATEST),
                     new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "100->119", SauceryConstants.SCREENRES_2560_1600),
                     new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_VERSION_LATEST, SauceryConstants.SCREENRES_2560_1600),
@@ -84,10 +109,33 @@ public class MerlinPlatformTests {
             }
         }
 
-        public static List<SaucePlatform> RealDevices
+        public static List<SaucePlatform> EmulatedAndroidPlatforms
         {
-            get {
+            get
+            {
+                return 
+                [
+                    new AndroidPlatform("Google Pixel 8 Pro GoogleAPI Emulator", "15.0", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT),
+                ];
+            }
+        }
+
+        public static List<SaucePlatform> EmulatedIOSPlatforms
+        {
+            get
+            {
                 return
+                [
+                    new IOSPlatform("iPhone XS Simulator", "17.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
+                ];
+            }
+        }
+
+        public static List<SaucePlatform> RealAndroidDevices
+        {
+            get
+            {
+                return 
                 [
                     new AndroidRealDevice("Google Pixel 8 | Android 15 Beta", "15"),
                     new AndroidRealDevice("Google Pixel 8 Pro", "14"),
@@ -99,7 +147,16 @@ public class MerlinPlatformTests {
                     new AndroidRealDevice("OnePlus 5", "8"),
                     new AndroidRealDevice("Samsung Galaxy Tab S2", "7"),
                     new AndroidRealDevice("Samsung Galaxy S5", "6"),
-                    
+                ];
+            }
+        }
+
+        public static List<SaucePlatform> RealIOSDevices
+        {
+            get
+            {
+                return
+                [
                     new IOSRealDevice("iPhone 15 Plus", "18"),
                     new IOSRealDevice("iPhone 15 Pro Max", "17"),
                     new IOSRealDevice("iPhone 14 Pro Max", "16"),
