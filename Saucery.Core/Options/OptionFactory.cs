@@ -37,9 +37,7 @@ public class OptionFactory(BrowserVersion bv) : IDisposable
                 DebugMessages.PrintHaveAndroidPlatform(false);
                 return new EmulatedAndroidCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType);
             }
-        }
-
-        
+        } 
     }
 
     private DriverOptions? GetDesktopOptions(string testName) => BrowserVersion.BrowserName.ToLower() switch
