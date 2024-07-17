@@ -59,6 +59,7 @@ public class SauceryBase : PageTest
     {
         try
         {
+            _testName = null;
             if (Driver != null)
             {
                 var passed = Equals(TestContext.CurrentContext.Result.Outcome, ResultState.Success);
