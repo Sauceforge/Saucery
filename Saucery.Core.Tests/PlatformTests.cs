@@ -133,7 +133,6 @@ public class MerlinPlatformTests {
                     new AndroidRealDevice("Samsung Galaxy Tab S4 10.5", "9"),
                     new AndroidRealDevice("OnePlus 5", "8"),
                     new AndroidRealDevice("Samsung Galaxy Tab S2", "7"),
-                    new AndroidRealDevice("Samsung Galaxy S5", "6"),
                 ];
             }
         }
