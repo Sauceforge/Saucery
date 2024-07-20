@@ -20,8 +20,11 @@ internal class RealDeviceIOSOptions : BaseOptions {
             DeviceName = browserVersion.DeviceName,
             PlatformVersion = browserVersion.PlatformNameForOption
         };
-        
+
+        options.AddAdditionalAppiumOption("webviewConnectTimeout", SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
+
         SauceOptions.Add(SauceryConstants.SAUCE_APPIUM_VERSION_CAPABILITY, "latest");
+        
         //if (!string.IsNullOrEmpty(browserVersion.DeviceOrientation))
         //{
         //    SauceOptions.Add(SauceryConstants.SAUCE_DEVICE_ORIENTATION_CAPABILITY, browserVersion.DeviceOrientation);

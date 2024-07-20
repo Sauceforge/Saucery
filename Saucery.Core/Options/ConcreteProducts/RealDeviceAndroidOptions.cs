@@ -24,6 +24,7 @@ internal class RealDeviceAndroidOptions : BaseOptions {
         options.AddAdditionalAppiumOption("platformName", "Android");
         options.AddAdditionalAppiumOption("w3c", true);
         options.AddAdditionalAppiumOption("autoGrantPermissions", true);
+        options.AddAdditionalAppiumOption("webviewConnectTimeout", SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
         //appiumOptions.AddAdditionalAppiumOption("app", "path/to/your/app.apk");
 
         SauceOptions.Add("appiumVersion", "latest");
