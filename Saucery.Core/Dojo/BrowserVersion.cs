@@ -119,7 +119,7 @@ public class BrowserVersion
         if (this.IsAMobileDevice())
         {
             AppendPlatformField(DeviceName);
-            AppendPlatformField(Name!);
+            //AppendPlatformField(Name!);
             
             if (!string.IsNullOrEmpty(DeviceOrientation))
             {
