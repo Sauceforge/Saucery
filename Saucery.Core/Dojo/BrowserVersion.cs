@@ -151,6 +151,9 @@ public class BrowserVersion
 
     private void AppendPlatformField(string fieldToAdd)
     {
+        if(fieldToAdd == null || fieldToAdd.Length == 0)
+            return;
+
         if(!TestNameBuilder[^1].Equals(SauceryConstants.UNDERSCORE))
             TestNameBuilder.Append($"{SauceryConstants.UNDERSCORE}{fieldToAdd}");
         else
