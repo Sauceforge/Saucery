@@ -28,6 +28,7 @@ internal class RealDeviceIOSOptions : BaseOptions {
         //{
         //    SauceOptions.Add(SauceryConstants.SAUCE_DEVICE_ORIENTATION_CAPABILITY, browserVersion.DeviceOrientation);
         //}
+        options.AddAdditionalAppiumOption("webviewConnectTimeout", 50000);
         options.AddAdditionalAppiumOption(SauceryConstants.SAUCE_OPTIONS_CAPABILITY, SauceOptions);
         Opts = options;
     }
