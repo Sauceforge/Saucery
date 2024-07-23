@@ -45,7 +45,7 @@ public class RealIOSDataClass
     {
         get
         {
-            var versions = new [] { "12", "13", "14", "15", "16", "17", "18" };
+            var versions = new [] { "13", "14", "15", "16", "17", "18" };
             return from v in versions
                    select new IOSRealDevice("iPhone.*", v);
         }
