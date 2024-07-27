@@ -119,7 +119,7 @@ public class BrowserVersion
         if (this.IsAMobileDevice())
         {
             AppendPlatformField(DeviceName);
-            AppendPlatformField(Name!);
+            //AppendPlatformField(Name!);
             
             if (!string.IsNullOrEmpty(DeviceOrientation))
             {
@@ -151,6 +151,12 @@ public class BrowserVersion
 
     private void AppendPlatformField(string fieldToAdd)
     {
-        TestNameBuilder.Append($"{SauceryConstants.UNDERSCORE}{fieldToAdd}");
+        if(fieldToAdd == null || fieldToAdd.Length == 0)
+            return;
+
+        if(!TestNameBuilder[^1].Equals(SauceryConstants.UNDERSCORE))
+            TestNameBuilder.Append($"{SauceryConstants.UNDERSCORE}{fieldToAdd}");
+        else
+            TestNameBuilder.Append($"{fieldToAdd}");
     }
 }

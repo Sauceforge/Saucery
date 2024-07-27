@@ -26,6 +26,7 @@ internal class RealDeviceAndroidOptions : BaseOptions {
         options.AddAdditionalAppiumOption("autoGrantPermissions", true);
         //appiumOptions.AddAdditionalAppiumOption("app", "path/to/your/app.apk");
 
+        //SauceOptions.Add("webviewConnectTimeout", SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
         SauceOptions.Add("appiumVersion", "latest");
 
         //if(!string.IsNullOrEmpty(browserVersion.DeviceOrientation)) {

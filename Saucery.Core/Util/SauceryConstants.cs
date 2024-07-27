@@ -19,7 +19,7 @@ public class SauceryConstants {
     internal const string SAUCERY_LICENCE_FILE = @"\Saucery.lic"; //need the backslash here!
     internal const string LICENCE_PRODUCTCODE = "N3";
     internal const string TRIAL_PRODUCTCODE = "3T";
-    internal static readonly int[] NUNIT3POSARRAY = { 3, 6, 9, 12, 15, 18, 21, 24, 27, 30 };
+    internal static readonly int[] NUNIT3POSARRAY = [3, 6, 9, 12, 15, 18, 21, 24, 27, 30];
     internal const string SAUCERY_ASSEMBLY = "<Reference Include=\"Saucery";
     internal const string SAUCERYTESTER_ASSEMBLY = "<ProjectReference Include=\"..\\Saucery\\Saucery.csproj\">";
 
@@ -202,7 +202,7 @@ public class SauceryConstants {
     public const string PLATFORM_SEPARATOR = "->";
     internal static List<string> BROWSER_VERSIONS_LATEST = [BROWSER_VERSION_LATEST_MINUS1, BROWSER_VERSION_LATEST];
     internal static List<string> BROWSER_VERSIONS_DEVS = [BROWSER_VERSION_BETA, BROWSER_VERSION_DEV];
-    internal static List<string> BROWSER_VERSIONS_NONNUMERIC = BROWSER_VERSIONS_LATEST.Concat(BROWSER_VERSIONS_DEVS).ToList();
+    internal static List<string> BROWSER_VERSIONS_NONNUMERIC = [.. BROWSER_VERSIONS_LATEST, .. BROWSER_VERSIONS_DEVS];
 
     //SCREEN RESOLUTIONS
     public const string SCREENRES_800_600 = "800x600";

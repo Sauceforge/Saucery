@@ -112,7 +112,7 @@ public class MerlinPlatformTests {
             {
                 return
                 [
-                    new IOSPlatform("iPhone XS Simulator", "17.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
+                    new IOSPlatform("iPhone 15 Pro Max Simulator", "17.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
                 ];
             }
         }

@@ -52,7 +52,8 @@ public class RealAndroidDataClass
             yield return new AndroidRealDevice("Google Pixel 4a", "11");
             yield return new AndroidRealDevice("Google Pixel 4 XL", "10");
             yield return new AndroidRealDevice("Samsung Galaxy Tab S3", "9");
-            //yield return new AndroidRealDevice("Motorola Moto Z Play", "8");
+            //yield return new AndroidRealDevice("OnePlus 5", "8");
+            yield return new AndroidRealDevice("Samsung.*", "8");  //This shouldn't pass but does!
             yield return new AndroidRealDevice("Samsung.*", "7");
         }
     }

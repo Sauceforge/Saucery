@@ -41,6 +41,7 @@ public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>
     {
         try
         {
+            _testName = null;
             if (BaseFixture.Driver != null)
             {
                 var passed = Context.TestException == null;
