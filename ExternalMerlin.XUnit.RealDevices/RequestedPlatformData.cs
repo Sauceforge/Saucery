@@ -13,7 +13,7 @@ public class RequestedPlatformData : SauceryTestData
             //Real Devices
             //new AndroidRealDevice("Google Pixel 8 | Android 15 Beta", "15"),
             new AndroidRealDevice("Google.*", "15"),
-            new IOSRealDevice("iPhone 15 Pro Max", "17"),
+            new IOSRealDevice("iPhone 14 Pro Max", "16"),
         ];
 
         SetPlatforms(platforms);
