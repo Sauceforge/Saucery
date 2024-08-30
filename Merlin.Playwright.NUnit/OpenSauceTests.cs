@@ -1,6 +1,6 @@
 using Microsoft.Playwright;
 using Saucery.Core.Dojo;
-using Saucery.Playwright;
+using Saucery.Playwright.NUnit;
 using System.Text.RegularExpressions;
 
 namespace Merlin.Playwright.NUnit;

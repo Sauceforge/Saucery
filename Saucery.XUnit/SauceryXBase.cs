@@ -73,13 +73,14 @@ public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>
         return ((ITest)testMember!.GetValue(_outputHelper)!).TestCase.TestMethod.Method.Name;
     }
 
-    public static IEnumerable<object[]> GetAllCombinations(object[] data) {
+    protected static IEnumerable<object[]> GetAllCombinations(object[] data) {
         List<object[]> allCombinations = [];
 
-        foreach(var platform in SauceryTestData.Items) {
-            foreach(var datum in data) {
-                allCombinations.Add([platform, datum]);
-            }
+        foreach(var platform in SauceryTestData.Items)
+        {
+            allCombinations
+                .AddRange(data
+                    .Select(datum => (object[]) [platform, datum]));
         }
 
         return allCombinations;

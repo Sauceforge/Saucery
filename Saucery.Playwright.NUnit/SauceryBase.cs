@@ -9,12 +9,12 @@ using Saucery.Core.RestAPI.FlowControl;
 using Saucery.Core.RestAPI.TestStatus;
 using Saucery.Core.Util;
 
-namespace Saucery.Playwright;
+namespace Saucery.Playwright.NUnit;
 
 public class SauceryBase : PageTest
 {
     private string? _testName;
-    protected WebDriver? Driver;
+    private WebDriver? Driver;
     private readonly BrowserVersion? _browserVersion;
     private static readonly SauceLabsStatusNotifier SauceLabsStatusNotifier;
     private static readonly SauceLabsFlowController SauceLabsFlowController;

@@ -104,7 +104,7 @@ public class SauceryBase
         }
     }
 
-    public WebDriver SauceryDriver() => 
+    protected WebDriver SauceryDriver() => 
         Driver!;
 }
 /*

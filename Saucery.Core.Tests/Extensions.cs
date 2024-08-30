@@ -9,13 +9,13 @@ internal static class Extensions
         type.GetTypeInfo().IsAbstract && 
         type.GetTypeInfo().IsSealed;
 
-    public static bool HasAttribute<T>(this ICustomAttributeProvider attributeProvider, bool inherit) => 
+    private static bool HasAttribute<T>(this ICustomAttributeProvider attributeProvider, bool inherit) => 
         attributeProvider.IsDefined(typeof(T), inherit);
 
     public static bool HasAttribute<T>(this Type type, bool inherit) => 
         ((ICustomAttributeProvider)type.GetTypeInfo()).HasAttribute<T>(inherit);
 
-    public static T[] GetAttributes<T>(this ICustomAttributeProvider attributeProvider, bool inherit) where T : class => 
+    private static T[] GetAttributes<T>(this ICustomAttributeProvider attributeProvider, bool inherit) where T : class => 
         (T[])attributeProvider.GetCustomAttributes(typeof(T), inherit);
 
     public static T[] GetAttributes<T>(this Assembly assembly) where T : class => 
@@ -36,9 +36,7 @@ internal static class Extensions
             }
 
             while (iterator.MoveNext())
-            {
                 yield return iterator.Current;
-            }
         }
     }
 }

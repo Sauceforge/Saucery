@@ -7,7 +7,7 @@ namespace Saucery.Core.DataSources;
 
 public class SauceryTestData : IEnumerable 
 {
-    protected static List<BrowserVersion>? BrowserVersions { get; private set; }
+    private static List<BrowserVersion>? BrowserVersions { get; set; }
 
     public IEnumerator GetEnumerator() => BrowserVersions?.GetEnumerator()!;
 

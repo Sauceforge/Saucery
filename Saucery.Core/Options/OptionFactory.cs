@@ -19,25 +19,25 @@ public class OptionFactory(BrowserVersion bv) : IDisposable
         }
 
         //Mobile Device
-        if(BrowserVersion.IsARealDevice()) {
+        if(BrowserVersion.IsARealDevice())
+        {
             if(BrowserVersion.PlatformType.Equals(OnDemand.PlatformType.Apple)) {
                 DebugMessages.PrintHaveApplePlatform(true);
                 return new RealDeviceIOSCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType);
-            } else {
-                DebugMessages.PrintHaveAndroidPlatform(true);
-                return new RealDeviceAndroidCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType);
             }
+
+            DebugMessages.PrintHaveAndroidPlatform(true);
+            return new RealDeviceAndroidCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType);
         }
-        else {
-            //Emulated Mobile Platform
-            if(BrowserVersion.PlatformType.Equals(OnDemand.PlatformType.Apple)) {
-                DebugMessages.PrintHaveApplePlatform(false);
-                return new EmulatedIOSCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType);
-            } else {
-                DebugMessages.PrintHaveAndroidPlatform(false);
-                return new EmulatedAndroidCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType);
-            }
-        } 
+
+        //Emulated Mobile Platform
+        if(BrowserVersion.PlatformType.Equals(OnDemand.PlatformType.Apple)) {
+            DebugMessages.PrintHaveApplePlatform(false);
+            return new EmulatedIOSCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType);
+        }
+
+        DebugMessages.PrintHaveAndroidPlatform(false);
+        return new EmulatedAndroidCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType);
     }
 
     private DriverOptions? GetDesktopOptions(string testName) => BrowserVersion.BrowserName.ToLower() switch
