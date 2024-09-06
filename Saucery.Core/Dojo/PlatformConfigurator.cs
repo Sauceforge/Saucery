@@ -165,7 +165,7 @@ public class PlatformConfigurator
                 browserVersion = AvailablePlatforms.FindIOSBrowser(requested);
                 break;
             default:
-                Console.WriteLine($"Requested Platform Not Found: {0}", requested.LongName);
+                Console.WriteLine("Requested Platform Not Found: {0}", requested.LongName);
                 return null;
         }
 

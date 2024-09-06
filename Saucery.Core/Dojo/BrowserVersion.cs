@@ -91,23 +91,23 @@ public class BrowserVersion
         TestNameBuilder = new StringBuilder(); 
     }
 
-    public object[] ToObjectArray() =>
-        [
-            Os,
-            PlatformNameForOption,
-            BrowserName,
-            Name!,
-            AutomationBackend,
-            DeviceName,
-            RecommendedAppiumVersion,
-            SupportedBackendVersions,
-            DeprecatedBackendVersions,
-            TestName!,
-            DeviceOrientation!,
-            ScreenResolution!,
-            PlatformType,
-            ScreenResolutions
-        ];
+    //public object[] ToObjectArray() =>
+    //    [
+    //        Os,
+    //        PlatformNameForOption,
+    //        BrowserName,
+    //        Name!,
+    //        AutomationBackend,
+    //        DeviceName,
+    //        RecommendedAppiumVersion,
+    //        SupportedBackendVersions,
+    //        DeprecatedBackendVersions,
+    //        TestName!,
+    //        DeviceOrientation!,
+    //        ScreenResolution!,
+    //        PlatformType,
+    //        ScreenResolutions
+    //    ];
 
     public void SetTestName(string testName)
     {

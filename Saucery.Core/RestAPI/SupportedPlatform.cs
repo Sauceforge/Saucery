@@ -51,7 +51,7 @@ public class SupportedPlatform {
     public bool SupportsMultiTouch { get; set; }
     public bool SupportsXcuiTest { get; set; }
 
-    public int short_version_as_int => int.TryParse(short_version, out int discard) ? int.Parse(short_version) : 0;
+    public int short_version_as_int => int.TryParse(short_version, out var discard) ? int.Parse(short_version) : 0;
 
     public bool IsIOSPlatform() => automation_backend!.Equals("appium") && 
                                    recommended_backend_version != null && 

@@ -25,7 +25,7 @@ public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>
         BaseFixture.OptionFactory = new OptionFactory(_browserVersion);
         var opts = BaseFixture.OptionFactory.CreateOptions(_testName!);
 
-        bool driverInitialised = BaseFixture.InitialiseDriver(opts!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
+        var driverInitialised = BaseFixture.InitialiseDriver(opts!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
 
         while (!driverInitialised)
         {

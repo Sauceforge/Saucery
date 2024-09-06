@@ -18,7 +18,7 @@ public class TestBuilder {
     public static TestSuite MakeFixture(Type type) => new DefaultSuiteBuilder().BuildFrom(new TypeWrapper(type));
 
     public static TestSuite MakeFixture(object fixture) {
-        TestSuite suite = MakeFixture(fixture.GetType());
+        var suite = MakeFixture(fixture.GetType());
         suite.Fixture = fixture;
         return suite;
     }

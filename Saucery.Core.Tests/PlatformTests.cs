@@ -25,7 +25,7 @@ public class MerlinPlatformTests {
     [Test]
     public void ValidDesktopPlatformTest() {
         PlatformExpander expander = new(PlatformConfigurator!, PlatformDataClass.DesktopPlatforms);
-        List<SaucePlatform> expandedPlatforms = expander.Expand();
+        var expandedPlatforms = expander.Expand();
         var bvs = PlatformConfigurator!
             .FilterAll(expandedPlatforms);
 

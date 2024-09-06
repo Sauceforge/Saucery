@@ -44,7 +44,7 @@ public class SauceryBase : PageTest
         var factory = new OptionFactory(_browserVersion);
         var opts = factory.CreateOptions(_testName);
 
-        bool driverInitialised = InitialiseDriver(opts!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
+        var driverInitialised = InitialiseDriver(opts!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
 
         while (!driverInitialised)
         {
