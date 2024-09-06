@@ -41,7 +41,7 @@ public class BrowserVersion
 
     public BrowserVersion(SupportedPlatform sp, BrowserBase b)
     {
-        Os = sp.os!;
+        Os = sp.Os!;
         PlatformNameForOption = b.PlatformNameForOption;
         ScreenResolutions = b.ScreenResolutions;
         BrowserName = sp.api_name!;

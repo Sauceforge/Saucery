@@ -21,7 +21,7 @@ public static class DojoExtensions
             //first one
             p = PlatformFactory.CreateRealPlatform(sp);
             if(p == null) {
-                //SauceLabs may have just added it to the platform cornfigurato. Don't fall over.
+                //SauceLabs may have just added it to the platform configurator. Don't fall over.
                 return;
             }
             platforms.Add(p);
@@ -57,7 +57,7 @@ public static class DojoExtensions
 
         foreach(var m in platforms) {
             result = platforms
-                .Find(mp => mp.Name.Equals(sp.os, StringComparison.Ordinal) && 
+                .Find(mp => mp.Name.Equals(sp.Os, StringComparison.Ordinal) && 
                       mp.PlatformVersion!.Equals(sp.OsVersion?.Split(".")[0], StringComparison.Ordinal));
             
             if(result != null) {
@@ -83,7 +83,7 @@ public static class DojoExtensions
             foreach(var m in mobilePlatforms)
             {
                 result = mobilePlatforms
-                    .Find(mp => mp.Name.Equals(sp.os, StringComparison.Ordinal) && 
+                    .Find(mp => mp.Name.Equals(sp.Os, StringComparison.Ordinal) && 
                           mp.PlatformVersion!.Equals(sp.short_version, StringComparison.Ordinal));
                 
                 if(result != null) {
@@ -94,7 +94,7 @@ public static class DojoExtensions
         } else {
             foreach (var d in desktopPlatforms)
             {
-                result = desktopPlatforms.Find(dp => dp.Name.Equals(sp.os, StringComparison.Ordinal));
+                result = desktopPlatforms.Find(dp => dp.Name.Equals(sp.Os, StringComparison.Ordinal));
                 
                 if (result != null)
                 {
@@ -306,12 +306,12 @@ public static class DojoExtensions
             .FirstOrDefault(b => b.Name
             .Equals(sp.api_name, StringComparison.Ordinal) &&
             b.DeviceName.Equals(sp.long_name, StringComparison.Ordinal) &&
-            b.Os.Equals(sp.os, StringComparison.Ordinal));
+            b.Os.Equals(sp.Os, StringComparison.Ordinal));
 
     private static BrowserBase? FindRealBrowser(this IEnumerable<BrowserBase> browsers, SupportedPlatform sp) => browsers
             .FirstOrDefault(b => b.Name.Equals(sp.api_name, StringComparison.Ordinal) &&
                                  b.DeviceName.Equals(sp.long_name, StringComparison.Ordinal) &&
-                                 b.Os.Equals(sp.os, StringComparison.Ordinal));
+                                 b.Os.Equals(sp.Os, StringComparison.Ordinal));
 
     public static BrowserVersion Classify(this BrowserVersion browserVersion)
     {

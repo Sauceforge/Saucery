@@ -96,13 +96,13 @@ public class PlatformConfigurator
     }
 
     private static List<SupportedPlatform> FindLinuxPlatforms(List<SupportedPlatform> platforms) => 
-        platforms.FindAll(p => p.os! == "Linux" && p.automation_backend!.Equals("webdriver") && p.device! == null);
+        platforms.FindAll(p => p.Os! == "Linux" && p.automation_backend!.Equals("webdriver") && p.device! == null);
 
     private static List<SupportedPlatform> FindWindowsPlatforms(List<SupportedPlatform> platforms) => 
-        platforms.FindAll(p => p.os!.Contains("Windows") && p.automation_backend!.Equals("webdriver"));
+        platforms.FindAll(p => p.Os!.Contains("Windows") && p.automation_backend!.Equals("webdriver"));
 
     private static List<SupportedPlatform> FindMacPlatforms(List<SupportedPlatform> platforms, IReadOnlyCollection<string> oses) => 
-        platforms.FindAll(p => oses.Any(o => o.Equals(p.os)) && p.automation_backend!.Equals("webdriver") && !p.api_name!.Equals("ipad") && !p.api_name.Equals("iphone"));
+        platforms.FindAll(p => oses.Any(o => o.Equals(p.Os)) && p.automation_backend!.Equals("webdriver") && !p.api_name!.Equals("ipad") && !p.api_name.Equals("iphone"));
 
     private static List<SupportedPlatform> FindMobilePlatforms(List<SupportedPlatform> platforms, IReadOnlyCollection<string> apis) => 
         platforms.FindAll(p => apis.Any(a => a.Equals(p.api_name)) && p.automation_backend!.Equals("appium"));

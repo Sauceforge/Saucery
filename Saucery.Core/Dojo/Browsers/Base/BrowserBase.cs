@@ -25,7 +25,7 @@ public abstract class BrowserBase : IBrowser
 
     protected BrowserBase(SupportedPlatform sp, List<string> screenResolutions, string platformNameForOption)
     {
-        Os = sp.os!;
+        Os = sp.Os!;
         PlatformNameForOption = platformNameForOption;
         AutomationBackend = sp.automation_backend!;
         Name = sp.api_name!;

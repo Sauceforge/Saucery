@@ -11,7 +11,7 @@ internal class IEBrowser(SupportedPlatform sp, List<string> screenResolutions, s
             .Find(bv => bv.Name!.Equals(sp.latest_stable_version) || 
                   bv.Name.Equals(sp.short_version));
 
-    public int MinimumVersion(SupportedPlatform sp) => sp.os switch
+    public int MinimumVersion(SupportedPlatform sp) => sp.Os switch
     {
         SauceryConstants.PLATFORM_WINDOWS_10 => 11,
         SauceryConstants.PLATFORM_WINDOWS_81 => 11,

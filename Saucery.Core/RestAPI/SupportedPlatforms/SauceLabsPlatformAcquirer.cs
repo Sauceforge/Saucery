@@ -18,7 +18,11 @@ public class SauceLabsPlatformAcquirer : PlatformAcquirer {
     }
     public override List<SupportedPlatform>? AcquirePlatforms() {
         var json = GetJsonResponse(SauceryConstants.SUPPORTED_PLATFORMS_REQUEST);
-        var supportedPlatforms = JsonSerializer.Deserialize<List<SupportedPlatform>>(json!);
+        var supportedPlatforms = JsonSerializer.Deserialize<List<SupportedPlatform>>(json!, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        });
+
         return supportedPlatforms;
     }
 }

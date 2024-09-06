@@ -11,7 +11,7 @@ public class SupportedPlatform {
     public string? device { get; set; }
     public string? latest_stable_version { get; set; }
     public string? automation_backend { get; set; }
-    public string? os { get; set; }
+    public string? Os { get; set; }
 
 
     //REAL DEVICE
@@ -32,7 +32,6 @@ public class SupportedPlatform {
     public bool IsTablet { get; set; }
     public List<string>? Manufacturer { get; set; }
     public string? ModelNumber { get; set; }
-    public string? Os { get; set; }
     public string? OsVersion { get; set; }
     public int PixelsPerPoint { get; set; }
     public int RamSize { get; set; }

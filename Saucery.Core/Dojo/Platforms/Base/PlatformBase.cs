@@ -20,7 +20,7 @@ public abstract class PlatformBase
 
     protected PlatformBase(SupportedPlatform sp)
     {
-        Name = sp.os!;
+        Name = sp.Os!;
         AutomationBackend = sp.automation_backend!;
         RecommendedAppiumVersion = sp.recommended_backend_version!;
         SupportedBackendVersions = sp.supported_backend_versions!;

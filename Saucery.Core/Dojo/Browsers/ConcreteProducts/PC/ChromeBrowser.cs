@@ -11,7 +11,7 @@ internal class ChromeBrowser(SupportedPlatform sp, List<string> screenResolution
                              bv.Name!.Equals(sp.latest_stable_version) || 
                              bv.Name.Equals(sp.short_version));
 
-    public int MinimumVersion(SupportedPlatform sp) => sp.os switch
+    public int MinimumVersion(SupportedPlatform sp) => sp.Os switch
     {
         SauceryConstants.PLATFORM_WINDOWS_11 or
         SauceryConstants.PLATFORM_WINDOWS_10 or

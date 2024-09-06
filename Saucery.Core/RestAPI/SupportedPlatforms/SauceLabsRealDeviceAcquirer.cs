@@ -19,7 +19,10 @@ public class SauceLabsRealDeviceAcquirer : RealDeviceAcquirer {
 
     public override List<SupportedPlatform>? AcquireRealDevicePlatforms() {
         var json = GetJsonResponse(SauceryConstants.SUPPORTED_REALDEVICE_PLATFORMS_REQUEST);
-        var supportedPlatforms = JsonSerializer.Deserialize<List<SupportedPlatform>>(json!);
+        var supportedPlatforms = JsonSerializer.Deserialize<List<SupportedPlatform>>(json!, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        });
         
         return supportedPlatforms;
     }

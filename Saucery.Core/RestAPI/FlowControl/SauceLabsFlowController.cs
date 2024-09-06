@@ -30,7 +30,10 @@ public class SauceLabsFlowController : FlowController {
         //Console.WriteLine(@"Debug: {0}", json);
         var remainingSection = ExtractJsonSegment(json!, json!.IndexOf("\"remaining", StringComparison.Ordinal), json.Length - 3);
         //Console.WriteLine(@"Debug: remainingsection = {0}", remainingSection);
-        var flowControl = JsonSerializer.Deserialize<FlowControl>(remainingSection);
+        var flowControl = JsonSerializer.Deserialize<FlowControl>(remainingSection, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        });
 
         return flowControl?.remaining!.overall <= 0;
     }
