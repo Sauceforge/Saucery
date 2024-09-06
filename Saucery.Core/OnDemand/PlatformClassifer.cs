@@ -12,13 +12,11 @@ public static class PlatformClassifer
             platform.PlatformType = PlatformType.Android;
             return platform;
         }
-        else
+
+        if (platform.IsAnAppleDevice())
         {
-            if (platform.IsAnAppleDevice())
-            {
-                platform.PlatformType = PlatformType.Apple;
-                return platform;
-            }
+            platform.PlatformType = PlatformType.Apple;
+            return platform;
         }
 
         //Desktop

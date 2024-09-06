@@ -134,15 +134,15 @@ public class PlatformConfigurator
             return ValidateReal(platform) != null 
                 ? new BrowserVersion(platform) 
                 : null;
-        } else {
-            var bv = Validate(platform);
-            if(bv != null) {
-                bv.ScreenResolution = platform.ScreenResolution;
-                bv.DeviceOrientation = platform.DeviceOrientation;
-            }
-
-            return bv;
         }
+
+        var bv = Validate(platform);
+        if(bv != null) {
+            bv.ScreenResolution = platform.ScreenResolution;
+            bv.DeviceOrientation = platform.DeviceOrientation;
+        }
+
+        return bv;
     }
 
     public BrowserVersion? Validate(SaucePlatform requested)

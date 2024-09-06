@@ -320,13 +320,11 @@ public static class DojoExtensions
             browserVersion.PlatformType = PlatformType.Android;
             return browserVersion;
         }
-        else
+
+        if (browserVersion.IsAnAppleDevice())
         {
-            if (browserVersion.IsAnAppleDevice())
-            {
-                browserVersion.PlatformType = PlatformType.Apple;
-                return browserVersion;
-            }
+            browserVersion.PlatformType = PlatformType.Apple;
+            return browserVersion;
         }
 
         //Desktop
