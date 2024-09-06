@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json;
 using RestSharp;
 using RestSharp.Authenticators;
 using Saucery.Core.RestAPI.SupportedPlatforms.Base;
@@ -18,7 +18,7 @@ public class SauceLabsPlatformAcquirer : PlatformAcquirer {
     }
     public override List<SupportedPlatform>? AcquirePlatforms() {
         var json = GetJsonResponse(SauceryConstants.SUPPORTED_PLATFORMS_REQUEST);
-        var supportedPlatforms = JsonConvert.DeserializeObject<List<SupportedPlatform>>(json!);
+        var supportedPlatforms = JsonSerializer.Deserialize<List<SupportedPlatform>>(json!);
         return supportedPlatforms;
     }
 }
