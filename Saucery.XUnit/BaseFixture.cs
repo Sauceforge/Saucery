@@ -36,21 +36,13 @@ public class BaseFixture : IDisposable
         SauceLabsFlowController.ControlFlow();
         try
         {
-            if (OptionFactory!.IsApple())
-            {
-                Driver = new IOSDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, TimeSpan.FromSeconds(waitSecs), AppiumClientConfig);
-            }
-            else
-            {
-                if (OptionFactory!.IsAndroid())
-                {
-                    Driver = new AndroidDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, TimeSpan.FromSeconds(waitSecs), AppiumClientConfig);
-                }
-                else
-                {
-                    Driver = new SauceryRemoteWebDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, waitSecs);
-                }
-            }
+            Driver = OptionFactory!.IsApple()
+                ? new IOSDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, TimeSpan.FromSeconds(waitSecs),
+                    AppiumClientConfig)
+                : OptionFactory!.IsAndroid()
+                    ? new AndroidDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, TimeSpan.FromSeconds(waitSecs),
+                        AppiumClientConfig)
+                    : new SauceryRemoteWebDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, waitSecs);
 
             return true;
         }

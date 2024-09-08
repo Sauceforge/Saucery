@@ -1,5 +1,5 @@
-﻿using Newtonsoft.Json;
-using Saucery.Core.Util;
+﻿using Saucery.Core.Util;
+using System.Text.Json.Serialization;
 
 namespace Saucery.Core.OnDemand.Base;
 
@@ -18,18 +18,18 @@ public class SaucePlatform(string desktopPlatformName = "",
     public string Platform { get; set; } = Sanitiser.SanitisePlatformField(platform)!;
     public string Browser { get; set; } = Sanitiser.SanitisePlatformField(browser)!;
 
-    [JsonProperty(PropertyName = "browser-version")]
+    [JsonPropertyName("browser-version")]
     public string BrowserVersion { get; set; } = Sanitiser.SanitisePlatformField(browserVersion)!;
 
     public string ScreenResolution { get; set; } = Sanitiser.SanitisePlatformField(screenResolution)!;
 
-    [JsonProperty(PropertyName = "long-name")]
+    [JsonPropertyName("long-name")]
     public string LongName { get; set; } = Sanitiser.SanitisePlatformField(longName)!;
 
-    [JsonProperty(PropertyName = "long-version")]
+    [JsonPropertyName("long-version")]
     public string LongVersion { get; set; } = Sanitiser.SanitisePlatformField(longVersion)!;
 
-    [JsonProperty(PropertyName = "device-orientation")]
+    [JsonPropertyName("device-orientation")]
     public string DeviceOrientation { get; set; } = deviceOrientation ?? SauceryConstants.NULL_STRING;
 
     public PlatformType PlatformType { get; set; }

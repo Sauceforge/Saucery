@@ -12,7 +12,7 @@ public class PlatformExpander(PlatformConfigurator platformConfigurator, List<Sa
 
     public List<SaucePlatform> Expand()
     {
-        foreach (SaucePlatform platform in Platforms)
+        foreach (var platform in Platforms)
         {
             if (!platform.NeedsExpansion() || 
                 platform.IsAnAndroidDevice() || 
@@ -23,16 +23,16 @@ public class PlatformExpander(PlatformConfigurator platformConfigurator, List<Sa
             }
             
             //Needs Expansion
-            string[] requestedVersions = platform.BrowserVersion.Split(SauceryConstants.PLATFORM_SEPARATOR);
+            var requestedVersions = platform.BrowserVersion.Split(SauceryConstants.PLATFORM_SEPARATOR);
 
-            PlatformRange rangeType = RangeClassifer.Classify(requestedVersions);
+            var rangeType = RangeClassifer.Classify(requestedVersions);
             if(rangeType == PlatformRange.Invalid)
             {
                 continue;
             }
 
-            string lowerBound = requestedVersions[0];
-            string upperBound = requestedVersions[1];
+            var lowerBound = requestedVersions[0];
+            var upperBound = requestedVersions[1];
 
             switch (rangeType)
             {
@@ -55,16 +55,16 @@ public class PlatformExpander(PlatformConfigurator platformConfigurator, List<Sa
 
     private void AddMixedRange(SaucePlatform platform, int lowerBound, string upperBound)
     {
-        int maxVersion = PlatformConfigurator.FindMaxBrowserVersion(platform);
+        var maxVersion = PlatformConfigurator.FindMaxBrowserVersion(platform);
         AddNumericRange(platform, lowerBound, maxVersion);
         AddNonNumericRange(platform, SauceryConstants.BROWSER_VERSION_LATEST_MINUS1, upperBound);
     }
 
     private void AddNonNumericRange(SaucePlatform platform, string lowerBound, string upperBound)
     {
-        int lowerIndex = SauceryConstants.BROWSER_VERSIONS_NONNUMERIC.IndexOf(lowerBound);
-        int upperIndex = SauceryConstants.BROWSER_VERSIONS_NONNUMERIC.IndexOf(upperBound);
-        for (int i = lowerIndex; i <= upperIndex; i++)
+        var lowerIndex = SauceryConstants.BROWSER_VERSIONS_NONNUMERIC.IndexOf(lowerBound);
+        var upperIndex = SauceryConstants.BROWSER_VERSIONS_NONNUMERIC.IndexOf(upperBound);
+        for (var i = lowerIndex; i <= upperIndex; i++)
         {
             AddPlatform(platform, SauceryConstants.BROWSER_VERSIONS_NONNUMERIC.ElementAt(i));
         }
@@ -72,7 +72,7 @@ public class PlatformExpander(PlatformConfigurator platformConfigurator, List<Sa
 
     private void AddNumericRange(SaucePlatform platform, int lowerBound, int upperBound)
     {
-        for (int version = lowerBound; version <= upperBound; version++)
+        for (var version = lowerBound; version <= upperBound; version++)
         {
             if ((platform.Browser.Equals(SauceryConstants.BROWSER_CHROME) ||
                 platform.Browser.Equals(SauceryConstants.BROWSER_EDGE)) &&

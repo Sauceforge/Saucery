@@ -96,13 +96,13 @@ public class PlatformConfigurator
     }
 
     private static List<SupportedPlatform> FindLinuxPlatforms(List<SupportedPlatform> platforms) => 
-        platforms.FindAll(p => p.os! == "Linux" && p.automation_backend!.Equals("webdriver") && p.device! == null);
+        platforms.FindAll(p => p.Os! == "Linux" && p.automation_backend!.Equals("webdriver") && p.device! == null);
 
     private static List<SupportedPlatform> FindWindowsPlatforms(List<SupportedPlatform> platforms) => 
-        platforms.FindAll(p => p.os!.Contains("Windows") && p.automation_backend!.Equals("webdriver"));
+        platforms.FindAll(p => p.Os!.Contains("Windows") && p.automation_backend!.Equals("webdriver"));
 
     private static List<SupportedPlatform> FindMacPlatforms(List<SupportedPlatform> platforms, IReadOnlyCollection<string> oses) => 
-        platforms.FindAll(p => oses.Any(o => o.Equals(p.os)) && p.automation_backend!.Equals("webdriver") && !p.api_name!.Equals("ipad") && !p.api_name.Equals("iphone"));
+        platforms.FindAll(p => oses.Any(o => o.Equals(p.Os)) && p.automation_backend!.Equals("webdriver") && !p.api_name!.Equals("ipad") && !p.api_name.Equals("iphone"));
 
     private static List<SupportedPlatform> FindMobilePlatforms(List<SupportedPlatform> platforms, IReadOnlyCollection<string> apis) => 
         platforms.FindAll(p => apis.Any(a => a.Equals(p.api_name)) && p.automation_backend!.Equals("appium"));
@@ -134,15 +134,15 @@ public class PlatformConfigurator
             return ValidateReal(platform) != null 
                 ? new BrowserVersion(platform) 
                 : null;
-        } else {
-            var bv = Validate(platform);
-            if(bv != null) {
-                bv.ScreenResolution = platform.ScreenResolution;
-                bv.DeviceOrientation = platform.DeviceOrientation;
-            }
-
-            return bv;
         }
+
+        var bv = Validate(platform);
+        if(bv != null) {
+            bv.ScreenResolution = platform.ScreenResolution;
+            bv.DeviceOrientation = platform.DeviceOrientation;
+        }
+
+        return bv;
     }
 
     public BrowserVersion? Validate(SaucePlatform requested)
@@ -165,7 +165,7 @@ public class PlatformConfigurator
                 browserVersion = AvailablePlatforms.FindIOSBrowser(requested);
                 break;
             default:
-                Console.WriteLine($"Requested Platform Not Found: {0}", requested.LongName);
+                Console.WriteLine("Requested Platform Not Found: {0}", requested.LongName);
                 return null;
         }
 

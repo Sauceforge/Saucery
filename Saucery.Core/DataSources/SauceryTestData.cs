@@ -7,7 +7,7 @@ namespace Saucery.Core.DataSources;
 
 public class SauceryTestData : IEnumerable 
 {
-    protected static List<BrowserVersion>? BrowserVersions { get; private set; }
+    private static List<BrowserVersion>? BrowserVersions { get; set; }
 
     public IEnumerator GetEnumerator() => BrowserVersions?.GetEnumerator()!;
 
@@ -15,7 +15,7 @@ public class SauceryTestData : IEnumerable
     {
         PlatformConfigurator platformConfigurator = new(PlatformFilter.ALL);
         PlatformExpander expander = new(platformConfigurator, platforms);
-        List<SaucePlatform> expandedPlatforms = expander.Expand();
+        var expandedPlatforms = expander.Expand();
         BrowserVersions = platformConfigurator.FilterAll(expandedPlatforms);
     }
 

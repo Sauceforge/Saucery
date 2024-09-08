@@ -21,7 +21,7 @@ public static class DojoExtensions
             //first one
             p = PlatformFactory.CreateRealPlatform(sp);
             if(p == null) {
-                //SauceLabs may have just added it to the platform cornfigurato. Don't fall over.
+                //SauceLabs may have just added it to the platform configurator. Don't fall over.
                 return;
             }
             platforms.Add(p);
@@ -37,7 +37,7 @@ public static class DojoExtensions
             p = PlatformFactory.CreatePlatform(sp);
             if(p == null)
             {
-                //SauceLabs may have just added it to the platform cornfigurato. Don't fall over.
+                //SauceLabs may have just added it to the platform configurator. Don't fall over.
                 return;
             }
             p.Browsers.AddBrowser(sp, p.ScreenResolutions!);
@@ -49,67 +49,33 @@ public static class DojoExtensions
         }
     }
 
-    public static PlatformBase? FindRealPlatform(this List<PlatformBase> platforms, SupportedPlatform sp) {
-        if(platforms.Count == 0)
-            return null;
-
-        PlatformBase? result = null;
-
-        foreach(var m in platforms) {
-            result = platforms
-                .Find(mp => mp.Name.Equals(sp.os, StringComparison.Ordinal) && 
-                      mp.PlatformVersion!.Equals(sp.OsVersion?.Split(".")[0], StringComparison.Ordinal));
-            
-            if(result != null) {
-                break;
-            }
-        }
-
-        return result;
-    }
+    public static PlatformBase? FindRealPlatform(this List<PlatformBase> platforms, SupportedPlatform sp) =>
+        platforms.Count == 0
+            ? null
+            : platforms
+                .Find(mp =>
+                    mp.Name.Equals(sp.Os, StringComparison.Ordinal) &&
+                    mp.PlatformVersion!.Equals(sp.OsVersion?.Split(".")[0], StringComparison.Ordinal));
 
     public static PlatformBase? FindPlatform(this List<PlatformBase> platforms, SupportedPlatform sp)
     {
         if(platforms.Count == 0)
             return null;
 
-        PlatformBase? result = null;
+        var mobilePlatforms = platforms.FindAll(p => p.AutomationBackend.Equals("appium"));
+        var desktopPlatforms = platforms.FindAll(p=> p.AutomationBackend.Equals("webdriver"));
 
-        List<PlatformBase> mobilePlatforms = platforms.FindAll(p =>p.AutomationBackend.Equals("appium"));
-        List<PlatformBase> desktopPlatforms = platforms.FindAll(p=>p.AutomationBackend.Equals("webdriver"));
-
-        if (sp.IsMobilePlatform())
-        {
-            foreach(var m in mobilePlatforms)
-            {
-                result = mobilePlatforms
-                    .Find(mp => mp.Name.Equals(sp.os, StringComparison.Ordinal) && 
-                          mp.PlatformVersion!.Equals(sp.short_version, StringComparison.Ordinal));
-                
-                if(result != null) {
-                    break;
-                }
-            }
-
-        } else {
-            foreach (var d in desktopPlatforms)
-            {
-                result = desktopPlatforms.Find(dp => dp.Name.Equals(sp.os, StringComparison.Ordinal));
-                
-                if (result != null)
-                {
-                    break;
-                }
-            }
-
-        }
-
-        return result;
+        return sp.IsMobilePlatform()
+            ? mobilePlatforms
+                .Find(mp =>
+                    mp.Name.Equals(sp.Os, StringComparison.Ordinal) &&
+                    mp.PlatformVersion!.Equals(sp.short_version, StringComparison.Ordinal))
+            : desktopPlatforms.Find(dp => dp.Name.Equals(sp.Os, StringComparison.Ordinal));
     }
 
     public static void AddBrowser(this List<BrowserBase> browsers, SupportedPlatform sp, List<string> screenResolutions)
     {
-        BrowserBase? b = browsers.FindBrowser(sp);
+        var b = browsers.FindBrowser(sp);
 
         if (b == null) {
             //first one
@@ -122,7 +88,7 @@ public static class DojoExtensions
     }
 
     public static void AddRealBrowser(this List<BrowserBase> browsers, SupportedPlatform sp) {
-        BrowserBase? b = browsers.FindRealBrowser(sp);
+        var b = browsers.FindRealBrowser(sp);
 
         if(b == null) {
             //first one
@@ -306,12 +272,12 @@ public static class DojoExtensions
             .FirstOrDefault(b => b.Name
             .Equals(sp.api_name, StringComparison.Ordinal) &&
             b.DeviceName.Equals(sp.long_name, StringComparison.Ordinal) &&
-            b.Os.Equals(sp.os, StringComparison.Ordinal));
+            b.Os.Equals(sp.Os, StringComparison.Ordinal));
 
     private static BrowserBase? FindRealBrowser(this IEnumerable<BrowserBase> browsers, SupportedPlatform sp) => browsers
             .FirstOrDefault(b => b.Name.Equals(sp.api_name, StringComparison.Ordinal) &&
                                  b.DeviceName.Equals(sp.long_name, StringComparison.Ordinal) &&
-                                 b.Os.Equals(sp.os, StringComparison.Ordinal));
+                                 b.Os.Equals(sp.Os, StringComparison.Ordinal));
 
     public static BrowserVersion Classify(this BrowserVersion browserVersion)
     {
@@ -320,13 +286,11 @@ public static class DojoExtensions
             browserVersion.PlatformType = PlatformType.Android;
             return browserVersion;
         }
-        else
+
+        if (browserVersion.IsAnAppleDevice())
         {
-            if (browserVersion.IsAnAppleDevice())
-            {
-                browserVersion.PlatformType = PlatformType.Apple;
-                return browserVersion;
-            }
+            browserVersion.PlatformType = PlatformType.Apple;
+            return browserVersion;
         }
 
         //Desktop

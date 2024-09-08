@@ -7,17 +7,17 @@ namespace Saucery.Core.PageObjects;
 
 public class PageObjectBase(string url, string name, string title)
 {
-    internal string PageUrl = url;
+    private string PageUrl = url;
     internal string Name = name;
-    internal string Title = title;
-    internal WebDriverWait? Wait;
+    private string Title = title;
+    private WebDriverWait? Wait;
 
-    public void GetPage(WebDriver driver) {
+    protected void GetPage(WebDriver driver) {
         driver.Navigate().GoToUrl(PageUrl);
         CheckTitle(driver);
     }
 
-    public void CheckTitle(WebDriver driver) {
+    private void CheckTitle(WebDriver driver) {
         Wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
         while (!Wait.Until(ExpectedConditions.TitleIs(Title)))
         {

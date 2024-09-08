@@ -41,7 +41,7 @@ internal class RestAPILimitsChecker {
         int.Parse(_headers["x-ratelimit-remaining"]) <= 0;
 
     internal int GetReset() => 
-        _headers.TryGetValue("x-ratelimit-reset", out string? value) 
+        _headers.TryGetValue("x-ratelimit-reset", out var value) 
             ? int.Parse(value)
             : 0;
 

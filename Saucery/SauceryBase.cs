@@ -43,7 +43,7 @@ public class SauceryBase
         _optionFactory = new OptionFactory(_browserVersion!);
         var opts = _optionFactory.CreateOptions(_testName!);
 
-        bool driverInitialised = InitialiseDriver(opts!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
+        var driverInitialised = InitialiseDriver(opts!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
 
         while (!driverInitialised)
         {
@@ -104,7 +104,7 @@ public class SauceryBase
         }
     }
 
-    public WebDriver SauceryDriver() => 
+    protected WebDriver SauceryDriver() => 
         Driver!;
 }
 /*

@@ -80,7 +80,7 @@ public class PlatformExpansionTests
         ];
 
         PlatformExpander expander = new(PlatformConfigurator!, platforms);
-        List<SaucePlatform> expandedSet = expander.Expand();
+        var expandedSet = expander.Expand();
         expandedSet.Count.ShouldBe(128);
     }
 
@@ -102,7 +102,7 @@ public class PlatformExpansionTests
         ];
 
         PlatformExpander expander = new(PlatformConfigurator!, platforms);
-        List<SaucePlatform> expandedSet = expander.Expand();
+        var expandedSet = expander.Expand();
         expandedSet.Count.ShouldBe(20);
     }
 
@@ -116,7 +116,7 @@ public class PlatformExpansionTests
         ];
 
         PlatformExpander expander = new(PlatformConfigurator!, platforms);
-        List<SaucePlatform> expandedSet = expander.Expand();
+        var expandedSet = expander.Expand();
         expandedSet.Count.ShouldBe(0);
     }
 
@@ -130,7 +130,7 @@ public class PlatformExpansionTests
         ];
 
         PlatformExpander expander = new(PlatformConfigurator!, platforms);
-        List<SaucePlatform> expandedSet = expander.Expand();
+        var expandedSet = expander.Expand();
         
         //It is not the job of the PlatformExpander to remove this from the requested set so just return it.
         //PlatformConfigurator Filtering will ensure it is not validated.

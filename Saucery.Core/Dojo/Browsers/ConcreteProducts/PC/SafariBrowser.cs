@@ -11,7 +11,7 @@ internal class SafariBrowser(SupportedPlatform sp, List<string> screenResolution
             .Find(bv => bv.Name!.Equals(sp.latest_stable_version) || 
                   bv.Name.Equals(sp.short_version));
 
-    public int MinimumVersion(SupportedPlatform sp) => sp.os switch
+    public int MinimumVersion(SupportedPlatform sp) => sp.Os switch
     {
         SauceryConstants.PLATFORM_MAC_12 => 15,
         SauceryConstants.PLATFORM_MAC_11 => 14,

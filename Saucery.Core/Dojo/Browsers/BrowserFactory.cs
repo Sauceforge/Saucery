@@ -14,7 +14,7 @@ public class BrowserFactory
             ? new AndroidBrowserCreator(sp).Create("Android", null!)
             : sp.IsIOSPlatform()
             ? new IOSBrowserCreator(sp).Create("iOS", null!)
-            : sp.os switch
+            : sp.Os switch
             {
                 SauceryConstants.PLATFORM_LINUX => new LinuxBrowserCreator(sp).Create("Linux", screenResolutions),
                 SauceryConstants.PLATFORM_WINDOWS_11 => new Windows11BrowserCreator(sp).Create("Windows 11", screenResolutions),
