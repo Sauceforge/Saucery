@@ -14,18 +14,22 @@ public class PageObjectBase(string url, string name, string title)
 
     protected void GetPage(WebDriver driver) {
         driver.Navigate().GoToUrl(PageUrl);
-        CheckTitle(driver);
+
+        Wait = new WebDriverWait(driver, TimeSpan.FromSeconds(1800));
+        Wait.Until(ExpectedConditions.TitleIs(Title));
+        driver.Title.ShouldBe(Title);
+        //CheckTitle(driver);
     }
 
-    private void CheckTitle(WebDriver driver) {
-        Wait = new WebDriverWait(driver, TimeSpan.FromSeconds(400));
-        while (!Wait.Until(ExpectedConditions.TitleIs(Title)))
-        {
-            GetPage(driver);
-        }
-        driver.Title.ShouldBe(Title);
-        //Assert.AreEqual(Title, driver.Title);
-    }
+    //private void CheckTitle(WebDriver driver) {
+    //    Wait = new WebDriverWait(driver, TimeSpan.FromSeconds(1800));
+    //    while (!Wait.Until(ExpectedConditions.TitleIs(Title)))
+    //    {
+    //        GetPage(driver);
+    //    }
+    //    driver.Title.ShouldBe(Title);
+    //    //Assert.AreEqual(Title, driver.Title);
+    //}
 
     //protected static void ScrollIntoView(SauceryRemoteWebDriver driver, IWebElement element) {
     //    ((IJavaScriptExecutor)driver).ExecuteScript("arguments[0].scrollIntoView(true);", element);
