@@ -18,7 +18,7 @@ public class PageObjectBase(string url, string name, string title)
     }
 
     private void CheckTitle(WebDriver driver) {
-        Wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
+        Wait = new WebDriverWait(driver, TimeSpan.FromSeconds(400));
         while (!Wait.Until(ExpectedConditions.TitleIs(Title)))
         {
             GetPage(driver);
