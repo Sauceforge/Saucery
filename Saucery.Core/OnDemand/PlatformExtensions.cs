@@ -4,7 +4,7 @@ using Saucery.Core.Util;
 
 namespace Saucery.Core.OnDemand;
 
-internal static class PlatformExtensions {
+public static class PlatformExtensions {
     public static bool IsAMobileDevice(this BrowserVersion browserVersion) => 
         IsAnAndroidDevice(browserVersion) || 
         IsAnAppleDevice(browserVersion);

@@ -36,8 +36,8 @@ public class IOSFactoryVersionTests
         var factory = new OptionFactory(validPlatform);
         factory.ShouldNotBeNull();
         
-        var opts = factory.CreateOptions("AppiumIOSOptionTest");
-        opts.ShouldNotBeNull();
+        var tuple = factory.CreateOptions("AppiumIOSOptionTest");
+        tuple.opts.ShouldNotBeNull();
     }
 }
 public class IOSDataClass

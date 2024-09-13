@@ -17,25 +17,34 @@ public class SauceLabsFlowController : FlowController {
         Client = new RestClient(clientOptions);
     }
 
-    public override void ControlFlow() {
-        while(TooManyTests()) {
+    public override void ControlFlow(bool realDevices) {
+        while(TooManyTests(realDevices)) {
             Thread.Sleep(SauceryConstants.SAUCELABS_FLOW_WAIT);
         }
     }
 
-    protected override bool TooManyTests() {
+    protected override bool TooManyTests(bool realDevices) {
         //int maxParallelMacSessionsAllowed;  //Possible future use.
         var json = GetJsonResponse(SauceryConstants.ACCOUNT_CONCURRENCY_REQUEST);
 
+        if (json == null)
+        {
+            return true;
+        }
+
         //Console.WriteLine(@"Debug: {0}", json);
-        var remainingSection = ExtractJsonSegment(json!, json!.IndexOf("\"remaining", StringComparison.Ordinal), json.Length - 3);
+        //var remainingSection = ExtractJsonSegment(json!, json!.IndexOf("\"remaining", StringComparison.Ordinal), json.Length - 3);
         //Console.WriteLine(@"Debug: remainingsection = {0}", remainingSection);
-        var flowControl = JsonSerializer.Deserialize<FlowControl>(remainingSection, new JsonSerializerOptions
+        var flowControl = JsonSerializer.Deserialize<FlowControl>(json, new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         });
 
-        return flowControl?.remaining!.overall <= 0;
+        var org = flowControl?.concurrency.organization;
+        var orgAllowed = realDevices ? org.allowed.rds : org.allowed.vms;
+        var orgCurrent = realDevices ? org.current.rds : org.current.vms;
+
+        return orgAllowed - orgCurrent <= 0;
     }
 }
 /*

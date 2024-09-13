@@ -23,14 +23,14 @@ public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>
         //DebugMessages.PrintPlatformDetails(platform);
         // set up the desired options
         BaseFixture.OptionFactory = new OptionFactory(_browserVersion);
-        var opts = BaseFixture.OptionFactory.CreateOptions(_testName!);
+        var tuple = BaseFixture.OptionFactory.CreateOptions(_testName!);
 
-        var driverInitialised = BaseFixture.InitialiseDriver(opts!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
+        var driverInitialised = BaseFixture.InitialiseDriver(tuple, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
 
         while (!driverInitialised)
         {
             Console.WriteLine($"Driver failed to initialise: {_testName}.");
-            driverInitialised = BaseFixture.InitialiseDriver(opts!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
+            driverInitialised = BaseFixture.InitialiseDriver(tuple, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
         }
         Console.WriteLine($"Driver successfully initialised: {_testName}.");
         
