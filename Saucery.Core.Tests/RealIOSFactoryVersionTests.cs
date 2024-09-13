@@ -35,8 +35,8 @@ public class RealIOSFactoryVersionTests
         var factory = new OptionFactory(validPlatform);
         factory.ShouldNotBeNull();
         
-        var opts = factory.CreateOptions("AppiumRealIOSOptionTest");
-        opts.ShouldNotBeNull();
+        var tuple = factory.CreateOptions("AppiumRealIOSOptionTest");
+        tuple.opts.ShouldNotBeNull();
     }
 }
 public class RealIOSDataClass

@@ -33,8 +33,8 @@ public class DesktopFactoryVersionTests
         var factory = new OptionFactory(validplatform);
         factory.ShouldNotBeNull();
 
-        var opts = factory.CreateOptions("DesktopOptionTest");
-        opts.ShouldNotBeNull();
+        var tuple = factory.CreateOptions("DesktopOptionTest");
+        tuple.opts.ShouldNotBeNull();
     }
 }
 public class DesktopDataClass

@@ -4,10 +4,12 @@ using NUnit.Framework.Interfaces;
 using OpenQA.Selenium;
 using Saucery.Core.Dojo;
 using Saucery.Core.Driver;
+using Saucery.Core.OnDemand;
 using Saucery.Core.Options;
 using Saucery.Core.RestAPI.FlowControl;
 using Saucery.Core.RestAPI.TestStatus;
 using Saucery.Core.Util;
+using System;
 
 namespace Saucery.Playwright.NUnit;
 
@@ -42,14 +44,14 @@ public class SauceryBase : PageTest
         //DebugMessages.PrintPlatformDetails(platform);
         // set up the desired options
         var factory = new OptionFactory(_browserVersion);
-        var opts = factory.CreateOptions(_testName);
+        var tuple = factory.CreateOptions(_testName);
 
-        var driverInitialised = InitialiseDriver(opts!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
+        var driverInitialised = InitialiseDriver(tuple, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
 
         while (!driverInitialised)
         {
             Console.WriteLine($"Driver failed to initialise: {TestContext.CurrentContext.Test.Name}.");
-            driverInitialised = InitialiseDriver(opts!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
+            driverInitialised = InitialiseDriver(tuple, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
         }
         Console.WriteLine($"Driver successfully initialised: {TestContext.CurrentContext.Test.Name}.");
     }
@@ -77,12 +79,12 @@ public class SauceryBase : PageTest
         }
     }
 
-    private bool InitialiseDriver(DriverOptions opts, int waitSecs)
+    private bool InitialiseDriver((DriverOptions opts, BrowserVersion browserVersion) tuple, int waitSecs)
     {
-        //SauceLabsFlowController.ControlFlow();
+        SauceLabsFlowController.ControlFlow(tuple.browserVersion.IsARealDevice());
         try
         {
-            Driver = new SauceryRemoteWebDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, waitSecs);
+            Driver = new SauceryRemoteWebDriver(new Uri(SauceryConstants.SAUCELABS_HUB), tuple.opts, waitSecs);
             return true;
         }
         catch (Exception ex)

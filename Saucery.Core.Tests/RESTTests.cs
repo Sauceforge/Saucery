@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using NUnit.Framework.Constraints;
 using Saucery.Core.Dojo;
 using Saucery.Core.Dojo.Platforms.Base;
 using Saucery.Core.Dojo.Platforms.ConcreteProducts.Apple;
@@ -23,11 +24,18 @@ public class RestTests
     }
 
     [Test]
-    [Ignore("Something changed")]
     public void FlowControlTest() {
         var flowController = new SauceLabsFlowController();
         //Console.WriteLine(@"RESTTests: About to call ControlFlow()");
-        flowController.ControlFlow();
+        flowController.ControlFlow(false);
+    }
+
+    [Test]
+    public void FlowControlTestRealDevice()
+    {
+        var flowController = new SauceLabsFlowController();
+        //Console.WriteLine(@"RESTTests: About to call ControlFlow()");
+        flowController.ControlFlow(true);
     }
 
     [Test]
