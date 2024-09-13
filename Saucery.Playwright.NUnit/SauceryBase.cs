@@ -79,7 +79,7 @@ public class SauceryBase : PageTest
 
     private bool InitialiseDriver(DriverOptions opts, int waitSecs)
     {
-        SauceLabsFlowController.ControlFlow();
+        //SauceLabsFlowController.ControlFlow();
         try
         {
             Driver = new SauceryRemoteWebDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, waitSecs);

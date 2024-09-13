@@ -86,7 +86,7 @@ public class SauceryBase
 
     private bool InitialiseDriver(DriverOptions opts, int waitSecs)
     {
-        SauceLabsFlowController.ControlFlow();
+        //SauceLabsFlowController.ControlFlow();
         try
         {
             Driver = _optionFactory!.IsApple()

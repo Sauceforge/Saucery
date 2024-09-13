@@ -33,7 +33,7 @@ public class BaseFixture : IDisposable
 
     public bool InitialiseDriver(DriverOptions opts, int waitSecs)
     {
-        SauceLabsFlowController.ControlFlow();
+        //SauceLabsFlowController.ControlFlow();
         try
         {
             Driver = OptionFactory!.IsApple()
