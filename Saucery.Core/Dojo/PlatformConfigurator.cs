@@ -68,15 +68,16 @@ public class PlatformConfigurator
             //Not filtered for Min and Max Versions yet
             .. FindLinuxPlatforms(supportedPlatforms),
             .. FindWindowsPlatforms(supportedPlatforms),
-            .. FindMacPlatforms(supportedPlatforms, [ SauceryConstants.PLATFORM_MAC_1010,
-                                                      SauceryConstants.PLATFORM_MAC_1011,
-                                                      SauceryConstants.PLATFORM_MAC_1012,
-                                                      SauceryConstants.PLATFORM_MAC_1013,
-                                                      SauceryConstants.PLATFORM_MAC_1014,
-                                                      SauceryConstants.PLATFORM_MAC_1015,
-                                                      SauceryConstants.PLATFORM_MAC_11,
-                                                      SauceryConstants.PLATFORM_MAC_12,
-                                                      SauceryConstants.PLATFORM_MAC_13 ]),
+            .. FindMacPlatforms(supportedPlatforms, [
+                SauceryConstants.PLATFORM_MAC_1010, 
+                SauceryConstants.PLATFORM_MAC_1011,
+                SauceryConstants.PLATFORM_MAC_1012,
+                SauceryConstants.PLATFORM_MAC_1013,
+                SauceryConstants.PLATFORM_MAC_1014,
+                SauceryConstants.PLATFORM_MAC_1015,
+                SauceryConstants.PLATFORM_MAC_11,
+                SauceryConstants.PLATFORM_MAC_12,
+                SauceryConstants.PLATFORM_MAC_13 ]),
             .. FindMobilePlatforms(supportedPlatforms, ["iphone", "ipad"]),
             .. FindMobilePlatforms(supportedPlatforms, ["android"]),
         ];
@@ -89,30 +90,49 @@ public class PlatformConfigurator
         //Desktop Platform Only
         var availablePlatform = AvailablePlatforms.Find(p => p.Name.Equals(platform.Os));
         var browser = availablePlatform?.Browsers.Find(b => b.Name.Equals(platform.Browser));
-        var numericBrowserVersions = browser?.BrowserVersions.Where(x => x.Name!.Any(char.IsNumber) && x.Name != SauceryConstants.BROWSER_VERSION_LATEST_MINUS1);
-        var browserVersion = numericBrowserVersions?.Aggregate((maxItem, nextItem) => (int.Parse(maxItem.Name!) > int.Parse(nextItem.Name!)) ? maxItem : nextItem);
+        var numericBrowserVersions = browser?.BrowserVersions
+            .Where(x => 
+                x.Name!.Any(char.IsNumber) && 
+                x.Name != SauceryConstants.BROWSER_VERSION_LATEST_MINUS1);
+        var browserVersion = numericBrowserVersions?
+            .Aggregate((maxItem, nextItem) => 
+                int.Parse(maxItem.Name!) > int.Parse(nextItem.Name!) 
+                    ? maxItem 
+                    : nextItem);
 
         return int.Parse(browserVersion?.Name!);
     }
 
     private static List<SupportedPlatform> FindLinuxPlatforms(List<SupportedPlatform> platforms) => 
-        platforms.FindAll(p => p.Os! == "Linux" && p.automation_backend!.Equals("webdriver") && p.device! == null);
+        platforms.FindAll(p => 
+            p.Os! == "Linux" && 
+            p.automation_backend!.Equals("webdriver") && 
+            p.device! == null);
 
     private static List<SupportedPlatform> FindWindowsPlatforms(List<SupportedPlatform> platforms) => 
-        platforms.FindAll(p => p.Os!.Contains("Windows") && p.automation_backend!.Equals("webdriver"));
+        platforms.FindAll(p => 
+            p.Os!.Contains("Windows") && 
+            p.automation_backend!.Equals("webdriver"));
 
     private static List<SupportedPlatform> FindMacPlatforms(List<SupportedPlatform> platforms, IReadOnlyCollection<string> oses) => 
-        platforms.FindAll(p => oses.Any(o => o.Equals(p.Os)) && p.automation_backend!.Equals("webdriver") && !p.api_name!.Equals("ipad") && !p.api_name.Equals("iphone"));
+        platforms.FindAll(p => 
+            oses.Any(o => o.Equals(p.Os)) && 
+            p.automation_backend!.Equals("webdriver") && 
+            !p.api_name!.Equals("ipad") && 
+            !p.api_name.Equals("iphone"));
 
     private static List<SupportedPlatform> FindMobilePlatforms(List<SupportedPlatform> platforms, IReadOnlyCollection<string> apis) => 
-        platforms.FindAll(p => apis.Any(a => a.Equals(p.api_name)) && p.automation_backend!.Equals("appium"));
+        platforms.FindAll(p => 
+            apis.Any(a => a.Equals(p.api_name)) && 
+            p.automation_backend!.Equals("appium"));
 
     public void AddLatestBrowserVersion(string version)
     {
         foreach (var b in AvailablePlatforms
-                            .SelectMany(p => p.Browsers
-                                                .Where(b => p.BrowsersWithLatestVersion != null && 
-                                                            p.BrowsersWithLatestVersion.Contains(b.Name))))
+                     .SelectMany(p => 
+                         p.Browsers.Where(b => 
+                             p.BrowsersWithLatestVersion != null && 
+                             p.BrowsersWithLatestVersion.Contains(b.Name))))
         {
             b.BrowserVersions.Add(new BrowserVersion(b, version, version, null, null));
         }
@@ -125,6 +145,7 @@ public class PlatformConfigurator
                    where bv != null
                    select bv).ToList();
         Console.WriteLine(SauceryConstants.NUM_VALID_PLATFORMS, bvs.Count, platforms.Count);
+        
         return bvs;
     }
 
@@ -177,12 +198,10 @@ public class PlatformConfigurator
         switch(requested.PlatformType) {
             case PlatformType.Android:
                 return AvailableRealDevices.FindAndroidPlatform(requested);
-                //break;
             case PlatformType.Apple:
                 return AvailableRealDevices.FindIOSPlatform(requested);
-                //break;
             default:
-                Console.WriteLine($"Requested Real Platform Not Found: {0}", requested.LongName);
+                Console.WriteLine("Requested Real Platform Not Found: {0}", requested.LongName);
                 return null;
         }
     }

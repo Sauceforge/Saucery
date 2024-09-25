@@ -19,15 +19,17 @@ public class SauceryTestData : IEnumerable
         BrowserVersions = platformConfigurator.FilterAll(expandedPlatforms);
     }
 
-    public static IEnumerable<BrowserVersion> Items => BrowserVersions!.Select(x => x).AsEnumerable();
+    public static IEnumerable<BrowserVersion> Items => 
+        BrowserVersions!
+            .Select(x => x)
+            .AsEnumerable();
 
     protected static IEnumerable<object[]> GetAllCombinations(object[] data) {
         List<object[]> allCombinations = [];
 
-        foreach(var platform in Items) {
-            foreach(var datum in data) {
-                allCombinations.Add([platform, datum]);
-            }
+        foreach(var platform in Items)
+        {
+            allCombinations.AddRange(data.Select(datum => (object[]) [platform, datum]));
         }
 
         return allCombinations;
@@ -35,10 +37,7 @@ public class SauceryTestData : IEnumerable
 
     protected static IEnumerable<object[]> GetAllPlatforms() {
         List<object[]> allPlatforms = [];
-
-        foreach(var platform in Items) {
-            allPlatforms.Add([platform]);
-        }
+        allPlatforms.AddRange(Items.Select(platform => (object[]) [platform]));
 
         return allPlatforms.AsEnumerable();
     }
