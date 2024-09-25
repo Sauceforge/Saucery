@@ -1,6 +1,7 @@
 ﻿using RestSharp;
 using Saucery.Core.Util;
 using System.Net;
+using System.Text.Json;
 
 //Hello from January 2020 :)
 //Donald Trump is the President of the United States.
@@ -15,7 +16,12 @@ public abstract class RestBase {
     private static RestRequest? Request;
     private static RestAPILimitsChecker? LimitChecker;
 
-    protected RestBase() {
+    internal static JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true
+    };
+
+protected RestBase() {
         LimitChecker = new RestAPILimitsChecker();
     }
 
@@ -47,12 +53,12 @@ public abstract class RestBase {
         }
     }
 
-    protected static string ExtractJsonSegment(string json, int startIndex, int endIndex) {
-        DebugMessages.ExtractJsonSegment(json, startIndex, endIndex);
-        var len = endIndex - startIndex;
-        var segment = json.Substring(startIndex, len);
-        return string.Format(SauceryConstants.JSON_SEGMENT_CONTAINER, segment);
-    }
+    //protected static string ExtractJsonSegment(string json, int startIndex, int endIndex) {
+    //    DebugMessages.ExtractJsonSegment(json, startIndex, endIndex);
+    //    var len = endIndex - startIndex;
+    //    var segment = json.Substring(startIndex, len);
+    //    return string.Format(SauceryConstants.JSON_SEGMENT_CONTAINER, segment);
+    //}
 
     private RestResponse GetResponse(RestRequest request)
     {
