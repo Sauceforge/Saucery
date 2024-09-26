@@ -1,12 +1,11 @@
 ﻿using RestSharp;
 using RestSharp.Authenticators;
-using Saucery.Core.RestAPI.FlowControl.Base;
 using Saucery.Core.Util;
 using System.Text.Json;
 
 namespace Saucery.Core.RestAPI.FlowControl;
 
-public class SauceLabsFlowController : FlowController {
+public class SauceLabsFlowController : RestBase {
     public SauceLabsFlowController()
     {
         RestClientOptions clientOptions = new(SauceryConstants.SAUCE_REST_BASE)

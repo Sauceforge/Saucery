@@ -1,12 +1,11 @@
-﻿using System.Text.Json;
-using RestSharp;
+﻿using RestSharp;
 using RestSharp.Authenticators;
-using Saucery.Core.RestAPI.SupportedPlatforms.Base;
 using Saucery.Core.Util;
+using System.Text.Json;
 
 namespace Saucery.Core.RestAPI.SupportedPlatforms;
 
-public class SauceLabsPlatformAcquirer : PlatformAcquirer {
+public class SauceLabsPlatformAcquirer : RestBase {
     public SauceLabsPlatformAcquirer()
     {
         RestClientOptions clientOptions = new(SauceryConstants.SAUCE_REST_BASE)
