@@ -4,13 +4,8 @@ using Saucery.Core.Util;
 namespace Saucery.Core.RestAPI;
 
 internal class RestAPILimitsChecker {
-    private RestResponse _response;
-    private Dictionary<string, string> _headers;
-
-    public RestAPILimitsChecker() {
-        _response = new();
-        _headers = [];
-    }
+    private RestResponse _response = new();
+    private Dictionary<string, string> _headers = [];
 
     public void Update(RestResponse response) {
         _response = response;

@@ -2,7 +2,7 @@
 
 namespace Saucery.Core.Dojo.Browsers.Base;
 
-public abstract class BrowserBase : IBrowser
+public abstract class BrowserBase //: IBrowser
 {
     public string Os { get; set; }
 
@@ -23,7 +23,10 @@ public abstract class BrowserBase : IBrowser
     internal List<BrowserVersion> BrowserVersions { get; set; }
 
 
-    protected BrowserBase(SupportedPlatform sp, List<string> screenResolutions, string platformNameForOption)
+    protected BrowserBase(
+        SupportedPlatform sp, 
+        List<string> screenResolutions, 
+        string platformNameForOption)
     {
         Os = sp.Os!;
         PlatformNameForOption = platformNameForOption;

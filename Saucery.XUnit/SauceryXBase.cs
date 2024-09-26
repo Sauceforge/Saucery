@@ -25,12 +25,12 @@ public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>
         BaseFixture.OptionFactory = new OptionFactory(_browserVersion);
         var tuple = BaseFixture.OptionFactory.CreateOptions(_testName!);
 
-        var driverInitialised = BaseFixture.InitialiseDriver(tuple, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
+        var driverInitialised = BaseFixture.InitialiseDriver(tuple!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
 
         while (!driverInitialised)
         {
             Console.WriteLine($"Driver failed to initialise: {_testName}.");
-            driverInitialised = BaseFixture.InitialiseDriver(tuple, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
+            driverInitialised = BaseFixture.InitialiseDriver(tuple!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
         }
         Console.WriteLine($"Driver successfully initialised: {_testName}.");
         
@@ -48,14 +48,14 @@ public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>
                 // log the result to SauceLabs
                 var sessionId = BaseFixture.Driver.SessionId.ToString();
                 BaseFixture.SauceLabsStatusNotifier.NotifyStatus(sessionId, passed);
-                Console.WriteLine(@"SessionID={0} job-name={1}", sessionId, _testName);
+                Console.WriteLine($"SessionID={sessionId} job-name={_testName}");
                 BaseFixture.Driver.Quit();
                 GC.SuppressFinalize(this);
             }
         }
         catch (WebDriverException)
         {
-            Console.WriteLine(@"Caught WebDriverException, quitting driver.");
+            Console.WriteLine("Caught WebDriverException, quitting driver.");
             BaseFixture.Driver?.Quit();
         }
     }

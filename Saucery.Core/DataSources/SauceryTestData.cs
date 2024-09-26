@@ -24,16 +24,16 @@ public class SauceryTestData : IEnumerable
             .Select(x => x)
             .AsEnumerable();
 
-    protected static IEnumerable<object[]> GetAllCombinations(object[] data) {
-        List<object[]> allCombinations = [];
+    //protected static IEnumerable<object[]> GetAllCombinations(object[] data) {
+    //    List<object[]> allCombinations = [];
 
-        foreach(var platform in Items)
-        {
-            allCombinations.AddRange(data.Select(datum => (object[]) [platform, datum]));
-        }
+    //    foreach(var platform in Items)
+    //    {
+    //        allCombinations.AddRange(data.Select(datum => (object[]) [platform, datum]));
+    //    }
 
-        return allCombinations;
-    }
+    //    return allCombinations;
+    //}
 
     protected static IEnumerable<object[]> GetAllPlatforms() {
         List<object[]> allPlatforms = [];
