@@ -31,14 +31,13 @@ public class SauceLabsFlowController : RestBase {
             return true;
         }
 
-        //Console.WriteLine(@"Debug: {0}", json);
-        //var remainingSection = ExtractJsonSegment(json!, json!.IndexOf("\"remaining", StringComparison.Ordinal), json.Length - 3);
-        //Console.WriteLine(@"Debug: remainingsection = {0}", remainingSection);
         var flowControl = JsonSerializer.Deserialize<FlowControl>(json, JsonOptions);
 
         var org = flowControl?.concurrency.organization;
-        var orgAllowed = realDevices ? org.allowed.rds : org.allowed.vms;
-        var orgCurrent = realDevices ? org.current.rds : org.current.vms;
+        var current = org?.current;
+        var allowed = org?.allowed;
+        var orgAllowed = realDevices ? allowed?.rds : allowed?.vms;
+        var orgCurrent = realDevices ? current?.rds : current?.vms;
 
         return orgAllowed - orgCurrent <= 0;
     }
