@@ -17,13 +17,13 @@ public class SauceLabsFlowController : FlowController {
         Client = new RestClient(clientOptions);
     }
 
-    public override void ControlFlow(bool realDevices) {
+    public virtual void ControlFlow(bool realDevices) {
         while(TooManyTests(realDevices)) {
             Thread.Sleep(SauceryConstants.SAUCELABS_FLOW_WAIT);
         }
     }
 
-    protected override bool TooManyTests(bool realDevices) {
+    protected virtual bool TooManyTests(bool realDevices) {
         //int maxParallelMacSessionsAllowed;  //Possible future use.
         var json = GetJsonResponse(SauceryConstants.ACCOUNT_CONCURRENCY_REQUEST);
 

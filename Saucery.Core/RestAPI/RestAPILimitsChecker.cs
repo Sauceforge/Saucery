@@ -9,16 +9,17 @@ internal class RestAPILimitsChecker {
 
     public void Update(RestResponse response) {
         _response = response;
-        foreach(var p in response?.Headers!) {
+        foreach(var p in response.Headers!) {
             var newHeaders = _headers
                     .ToDictionary(entry => entry.Key,
                                   entry => entry.Value);
-            if (!_headers.ContainsKey(p.Name!)) {
-                newHeaders.Add(p.Name!, p.Value!.ToString()!);
-            } else {
-                newHeaders.Remove(p.Name!);
-                newHeaders.Add(p.Name!, p.Value!.ToString()!);
+
+            if (_headers.ContainsKey(p.Name)) {
+                newHeaders.Remove(p.Name);
             }
+
+            newHeaders.Add(p.Name, p.Value);
+
             _headers = newHeaders;
         }
     }

@@ -13,16 +13,17 @@ public abstract class RestBase {
     internal static readonly string UserName = Enviro.SauceUserName!;
     internal static readonly string AccessKey = Enviro.SauceApiKey!;
     internal RestClient? Client;
-    private static RestRequest? Request;
-    private static RestAPILimitsChecker? LimitChecker;
+    private static RestRequest? _request;
+    private static RestAPILimitsChecker? _limitChecker;
 
     internal static JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true
     };
 
-protected RestBase() {
-        LimitChecker = new RestAPILimitsChecker();
+    protected RestBase() 
+    {
+        _limitChecker = new RestAPILimitsChecker();
     }
 
     protected string? GetJsonResponse(string requestProforma)
@@ -34,31 +35,25 @@ protected RestBase() {
 
     protected static RestRequest BuildRequest(string request, Method method) {
         request = string.Format(request, UserName);
-        Request = new RestRequest(request, method);
-        Request.AddHeader("Content-Type", SauceryConstants.JSON_CONTENT_TYPE);
-        Request.RequestFormat = DataFormat.Json;
-        return Request;
+        _request = new RestRequest(request, method);
+        _request.AddHeader("Content-Type", SauceryConstants.JSON_CONTENT_TYPE);
+        _request.RequestFormat = DataFormat.Json;
+        
+        return _request;
     }
     
     protected void EnsureExecution(RestRequest request)
     {
         var response = Client!.Execute<RestRequest>(request);
-        LimitChecker?.Update(response);
+        _limitChecker?.Update(response);
 
-        while (LimitChecker!.IsLimitExceeded())
+        while (_limitChecker!.IsLimitExceeded())
         {
-            Thread.Sleep(LimitChecker.GetReset());
+            Thread.Sleep(_limitChecker.GetReset());
             response = Client!.Execute<RestRequest>(request);
-            LimitChecker.Update(response);
+            _limitChecker.Update(response);
         }
     }
-
-    //protected static string ExtractJsonSegment(string json, int startIndex, int endIndex) {
-    //    DebugMessages.ExtractJsonSegment(json, startIndex, endIndex);
-    //    var len = endIndex - startIndex;
-    //    var segment = json.Substring(startIndex, len);
-    //    return string.Format(SauceryConstants.JSON_SEGMENT_CONTAINER, segment);
-    //}
 
     private RestResponse GetResponse(RestRequest request)
     {
@@ -68,14 +63,14 @@ protected RestBase() {
             return response;
         }
 
-        LimitChecker!.Update(response);
+        _limitChecker!.Update(response);
 
-        while (LimitChecker.IsLimitExceeded())
+        while (_limitChecker.IsLimitExceeded())
         {
             Console.WriteLine(SauceryConstants.RESTAPI_LIMIT_EXCEEDED_MSG);
-            Thread.Sleep(LimitChecker.GetReset());
+            Thread.Sleep(_limitChecker.GetReset());
             response = Client!.Execute<RestRequest>(request);
-            LimitChecker.Update(response);
+            _limitChecker.Update(response);
         }
 
         return response;

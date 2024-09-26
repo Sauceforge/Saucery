@@ -16,7 +16,7 @@ public class SauceLabsPlatformAcquirer : PlatformAcquirer {
 
         Client = new RestClient(clientOptions);
     }
-    public override List<SupportedPlatform>? AcquirePlatforms() {
+    public virtual List<SupportedPlatform>? AcquirePlatforms() {
         var json = GetJsonResponse(SauceryConstants.SUPPORTED_PLATFORMS_REQUEST);
         var supportedPlatforms = JsonSerializer.Deserialize<List<SupportedPlatform>>(json!, JsonOptions);
 

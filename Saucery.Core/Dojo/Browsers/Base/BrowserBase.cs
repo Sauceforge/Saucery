@@ -2,7 +2,7 @@
 
 namespace Saucery.Core.Dojo.Browsers.Base;
 
-public abstract class BrowserBase //: IBrowser
+public abstract class BrowserBase
 {
     public string Os { get; set; }
 

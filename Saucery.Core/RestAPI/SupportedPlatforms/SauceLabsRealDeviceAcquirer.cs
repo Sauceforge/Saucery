@@ -17,7 +17,7 @@ public class SauceLabsRealDeviceAcquirer : RealDeviceAcquirer {
         Client = new RestClient(clientOptions);
     }
 
-    public override List<SupportedPlatform>? AcquireRealDevicePlatforms() {
+    public virtual List<SupportedPlatform>? AcquireRealDevicePlatforms() {
         var json = GetJsonResponse(SauceryConstants.SUPPORTED_REALDEVICE_PLATFORMS_REQUEST);
         var supportedPlatforms = JsonSerializer.Deserialize<List<SupportedPlatform>>(json!, JsonOptions);
         
