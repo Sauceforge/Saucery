@@ -10,12 +10,12 @@ public class OptionFactory(BrowserVersion bv) : IDisposable
 {
     private BrowserVersion BrowserVersion { get; set; } = bv;
 
-    public DriverOptions? CreateOptions(string testName)
+    public (DriverOptions? opts, BrowserVersion browserVersion) CreateOptions(string testName)
     {
         if (!BrowserVersion.IsAMobileDevice())
         {
             DebugMessages.PrintHaveDesktopPlatform();
-            return GetDesktopOptions(testName);
+            return (GetDesktopOptions(testName), bv);
         }
 
         //Mobile Device
@@ -23,21 +23,33 @@ public class OptionFactory(BrowserVersion bv) : IDisposable
         {
             if(BrowserVersion.PlatformType.Equals(OnDemand.PlatformType.Apple)) {
                 DebugMessages.PrintHaveApplePlatform(true);
-                return new RealDeviceIOSCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType);
+                return (new RealDeviceIOSCreator()
+                    .Create(BrowserVersion, testName)
+                    .GetOpts(BrowserVersion.PlatformType), 
+                    bv);
             }
 
             DebugMessages.PrintHaveAndroidPlatform(true);
-            return new RealDeviceAndroidCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType);
+            return (new RealDeviceAndroidCreator()
+                .Create(BrowserVersion, testName)
+                .GetOpts(BrowserVersion.PlatformType), 
+                bv);
         }
 
         //Emulated Mobile Platform
         if(BrowserVersion.PlatformType.Equals(OnDemand.PlatformType.Apple)) {
             DebugMessages.PrintHaveApplePlatform(false);
-            return new EmulatedIOSCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType);
+            return (new EmulatedIOSCreator()
+                .Create(BrowserVersion, testName)
+                .GetOpts(BrowserVersion.PlatformType), 
+                bv);
         }
 
         DebugMessages.PrintHaveAndroidPlatform(false);
-        return new EmulatedAndroidCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType);
+        return (new EmulatedAndroidCreator()
+            .Create(BrowserVersion, testName)
+            .GetOpts(BrowserVersion.PlatformType), 
+            bv);
     }
 
     private DriverOptions? GetDesktopOptions(string testName) => BrowserVersion.BrowserName.ToLower() switch

@@ -35,8 +35,8 @@ public class RealAndroidFactoryVersionTests
         var factory = new OptionFactory(validPlatform);
         factory.ShouldNotBeNull();
 
-        var opts = factory.CreateOptions("AppiumRealAndroidOptionTest");
-        opts.ShouldNotBeNull();
+        var tuple = factory.CreateOptions("AppiumRealAndroidOptionTest");
+        tuple.opts.ShouldNotBeNull();
     }
 }
 public class RealAndroidDataClass

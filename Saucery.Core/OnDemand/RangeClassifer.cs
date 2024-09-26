@@ -9,11 +9,11 @@ public class RangeClassifer
 
         return requestedVersions.Length != 2
             ? PlatformRange.Invalid
-            : int.TryParse(lowerBound, out var _) && int.TryParse(upperBound, out var _)
+            : int.TryParse(lowerBound, out _) && int.TryParse(upperBound, out _)
                 ? PlatformRange.NumericOnly
-                : !int.TryParse(lowerBound, out var _) && !int.TryParse(upperBound, out var _)
+                : !int.TryParse(lowerBound, out _) && !int.TryParse(upperBound, out _)
                     ? PlatformRange.NonNumericOnly
-                    : int.TryParse(lowerBound, out var _) && !int.TryParse(upperBound, out var _)
+                    : int.TryParse(lowerBound, out _) && !int.TryParse(upperBound, out _)
                         ? PlatformRange.NumericNonNumeric
                         : PlatformRange.Invalid;
     }

@@ -40,8 +40,8 @@ public class SaucePlatform(string desktopPlatformName = "",
 
     public bool NeedsExpansion() => 
         BrowserVersion
-        .Replace(SauceryConstants.SPACE, string.Empty)
-        .Contains(SauceryConstants.PLATFORM_SEPARATOR);
+            .Replace(SauceryConstants.SPACE, string.Empty)
+            .Contains(SauceryConstants.PLATFORM_SEPARATOR);
 }
 /*
 * Copyright Andrew Gray, SauceForge

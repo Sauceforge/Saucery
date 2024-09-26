@@ -1,8 +1,8 @@
 ﻿namespace Saucery.Core.RestAPI.FlowControl.Base; 
 
 public abstract class FlowController : RestBase {
-    protected abstract bool TooManyTests();
-    public abstract void ControlFlow();
+    protected abstract bool TooManyTests(bool realDevices);
+    public abstract void ControlFlow(bool realDevices);
 }
 /*
 * Copyright Andrew Gray, SauceForge

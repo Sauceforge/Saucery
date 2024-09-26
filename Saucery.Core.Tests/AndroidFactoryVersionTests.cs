@@ -36,8 +36,8 @@ public class AndroidFactoryVersionTests
         var factory = new OptionFactory(validPlatform);
         factory.ShouldNotBeNull();
 
-        var opts = factory.CreateOptions("AppiumAndroidOptionTest");
-        opts.ShouldNotBeNull();
+        var tuple = factory.CreateOptions("AppiumAndroidOptionTest");
+        tuple.opts.ShouldNotBeNull();
     }
 }
 public class AndroidDataClass

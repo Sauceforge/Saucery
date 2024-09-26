@@ -2,11 +2,14 @@
 using OpenQA.Selenium.Appium.Android;
 using OpenQA.Selenium.Appium.iOS;
 using OpenQA.Selenium.Appium.Service;
+using Saucery.Core.Dojo;
 using Saucery.Core.Driver;
+using Saucery.Core.OnDemand;
 using Saucery.Core.Options;
 using Saucery.Core.RestAPI.FlowControl;
 using Saucery.Core.RestAPI.TestStatus;
 using Saucery.Core.Util;
+using System;
 
 //Needs XunitContext NuGet Package
 //[assembly: CollectionBehavior(CollectionBehavior.CollectionPerAssembly, MaxParallelThreads = 4)]
@@ -31,18 +34,18 @@ public class BaseFixture : IDisposable
         SauceLabsFlowController = new SauceLabsFlowController();
     }
 
-    public bool InitialiseDriver(DriverOptions opts, int waitSecs)
+    public bool InitialiseDriver((DriverOptions opts, BrowserVersion browserVersion) tuple, int waitSecs)
     {
-        SauceLabsFlowController.ControlFlow();
+        SauceLabsFlowController.ControlFlow(tuple.browserVersion.IsARealDevice());
         try
         {
             Driver = OptionFactory!.IsApple()
-                ? new IOSDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, TimeSpan.FromSeconds(waitSecs),
+                ? new IOSDriver(new Uri(SauceryConstants.SAUCELABS_HUB), tuple.opts, TimeSpan.FromSeconds(waitSecs),
                     AppiumClientConfig)
                 : OptionFactory!.IsAndroid()
-                    ? new AndroidDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, TimeSpan.FromSeconds(waitSecs),
+                    ? new AndroidDriver(new Uri(SauceryConstants.SAUCELABS_HUB), tuple.opts, TimeSpan.FromSeconds(waitSecs),
                         AppiumClientConfig)
-                    : new SauceryRemoteWebDriver(new Uri(SauceryConstants.SAUCELABS_HUB), opts, waitSecs);
+                    : new SauceryRemoteWebDriver(new Uri(SauceryConstants.SAUCELABS_HUB), tuple.opts, waitSecs);
 
             return true;
         }
