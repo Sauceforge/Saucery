@@ -1,11 +1,10 @@
 ﻿using RestSharp;
 using RestSharp.Authenticators;
-using Saucery.Core.RestAPI.TestStatus.Base;
 using Saucery.Core.Util;
 
 namespace Saucery.Core.RestAPI.TestStatus;
 
-public class SauceLabsStatusNotifier : StatusNotifier {
+public class SauceLabsStatusNotifier : RestBase {
     public SauceLabsStatusNotifier()
     {
         RestClientOptions clientOptions = new(SauceryConstants.SAUCE_REST_BASE)
@@ -16,7 +15,7 @@ public class SauceLabsStatusNotifier : StatusNotifier {
         Client = new RestClient(clientOptions);
     }
 
-    public override void NotifyStatus(string jobId, bool isPassed) {
+    public virtual void NotifyStatus(string jobId, bool isPassed) {
         var request = BuildRequest(string.Format(SauceryConstants.JOB_REQUEST, UserName, jobId), Method.Put);
 
         var jobStatusObject = new { passed = true };

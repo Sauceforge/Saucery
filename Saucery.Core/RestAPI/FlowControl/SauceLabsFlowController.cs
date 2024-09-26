@@ -1,12 +1,11 @@
 ﻿using RestSharp;
 using RestSharp.Authenticators;
-using Saucery.Core.RestAPI.FlowControl.Base;
 using Saucery.Core.Util;
 using System.Text.Json;
 
 namespace Saucery.Core.RestAPI.FlowControl;
 
-public class SauceLabsFlowController : FlowController {
+public class SauceLabsFlowController : RestBase {
     public SauceLabsFlowController()
     {
         RestClientOptions clientOptions = new(SauceryConstants.SAUCE_REST_BASE)
@@ -17,13 +16,13 @@ public class SauceLabsFlowController : FlowController {
         Client = new RestClient(clientOptions);
     }
 
-    public override void ControlFlow(bool realDevices) {
+    public virtual void ControlFlow(bool realDevices) {
         while(TooManyTests(realDevices)) {
             Thread.Sleep(SauceryConstants.SAUCELABS_FLOW_WAIT);
         }
     }
 
-    protected override bool TooManyTests(bool realDevices) {
+    protected virtual bool TooManyTests(bool realDevices) {
         //int maxParallelMacSessionsAllowed;  //Possible future use.
         var json = GetJsonResponse(SauceryConstants.ACCOUNT_CONCURRENCY_REQUEST);
 
@@ -32,14 +31,13 @@ public class SauceLabsFlowController : FlowController {
             return true;
         }
 
-        //Console.WriteLine(@"Debug: {0}", json);
-        //var remainingSection = ExtractJsonSegment(json!, json!.IndexOf("\"remaining", StringComparison.Ordinal), json.Length - 3);
-        //Console.WriteLine(@"Debug: remainingsection = {0}", remainingSection);
         var flowControl = JsonSerializer.Deserialize<FlowControl>(json, JsonOptions);
 
         var org = flowControl?.concurrency.organization;
-        var orgAllowed = realDevices ? org.allowed.rds : org.allowed.vms;
-        var orgCurrent = realDevices ? org.current.rds : org.current.vms;
+        var current = org?.current;
+        var allowed = org?.allowed;
+        var orgAllowed = realDevices ? allowed?.rds : allowed?.vms;
+        var orgCurrent = realDevices ? current?.rds : current?.vms;
 
         return orgAllowed - orgCurrent <= 0;
     }

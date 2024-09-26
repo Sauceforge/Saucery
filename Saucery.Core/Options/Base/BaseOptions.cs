@@ -5,25 +5,25 @@ using Saucery.Core.Util;
 
 namespace Saucery.Core.Options.Base;
 
-internal abstract class BaseOptions {
+internal abstract class BaseOptions(string testName)
+{
     protected DriverOptions? Opts;
-    protected Dictionary<string, object> SauceOptions;
+    protected Dictionary<string, object> SauceOptions = new()
+    {
+        { SauceryConstants.SAUCE_USERNAME_CAPABILITY, Enviro.SauceUserName! },
+        { SauceryConstants.SAUCE_ACCESSKEY_CAPABILITY, Enviro.SauceApiKey! },
+        //This sets the Session column
+        { SauceryConstants.SAUCE_SESSIONNAME_CAPABILITY, testName },
+        //This sets the Build column
+        { SauceryConstants.SAUCE_BUILDNAME_CAPABILITY, Enviro.BuildName },
+        //Improve performance on SauceLabs
+        { SauceryConstants.SAUCE_VUOP_CAPABILITY, false }
+    };
 
-    protected BaseOptions(string testName) {
-        SauceOptions = new Dictionary<string, object>
-        {
-            { SauceryConstants.SAUCE_USERNAME_CAPABILITY, Enviro.SauceUserName! },
-            { SauceryConstants.SAUCE_ACCESSKEY_CAPABILITY, Enviro.SauceApiKey! },
-            //This sets the Session column
-            { SauceryConstants.SAUCE_SESSIONNAME_CAPABILITY, testName },
-            //This sets the Build column
-            { SauceryConstants.SAUCE_BUILDNAME_CAPABILITY, Enviro.BuildName },
-            //Improve performance on SauceLabs
-            { SauceryConstants.SAUCE_VUOP_CAPABILITY, false }
-        };
-
-        //SauceOptions.Add(Constants.VISIBILITY_KEY, Constants.VISIBILITY_TEAM);
-    }
+    //This sets the Session column
+    //This sets the Build column
+    //Improve performance on SauceLabs
+    //SauceOptions.Add(Constants.VISIBILITY_KEY, Constants.VISIBILITY_TEAM);
 
     protected void AddSauceLabsOptions(string nativeApp) {
         if (nativeApp != null) {

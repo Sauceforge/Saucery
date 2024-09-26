@@ -4,26 +4,22 @@ using Saucery.Core.Util;
 namespace Saucery.Core.RestAPI;
 
 internal class RestAPILimitsChecker {
-    private RestResponse _response;
-    private Dictionary<string, string> _headers;
-
-    public RestAPILimitsChecker() {
-        _response = new();
-        _headers = [];
-    }
+    private RestResponse _response = new();
+    private Dictionary<string, string> _headers = [];
 
     public void Update(RestResponse response) {
         _response = response;
-        foreach(var p in response?.Headers!) {
+        foreach(var p in response.Headers!) {
             var newHeaders = _headers
                     .ToDictionary(entry => entry.Key,
                                   entry => entry.Value);
-            if (!_headers.ContainsKey(p.Name!)) {
-                newHeaders.Add(p.Name!, p.Value!.ToString()!);
-            } else {
-                newHeaders.Remove(p.Name!);
-                newHeaders.Add(p.Name!, p.Value!.ToString()!);
+
+            if (_headers.ContainsKey(p.Name)) {
+                newHeaders.Remove(p.Name);
             }
+
+            newHeaders.Add(p.Name, p.Value);
+
             _headers = newHeaders;
         }
     }

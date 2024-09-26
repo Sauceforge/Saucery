@@ -31,41 +31,31 @@ public class DebugMessages {
         }
     }
 
-    public static void ExtractJsonSegment(string json, int startIndex, int endIndex)
-    {
-        if (UserChecker.ItIsMe())
-        {
-            Console.WriteLine("DEBUG MESSAGE: ExtractJsonSegment params {0} {1} {2}", json, startIndex, endIndex);
-            Console.Out.Flush();
-        }
-    }
-
     public static void PrintDesktopOptionValues(BrowserVersion browserVersion)
     {
         if (UserChecker.ItIsMe())
         {
-            Console.WriteLine("Desktop platform.Browser: {0}", browserVersion.BrowserName);
-            Console.WriteLine("Desktop platform.Os: {0}", browserVersion.Os);
-            Console.WriteLine("Desktop platform.BrowserVersion: {0}", browserVersion.Name);
+            Console.WriteLine($"Desktop platform.Browser: {browserVersion.BrowserName}");
+            Console.WriteLine($"Desktop platform.Os: {browserVersion.Os}");
+            Console.WriteLine($"Desktop platform.BrowserVersion: {browserVersion.Name}");
         }
     }
 
     public static void PrintiOSOptionValues(BrowserVersion browserVersion) => 
-        Console.WriteLine("{0}:{1}\n{2}:{3}\n{4}:{5}\n{6}:{7}\n{8}:{9}\n{10}:{11}",
-                          SauceryConstants.SAUCE_DEVICE_NAME_CAPABILITY, browserVersion.DeviceName,
-                          SauceryConstants.SAUCE_DEVICE_ORIENTATION_CAPABILITY, browserVersion.DeviceOrientation,
-                          SauceryConstants.SAUCE_PLATFORM_VERSION_CAPABILITY, browserVersion.Name,
-                          SauceryConstants.SAUCE_PLATFORM_NAME_CAPABILITY, SauceryConstants.PLATFORM_IOS,
-                          SauceryConstants.SAUCE_BROWSER_NAME_CAPABILITY, SauceryConstants.SAFARI_BROWSER,
-                          SauceryConstants.SAUCE_DEVICE_CAPABILITY, browserVersion.IsAnIPhone() ? SauceryConstants.IPHONE_SIMULATOR : SauceryConstants.IPAD_SIMULATOR);
+        Console.WriteLine($"{SauceryConstants.SAUCE_DEVICE_NAME_CAPABILITY}: {browserVersion.DeviceName}\n" +
+                          $"{SauceryConstants.SAUCE_DEVICE_ORIENTATION_CAPABILITY}: {browserVersion.DeviceOrientation}\n" +
+                          $"{SauceryConstants.SAUCE_PLATFORM_VERSION_CAPABILITY}: {browserVersion.Name}\n" +
+                          $"{SauceryConstants.SAUCE_PLATFORM_NAME_CAPABILITY}: {SauceryConstants.PLATFORM_IOS}\n" +
+                          $"{SauceryConstants.SAUCE_BROWSER_NAME_CAPABILITY}: {SauceryConstants.SAFARI_BROWSER}\n" +
+                          $"{SauceryConstants.SAUCE_DEVICE_CAPABILITY}: {0}",
+                          browserVersion.IsAnIPhone() ? SauceryConstants.IPHONE_SIMULATOR : SauceryConstants.IPAD_SIMULATOR);
 
     public static void PrintAndroidOptionValues(BrowserVersion browserVersion) => 
-        Console.WriteLine("{0}:{1}\n{2}:{3}\n{4}:{5}\n{6}:{7}\n{8}:{9}",
-                          SauceryConstants.SAUCE_DEVICE_NAME_CAPABILITY, browserVersion.DeviceName,
-                          SauceryConstants.SAUCE_DEVICE_ORIENTATION_CAPABILITY, browserVersion.DeviceOrientation,
-                          SauceryConstants.SAUCE_BROWSER_NAME_CAPABILITY, SauceryConstants.CHROME_BROWSER,
-                          SauceryConstants.SAUCE_PLATFORM_VERSION_CAPABILITY, browserVersion.Name,
-                          SauceryConstants.SAUCE_PLATFORM_NAME_CAPABILITY, SauceryConstants.ANDROID);
+        Console.WriteLine($"{SauceryConstants.SAUCE_DEVICE_NAME_CAPABILITY}:{browserVersion.DeviceName}\n" +
+                          $"{SauceryConstants.SAUCE_DEVICE_ORIENTATION_CAPABILITY}:{browserVersion.DeviceOrientation}\n" +
+                          $"{SauceryConstants.SAUCE_BROWSER_NAME_CAPABILITY}:{SauceryConstants.CHROME_BROWSER}\n" +
+                          $"{SauceryConstants.SAUCE_PLATFORM_VERSION_CAPABILITY}:{browserVersion.Name}\n" +
+                          $"{SauceryConstants.SAUCE_PLATFORM_NAME_CAPABILITY}:{SauceryConstants.ANDROID}");
 }
 
 /*

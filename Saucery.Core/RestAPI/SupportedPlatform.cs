@@ -51,17 +51,23 @@ public class SupportedPlatform {
     public bool SupportsMultiTouch { get; set; }
     public bool SupportsXcuiTest { get; set; }
 
-    public int short_version_as_int => int.TryParse(short_version, out var discard) ? int.Parse(short_version) : 0;
+    public int short_version_as_int => 
+        int.TryParse(short_version, out _) 
+            ? int.Parse(short_version) 
+            : 0;
 
-    public bool IsIOSPlatform() => automation_backend!.Equals("appium") && 
-                                   recommended_backend_version != null && 
-                                   (api_name!.Equals("iphone") || api_name.Equals("ipad"));
+    public bool IsIOSPlatform() => 
+        automation_backend!.Equals("appium") && 
+        recommended_backend_version != null && 
+        (api_name!.Equals("iphone") || api_name.Equals("ipad"));
 
-    public bool IsAndroidPlatform() => api_name == "android";
+    public bool IsAndroidPlatform() => 
+        api_name == "android";
 
-    public bool IsMobilePlatform() => automation_backend!.Equals("appium") &&
-                                      recommended_backend_version != null &&
-                                      api_name is "iphone" or "ipad" or "android";
+    public bool IsMobilePlatform() => 
+        automation_backend!.Equals("appium") &&
+        recommended_backend_version != null &&
+        api_name is "iphone" or "ipad" or "android";
 }
 /*
 * Copyright Andrew Gray, SauceForge

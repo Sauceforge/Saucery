@@ -14,21 +14,15 @@ using Saucery.Core.Util;
 
 namespace Saucery;
 
-public class SauceryBase
+public class SauceryBase()
 {
     private string? _testName;
     protected WebDriver? Driver;
     private readonly BrowserVersion? _browserVersion;
-    private readonly SauceLabsStatusNotifier SauceLabsStatusNotifier;
-    private readonly SauceLabsFlowController SauceLabsFlowController;
+    private readonly SauceLabsStatusNotifier SauceLabsStatusNotifier = new();
+    private readonly SauceLabsFlowController SauceLabsFlowController = new();
     private OptionFactory? _optionFactory;
     private readonly AppiumClientConfig AppiumClientConfig = new() { DirectConnect = true };
-
-    public SauceryBase()
-    {
-        SauceLabsStatusNotifier = new SauceLabsStatusNotifier();
-        SauceLabsFlowController = new SauceLabsFlowController();
-    }
 
     protected SauceryBase(BrowserVersion browserVersion) : this() => 
         _browserVersion = browserVersion;
@@ -44,12 +38,12 @@ public class SauceryBase
         _optionFactory = new OptionFactory(_browserVersion!);
         var tuple = _optionFactory.CreateOptions(_testName!);
 
-        var driverInitialised = InitialiseDriver(tuple, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
+        var driverInitialised = InitialiseDriver(tuple!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
 
         while (!driverInitialised)
         {
             Console.WriteLine($"Driver failed to initialise: {TestContext.CurrentContext.Test.Name}.");
-            driverInitialised = InitialiseDriver(tuple, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
+            driverInitialised = InitialiseDriver(tuple!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
         }
         Console.WriteLine($"Driver successfully initialised: {TestContext.CurrentContext.Test.Name}.");
     }
@@ -68,7 +62,7 @@ public class SauceryBase
                 // log the result to SauceLabs
                 var sessionId = Driver.SessionId.ToString();
                 SauceLabsStatusNotifier.NotifyStatus(sessionId, isPassed);
-                Console.WriteLine(@"SessionID={0} job-name={1}", sessionId, _testName);
+                Console.WriteLine($"SessionID={sessionId} job-name={_testName}");
                 Driver.Quit();
             }
 
@@ -79,7 +73,7 @@ public class SauceryBase
         }
         catch (WebDriverException)
         {
-            Console.WriteLine(@"Caught WebDriverException, quitting driver.");
+            Console.WriteLine("Caught WebDriverException, quitting driver.");
             Driver?.Quit();
             _optionFactory!.Dispose();
         }
