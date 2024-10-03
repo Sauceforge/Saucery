@@ -17,7 +17,7 @@ public class IOSFactoryVersionTests
     [OneTimeSetUp]
     public void OneTimeSetUp()
     {
-        PlatformConfigurator = new(PlatformFilter.ALL);
+        PlatformConfigurator = new(PlatformFilter.All);
     }
 
     [Test, TestCaseSource(typeof(IOSDataClass), nameof(IOSDataClass.NotSupportedTestCases))]

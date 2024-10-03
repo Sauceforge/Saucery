@@ -14,7 +14,7 @@ public class MerlinPlatformTests {
 
     [OneTimeSetUp]
     public void OneTimeSetUp() {
-        PlatformConfigurator = new PlatformConfigurator(PlatformFilter.ALL);
+        PlatformConfigurator = new PlatformConfigurator(PlatformFilter.All);
     }
 
     [SetUp]

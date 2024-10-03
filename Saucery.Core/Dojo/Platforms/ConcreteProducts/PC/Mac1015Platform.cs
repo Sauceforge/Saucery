@@ -5,7 +5,7 @@ using Saucery.Core.Util;
 namespace Saucery.Core.Dojo.Platforms.ConcreteProducts.PC;
 
 //Catalina
-public class Mac1015Platform : PlatformBase
+public sealed class Mac1015Platform : PlatformBase
 {
     public override string PlatformNameForOption { get; set; }
 

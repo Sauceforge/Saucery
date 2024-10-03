@@ -17,7 +17,7 @@ public partial class OpenSauceTests(BrowserVersion browserVersion) : SauceryBase
     //}
 
     [Test]
-    public async Task HomepageHasPlaywrightInTitleAndGetStartedLinkLinkingtoTheIntroPage()
+    public async Task HomepageHasPlaywrightInTitleAndGetStartedLinkLinkingToTheIntroPage()
     {
         await Page.GotoAsync("https://playwright.dev");
 
@@ -44,7 +44,7 @@ public partial class OpenSauceTests(BrowserVersion browserVersion) : SauceryBase
     {
         await Page.GotoAsync("https://saucelabs.com/test/guinea-pig");
 
-        var comments = Page.GetByRole(AriaRole.Textbox, new() { Name = "comments" });
+        var comments = Page.GetByRole(AriaRole.Textbox, new PageGetByRoleOptions { Name = "comments" });
 
         await comments.FillAsync(data.ToString());
 

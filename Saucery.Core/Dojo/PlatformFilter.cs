@@ -2,7 +2,7 @@
 
 public enum PlatformFilter
 {
-    ALL = 0,
-    EMULATED = 1,
-    REALDEVICE = 2
+    All = 0,
+    Emulated = 1,
+    RealDevice = 2
 }

@@ -5,7 +5,7 @@ using Saucery.Core.Util;
 namespace Saucery.Core.Dojo.Platforms.ConcreteProducts.PC;
 
 //High Sierra
-public class Mac1013Platform : PlatformBase
+public sealed class Mac1013Platform : PlatformBase
 {
     public override string PlatformNameForOption { get; set; }
 

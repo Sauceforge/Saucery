@@ -4,7 +4,7 @@ using Saucery.Core.Util;
 
 namespace Saucery.Core.Dojo.Platforms.ConcreteProducts.PC;
 
-public class Windows8Platform : PlatformBase
+public sealed class Windows8Platform : PlatformBase
 {
     public override string PlatformNameForOption { get; set; }
 

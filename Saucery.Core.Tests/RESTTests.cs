@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using NUnit.Framework.Constraints;
 using Saucery.Core.Dojo;
 using Saucery.Core.Dojo.Platforms.Base;
 using Saucery.Core.Dojo.Platforms.ConcreteProducts.Apple;
@@ -20,7 +19,7 @@ public class RestTests
     [OneTimeSetUp]
     public void Setup()
     {
-        _configurator = new PlatformConfigurator(PlatformFilter.ALL);
+        _configurator = new PlatformConfigurator(PlatformFilter.All);
     }
 
     [Test]
@@ -41,7 +40,7 @@ public class RestTests
     [Test]
     public void SupportedRealDevicePlatformTest()
     {
-        PlatformConfigurator configurator = new(PlatformFilter.REALDEVICE);
+        PlatformConfigurator configurator = new(PlatformFilter.RealDevice);
         var availablePlatforms = configurator.AvailablePlatforms;
         var realDevices = configurator.AvailableRealDevices;
 
@@ -52,7 +51,7 @@ public class RestTests
     [Test]
     public void SupportedEmulatedPlatformTest()
     {
-        PlatformConfigurator configurator = new(PlatformFilter.EMULATED);
+        PlatformConfigurator configurator = new(PlatformFilter.Emulated);
         var availablePlatforms = configurator.AvailablePlatforms;
         var realDevices = configurator.AvailableRealDevices;
 

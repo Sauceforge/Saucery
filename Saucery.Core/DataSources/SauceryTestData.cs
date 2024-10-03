@@ -13,7 +13,7 @@ public class SauceryTestData : IEnumerable
 
     protected static void SetPlatforms(List<SaucePlatform> platforms)
     {
-        PlatformConfigurator platformConfigurator = new(PlatformFilter.ALL);
+        PlatformConfigurator platformConfigurator = new(PlatformFilter.All);
         PlatformExpander expander = new(platformConfigurator, platforms);
         var expandedPlatforms = expander.Expand();
         BrowserVersions = platformConfigurator.FilterAll(expandedPlatforms);

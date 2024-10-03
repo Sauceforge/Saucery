@@ -1,11 +1,11 @@
-﻿using System.Collections;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Saucery.Core.Dojo;
 using Saucery.Core.OnDemand;
 using Saucery.Core.OnDemand.Base;
 using Saucery.Core.Options;
 using Saucery.Core.Util;
 using Shouldly;
+using System.Collections;
 
 namespace Saucery.Core.Tests;
 
@@ -15,28 +15,29 @@ public class DesktopFactoryVersionTests
     private static PlatformConfigurator PlatformConfigurator { get; set; }
 
     static DesktopFactoryVersionTests() => 
-        PlatformConfigurator = new PlatformConfigurator(PlatformFilter.ALL);
+        PlatformConfigurator = new PlatformConfigurator(PlatformFilter.All);
 
     [Test, TestCaseSource(typeof(DesktopDataClass), nameof(DesktopDataClass.NotSupportedTestCases))]
     public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform)
     {
-        var validplatform = PlatformConfigurator.Validate(saucePlatform);
-        validplatform.ShouldBeNull();
+        var validPlatform = PlatformConfigurator.Validate(saucePlatform);
+        validPlatform.ShouldBeNull();
     }
 
     [Test, TestCaseSource(typeof(DesktopDataClass), nameof(DesktopDataClass.SupportedTestCases))]
     public void DesktopOptionTest(SaucePlatform saucePlatform)
     {
-        var validplatform = PlatformConfigurator.Validate(saucePlatform);
-        validplatform.ShouldNotBeNull();
+        var validPlatform = PlatformConfigurator.Validate(saucePlatform);
+        validPlatform.ShouldNotBeNull();
 
-        var factory = new OptionFactory(validplatform);
+        var factory = new OptionFactory(validPlatform);
         factory.ShouldNotBeNull();
 
         var tuple = factory.CreateOptions("DesktopOptionTest");
         tuple.opts.ShouldNotBeNull();
     }
 }
+
 public class DesktopDataClass
 {
     public static IEnumerable SupportedTestCases

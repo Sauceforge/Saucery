@@ -5,7 +5,7 @@ using Saucery.Core.Util;
 namespace Saucery.Core.Dojo.Platforms.ConcreteProducts.PC;
 
 //Monterey
-public class Mac12Platform : PlatformBase
+public sealed class Mac12Platform : PlatformBase
 {
     public override string PlatformNameForOption { get; set; }
 

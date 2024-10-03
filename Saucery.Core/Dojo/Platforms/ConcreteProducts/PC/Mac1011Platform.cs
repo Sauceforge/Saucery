@@ -5,7 +5,7 @@ using Saucery.Core.Util;
 namespace Saucery.Core.Dojo.Platforms.ConcreteProducts.PC;
 
 //OS X El Capitan
-public class Mac1011Platform : PlatformBase
+public sealed class Mac1011Platform : PlatformBase
 {
     public override string PlatformNameForOption { get; set; }
 

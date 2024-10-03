@@ -15,7 +15,7 @@ public class PlatformExpansionTests
     [OneTimeSetUp]
     public void OneTimeSetUp()
     {
-        PlatformConfigurator = new(PlatformFilter.ALL);
+        PlatformConfigurator = new PlatformConfigurator(PlatformFilter.All);
     }
 
     [Test]
@@ -23,14 +23,18 @@ public class PlatformExpansionTests
     {
         List<SaucePlatform> platforms =
         [
-            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, $"75->{SauceryConstants.BROWSER_VERSION_DEV}", SauceryConstants.SCREENRES_2560_1600)
+            new DesktopPlatform(
+                SauceryConstants.PLATFORM_WINDOWS_11, 
+                SauceryConstants.BROWSER_CHROME, 
+                $"75->{SauceryConstants.BROWSER_VERSION_DEV}", 
+                SauceryConstants.SCREENRES_2560_1600)
         ];
 
         //PlatformConfigurator configurator = new();
         PlatformExpander expander = new(PlatformConfigurator!, platforms);
         var expandedSet = expander.Expand();
         expandedSet
-            .Find(e => e.BrowserVersion.Equals(82))
+            .Find(e => e.BrowserVersion.Equals("82"))
             .ShouldBeNull(); //Chrome didn't release version 82 due to Covid-19.
         expandedSet.Count.ShouldBeGreaterThanOrEqualTo(31);
     }
@@ -112,7 +116,11 @@ public class PlatformExpansionTests
         List<SaucePlatform> platforms =
         [
             //Desktop Platforms
-            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "75->100->latest", SauceryConstants.SCREENRES_2560_1600),
+            new DesktopPlatform(
+                SauceryConstants.PLATFORM_WINDOWS_11, 
+                SauceryConstants.BROWSER_CHROME, 
+                "75->100->latest", 
+                SauceryConstants.SCREENRES_2560_1600),
         ];
 
         PlatformExpander expander = new(PlatformConfigurator!, platforms);
