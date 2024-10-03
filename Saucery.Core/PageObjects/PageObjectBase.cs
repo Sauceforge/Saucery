@@ -10,12 +10,13 @@ public class PageObjectBase(string url, string name, string title)
     internal string Name = name;
     private WebDriverWait? Wait;
 
-    protected void GetPage(WebDriver driver) {
-        driver.Navigate().GoToUrl(PageUrl);
+    protected void GetPage(WebDriver driver)
+    {
+        driver.Navigate().GoToUrl(url);
 
         Wait = new WebDriverWait(driver, TimeSpan.FromSeconds(1800));
-        Wait.Until(ExpectedConditions.TitleIs(Title));
-        driver.Title.ShouldBe(Title);
+        Wait.Until(ExpectedConditions.TitleIs(title));
+        driver.Title.ShouldBe(title);
         //CheckTitle(driver);
     }
 
