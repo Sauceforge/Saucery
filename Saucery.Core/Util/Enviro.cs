@@ -14,9 +14,7 @@ public static class Enviro {
         $"Desktop_{GetStringVar(SauceryConstants.BUILD_NUMBER) ?? IdGenerator.Id}";
 
     private static string? GetStringVar(string envVar) => 
-        envVar == null 
-            ? null 
-            : Environment.GetEnvironmentVariable(envVar);
+        Environment.GetEnvironmentVariable(envVar);
 }
 
 /*

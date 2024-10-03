@@ -87,17 +87,17 @@ public static class DojoExtensions
         }
     }
 
-    public static void AddRealBrowser(this List<BrowserBase> browsers, SupportedPlatform sp) {
-        var b = browsers.FindRealBrowser(sp);
+    //public static void AddRealBrowser(this List<BrowserBase> browsers, SupportedPlatform sp) {
+    //    var b = browsers.FindRealBrowser(sp);
 
-        if(b == null) {
-            //first one
-            b = BrowserFactory.CreateRealBrowser(sp);
-            b?.AddVersion(browsers, sp, false);
-        } else {
-            b.AddVersion(browsers, sp, true);
-        }
-    }
+    //    if(b == null) {
+    //        //first one
+    //        b = BrowserFactory.CreateRealBrowser(sp);
+    //        b?.AddVersion(browsers, sp, false);
+    //    } else {
+    //        b.AddVersion(browsers, sp, true);
+    //    }
+    //}
 
     private static void AddVersion(this BrowserBase b, List<BrowserBase> browsers, SupportedPlatform sp, bool findVersion)
     {
@@ -292,11 +292,11 @@ public static class DojoExtensions
             b.DeviceName.Equals(sp.long_name, StringComparison.Ordinal) &&
             b.Os.Equals(sp.Os, StringComparison.Ordinal));
 
-    private static BrowserBase? FindRealBrowser(this IEnumerable<BrowserBase> browsers, SupportedPlatform sp) => 
-        browsers.FirstOrDefault(b => 
-            b.Name.Equals(sp.api_name, StringComparison.Ordinal) && 
-            b.DeviceName.Equals(sp.long_name, StringComparison.Ordinal) &&
-            b.Os.Equals(sp.Os, StringComparison.Ordinal));
+    //private static BrowserBase? FindRealBrowser(this IEnumerable<BrowserBase> browsers, SupportedPlatform sp) => 
+    //    browsers.FirstOrDefault(b => 
+    //        b.Name.Equals(sp.api_name, StringComparison.Ordinal) && 
+    //        b.DeviceName.Equals(sp.long_name, StringComparison.Ordinal) &&
+    //        b.Os.Equals(sp.Os, StringComparison.Ordinal));
 
     public static BrowserVersion Classify(this BrowserVersion browserVersion)
     {

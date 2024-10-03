@@ -7,9 +7,7 @@ namespace Saucery.Core.PageObjects;
 
 public class PageObjectBase(string url, string name, string title)
 {
-    private string PageUrl = url;
     internal string Name = name;
-    private string Title = title;
     private WebDriverWait? Wait;
 
     protected void GetPage(WebDriver driver) {

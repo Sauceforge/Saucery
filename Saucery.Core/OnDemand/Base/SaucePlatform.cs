@@ -30,11 +30,11 @@ public class SaucePlatform(string desktopPlatformName = "",
     public string LongVersion { get; set; } = Sanitiser.SanitisePlatformField(longVersion)!;
 
     [JsonPropertyName("device-orientation")]
-    public string DeviceOrientation { get; set; } = deviceOrientation ?? SauceryConstants.NULL_STRING;
+    public string DeviceOrientation { get; set; } = deviceOrientation;
 
     public PlatformType PlatformType { get; set; }
 
-    public string? TestName { get; set; }
+    //public string? TestName { get; set; }
 
     #endregion
 

@@ -45,7 +45,9 @@ public class BrowserVersion
         PlatformNameForOption = b.PlatformNameForOption;
         ScreenResolutions = b.ScreenResolutions;
         BrowserName = sp.api_name!;
-        Name = sp.latest_stable_version != string.Empty ? sp.latest_stable_version : sp.short_version;
+        Name = sp.latest_stable_version != string.Empty 
+            ? sp.latest_stable_version 
+            : sp.short_version;
         AutomationBackend = sp.automation_backend!;
         DeviceName = sp.long_name!;
         RecommendedAppiumVersion = sp.recommended_backend_version!;
@@ -63,7 +65,9 @@ public class BrowserVersion
         Os = b.Os;
         PlatformNameForOption = platformNameForOption;
         BrowserName = b.Name;
-        Name = latestStableVersion != string.Empty ? latestStableVersion : b.PlatformVersion;
+        Name = latestStableVersion != string.Empty 
+            ? latestStableVersion 
+            : b.PlatformVersion;
         AutomationBackend = b.AutomationBackend;
         DeviceName = b.DeviceName;
         RecommendedAppiumVersion = b.RecommendedAppiumVersion!;
@@ -151,7 +155,7 @@ public class BrowserVersion
 
     private void AppendPlatformField(string fieldToAdd)
     {
-        if(fieldToAdd == null || fieldToAdd.Length == 0)
+        if(string.IsNullOrEmpty(fieldToAdd))
             return;
 
         if(!TestNameBuilder[^1].Equals(SauceryConstants.UNDERSCORE))

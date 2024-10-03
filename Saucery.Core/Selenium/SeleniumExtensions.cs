@@ -16,6 +16,7 @@ internal static class SeleniumExtensions {
             result = (bool)driver.ExecuteScript("return typeof jQuery == 'function'");
         } catch(WebDriverException) {
         }
+
         return result;
     }
 
@@ -79,6 +80,7 @@ internal static class SeleniumExtensions {
         if(driver.ExecuteScript("return $(\"" + by.Selector + "\").get(0)") is IWebElement element) {
             return element;
         }
+
         throw new NoSuchElementException("No element found with jQuery command: jQuery" + by.Selector);
     }
 
@@ -96,6 +98,7 @@ internal static class SeleniumExtensions {
 
         //Unlike FindElement, FindElements does not throw an exception if no elements are found
         //and instead returns an empty list
+        
         return collection;
     }
 }
