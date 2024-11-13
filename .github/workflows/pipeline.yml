@@ -50,8 +50,8 @@ jobs:
     - name: Setup dotnet
       uses: actions/setup-dotnet@v4
       with:
-        # Check for latest at link at .NET 8 download page (https://dotnet.microsoft.com/download/dotnet/8.0)
-        dotnet-version: 8.0.x
+        # Check for latest at link at .NET 8 download page (https://dotnet.microsoft.com/download/dotnet/9.0)
+        dotnet-version: 9.0.x
 
     - name: Compile solution
       run: dotnet build -c ${{ env.CONFIG }}
@@ -90,7 +90,7 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         # Check for latest at link at .NET 8 download page (https://dotnet.microsoft.com/download/dotnet/8.0)
-        dotnet-version: 8.0.x
+        dotnet-version: 9.0.x
     
     - name: Compile solution
       run: dotnet build -c ${{ env.CONFIG }}
@@ -122,7 +122,7 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         # Check for latest at link at .NET 8 download page (https://dotnet.microsoft.com/download/dotnet/8.0)
-        dotnet-version: 8.0.x
+        dotnet-version: 9.0.x
     
     - name: Compile solution
       run: dotnet build -c ${{ env.CONFIG }}
@@ -154,7 +154,7 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         # Check for latest at link at .NET 8 download page (https://dotnet.microsoft.com/download/dotnet/8.0)
-        dotnet-version: 8.0.x
+        dotnet-version: 9.0.x
     
     - name: Compile solution
       run: dotnet build -c ${{ env.CONFIG }}
@@ -187,7 +187,7 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         # Check for latest at link at .NET 8 download page (https://dotnet.microsoft.com/download/dotnet/8.0)
-        dotnet-version: 8.0.x
+        dotnet-version: 9.0.x
     
     - name: Compile solution
       run: dotnet build -c ${{ env.CONFIG }}
@@ -219,7 +219,7 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         # Check for latest at link at .NET 8 download page (https://dotnet.microsoft.com/download/dotnet/8.0)
-        dotnet-version: 8.0.x
+        dotnet-version: 9.0.x
 
     - name: Compile solution
       run: dotnet build -c ${{ env.CONFIG }}
@@ -239,7 +239,7 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         # Check for latest at link at .NET 8 download page (https://dotnet.microsoft.com/download/dotnet/8.0)
-        dotnet-version: 8.0.x
+        dotnet-version: 9.0.x
 
     - name: Compile solution
       run: dotnet build -c ${{ env.CONFIG }}
@@ -259,7 +259,7 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         # Check for latest at link at .NET 8 download page (https://dotnet.microsoft.com/download/dotnet/8.0)
-        dotnet-version: 8.0.x
+        dotnet-version: 9.0.x
 
     - name: Compile solution
       run: dotnet build -c ${{ env.CONFIG }}
@@ -279,7 +279,7 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         # Check for latest at link at .NET 8 download page (https://dotnet.microsoft.com/download/dotnet/8.0)
-        dotnet-version: 8.0.x
+        dotnet-version: 9.0.x
 
     - name: Compile solution
       run: dotnet build -c ${{ env.CONFIG }}
