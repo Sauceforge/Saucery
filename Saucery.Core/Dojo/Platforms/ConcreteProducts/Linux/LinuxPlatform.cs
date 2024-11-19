@@ -4,7 +4,7 @@ using Saucery.Core.Util;
 
 namespace Saucery.Core.Dojo.Platforms.ConcreteProducts.Linux;
 
-public class LinuxPlatform : PlatformBase
+public sealed class LinuxPlatform : PlatformBase
 {
     public override string PlatformNameForOption { get; set; }
 

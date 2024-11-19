@@ -17,7 +17,7 @@ public class AndroidFactoryVersionTests
     [OneTimeSetUp]
     public void OneTimeSetUp()
     {
-        PlatformConfigurator = new PlatformConfigurator(PlatformFilter.ALL);
+        PlatformConfigurator = new PlatformConfigurator(PlatformFilter.All);
     }
 
     [Test, TestCaseSource(typeof(AndroidDataClass), nameof(AndroidDataClass.NotSupportedTestCases))]

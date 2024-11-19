@@ -3,7 +3,7 @@ using Saucery.Core.RestAPI;
 
 namespace Saucery.Core.Dojo.Platforms.ConcreteProducts.Google;
 
-public class Android81Platform : PlatformBase
+public sealed class Android81Platform : PlatformBase
 {
     public override string PlatformNameForOption { get; set; }
 

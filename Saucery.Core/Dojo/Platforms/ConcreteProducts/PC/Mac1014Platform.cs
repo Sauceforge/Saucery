@@ -5,7 +5,7 @@ using Saucery.Core.Util;
 namespace Saucery.Core.Dojo.Platforms.ConcreteProducts.PC;
 
 //Mojave
-public class Mac1014Platform : PlatformBase
+public sealed class Mac1014Platform : PlatformBase
 {
     public override string PlatformNameForOption { get; set; }
 

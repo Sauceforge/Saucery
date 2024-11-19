@@ -5,7 +5,7 @@ using Saucery.Core.Util;
 namespace Saucery.Core.Dojo.Platforms.ConcreteProducts.PC;
 
 //Sierra
-public class Mac1012Platform : PlatformBase
+public sealed class Mac1012Platform : PlatformBase
 {
     public override string PlatformNameForOption { get; set; }
 

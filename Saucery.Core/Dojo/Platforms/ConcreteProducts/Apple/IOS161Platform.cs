@@ -4,7 +4,7 @@ using Saucery.Core.Util;
 
 namespace Saucery.Core.Dojo.Platforms.ConcreteProducts.Apple;
 
-public class IOS161Platform : PlatformBase
+public sealed class IOS161Platform : PlatformBase
 {
     public override string PlatformNameForOption { get; set; }
 

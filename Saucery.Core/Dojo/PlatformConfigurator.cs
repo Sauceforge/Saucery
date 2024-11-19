@@ -18,16 +18,14 @@ public class PlatformConfigurator
     {
         switch (filter)
         {
-            case PlatformFilter.ALL:
+            case PlatformFilter.All:
                 ConstructAllPlatforms();
                 break;
-            case PlatformFilter.EMULATED:
+            case PlatformFilter.Emulated:
                 ConstructEmulatedPlatforms();
                 break;
-            case PlatformFilter.REALDEVICE:
+            case PlatformFilter.RealDevice:
                 ConstructRealDevices();
-                break;
-            default:
                 break;
         }
     }

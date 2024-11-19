@@ -34,7 +34,7 @@ public class BrowserFactory
                 _ => null,
             };
 
-    public static BrowserBase? CreateRealBrowser(SupportedPlatform sp) => sp.Manufacturer?[0] == "Apple"
-            ? new IOSBrowserCreator(sp).Create("iOS", null!)
-            : new AndroidBrowserCreator(sp).Create("Android", null!);
+    //public static BrowserBase CreateRealBrowser(SupportedPlatform sp) => sp.Manufacturer?[0] == "Apple"
+    //        ? new IOSBrowserCreator(sp).Create("iOS", null!)
+    //        : new AndroidBrowserCreator(sp).Create("Android", null!);
 }

@@ -10,63 +10,24 @@ public class PageObjectBase(string url, string name, string title)
     internal string Name = name;
     private WebDriverWait? Wait;
 
-    protected void GetPage(WebDriver driver) {
+    protected void GetPage(WebDriver driver)
+    {
         driver.Navigate().GoToUrl(url);
-        CheckTitle(driver);
-    }
 
-    private void CheckTitle(WebDriver driver) {
-        Wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
-        while (!Wait.Until(ExpectedConditions.TitleIs(title)))
-        {
-            GetPage(driver);
-        }
-
+        Wait = new WebDriverWait(driver, TimeSpan.FromSeconds(1800));
+        Wait.Until(ExpectedConditions.TitleIs(title));
         driver.Title.ShouldBe(title);
-        //Assert.AreEqual(Title, driver.Title);
+        //CheckTitle(driver);
     }
 
-    //protected static void ScrollIntoView(SauceryRemoteWebDriver driver, IWebElement element) {
-    //    ((IJavaScriptExecutor)driver).ExecuteScript("arguments[0].scrollIntoView(true);", element);
-    //    Thread.Sleep(500);
-    //}
-    
-    //protected static void WaitUntilElementClickable(SauceryRemoteWebDriver driver, IWebElement element) {
-    //    var wait = new WebDriverWait(driver, new TimeSpan(0, 0, 0, 10));
-    //    wait.Until(ElementIsClickable(element));
-    //}
-
-    //private static Func<IWebDriver, IWebElement> ElementIsClickable(IWebElement element) {
-    //    return driver => (element != null && element.Displayed && element.Enabled) ? element : null;
-    //}
-
-    //protected static void ScrollToTop(SauceryRemoteWebDriver driver) {
-    //    var actions = new Actions(driver);
-    //    actions.KeyDown(Keys.Control).SendKeys(Keys.Home).Perform();
-    //    Console.WriteLine(@"Scrolled to top");
-    //}
-
-    //protected static void ScrollToBottom(SauceryRemoteWebDriver driver) {
-    //    var actions = new Actions(driver);
-    //    actions.KeyDown(Keys.Control).SendKeys(Keys.End).Perform();
-    //}
-
-    //protected static void WaitUntilOptionsLoad(ISearchContext dropdown)
-    //{
-    //    while (true)
+    //private void CheckTitle(WebDriver driver) {
+    //    Wait = new WebDriverWait(driver, TimeSpan.FromSeconds(1800));
+    //    while (!Wait.Until(ExpectedConditions.TitleIs(Title)))
     //    {
-    //        Thread.Sleep(1000);
-    //        var options = dropdown.FindElements(By.TagName("option"));
-    //        if (options.Count > 0)
-    //        {
-    //            //System.out.println("More than one option tag found; therefore options have loaded");
-    //            break;
-    //        }
+    //        GetPage(driver);
     //    }
-    //}
-
-    //public static bool IsElementVisible(IWebElement element) {
-    //    return element.Displayed && element.Enabled;
+    //    driver.Title.ShouldBe(Title);
+    //    //Assert.AreEqual(Title, driver.Title);
     //}
 }
 /*
