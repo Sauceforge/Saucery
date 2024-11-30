@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace Saucery.Core.Tests.Issue1118.Base;
+namespace Saucery.Core.Tests.NUnitIssue1118.Base;
 
 [TestFixtureSource(typeof(SourceData))]
 [Parallelizable(ParallelScope.All)]
