@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
-using Saucery.Core.Tests.Issue1118.Base;
+using Saucery.Core.Tests.NUnitIssue1118.Base;
 
-namespace Saucery.Core.Tests.Issue1118;
+namespace Saucery.Core.Tests.NUnitIssue1118;
 
 public class Fixture(string browser) : BaseClass(browser) {
     [Test]
