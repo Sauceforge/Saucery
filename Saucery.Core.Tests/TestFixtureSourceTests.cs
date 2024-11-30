@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 using NUnit.Framework.Interfaces;
-using Saucery.Core.Tests.Issue1118;
+using Saucery.Core.Tests.NUnitIssue1118;
 
 namespace Saucery.Core.Tests; 
 
