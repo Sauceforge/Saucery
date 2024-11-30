@@ -63,6 +63,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TUnit", "TUnit", "{B6394A10
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Merlin.TUnit", "Merlin.TUnit\Merlin.TUnit.csproj", "{A03D7285-BDBA-493B-82F4-23EC98C2A692}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sandbox.TUnit", "Sandbox.TUnit\Sandbox.TUnit.csproj", "{3473943F-5C03-41A4-B561-C710927AF44F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -137,6 +139,10 @@ Global
 		{A03D7285-BDBA-493B-82F4-23EC98C2A692}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A03D7285-BDBA-493B-82F4-23EC98C2A692}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A03D7285-BDBA-493B-82F4-23EC98C2A692}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3473943F-5C03-41A4-B561-C710927AF44F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3473943F-5C03-41A4-B561-C710927AF44F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3473943F-5C03-41A4-B561-C710927AF44F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3473943F-5C03-41A4-B561-C710927AF44F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -164,6 +170,7 @@ Global
 		{291D78C1-3742-4979-AFB1-EF9841F8B7F8} = {BB2F463B-7D69-4C48-B301-FCFCFA77439B}
 		{B6394A10-FE50-410E-8217-697FC6688616} = {34E82214-CDA9-4CD5-9AE6-A5DAD5411F5F}
 		{A03D7285-BDBA-493B-82F4-23EC98C2A692} = {B6394A10-FE50-410E-8217-697FC6688616}
+		{3473943F-5C03-41A4-B561-C710927AF44F} = {B6394A10-FE50-410E-8217-697FC6688616}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B287ECB9-947E-4E9C-B745-27048D5CC522}
