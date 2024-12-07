@@ -67,7 +67,7 @@ public class SauceryTBase : BaseFixture
     //    _outputHelper = outputHelper;
     //}
 
-    private string? GetTestName() => TestContext.Current?.TestDetails.TestName;
+    private static string GetTestName() => TestContext.Current?.TestDetails.TestName ?? "";
 
     protected static IEnumerable<object[]> GetAllCombinations(object[] data) {
         List<object[]> allCombinations = [];
