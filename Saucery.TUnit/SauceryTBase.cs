@@ -81,6 +81,25 @@ public class SauceryTBase : BaseFixture
 
         return allCombinations;
     }
+
+    protected static List<Func<object[]>> GetAllCombinationsAsFunc(object[] data)
+    {
+        List<Func<object[]>> listOfFunc = [];
+        
+        foreach (var platform in SauceryTestData.Items)
+        {
+            listOfFunc.Add(() =>
+            {
+                var mergedArray = new object[data.Length + 1];
+                Array.Copy(data, mergedArray, data.Length);
+                mergedArray[^1] = platform;
+                return mergedArray;
+            });
+
+        }
+
+        return listOfFunc;
+    }
 }
 
 /*
