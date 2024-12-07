@@ -7,11 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="TUnit" Version="0.4.14" />
+    <PackageReference Include="TUnit" Version="0.4.74" />
+    <PackageReference Include="TUnit.Core" Version="0.4.74" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Saucery.Core\Saucery.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Images\" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,5 @@
 ﻿using Saucery.Core.DataSources;
+using Saucery.Core.Dojo;
 using Saucery.Core.OnDemand;
 using Saucery.Core.OnDemand.Base;
 using Saucery.Core.Util;
@@ -34,6 +35,8 @@ public class RequestedPlatformData : SauceryTestData
 
         SetPlatforms(platforms);
     }
+
+    public static IEnumerable<BrowserVersion> AllPlatforms() => (IEnumerable<BrowserVersion>)GetAllPlatforms();
 }
 /*
 * Copyright Andrew Gray, SauceForge
