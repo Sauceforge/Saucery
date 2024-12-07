@@ -216,8 +216,8 @@ public static class DojoExtensions
             "Linux 11" => platforms.GetPlatform<Android11Platform>()[0],
             "Linux 10" => platforms.GetPlatform<Android10Platform>()[0],
             "Linux 9" => platforms.GetPlatform<Android9Platform>()[0],
-            "Linux 8" => platforms.GetPlatform<Android8Platform>()[0],
-            "Linux 7" => platforms.GetPlatform<Android7Platform>()[0],
+            //"Linux 8" => platforms.GetPlatform<Android8Platform>()[0],
+            //"Linux 7" => platforms.GetPlatform<Android7Platform>()[0],
             _ => platform
         };
 

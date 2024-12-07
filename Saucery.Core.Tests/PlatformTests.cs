@@ -113,9 +113,7 @@ public class MerlinPlatformTests {
             new AndroidRealDevice("Google Pixel 6a", "12"),
             new AndroidRealDevice("Google Pixel 4a", "11"),
             new AndroidRealDevice("Google Pixel 4 XL", "10"),
-            new AndroidRealDevice("Samsung Galaxy Tab S4 10.5", "9"),
-            new AndroidRealDevice("OnePlus 5", "8"),
-            new AndroidRealDevice("Samsung Galaxy Tab S2", "7"),
+            new AndroidRealDevice("Samsung Galaxy Tab S4 10.5", "9")
         ];
 
         public static List<SaucePlatform> RealIOSDevices =>
