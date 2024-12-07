@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="LicenceTests.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="consoleRun.bat" />
   </ItemGroup>
 
