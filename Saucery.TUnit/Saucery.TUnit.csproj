@@ -4,11 +4,35 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+	<CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+	<GenerateRuntimeConfigDevFile>true</GenerateRuntimeConfigDevFile>
+  </PropertyGroup>
+
+  <PropertyGroup>
+	<IsPackable>true</IsPackable>
+	<PackageId>Saucery.tUnit</PackageId>
+	<PackageVersion>4.5.7</PackageVersion>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
+	<Authors>Andrew Gray</Authors>
+	<Company>SauceForge</Company>
+	<Copyright>Copyright Andrew Gray 2014</Copyright>
+	<Description>Sorcery for SauceLabs - Unlocking SauceLabs capability</Description>
+	<PackageReleaseNotes>
+		ChangeLog:
+		v4.0.0
+		- Initial Release with dependency on Saucery.Core
+	</PackageReleaseNotes>
+	<PackageProjectUrl>https://github.com/Sauceforge/Saucery</PackageProjectUrl>
+	<PackageIcon>Saucery.tUnit.128x128.png</PackageIcon>
+	<PackageTags>tunit saucelabs test testing tdd framework assert</PackageTags>
+	<Title>Sorcery for SauceLabs and TUnit</Title>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="TUnit" Version="0.4.86" />
     <PackageReference Include="TUnit.Core" Version="0.4.86" />
+    <!--<None Include="Images\Saucery.TUnit.128x128.png" Pack="true" PackagePath="\" />-->
+    <!--<None Include="..\README.md" Pack="true" PackagePath="\" />-->
   </ItemGroup>
 
   <ItemGroup>
