@@ -1,6 +1,6 @@
 <h1 align="center">
 
-<img src="https://raw.githubusercontent.com/SauceForge/Saucery/master/Saucery.Core/Images/Saucery.Core.png" alt="Saucery" width="200"/>
+<img src="/Saucery.Core/Images/Saucery.Core.png" alt="Saucery" width="200"/>
 <br/>
 Saucery
 </h1>
@@ -37,7 +37,7 @@ These steps apply to all flavors:
 
 ### NUnit
 
-<img src="https://raw.githubusercontent.com/SauceForge/Saucery/master/Saucery/Images/Saucery.NUnit.png" alt="Saucery" width="100"/>
+<img src="/Saucery/Images/Saucery.NUnit.png" alt="Saucery" width="100"/>
 
 1. In your solution create a simple class library.
 1. Add properties CopyLocalLockFileAssemblies and GenerateRuntimeConfigurationFiles to the top PropertyGroup and set them both to true.
@@ -168,7 +168,7 @@ The `List<SaucePlatform>` is what you will specify. The rest of the class is man
 
 ### XUnit
 
-<img src="https://raw.githubusercontent.com/SauceForge/Saucery/master/Saucery.XUnit/Images/Saucery.XUnit.png" alt="Saucery.XUnit" width="100"/>
+<img src="/Saucery.XUnit/Images/Saucery.XUnit.png" alt="Saucery.XUnit" width="100"/>
 
 1. In your solution create a simple class library.
 1. Add properties CopyLocalLockFileAssemblies and GenerateRuntimeConfigurationFiles to the top PropertyGroup and set them both to true.
