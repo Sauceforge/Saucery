@@ -1,6 +1,6 @@
 <h1 align="center">
 
-<img src="https://raw.githubusercontent.com/SauceForge/Saucery/master/Saucery.Core/Images/Saucery.Core.png" alt="Saucery" width="200"/>
+<img src="/Saucery.Core/Images/Saucery.Core.png" alt="Saucery" width="200"/>
 <br/>
 Saucery
 </h1>
@@ -37,7 +37,7 @@ These steps apply to all flavors:
 
 ### NUnit
 
-<img src="https://raw.githubusercontent.com/SauceForge/Saucery/master/Saucery/Images/Saucery.NUnit.png" alt="Saucery" width="100"/>
+<img src="/Saucery/Images/Saucery.NUnit.png" alt="Saucery" width="100"/>
 
 1. In your solution create a simple class library.
 1. Add properties CopyLocalLockFileAssemblies and GenerateRuntimeConfigurationFiles to the top PropertyGroup and set them both to true.
@@ -49,7 +49,7 @@ Your Project file should look something like this:
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
@@ -59,8 +59,8 @@ Your Project file should look something like this:
   </PropertyGroup>
 
   <ItemGroup> 
-    <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
-    <PackageReference Include="Saucery" Version="4.5.1" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
+    <PackageReference Include="Saucery" Version="4.5.7" />
   </ItemGroup>
 
 </Project>
@@ -168,7 +168,7 @@ The `List<SaucePlatform>` is what you will specify. The rest of the class is man
 
 ### XUnit
 
-<img src="https://raw.githubusercontent.com/SauceForge/Saucery/master/Saucery.XUnit/Images/Saucery.XUnit.png" alt="Saucery.XUnit" width="100"/>
+<img src="/Saucery.XUnit/Images/Saucery.XUnit.png" alt="Saucery.XUnit" width="100"/>
 
 1. In your solution create a simple class library.
 1. Add properties CopyLocalLockFileAssemblies and GenerateRuntimeConfigurationFiles to the top PropertyGroup and set them both to true.
@@ -180,7 +180,7 @@ Your Project file should look something like this:
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
@@ -190,11 +190,11 @@ Your Project file should look something like this:
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.1">
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-	<PackageReference Include="Saucery.XUnit" Version="4.5.1" />
+	<PackageReference Include="Saucery.XUnit" Version="4.5.7" />
   </ItemGroup>
 
 </Project>

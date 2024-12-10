@@ -36,7 +36,7 @@ public class RequestedPlatformData : SauceryTestData
         SetPlatforms(platforms);
     }
 
-    public static IEnumerable<BrowserVersion> AllPlatforms() => (IEnumerable<BrowserVersion>)GetAllPlatforms();
+    public static List<Func<BrowserVersion>> AllPlatforms() => GetAllPlatformsAsFunc();
 }
 /*
 * Copyright Andrew Gray, SauceForge

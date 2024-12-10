@@ -11,8 +11,8 @@
 	<PropertyGroup>
 		<IsPackable>true</IsPackable>
 		<PackageId>Saucery.XUnit</PackageId>
-		<PackageVersion>4.5.6</PackageVersion>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageVersion>4.5.7</PackageVersion>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
 		<Authors>Andrew Gray</Authors>
 		<Company>SauceForge</Company>
 		<Copyright>Copyright Andrew Gray 2014</Copyright>
