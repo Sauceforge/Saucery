@@ -42,6 +42,25 @@ public class SauceryTestData : IEnumerable
 
         return listOfFunc;
     }
+
+    protected static List<Func<object[]>> GetAllCombinationsAsFunc(object[] data)
+    {
+        List<Func<object[]>> listOfFunc = [];
+
+        foreach (var platform in Items)
+        {
+            listOfFunc.Add(() =>
+            {
+                var mergedArray = new object[data.Length + 1];
+                Array.Copy(data, mergedArray, data.Length);
+                mergedArray[^1] = platform;
+                return mergedArray;
+            });
+
+        }
+
+        return listOfFunc;
+    }
 }
 /*
 * Copyright Andrew Gray, SauceForge
