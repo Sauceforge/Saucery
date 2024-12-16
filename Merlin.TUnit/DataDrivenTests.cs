@@ -1,5 +1,4 @@
-﻿using Saucery.Core.DataSources;
-using Saucery.Core.Dojo;
+﻿using Saucery.Core.Dojo;
 using Saucery.Tests.Common.PageObjects;
 using Saucery.TUnit;
 
@@ -8,7 +7,7 @@ namespace Merlin.TUnit;
 public class DataDrivenTests : SauceryTBase
 {
     [Test]
-    [MethodDataSource(nameof(AllCombinations))]
+    [MethodDataSource(nameof(AllCombinations), Arguments = [ new[] { 4, 5 } ])]
     public async Task DataDrivenTest(BrowserVersion requestedPlatform, int data)
     {
         InitialiseDriver(requestedPlatform);
@@ -18,13 +17,13 @@ public class DataDrivenTests : SauceryTBase
         guineaPigPage.TypeField(SauceryDriver(), "comments", data.ToString());
     }
 
-    public static IEnumerable<(BrowserVersion, int)> AllCombinations()
+    public static IEnumerable<(BrowserVersion, int)> AllCombinations(int[] data)
     {
-        foreach (var browserVersion in SauceryTestData.Items)
+        foreach (var browserVersion in RequestedPlatformData.AllPlatformsAsList())
         {
-            foreach (var data in new[] { 4, 5 })
+            foreach (var datum in data)
             {
-                yield return (browserVersion, data);
+                yield return (browserVersion, datum);
             }
         }
     }

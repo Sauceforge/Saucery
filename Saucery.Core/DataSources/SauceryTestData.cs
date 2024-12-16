@@ -2,6 +2,7 @@
 using Saucery.Core.OnDemand;
 using Saucery.Core.OnDemand.Base;
 using System.Collections;
+using System.Linq;
 
 namespace Saucery.Core.DataSources;
 
@@ -31,6 +32,14 @@ public class SauceryTestData : IEnumerable
         return allPlatforms.AsEnumerable();
     }
 
+    protected static List<BrowserVersion> GetAllPlatformsAsList()
+    {
+        List<BrowserVersion> allPlatforms = [];
+        allPlatforms.AddRange(from platform in Items
+                              select platform);
+        return allPlatforms;
+    }
+
     protected static List<Func<BrowserVersion>> GetAllPlatformsAsFunc()
     {
         var listOfFunc = new List<Func<BrowserVersion>>();
@@ -38,25 +47,6 @@ public class SauceryTestData : IEnumerable
         foreach (var platform in Items)
         {
             listOfFunc.Add(() => platform);
-        }
-
-        return listOfFunc;
-    }
-
-    protected static List<Func<object[]>> GetAllCombinationsAsFunc(object[] data)
-    {
-        List<Func<object[]>> listOfFunc = [];
-
-        foreach (var platform in Items)
-        {
-            listOfFunc.Add(() =>
-            {
-                var mergedArray = new object[data.Length + 1];
-                Array.Copy(data, mergedArray, data.Length);
-                mergedArray[^1] = platform;
-                return mergedArray;
-            });
-
         }
 
         return listOfFunc;
