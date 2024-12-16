@@ -19,18 +19,35 @@ public class DataDrivenTests : SauceryTBase
         guineaPigPage.TypeField(SauceryDriver(), "comments", data.ToString());
     }
 
-    public static IEnumerable<(BrowserVersion, int)> AllCombinations()
+    public IEnumerable<(BrowserVersion, int)> AllCombinations()
     {
         foreach (var browserVersion in SauceryTestData.Items)
         {
-            foreach (var datum in new[] { 4, 5 })
+            foreach (var data in new[] { 4, 5 })
             {
-                yield return (browserVersion, datum);
+                yield return (browserVersion, data);
             }
         }
     }
 
+    //public static List<Func<DataDrivenData>> AllCombinations()
+    //{
+    //    var allPlatforms = RequestedPlatformData.AllPlatforms;
 
+    //    return GetAllCombinationsAsFunc([4, 5])
+    //        .ConvertAll<Func<DataDrivenData>>(func => () =>
+    //        {
+    //            var array = func();
+    //            var requestedPlatform = (BrowserVersion)array[0];
+    //            var data = (int)array[1];
+
+    //            return new DataDrivenData
+    //            {
+    //                RequestedPlatform = requestedPlatform,
+    //                Data = data
+    //            };
+    //        });
+    //}
 }
 
 /*
