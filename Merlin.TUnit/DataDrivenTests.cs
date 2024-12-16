@@ -2,7 +2,6 @@
 using Saucery.Core.Dojo;
 using Saucery.Tests.Common.PageObjects;
 using Saucery.TUnit;
-using Shouldly;
 
 namespace Merlin.TUnit;
 
@@ -19,7 +18,7 @@ public class DataDrivenTests : SauceryTBase
         guineaPigPage.TypeField(SauceryDriver(), "comments", data.ToString());
     }
 
-    public IEnumerable<(BrowserVersion, int)> AllCombinations()
+    public static IEnumerable<(BrowserVersion, int)> AllCombinations()
     {
         foreach (var browserVersion in SauceryTestData.Items)
         {
@@ -29,25 +28,6 @@ public class DataDrivenTests : SauceryTBase
             }
         }
     }
-
-    //public static List<Func<DataDrivenData>> AllCombinations()
-    //{
-    //    var allPlatforms = RequestedPlatformData.AllPlatforms;
-
-    //    return GetAllCombinationsAsFunc([4, 5])
-    //        .ConvertAll<Func<DataDrivenData>>(func => () =>
-    //        {
-    //            var array = func();
-    //            var requestedPlatform = (BrowserVersion)array[0];
-    //            var data = (int)array[1];
-
-    //            return new DataDrivenData
-    //            {
-    //                RequestedPlatform = requestedPlatform,
-    //                Data = data
-    //            };
-    //        });
-    //}
 }
 
 /*

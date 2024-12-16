@@ -21,7 +21,7 @@ public class MethodDataSourceTests
         Console.WriteLine($"First Second:{first} {second}");
     }
 
-    public IEnumerable<(int, int)> AllCombinations()
+    public static IEnumerable<(int, int)> AllCombinations()
     {
         foreach (var firstInt in new[] { 1, 2 })
         {
