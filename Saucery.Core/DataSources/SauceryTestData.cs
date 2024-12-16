@@ -2,6 +2,7 @@
 using Saucery.Core.OnDemand;
 using Saucery.Core.OnDemand.Base;
 using System.Collections;
+using System.Linq;
 
 namespace Saucery.Core.DataSources;
 
@@ -29,6 +30,14 @@ public class SauceryTestData : IEnumerable
         allPlatforms.AddRange(Items.Select(platform => (object[]) [platform]));
 
         return allPlatforms.AsEnumerable();
+    }
+
+    protected static List<BrowserVersion> GetAllPlatformsAsList()
+    {
+        List<BrowserVersion> allPlatforms = [];
+        allPlatforms.AddRange(from platform in Items
+                              select platform);
+        return allPlatforms;
     }
 
     protected static List<Func<BrowserVersion>> GetAllPlatformsAsFunc()

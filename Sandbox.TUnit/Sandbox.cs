@@ -1,19 +1,17 @@
-﻿namespace Sandbox.TUnit
+﻿namespace Sandbox.TUnit;
+
+public class Sandbox
 {
-    public class Sandbox
+    [Test]
+    public async Task MyTest()
     {
-        [Test]
-        public async Task MyTest()
-        {
-            var result = Add(1, 2);
+        var result = Add(1, 2);
 
-            await Assert.That(result).IsEqualTo(3);
-        }
+        await Assert.That(result).IsEqualTo(3);
+    }
 
-        private int Add(int x, int y)
-        {
-            return x + y;
-        }
-
+    private int Add(int x, int y)
+    {
+        return x + y;
     }
 }
