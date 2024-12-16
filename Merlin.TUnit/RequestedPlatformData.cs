@@ -3,7 +3,6 @@ using Saucery.Core.Dojo;
 using Saucery.Core.OnDemand;
 using Saucery.Core.OnDemand.Base;
 using Saucery.Core.Util;
-using System.Collections;
 
 namespace Merlin.TUnit;
 
@@ -38,26 +37,6 @@ public class RequestedPlatformData : SauceryTestData
     }
 
     public static List<Func<BrowserVersion>> AllPlatforms() => GetAllPlatformsAsFunc();
-    public static List<BrowserVersion> AllPlatformsAsList() => Items.ToList();
-
-    public static List<Func<DataDrivenData>> AllCombinations(object[] data)
-    {
-        List<Func<DataDrivenData>> dataDrivenFuncs = [];
-
-        foreach (var platform in AllPlatforms())
-        {
-            foreach (var obj in data)
-            {
-                dataDrivenFuncs.Add(() => new DataDrivenData
-                {
-                    Data = (int)obj,
-                    RequestedPlatform = platform()
-                });
-            }
-        }
-
-        return dataDrivenFuncs;
-    }
 }
 /*
 * Copyright Andrew Gray, SauceForge
