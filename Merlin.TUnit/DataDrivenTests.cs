@@ -19,11 +19,16 @@ public class DataDrivenTests : SauceryTBase
         guineaPigPage.TypeField(SauceryDriver(), "comments", data.ToString());
     }
 
-    public IEnumerable<(BrowserVersion, int)> AllCombinations() =>
-        from browserVersion 
-            in SauceryTestData.Items 
-        from data in new[] { 4, 5 } 
-        select (browserVersion, data);
+    public IEnumerable<(BrowserVersion, int)> AllCombinations()
+    {
+        foreach (var browserVersion in SauceryTestData.Items)
+        {
+            foreach (var data in new[] { 4, 5 })
+            {
+                yield return (browserVersion, data);
+            }
+        }
+    }
 
     //public static List<Func<DataDrivenData>> AllCombinations()
     //{
