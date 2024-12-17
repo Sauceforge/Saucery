@@ -286,6 +286,14 @@ public class RequestedPlatformData : SauceryTestData
 
 The `List<SaucePlatform>` is what you will specify. The rest of the class is mandatory. Check out `SauceryConstants` for all the platform, browser and screenres enums.
 
+
+### TUnit
+
+<img src="/Saucery.TUnit/Images/Saucery.TUnit.png" alt="Saucery.XUnit" width="100"/>
+
+
+
+
 ## Platform Range Expansion
 Platform range expansion is a feature unique to Saucery. Say you wanted to test on a range of browser versions but you didn't want to specify each individually. That's fine. Saucery supports specifying ranges.
 
