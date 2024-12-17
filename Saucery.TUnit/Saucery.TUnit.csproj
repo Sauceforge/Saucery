@@ -39,8 +39,4 @@
     <ProjectReference Include="..\Saucery.Core\Saucery.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Images\" />
-  </ItemGroup>
-
 </Project>
