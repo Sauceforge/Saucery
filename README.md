@@ -311,15 +311,19 @@ Yes, Saucery supports Real Devices!
 [![NuGet version (Saucery)](https://img.shields.io/nuget/v/Saucery.svg?style=for-the-badge)](https://www.nuget.org/packages/Saucery/)
 
 ### Saucery.XUnit
-[![NuGet version (Saucery)](https://img.shields.io/nuget/v/Saucery.XUnit.svg?style=for-the-badge)](https://www.nuget.org/packages/Saucery.XUnit/)
+[![NuGet version (Saucery.XUnit)](https://img.shields.io/nuget/v/Saucery.XUnit.svg?style=for-the-badge)](https://www.nuget.org/packages/Saucery.XUnit/)
+
+### Saucery.TUnit
+[![NuGet version (Saucery.TUnit)](https://img.shields.io/nuget/v/Saucery.TUnit.svg?style=for-the-badge)](https://www.nuget.org/packages/Saucery.TUnit/)
 
 ## Resources
 ### Download statistics
 ![Nuget](https://img.shields.io/nuget/dt/Saucery.svg?label=Saucery%40nuget&style=for-the-badge)
 ![Nuget](https://img.shields.io/nuget/dt/Saucery.XUnit.svg?label=Saucery.XUnit%40nuget&style=for-the-badge)
+![Nuget](https://img.shields.io/nuget/dt/Saucery.TUnit.svg?label=Saucery.TUnit%40nuget&style=for-the-badge)
 
 ### Trends
-[Nuget downloads](https://nugettrends.com/packages?months=24&ids=Saucery&ids=Saucery.XUnit)  
+[Nuget downloads](https://nugettrends.com/packages?months=24&ids=Saucery&ids=Saucery.XUnit&ids=Saucery.TUnit)  
 [GitHub stars](https://star-history.com/#sauceforge/Saucery)
 
 ## Contact
