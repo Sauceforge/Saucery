@@ -297,7 +297,9 @@ jobs:
 
   tunit-integration-tests:
     runs-on: ubuntu-latest
-    needs: [xunit-external-tests,
+    needs: [nunit-integration-tests,
+            xunit-integration-tests,
+            xunit-external-tests,
             nunit-external-tests,
             xunit-real-external-tests,
             nunit-real-external-tests]
@@ -316,7 +318,7 @@ jobs:
       run: dotnet build -c ${{ env.CONFIG }}
 
     - name: Run TUnit Integration Tests
-      run: dotnet test
+      run: dotnet test -c ${{ env.CONFIG }} ${{ env.M_TUNIT_PROJECT }}
 
     # - name: Run TUnit Integration Tests
     #   uses: b3b00/coverlet-action@11.9
