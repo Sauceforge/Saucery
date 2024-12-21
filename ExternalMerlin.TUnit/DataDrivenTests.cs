@@ -15,18 +15,17 @@ public class DataDrivenTests : SauceryTBase
         var guineaPigPage = new GuineaPigPage(SauceryDriver(), "https://saucelabs.com/");
 
         guineaPigPage.TypeField(SauceryDriver(), "comments", data.ToString());
+
+        var commentField = guineaPigPage.GetField(SauceryDriver(), "comments");
+        await Assert.That(commentField).IsNotNull();
+        
+        var commentText = commentField.GetDomProperty("value");
+        await Assert.That(commentText).Contains(data.ToString());
     }
 
-    public static IEnumerable<(BrowserVersion, int)> AllCombinations(int[] data)
-    {
-        foreach (var browserVersion in RequestedPlatformData.AllPlatformsAsList())
-        {
-            foreach (var datum in data)
-            {
-                yield return (browserVersion, datum);
-            }
-        }
-    }
+    public static IEnumerable<(BrowserVersion, int)> AllCombinations(int[] data) => from browserVersion in RequestedPlatformData.AllPlatformsAsList()
+                                                                                    from datum in data
+                                                                                    select (browserVersion, datum);
 }
 
 /*

@@ -8,7 +8,7 @@ public class DataDrivenTests : SauceryTBase
 {
     [Test]
     [MethodDataSource(nameof(AllCombinations), Arguments = [new[] { 4, 5 }])]
-    public Task DataDrivenTest(BrowserVersion requestedPlatform, int data)
+    public async Task DataDrivenTest(BrowserVersion requestedPlatform, int data)
     {
         InitialiseDriver(requestedPlatform);
 
@@ -16,19 +16,16 @@ public class DataDrivenTests : SauceryTBase
 
         guineaPigPage.TypeField(SauceryDriver(), "comments", data.ToString());
 
-        return Task.CompletedTask;
+        var commentField = guineaPigPage.GetField(SauceryDriver(), "comments");
+        await Assert.That(commentField).IsNotNull();
+
+        var commentText = commentField.GetDomProperty("value");
+        await Assert.That(commentText).Contains(data.ToString());
     }
 
-    public static IEnumerable<(BrowserVersion, int)> AllCombinations(int[] data)
-    {
-        foreach (var browserVersion in RequestedPlatformData.AllPlatformsAsList())
-        {
-            foreach (var datum in data)
-            {
-                yield return (browserVersion, datum);
-            }
-        }
-    }
+    public static IEnumerable<(BrowserVersion, int)> AllCombinations(int[] data) => from browserVersion in RequestedPlatformData.AllPlatformsAsList()
+                                                                                    from datum in data
+                                                                                    select (browserVersion, datum);
 }
 
 /*

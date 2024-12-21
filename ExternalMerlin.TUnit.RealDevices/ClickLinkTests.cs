@@ -21,7 +21,7 @@ public class ClickLinkTests : SauceryTBase
         guineaPigPage.ClickLink(SauceryDriver());
 
         // verify the browser was navigated to the correct page
-        Driver!.Url.ShouldContain("saucelabs.com/test-guinea-pig2.html");
+        await Assert.That(Driver!.Url).Contains("saucelabs.com/test-guinea-pig2.html");
     }
 }
 /*
