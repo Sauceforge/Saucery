@@ -7,14 +7,16 @@ namespace Merlin.TUnit;
 public class DataDrivenTests : SauceryTBase
 {
     [Test]
-    [MethodDataSource(nameof(AllCombinations), Arguments = [ new[] { 4, 5 } ])]
-    public async Task DataDrivenTest(BrowserVersion requestedPlatform, int data)
+    [MethodDataSource(nameof(AllCombinations), Arguments = [new[] { 4, 5 }])]
+    public Task DataDrivenTest(BrowserVersion requestedPlatform, int data)
     {
         InitialiseDriver(requestedPlatform);
 
         var guineaPigPage = new GuineaPigPage(SauceryDriver(), "https://saucelabs.com/");
 
         guineaPigPage.TypeField(SauceryDriver(), "comments", data.ToString());
+
+        return Task.CompletedTask;
     }
 
     public static IEnumerable<(BrowserVersion, int)> AllCombinations(int[] data)

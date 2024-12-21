@@ -7,7 +7,6 @@ using TUnit.Core.Enums;
 
 namespace Saucery.TUnit;
 
-//public class SauceryTBase //: IClassFixture<BaseFixture>
 public class SauceryTBase : BaseFixture
 {
     private string? _testName;
@@ -61,11 +60,6 @@ public class SauceryTBase : BaseFixture
             Driver?.Quit();
         }
     }
-
-    //protected SauceryTBase(ITestOutputHelper outputHelper, BaseFixture baseFixture) : base(outputHelper)
-    //{
-    //    _outputHelper = outputHelper;
-    //}
 
     private static string GetTestName() => TestContext.Current?.TestDetails.TestName ?? "";
 
