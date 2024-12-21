@@ -141,7 +141,8 @@ public class PlatformConfigurator
         var bvs = (from p in platforms
                    let bv = Filter(p)
                    where bv != null
-                   select bv).ToList();
+                   select bv)
+                   .ToList();
         Console.WriteLine(SauceryConstants.NUM_VALID_PLATFORMS, bvs.Count, platforms.Count);
         
         return bvs;
