@@ -1,4 +1,4 @@
-using Merlin.TUnit;
+using ExternalMerlin.TUnit;
 using Saucery.Core.Dojo;
 using Saucery.Tests.Common.PageObjects;
 using Saucery.TUnit;
@@ -6,7 +6,7 @@ using Shouldly;
 
 [assembly: ParallelLimiter<MyParallelLimit>]
 
-namespace Merlin.TUnit;
+namespace ExternalMerlin.TUnit;
 
 public class ClickLinkTests : SauceryTBase
 {

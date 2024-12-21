@@ -7,7 +7,6 @@ using TUnit.Core.Enums;
 
 namespace Saucery.TUnit;
 
-//public class SauceryTBase //: IClassFixture<BaseFixture>
 public class SauceryTBase : BaseFixture
 {
     private string? _testName;
@@ -62,11 +61,6 @@ public class SauceryTBase : BaseFixture
         }
     }
 
-    //protected SauceryTBase(ITestOutputHelper outputHelper, BaseFixture baseFixture) : base(outputHelper)
-    //{
-    //    _outputHelper = outputHelper;
-    //}
-
     private static string GetTestName() => TestContext.Current?.TestDetails.TestName ?? "";
 
     protected static IEnumerable<object[]> GetAllCombinations(object[] data) {
@@ -80,25 +74,6 @@ public class SauceryTBase : BaseFixture
         }
 
         return allCombinations;
-    }
-
-    protected static List<Func<object[]>> GetAllCombinationsAsFunc(object[] data)
-    {
-        List<Func<object[]>> listOfFunc = [];
-        
-        foreach (var platform in SauceryTestData.Items)
-        {
-            listOfFunc.Add(() =>
-            {
-                var mergedArray = new object[data.Length + 1];
-                Array.Copy(data, mergedArray, data.Length);
-                mergedArray[^1] = platform;
-                return mergedArray;
-            });
-
-        }
-
-        return listOfFunc;
     }
 }
 

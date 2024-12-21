@@ -2,7 +2,7 @@
 using Saucery.Tests.Common.PageObjects;
 using Saucery.TUnit;
 
-namespace Merlin.TUnit;
+namespace ExternalMerlin.TUnit.RealDevices;
 
 public class DataDrivenTests : SauceryTBase
 {

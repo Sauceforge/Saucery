@@ -7,8 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-	<PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" Version="17.13.1" />
-    <PackageReference Include="TUnit" Version="0.5.22" />
+    <PackageReference Include="Saucery.TUnit" Version="0.5.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Saucery.Tests.Common\Saucery.Tests.Common.csproj" />
   </ItemGroup>
 
 </Project>

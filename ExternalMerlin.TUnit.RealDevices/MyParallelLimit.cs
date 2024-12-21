@@ -1,6 +1,6 @@
 ﻿using TUnit.Core.Interfaces;
 
-namespace Merlin.TUnit;
+namespace ExternalMerlin.TUnit.RealDevices;
 
 public record MyParallelLimit : IParallelLimit
 {

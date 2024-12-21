@@ -31,6 +31,14 @@ public class SauceryTestData : IEnumerable
         return allPlatforms.AsEnumerable();
     }
 
+    protected static List<BrowserVersion> GetAllPlatformsAsList()
+    {
+        List<BrowserVersion> allPlatforms = [];
+        allPlatforms.AddRange(from platform in Items
+                              select platform);
+        return allPlatforms;
+    }
+
     protected static List<Func<BrowserVersion>> GetAllPlatformsAsFunc()
     {
         var listOfFunc = new List<Func<BrowserVersion>>();
