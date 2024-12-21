@@ -337,7 +337,12 @@ jobs:
 
   tunit-real-integration-tests:
     runs-on: ubuntu-latest
-    needs: tunit-integration-tests
+    needs: [nunit-integration-tests,
+            xunit-integration-tests,
+            xunit-external-tests,
+            nunit-external-tests,
+            xunit-real-external-tests,
+            nunit-real-external-tests]
 
     steps:
     - name: Checkout Code
@@ -372,7 +377,8 @@ jobs:
 
   tunit-external-tests:
     runs-on: ubuntu-latest
-    needs: tunit-real-integration-tests
+    needs: [tunit-real-integration-tests, 
+            tunit-integration-tests]
 
     steps:
     - name: Checkout Code
@@ -392,7 +398,8 @@ jobs:
 
   tunit-real-external-tests:
     runs-on: ubuntu-latest
-    needs: tunit-external-tests
+    needs: [tunit-real-integration-tests, 
+            tunit-integration-tests]
 
     steps:
     - name: Checkout Code
@@ -412,18 +419,7 @@ jobs:
 
   generate-report:
     runs-on: ubuntu-latest
-    needs: [build, 
-            nunit-integration-tests,        
-            xunit-integration-tests, 
-            nunit-real-integration-tests,
-            xunit-real-integration-tests,
-            nunit-external-tests,
-            xunit-external-tests, 
-            nunit-real-external-tests,
-            xunit-real-external-tests,
-            tunit-integration-tests,
-            tunit-real-integration-tests,
-            tunit-external-tests,
+    needs: [tunit-external-tests,
             tunit-real-external-tests]
     
     steps:

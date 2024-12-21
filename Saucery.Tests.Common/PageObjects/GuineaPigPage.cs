@@ -21,12 +21,14 @@ public class GuineaPigPage : PageObjectBase {
         return this;
     }
 
+    public IWebElement GetField(WebDriver driver, string fieldId) => driver.FindElement(By.Id(fieldId));
+
     public string GetUserAgent(WebDriver driver) =>
         //Could also use a "Selectors" class here.
         driver.FindElement(By.Id("useragent")).Text;
 
     public GuineaPigPage TypeField(WebDriver driver, string fieldId, string data) {
-        var element = driver.FindElement(By.Id(fieldId));
+        var element = GetField(driver, fieldId);
         element.Clear();
         element.SendKeys(data);
         return this;

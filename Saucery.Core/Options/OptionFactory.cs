@@ -15,41 +15,43 @@ public class OptionFactory(BrowserVersion bv) : IDisposable
         if (!BrowserVersion.IsAMobileDevice())
         {
             DebugMessages.PrintHaveDesktopPlatform();
-            return (GetDesktopOptions(testName), bv);
+            return (GetDesktopOptions(testName), BrowserVersion);
         }
 
         //Mobile Device
-        if(BrowserVersion.IsARealDevice())
+        if (BrowserVersion.IsARealDevice())
         {
-            if(BrowserVersion.PlatformType.Equals(OnDemand.PlatformType.Apple)) {
+            if (BrowserVersion.PlatformType.Equals(OnDemand.PlatformType.Apple))
+            {
                 DebugMessages.PrintHaveApplePlatform(true);
                 return (new RealDeviceIOSCreator()
                     .Create(BrowserVersion, testName)
-                    .GetOpts(BrowserVersion.PlatformType), 
-                    bv);
+                    .GetOpts(BrowserVersion.PlatformType),
+                    BrowserVersion);
             }
 
             DebugMessages.PrintHaveAndroidPlatform(true);
             return (new RealDeviceAndroidCreator()
                 .Create(BrowserVersion, testName)
-                .GetOpts(BrowserVersion.PlatformType), 
-                bv);
+                .GetOpts(BrowserVersion.PlatformType),
+                BrowserVersion);
         }
 
         //Emulated Mobile Platform
-        if(BrowserVersion.PlatformType.Equals(OnDemand.PlatformType.Apple)) {
+        if (BrowserVersion.PlatformType.Equals(OnDemand.PlatformType.Apple))
+        {
             DebugMessages.PrintHaveApplePlatform(false);
             return (new EmulatedIOSCreator()
                 .Create(BrowserVersion, testName)
-                .GetOpts(BrowserVersion.PlatformType), 
-                bv);
+                .GetOpts(BrowserVersion.PlatformType),
+                BrowserVersion);
         }
 
         DebugMessages.PrintHaveAndroidPlatform(false);
         return (new EmulatedAndroidCreator()
             .Create(BrowserVersion, testName)
-            .GetOpts(BrowserVersion.PlatformType), 
-            bv);
+            .GetOpts(BrowserVersion.PlatformType),
+            BrowserVersion);
     }
 
     private DriverOptions? GetDesktopOptions(string testName) => BrowserVersion.BrowserName.ToLower() switch
@@ -62,13 +64,13 @@ public class OptionFactory(BrowserVersion bv) : IDisposable
         _ => new ChromeCreator().Create(BrowserVersion, testName).GetOpts(BrowserVersion.PlatformType),
     };
 
-    public bool IsApple() => 
+    public bool IsApple() =>
         BrowserVersion.PlatformType.Equals(OnDemand.PlatformType.Apple);
 
-    public bool IsAndroid() => 
+    public bool IsAndroid() =>
         BrowserVersion.PlatformType.Equals(OnDemand.PlatformType.Android);
 
-    public void Dispose() => 
+    public void Dispose() =>
         GC.SuppressFinalize(this);
 }
 /*

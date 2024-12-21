@@ -2,7 +2,7 @@
 using Saucery.Tests.Common.PageObjects;
 using Saucery.TUnit;
 
-namespace Merlin.TUnit.RealDevices;
+namespace ExternalMerlin.TUnit;
 
 public class DataDrivenTests : SauceryTBase
 {
@@ -18,7 +18,7 @@ public class DataDrivenTests : SauceryTBase
 
         var commentField = guineaPigPage.GetField(SauceryDriver(), "comments");
         await Assert.That(commentField).IsNotNull();
-
+        
         var commentText = commentField.GetDomProperty("value");
         await Assert.That(commentText).Contains(data.ToString());
     }
