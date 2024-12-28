@@ -5,46 +5,44 @@ using Saucery.Core.Util;
 
 namespace Saucery.Core.Options.Base;
 
-internal abstract class BaseOptions(string testName)
-{
+internal abstract class BaseOptions(string testName) {
     protected DriverOptions? Opts;
     protected Dictionary<string, object> SauceOptions = new()
     {
         { SauceryConstants.SAUCE_USERNAME_CAPABILITY, Enviro.SauceUserName! },
         { SauceryConstants.SAUCE_ACCESSKEY_CAPABILITY, Enviro.SauceApiKey! },
-        //This sets the Session column
         { SauceryConstants.SAUCE_SESSIONNAME_CAPABILITY, testName },
-        //This sets the Build column
         { SauceryConstants.SAUCE_BUILDNAME_CAPABILITY, Enviro.BuildName },
-        //Improve performance on SauceLabs
         { SauceryConstants.SAUCE_VUOP_CAPABILITY, false }
     };
 
-    //This sets the Session column
-    //This sets the Build column
-    //Improve performance on SauceLabs
-    //SauceOptions.Add(Constants.VISIBILITY_KEY, Constants.VISIBILITY_TEAM);
-
-    protected void AddSauceLabsOptions(string nativeApp) {
-        if (nativeApp != null) {
-            SauceOptions.Add(SauceryConstants.SAUCE_NATIVE_APP_CAPABILITY, nativeApp);
+    /// <summary>
+    /// Adds SauceLabs options for native applications.
+    /// </summary>
+    /// <param name="nativeApp">The native application to be tested.</param>
+    protected void AddSauceLabsOptions(string? nativeApp) {
+        if(!string.IsNullOrEmpty(nativeApp)) {
+            SauceOptions[SauceryConstants.SAUCE_NATIVE_APP_CAPABILITY] = nativeApp;
         }
     }
 
+    /// <summary>
+    /// Gets the driver options based on the platform type.
+    /// </summary>
+    /// <param name="type">The platform type.</param>
+    /// <returns>The configured driver options.</returns>
     public DriverOptions? GetOpts(OnDemand.PlatformType type) {
-        if (type.IsMobile())
-        {
-            ((AppiumOptions)Opts!).AddAdditionalAppiumOption(SauceryConstants.SAUCE_USERNAME_CAPABILITY, Enviro.SauceUserName);
-            ((AppiumOptions)Opts).AddAdditionalAppiumOption(SauceryConstants.SAUCE_ACCESSKEY_CAPABILITY, Enviro.SauceApiKey);
+        if(type.IsMobile()) {
+            var appiumOptions = (AppiumOptions)Opts!;
+            appiumOptions.AddAdditionalAppiumOption(SauceryConstants.SAUCE_USERNAME_CAPABILITY, Enviro.SauceUserName);
+            appiumOptions.AddAdditionalAppiumOption(SauceryConstants.SAUCE_ACCESSKEY_CAPABILITY, Enviro.SauceApiKey);
         }
 
-        if (type.IsApple())
-        {
+        if(type.IsApple()) {
             ((AppiumOptions)Opts!).AutomationName = SauceryConstants.APPLE_AUTOMATION_NAME;
         }
 
-        if (type.IsAndroid())
-        {
+        if(type.IsAndroid()) {
             ((AppiumOptions)Opts!).AutomationName = SauceryConstants.ANDROID_AUTOMATION_NAME;
         }
 
