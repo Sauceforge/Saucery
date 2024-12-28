@@ -25,7 +25,6 @@ public class RequestedPlatformData : SauceryTestData
     }
 
     public static List<Func<BrowserVersion>> AllPlatforms() => GetAllPlatformsAsFunc();
-    public static List<BrowserVersion> AllPlatformsAsList() => GetAllPlatformsAsList();
 }
 /*
 * Copyright Andrew Gray, SauceForge

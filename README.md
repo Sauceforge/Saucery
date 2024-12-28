@@ -305,7 +305,7 @@ Your Project file should look something like this:
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Saucery.TUnit" Version="0.5.22" />
+    <PackageReference Include="Saucery.TUnit" Version="0.6.0" />
   </ItemGroup>
 
 </Project>
@@ -322,15 +322,15 @@ using Saucery.Core.Dojo;
 using Saucery.Tests.Common.PageObjects;
 using Saucery.TUnit;
 
-namespace ExternalMerlin.TUnit;
+namespace Merlin.TUnit.RealDevices;
 
 public class DataDrivenTests : SauceryTBase
 {
     [Test]
-    [MethodDataSource(nameof(AllCombinations), Arguments = [new[] { 4, 5 }])
-    public async Task DataDrivenTest(BrowserVersion requestedPlatform, int data)
+    [MethodDataSource(nameof(AllCombinations), Arguments = [new[] { 4, 5 }])]
+    public async Task DataDrivenTest(Func<BrowserVersion> requestedPlatform, int data)
     {
-        InitialiseDriver(requestedPlatform);
+        InitialiseDriver(requestedPlatform());
 
         var guineaPigPage = new GuineaPigPage(SauceryDriver(), "https://saucelabs.com/");
 
@@ -338,14 +338,18 @@ public class DataDrivenTests : SauceryTBase
 
         var commentField = guineaPigPage.GetField(SauceryDriver(), "comments");
         await Assert.That(commentField).IsNotNull();
-        
+
         var commentText = commentField.GetDomProperty("value");
         await Assert.That(commentText).Contains(data.ToString());
     }
 
-    public static IEnumerable<(BrowserVersion, int)> AllCombinations(int[] data) => from browserVersion in RequestedPlatformData.AllPlatformsAsList()
-                                                                                    from datum in data
-                                                                                    select (browserVersion, datum);
+    public static IEnumerable<(Func<BrowserVersion>, int)> AllCombinations(int[] data) =>
+    RequestedPlatformData
+        .AllPlatforms()
+        .SelectMany(
+            browserVersionFunc => data,
+            (browserVersionFunc, datum) => (browserVersionFunc, datum)
+        );
 }
 ```
 
@@ -370,10 +374,10 @@ A data driven test is specified like this:
 ```
 [Test]
 [MethodDataSource(nameof(AllCombinations), Arguments = [new[] { 4, 5 }])]
-public async Task DataDrivenTest(BrowserVersion requestedPlatform, int data)
+public async Task DataDrivenTest(Func<BrowserVersion> requestedPlatform, int data)
 ```
 
-You can call the class what you like but it must take a `BrowserVersion` and the `data` as a parameter and subclass `SauceryTBase`.
+You can call the class what you like but it must take a `Func<BrowserVersion>` and the `data` as a parameter and subclass `SauceryTBase`.
 
 `[MethodDataSource(nameof(AllCombinations)...]` is how you tell SauceryT what platforms you want to test on. You need to specify a class to do that. In this example its called `RequestedPlatformData` but you can call it anything you like.
 
@@ -407,7 +411,6 @@ public class RequestedPlatformData : SauceryTestData
     }
 
     public static List<Func<BrowserVersion>> AllPlatforms() => GetAllPlatformsAsFunc();
-    public static List<BrowserVersion> AllPlatformsAsList() => GetAllPlatformsAsList();
 ```
 
 The `List<SaucePlatform>` is what you will specify. The rest of the class is mandatory. Check out `SauceryConstants` for all the platform, browser and screenres enums.
