@@ -16,6 +16,10 @@ public class PlatformConfigurator
 
     public PlatformConfigurator(PlatformFilter filter)
     {
+        if(AvailablePlatforms.Any()) {
+            return;
+        }
+
         switch (filter)
         {
             case PlatformFilter.All:
