@@ -22,6 +22,7 @@ public class PlatformConfigurator
         }
         else
         {
+            DebugMessages.AvailablePlatformsEmpty();
             switch (filter)
             {
                 case PlatformFilter.All:
