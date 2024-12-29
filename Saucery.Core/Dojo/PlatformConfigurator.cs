@@ -16,17 +16,25 @@ public class PlatformConfigurator
 
     public PlatformConfigurator(PlatformFilter filter)
     {
-        switch (filter)
+        if(AvailablePlatforms.Any())
         {
-            case PlatformFilter.All:
-                ConstructAllPlatforms();
-                break;
-            case PlatformFilter.Emulated:
-                ConstructEmulatedPlatforms();
-                break;
-            case PlatformFilter.RealDevice:
-                ConstructRealDevices();
-                break;
+            DebugMessages.AvailablePlatformsAlreadyPopulated();
+        }
+        else
+        {
+            DebugMessages.AvailablePlatformsEmpty();
+            switch (filter)
+            {
+                case PlatformFilter.All:
+                    ConstructAllPlatforms();
+                    break;
+                case PlatformFilter.Emulated:
+                    ConstructEmulatedPlatforms();
+                    break;
+                case PlatformFilter.RealDevice:
+                    ConstructRealDevices();
+                    break;
+            }
         }
     }
 
@@ -120,7 +128,7 @@ public class PlatformConfigurator
             apis.Any(a => a.Equals(p.api_name)) &&
             p.automation_backend!.Equals("appium"));
 
-    public void AddLatestBrowserVersion(string version)
+    private void AddLatestBrowserVersion(string version)
     {
         foreach (var browser in AvailablePlatforms
                      .SelectMany(p =>
@@ -181,7 +189,7 @@ public class PlatformConfigurator
         return browserVersion?.Classify();
     }
 
-    public PlatformBase? ValidateReal(SaucePlatform requested)
+    private PlatformBase? ValidateReal(SaucePlatform requested)
     {
         requested.Classify();
         return requested.PlatformType switch

@@ -13,6 +13,21 @@ public class DebugMessages {
         }
     }
 
+    internal static void AvailablePlatformsAlreadyPopulated() 
+    {
+        if(UserChecker.ItIsMe()) {
+            Console.WriteLine("DEBUG MESSAGE: AvailablePlatforms is already populated");
+            Console.Out.Flush();
+        }
+    }
+
+    internal static void AvailablePlatformsEmpty() {
+        if(UserChecker.ItIsMe()) {
+            Console.WriteLine("DEBUG MESSAGE: AvailablePlatforms is empty");
+            Console.Out.Flush();
+        }
+    }
+
     internal static void PrintHaveAndroidPlatform(bool isReal)
     {
         if (UserChecker.ItIsMe())

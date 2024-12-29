@@ -108,3 +108,8 @@ public class SauceryBase()
 * Date: 12th July 2014
 * 
 */
+
+//var isPassed = TestContext.CurrentContext.Result.Outcome.Status
+//                           == TestStatus.Passed;
+//            var script = "sauce:job-result=" + (isPassed ? "passed" : "failed");
+//            ((IJavaScriptExecutor) driver).ExecuteScript(script);
