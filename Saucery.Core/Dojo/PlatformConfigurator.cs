@@ -16,21 +16,24 @@ public class PlatformConfigurator
 
     public PlatformConfigurator(PlatformFilter filter)
     {
-        if(AvailablePlatforms.Any()) {
-            return;
-        }
-
-        switch (filter)
+        if(AvailablePlatforms.Any())
         {
-            case PlatformFilter.All:
-                ConstructAllPlatforms();
-                break;
-            case PlatformFilter.Emulated:
-                ConstructEmulatedPlatforms();
-                break;
-            case PlatformFilter.RealDevice:
-                ConstructRealDevices();
-                break;
+            DebugMessages.AvailablePlatformsAlreadyPopulated();
+        }
+        else
+        {
+            switch (filter)
+            {
+                case PlatformFilter.All:
+                    ConstructAllPlatforms();
+                    break;
+                case PlatformFilter.Emulated:
+                    ConstructEmulatedPlatforms();
+                    break;
+                case PlatformFilter.RealDevice:
+                    ConstructRealDevices();
+                    break;
+            }
         }
     }
 
