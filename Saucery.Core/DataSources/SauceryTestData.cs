@@ -14,6 +14,22 @@ public class SauceryTestData : IEnumerable
     protected static void SetPlatforms(List<SaucePlatform> platforms)
     {
         PlatformConfigurator platformConfigurator = new(PlatformFilter.All);
+        ExpandAndFilter(platforms, platformConfigurator);
+        //PlatformExpander expander = new(platformConfigurator, platforms);
+        //var expandedPlatforms = expander.Expand();
+        //BrowserVersions = platformConfigurator.FilterAll(expandedPlatforms);
+    }
+
+    protected static void SetPlatforms(List<SaucePlatform> platforms, PlatformFilter filter) {
+        PlatformConfigurator platformConfigurator = new(filter);
+        ExpandAndFilter(platforms, platformConfigurator);
+        //PlatformExpander expander = new(platformConfigurator, platforms);
+        //var expandedPlatforms = expander.Expand();
+        //BrowserVersions = platformConfigurator.FilterAll(expandedPlatforms);
+    }
+
+    private static void ExpandAndFilter(List<SaucePlatform> platforms, PlatformConfigurator platformConfigurator)
+    {
         PlatformExpander expander = new(platformConfigurator, platforms);
         var expandedPlatforms = expander.Expand();
         BrowserVersions = platformConfigurator.FilterAll(expandedPlatforms);
