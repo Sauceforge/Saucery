@@ -33,7 +33,7 @@ public class RequestedPlatformData : SauceryTestData
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_EDGE, "99", SauceryConstants.SCREENRES_800_600)
         };
 
-        SetPlatforms(platforms);
+        SetPlatforms(platforms, PlatformFilter.Emulated);
     }
 
     public static List<Func<BrowserVersion>> AllPlatforms() => GetAllPlatformsAsFunc();

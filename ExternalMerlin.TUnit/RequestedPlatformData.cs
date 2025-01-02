@@ -21,7 +21,7 @@ public class RequestedPlatformData : SauceryTestData
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_CHROME, "124", SauceryConstants.SCREENRES_2560_1600)
         };
 
-        SetPlatforms(platforms);
+        SetPlatforms(platforms, PlatformFilter.Emulated);
     }
 
     public static List<Func<BrowserVersion>> AllPlatforms() => GetAllPlatformsAsFunc();

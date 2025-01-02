@@ -1,4 +1,5 @@
 ﻿using Saucery.Core.DataSources;
+using Saucery.Core.Dojo;
 using Saucery.Core.OnDemand;
 using Saucery.Core.OnDemand.Base;
 using Saucery.Core.Util;
@@ -32,7 +33,7 @@ public class RequestedPlatformData : SauceryTestData
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_EDGE, "99", SauceryConstants.SCREENRES_800_600)
         };
 
-        SetPlatforms(platforms);
+        SetPlatforms(platforms, PlatformFilter.Emulated);
     }
 }
 /*

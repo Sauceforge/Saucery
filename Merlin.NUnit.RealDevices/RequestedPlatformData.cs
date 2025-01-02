@@ -1,4 +1,5 @@
 ﻿using Saucery.Core.DataSources;
+using Saucery.Core.Dojo;
 using Saucery.Core.OnDemand;
 using Saucery.Core.OnDemand.Base;
 
@@ -16,7 +17,7 @@ public class RequestedPlatformData : SauceryTestData
             new IOSRealDevice("iPhone 14 Pro Max", "16"),
         };
 
-        SetPlatforms(platforms);
+        SetPlatforms(platforms, PlatformFilter.RealDevice);
     }
 }
 /*
