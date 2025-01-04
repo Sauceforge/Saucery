@@ -1,9 +1,10 @@
 ﻿namespace Saucery.Core.RestAPI.FlowControl;
 
+#pragma warning disable IDE1006 // Naming Styles
 public class FlowControl
 {
     public double timestamp { get; set; }
-    public Concurrency concurrency { get; set; }
+    public required Concurrency concurrency { get; set; }
 }
 
 public class Allowed
@@ -16,8 +17,8 @@ public class Allowed
 
 public class Concurrency
 {
-    public Organization organization { get; set; }
-    public Team team { get; set; }
+    public required Organization organization { get; set; }
+    public required Team team { get; set; }
 }
 
 public class Current
@@ -30,16 +31,16 @@ public class Current
 
 public class Organization
 {
-    public Current current { get; set; }
-    public string id { get; set; }
-    public Allowed allowed { get; set; }
+    public required Current current { get; set; }
+    public required string id { get; set; }
+    public required Allowed allowed { get; set; }
 }
 
 public class Team
 {
-    public Current current { get; set; }
-    public string id { get; set; }
-    public Allowed allowed { get; set; }
+    public required Current current { get; set; }
+    public required string id { get; set; }
+    public required Allowed allowed { get; set; }
 }
 
 /*
