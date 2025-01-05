@@ -16,7 +16,7 @@ public class PlatformConfigurator
 
     public PlatformConfigurator(PlatformFilter filter)
     {
-        if(AvailablePlatforms.Any())
+        if(AvailablePlatforms.Count != 0)
         {
             DebugMessages.AvailablePlatformsAlreadyPopulated();
         }
