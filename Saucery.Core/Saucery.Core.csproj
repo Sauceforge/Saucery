@@ -9,7 +9,7 @@
 	<PropertyGroup>
 		<IsPackable>true</IsPackable>
 		<PackageId>Saucery.Core</PackageId>
-	    <PackageVersion>4.5.8</PackageVersion>
+	    <PackageVersion>4.5.9</PackageVersion>
 	    <Authors>Andrew Gray</Authors>
 	    <Company>SauceForge</Company>
 	    <Copyright>Copyright Andrew Gray 2014</Copyright>
@@ -17,7 +17,7 @@
 	    <PackageReleaseNotes>
 	      ChangeLog:
 	      v4.0.1
-	      - Initial Release
+	      - Initial Relese
 	    </PackageReleaseNotes>
 	    <PackageProjectUrl>https://github.com/Sauceforge/Saucery</PackageProjectUrl>
 	    <PackageIcon>Saucery.Core.128x128.png</PackageIcon>

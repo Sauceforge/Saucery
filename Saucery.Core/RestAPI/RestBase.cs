@@ -55,7 +55,7 @@ public abstract class RestBase {
         }
     }
 
-    private RestResponse GetResponse(RestRequest request)
+    private RestResponse<RestRequest> GetResponse(RestRequest request)
     {
         var response = Client!.Execute<RestRequest>(request);
         if (response.StatusCode.Equals(HttpStatusCode.OK))
