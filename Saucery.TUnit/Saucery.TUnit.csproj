@@ -30,7 +30,7 @@
 
   <ItemGroup>
     <PackageReference Include="TUnit" Version="0.6.89" />
-    <PackageReference Include="TUnit.Core" Version="0.6.89" />
+    <PackageReference Include="TUnit.Core" Version="0.6.100" />
     <None Include="Images\Saucery.TUnit.128x128.png" Pack="true" PackagePath="\" />
     <None Include="..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
