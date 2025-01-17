@@ -1,5 +1,5 @@
-﻿using Saucery.Core.Dojo;
-using Saucery.Tests.Common.PageObjects;
+﻿using ExternalMerlin.XUnit.RealDevices.PageObjects;
+using Saucery.Core.Dojo;
 using Saucery.XUnit;
 using Xunit.Abstractions;
 
