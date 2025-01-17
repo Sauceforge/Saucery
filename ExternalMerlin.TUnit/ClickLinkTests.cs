@@ -1,6 +1,6 @@
 using ExternalMerlin.TUnit;
+using ExternalMerlin.TUnit.PageObjects;
 using Saucery.Core.Dojo;
-using Saucery.Tests.Common.PageObjects;
 using Saucery.TUnit;
 using Shouldly;
 

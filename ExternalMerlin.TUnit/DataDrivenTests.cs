@@ -1,5 +1,5 @@
-﻿using Saucery.Core.Dojo;
-using Saucery.Tests.Common.PageObjects;
+﻿using ExternalMerlin.TUnit.PageObjects;
+using Saucery.Core.Dojo;
 using Saucery.TUnit;
 
 namespace ExternalMerlin.TUnit;
