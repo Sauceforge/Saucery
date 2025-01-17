@@ -142,7 +142,10 @@ public class BrowserVersion
             }
         }
 
-        TestName = TestNameBuilder.ToString();
+        if(TestNameBuilder.Length > 0) 
+        {
+            TestName = TestNameBuilder?.ToString();
+        }
 
         //TestName = this.IsAMobileDevice()
         //    ? string.IsNullOrEmpty(DeviceOrientation)
@@ -158,9 +161,9 @@ public class BrowserVersion
         if(string.IsNullOrEmpty(fieldToAdd))
             return;
 
-        if(!TestNameBuilder[^1].Equals(SauceryConstants.UNDERSCORE))
+        if(!TestNameBuilder.ToString().Contains(fieldToAdd))
             TestNameBuilder.Append($"{SauceryConstants.UNDERSCORE}{fieldToAdd}");
-        else
-            TestNameBuilder.Append($"{fieldToAdd}");
+        //else
+        //    TestNameBuilder.Append($"{fieldToAdd}");
     }
 }
