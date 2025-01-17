@@ -34,8 +34,6 @@ public class SaucePlatform(string desktopPlatformName = "",
 
     public PlatformType PlatformType { get; set; }
 
-    //public string? TestName { get; set; }
-
     #endregion
 
     public bool NeedsExpansion() => 

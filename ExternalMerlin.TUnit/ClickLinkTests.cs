@@ -2,7 +2,6 @@ using ExternalMerlin.TUnit;
 using ExternalMerlin.TUnit.PageObjects;
 using Saucery.Core.Dojo;
 using Saucery.TUnit;
-using Shouldly;
 
 [assembly: ParallelLimiter<MyParallelLimit>]
 

@@ -57,7 +57,6 @@ public class SauceryBase()
 
             if (Driver != null)
             {
-                //var passed = Equals(TestContext.CurrentContext.Result.Outcome., ResultState.Success);
                 var isPassed = TestContext.CurrentContext.Result.Outcome.Status == TestStatus.Passed;
                 // log the result to SauceLabs
                 var sessionId = Driver.SessionId.ToString();

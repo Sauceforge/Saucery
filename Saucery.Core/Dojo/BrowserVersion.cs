@@ -95,24 +95,6 @@ public class BrowserVersion
         TestNameBuilder = new StringBuilder(); 
     }
 
-    //public object[] ToObjectArray() =>
-    //    [
-    //        Os,
-    //        PlatformNameForOption,
-    //        BrowserName,
-    //        Name!,
-    //        AutomationBackend,
-    //        DeviceName,
-    //        RecommendedAppiumVersion,
-    //        SupportedBackendVersions,
-    //        DeprecatedBackendVersions,
-    //        TestName!,
-    //        DeviceOrientation!,
-    //        ScreenResolution!,
-    //        PlatformType,
-    //        ScreenResolutions
-    //    ];
-
     public void SetTestName(string testName)
     {
         TestNameBuilder.Clear();
@@ -123,7 +105,6 @@ public class BrowserVersion
         if (this.IsAMobileDevice())
         {
             AppendPlatformField(DeviceName);
-            //AppendPlatformField(Name!);
             
             if (!string.IsNullOrEmpty(DeviceOrientation))
             {
@@ -146,24 +127,14 @@ public class BrowserVersion
         {
             TestName = TestNameBuilder?.ToString();
         }
-
-        //TestName = this.IsAMobileDevice()
-        //    ? string.IsNullOrEmpty(DeviceOrientation)
-        //        ? AppendPlatformField(AppendPlatformField(DeviceName), Name).ToString()
-        //        : AppendPlatformField(AppendPlatformField(AppendPlatformField(DeviceName), Name), DeviceOrientation).ToString()
-        //    : string.IsNullOrEmpty(ScreenResolution)
-        //        ? AppendPlatformField(AppendPlatformField(AppendPlatformField(Os), BrowserName), Name).ToString()
-        //        : AppendPlatformField(AppendPlatformField(AppendPlatformField(AppendPlatformField(Os), BrowserName), Name), ScreenResolution).ToString();
     }
 
     private void AppendPlatformField(string fieldToAdd)
     {
-        if(string.IsNullOrEmpty(fieldToAdd))
-            return;
-
-        if(!TestNameBuilder.ToString().Contains(fieldToAdd))
+        if(!string.IsNullOrEmpty(fieldToAdd) &&
+           !TestNameBuilder.ToString().Contains(fieldToAdd)) 
+        {
             TestNameBuilder.Append($"{SauceryConstants.UNDERSCORE}{fieldToAdd}");
-        //else
-        //    TestNameBuilder.Append($"{fieldToAdd}");
+        }
     }
 }

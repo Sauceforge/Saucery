@@ -8,7 +8,6 @@ namespace Saucery.Core.Tests.Util;
 public class GenericTestCaseAttribute(Type type, params object[] arguments) : TestCaseAttribute(arguments), ITestBuilder
 {
     IEnumerable<TestMethod> ITestBuilder.BuildFrom(IMethodInfo method, Test? suite) =>
-        //if (method.IsGenericMethodDefinition && type != null)
         BuildFrom(method.IsGenericMethodDefinition 
                 ? method.MakeGenericMethod(type) 
                 : method, 

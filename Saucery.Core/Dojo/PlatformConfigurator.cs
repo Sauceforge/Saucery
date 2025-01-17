@@ -192,6 +192,7 @@ public class PlatformConfigurator
     private PlatformBase? ValidateReal(SaucePlatform requested)
     {
         requested.Classify();
+        
         return requested.PlatformType switch
         {
             PlatformType.Android => AvailableRealDevices.FindAndroidPlatform(requested),

@@ -55,17 +55,6 @@ public class BaseFixture
         }
     }
 
-    //public void Dispose() {
-    //    GC.SuppressFinalize(this);
-    //    if (Driver is not null)
-    //    {
-    //        Driver.Quit();
-    //        Driver.Dispose();
-    //    }
-
-    //    OptionFactory?.Dispose();
-    //}
-
     public WebDriver SauceryDriver() => 
         Driver!;
 }

@@ -30,7 +30,6 @@ public class PlatformExpansionTests
                 SauceryConstants.SCREENRES_2560_1600)
         ];
 
-        //PlatformConfigurator configurator = new();
         PlatformExpander expander = new(PlatformConfigurator!, platforms);
         var expandedSet = expander.Expand();
         expandedSet
