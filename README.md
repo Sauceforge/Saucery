@@ -9,12 +9,22 @@ Saucery
     
 <b>Automated testing made more awesome</b>
 
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)](https://raw.githubusercontent.com/SauceForge/Saucery/master/LICENSE)
-[![CI-CD](https://img.shields.io/github/actions/workflow/status/SauceForge/Saucery/pipeline.yml?style=for-the-badge)](https://github.com/SauceForge/Saucery/actions/workflows/pipeline.yml)
+![GitHub Repo stars](https://img.shields.io/github/stars/Sauceforge/Saucery) 
+[![GitHub Sponsors](https://img.shields.io/github/sponsors/Sauceforge)](https://github.com/sponsors/Sauceforge)
+![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/Sauceforge/Saucery/pipeline.yml) 
+![GitHub last commit (branch)](https://img.shields.io/github/last-commit/Sauceforge/Saucery/master) 
+![License](https://img.shields.io/github/license/Sauceforge/Saucery) 
 
 </div>
 
 Saucery handles all the plumbing required to integrate with SauceLabs, making writing tests a breeze. Saucery comes in multiple flavors supporting popular test frameworks.
+
+### Packages
+| Package | Badges |
+| --- | --- |
+| Saucery | [![nuget](https://img.shields.io/nuget/v/Saucery.svg)](https://www.nuget.org/packages/Saucery/)  [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery)](https://www.nuget.org/packages/Saucery/) |
+| Saucery.XUnit | [![nuget](https://img.shields.io/nuget/v/Saucery.XUnit.svg)](https://www.nuget.org/packages/Saucery.XUnit/)  [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery.XUnit)](https://www.nuget.org/packages/Saucery.XUnit/) |
+| Saucery.TUnit | [![nuget](https://img.shields.io/nuget/v/Saucery.TUnit.svg)](https://www.nuget.org/packages/Saucery.TUnit/)  [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery.TUnit)](https://www.nuget.org/packages/Saucery.TUnit/) |
 
 ### Dog food Status
 We test Saucery itself on SauceLabs!
@@ -69,10 +79,10 @@ Your Project file should look something like this:
 The ExternalMerlin.NUnit dogfood integration tests use the following template:
 
 ```
+using ExternalMerlin.XUnit.PageObjects;
 using NUnit.Framework;
 using Saucery;
 using Saucery.Core.Dojo;
-using Saucery.Tests.Common.PageObjects;
 using Shouldly;
 
 [assembly: LevelOfParallelism(4)]
@@ -203,8 +213,8 @@ Your Project file should look something like this:
 The ExternalMerlin.XUnit dogfood integration tests use the following template:
 
 ```
+using ExternalMerlin.XUnit.PageObjects;
 using Saucery.Core.Dojo;
-using Saucery.Tests.Common.PageObjects;
 using Saucery.XUnit;
 using Xunit.Abstractions;
 
@@ -318,8 +328,8 @@ Follow the instructions [here](https://thomhurst.github.io/TUnit/docs/tutorial-b
 The ExternalMerlin.TUnit dogfood integration tests use the following template:
 
 ```
+using ExternalMerlin.XUnit.PageObjects;
 using Saucery.Core.Dojo;
-using Saucery.Tests.Common.PageObjects;
 using Saucery.TUnit;
 
 namespace Merlin.TUnit.RealDevices;
@@ -426,22 +436,6 @@ This will test on Windows 11 Chrome all available versions from 100 to 119 inclu
 
 ## Real Devices
 Yes, Saucery supports Real Devices!
-
-## Flavors
-### Saucery
-[![NuGet version (Saucery)](https://img.shields.io/nuget/v/Saucery.svg?style=for-the-badge)](https://www.nuget.org/packages/Saucery/)
-
-### Saucery.XUnit
-[![NuGet version (Saucery.XUnit)](https://img.shields.io/nuget/v/Saucery.XUnit.svg?style=for-the-badge)](https://www.nuget.org/packages/Saucery.XUnit/)
-
-### Saucery.TUnit
-[![NuGet version (Saucery.TUnit)](https://img.shields.io/nuget/v/Saucery.TUnit.svg?style=for-the-badge)](https://www.nuget.org/packages/Saucery.TUnit/)
-
-## Resources
-### Download statistics
-![Nuget](https://img.shields.io/nuget/dt/Saucery.svg?label=Saucery%40nuget&style=for-the-badge)
-![Nuget](https://img.shields.io/nuget/dt/Saucery.XUnit.svg?label=Saucery.XUnit%40nuget&style=for-the-badge)
-![Nuget](https://img.shields.io/nuget/dt/Saucery.TUnit.svg?label=Saucery.TUnit%40nuget&style=for-the-badge)
 
 ### Trends
 [Nuget downloads](https://nugettrends.com/packages?months=24&ids=Saucery&ids=Saucery.XUnit&ids=Saucery.TUnit)  
