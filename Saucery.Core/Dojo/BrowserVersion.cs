@@ -97,7 +97,7 @@ public class BrowserVersion
 
     public void SetTestName(string testName)
     {
-        TestNameBuilder.Clear();
+        TestNameBuilder = new StringBuilder();
         TestNameBuilder.Append(testName.Contains(SauceryConstants.LEFT_SQUARE_BRACKET)
                                 ? testName[..testName.IndexOf(SauceryConstants.LEFT_SQUARE_BRACKET, StringComparison.Ordinal)]
                                 : testName);
@@ -132,7 +132,8 @@ public class BrowserVersion
     private void AppendPlatformField(string fieldToAdd)
     {
         if(!string.IsNullOrEmpty(fieldToAdd) &&
-            TestNameBuilder != null &&
+            //TestNameBuilder != null &&
+            TestNameBuilder?.Length > 0 &&
            !TestNameBuilder.ToString().Contains(fieldToAdd)) 
         {
             TestNameBuilder.Append($"{SauceryConstants.UNDERSCORE}{fieldToAdd}");
