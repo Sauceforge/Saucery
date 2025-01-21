@@ -92,51 +92,52 @@ public class BrowserVersion
         ScreenResolution = string.Empty;
         PlatformType = platform.IsAnAndroidDevice() ? PlatformType.Android : PlatformType.Apple;
         ScreenResolutions = [];
-        TestNameBuilder = new StringBuilder(); 
+        TestNameBuilder = new StringBuilder();
     }
 
     public void SetTestName(string testName)
     {
         TestNameBuilder = new StringBuilder();
-        TestNameBuilder.Append(testName.Contains(SauceryConstants.LEFT_SQUARE_BRACKET)
-                                ? testName[..testName.IndexOf(SauceryConstants.LEFT_SQUARE_BRACKET, StringComparison.Ordinal)]
-                                : testName);
+
+        AppendPlatformField(testName.Contains(SauceryConstants.LEFT_SQUARE_BRACKET)
+            ? testName[..testName.IndexOf(SauceryConstants.LEFT_SQUARE_BRACKET, StringComparison.Ordinal)]
+            : testName);
 
         if (this.IsAMobileDevice())
         {
             AppendPlatformField(DeviceName);
-            
-            if (!string.IsNullOrEmpty(DeviceOrientation))
-            {
-                AppendPlatformField(DeviceOrientation);
-            }
+            AppendPlatformField(DeviceOrientation!);
         }
         else
         {
             AppendPlatformField(Os);
             AppendPlatformField(BrowserName);
             AppendPlatformField(Name!);
-            
-            if (!string.IsNullOrEmpty(ScreenResolution))
-            {
-                AppendPlatformField(ScreenResolution);
-            }
+            AppendPlatformField(ScreenResolution!);
         }
 
         if(TestNameBuilder.Length > 0) 
         {
-            TestName = TestNameBuilder?.ToString();
+            TestName = TestNameBuilder.ToString();
         }
     }
 
     private void AppendPlatformField(string fieldToAdd)
     {
-        if(!string.IsNullOrEmpty(fieldToAdd) &&
-            //TestNameBuilder != null &&
-            TestNameBuilder?.Length > 0 &&
-           !TestNameBuilder.ToString().Contains(fieldToAdd)) 
+        if (!string.IsNullOrEmpty(fieldToAdd) &&
+            !TestNameBuilder.ToString().Contains(fieldToAdd))
         {
-            TestNameBuilder.Append($"{SauceryConstants.UNDERSCORE}{fieldToAdd}");
+            lock (TestNameBuilder)
+            {
+                if (TestNameBuilder.Length == 0)
+                {
+                    TestNameBuilder.Append($"{fieldToAdd}");
+                }
+                else
+                {
+                    TestNameBuilder.Append($"{SauceryConstants.UNDERSCORE}{fieldToAdd}");
+                }
+            }
         }
     }
 }

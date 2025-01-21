@@ -19,10 +19,10 @@ public class SauceryBase()
     private string? _testName;
     protected WebDriver? Driver;
     private readonly BrowserVersion? _browserVersion;
-    private readonly SauceLabsStatusNotifier SauceLabsStatusNotifier = new();
-    private readonly SauceLabsFlowController SauceLabsFlowController = new();
+    private readonly SauceLabsStatusNotifier _sauceLabsStatusNotifier = new();
+    private readonly SauceLabsFlowController _sauceLabsFlowController = new();
     private OptionFactory? _optionFactory;
-    private readonly AppiumClientConfig AppiumClientConfig = new() { DirectConnect = true };
+    private readonly AppiumClientConfig _appiumClientConfig = new() { DirectConnect = true };
 
     protected SauceryBase(BrowserVersion browserVersion) : this() => 
         _browserVersion = browserVersion;
@@ -30,8 +30,11 @@ public class SauceryBase()
     [SetUp]
     public void Setup()
     {
-        _browserVersion?.SetTestName(TestContext.CurrentContext.Test.Name);
-        _testName = _browserVersion?.TestName;
+        lock (_browserVersion!)
+        {
+            _browserVersion?.SetTestName(TestContext.CurrentContext.Test.Name);
+            _testName = _browserVersion?.TestName;
+        }
 
         //DebugMessages.PrintPlatformDetails(platform);
         // set up the desired options
@@ -60,7 +63,7 @@ public class SauceryBase()
                 var isPassed = TestContext.CurrentContext.Result.Outcome.Status == TestStatus.Passed;
                 // log the result to SauceLabs
                 var sessionId = Driver.SessionId.ToString();
-                SauceLabsStatusNotifier.NotifyStatus(sessionId, isPassed);
+                _sauceLabsStatusNotifier.NotifyStatus(sessionId, isPassed);
                 Console.WriteLine($"SessionID={sessionId} job-name={_testName}");
                 Driver.Quit();
             }
@@ -80,14 +83,14 @@ public class SauceryBase()
 
     private bool InitialiseDriver((DriverOptions opts, BrowserVersion browserVersion) tuple, int waitSecs)
     {
-        SauceLabsFlowController.ControlFlow(tuple.browserVersion.IsARealDevice());
+        _sauceLabsFlowController.ControlFlow(tuple.browserVersion.IsARealDevice());
 
         try
         {
             Driver = _optionFactory!.IsApple()
-                ? new IOSDriver(new Uri(SauceryConstants.SAUCELABS_HUB), tuple.opts, TimeSpan.FromSeconds(waitSecs), AppiumClientConfig)
+                ? new IOSDriver(new Uri(SauceryConstants.SAUCELABS_HUB), tuple.opts, TimeSpan.FromSeconds(waitSecs), _appiumClientConfig)
                 : _optionFactory!.IsAndroid()
-                    ? new AndroidDriver(new Uri(SauceryConstants.SAUCELABS_HUB), tuple.opts, TimeSpan.FromSeconds(waitSecs), AppiumClientConfig)
+                    ? new AndroidDriver(new Uri(SauceryConstants.SAUCELABS_HUB), tuple.opts, TimeSpan.FromSeconds(waitSecs), _appiumClientConfig)
                     : new SauceryRemoteWebDriver(new Uri(SauceryConstants.SAUCELABS_HUB), tuple.opts, waitSecs);
 
             return true;
