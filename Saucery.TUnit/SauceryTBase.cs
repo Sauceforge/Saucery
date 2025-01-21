@@ -15,8 +15,11 @@ public class SauceryTBase : BaseFixture
     protected bool InitialiseDriver(BrowserVersion browserVersion)
     {
         _browserVersion = browserVersion;
-        _browserVersion.SetTestName(GetTestName());
-        _testName = _browserVersion.TestName;
+        lock (browserVersion)
+        {
+            _browserVersion.SetTestName(GetTestName());
+            _testName = _browserVersion.TestName;
+        }
 
         //DebugMessages.PrintPlatformDetails(platform);
         // set up the desired options

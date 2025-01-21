@@ -30,8 +30,11 @@ public class SauceryBase()
     [SetUp]
     public void Setup()
     {
-        _browserVersion?.SetTestName(TestContext.CurrentContext.Test.Name);
-        _testName = _browserVersion?.TestName;
+        lock (_browserVersion!)
+        {
+            _browserVersion?.SetTestName(TestContext.CurrentContext.Test.Name);
+            _testName = _browserVersion?.TestName;
+        }
 
         //DebugMessages.PrintPlatformDetails(platform);
         // set up the desired options

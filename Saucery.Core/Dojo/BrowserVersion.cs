@@ -145,7 +145,14 @@ public class BrowserVersion
         {
             lock (TestNameBuilder)
             {
-                TestNameBuilder.Append($"{SauceryConstants.UNDERSCORE}{fieldToAdd}");
+                if (TestNameBuilder.Length == 0)
+                {
+                    TestNameBuilder.Append($"{fieldToAdd}");
+                }
+                else
+                {
+                    TestNameBuilder.Append($"{SauceryConstants.UNDERSCORE}{fieldToAdd}");
+                }
             }
         }
     }
