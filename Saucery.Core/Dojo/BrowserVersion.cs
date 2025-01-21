@@ -3,7 +3,7 @@ using Saucery.Core.OnDemand;
 using Saucery.Core.OnDemand.Base;
 using Saucery.Core.RestAPI;
 using Saucery.Core.Util;
-using System.Collections.Concurrent;
+using System.Text;
 
 namespace Saucery.Core.Dojo;
 
@@ -37,7 +37,7 @@ public class BrowserVersion
 
     public List<string> ScreenResolutions { get; set; }
 
-    private ConcurrentQueue<string> TestNameQueue { get; set; }
+    private StringBuilder TestNameBuilder { get; set; }
 
     public BrowserVersion(SupportedPlatform sp, BrowserBase b)
     {
@@ -53,7 +53,7 @@ public class BrowserVersion
         RecommendedAppiumVersion = sp.recommended_backend_version!;
         SupportedBackendVersions = sp.supported_backend_versions!;
         DeprecatedBackendVersions = sp.deprecated_backend_versions!;
-        TestNameQueue = new ConcurrentQueue<string>();
+        TestNameBuilder = new StringBuilder();
     }
 
     public BrowserVersion(BrowserBase b, 
@@ -74,7 +74,7 @@ public class BrowserVersion
         SupportedBackendVersions = supportedBackendVersions!;
         DeprecatedBackendVersions = deprecatedBackendVersions!;
         ScreenResolutions = b.ScreenResolutions;
-        TestNameQueue = new ConcurrentQueue<string>();
+        TestNameBuilder = new StringBuilder();
     }
 
     public BrowserVersion(SaucePlatform platform) {
@@ -92,53 +92,61 @@ public class BrowserVersion
         ScreenResolution = string.Empty;
         PlatformType = platform.IsAnAndroidDevice() ? PlatformType.Android : PlatformType.Apple;
         ScreenResolutions = [];
-        TestNameQueue = new ConcurrentQueue<string>();
+        TestNameBuilder = new StringBuilder();
     }
 
     public void SetTestName(string testName)
     {
-        TestNameQueue = new ConcurrentQueue<string>();
-        if(!TestNameQueue.Contains(testName)) 
-        {
-            TestNameQueue.Enqueue(testName.Contains(SauceryConstants.LEFT_SQUARE_BRACKET)
-                                    ? testName[..testName.IndexOf(SauceryConstants.LEFT_SQUARE_BRACKET, StringComparison.Ordinal)]
-                                    : testName);
-        }
+        TestNameBuilder = new StringBuilder();
+
+        AppendPlatformField(testName.Contains(SauceryConstants.LEFT_SQUARE_BRACKET)
+            ? testName[..testName.IndexOf(SauceryConstants.LEFT_SQUARE_BRACKET, StringComparison.Ordinal)]
+            : testName);
+
+        //if(!TestNameQueue.Contains(testName)) 
+        //{
+        //    TestNameQueue.Enqueue(testName.Contains(SauceryConstants.LEFT_SQUARE_BRACKET)
+        //                            ? testName[..testName.IndexOf(SauceryConstants.LEFT_SQUARE_BRACKET, StringComparison.Ordinal)]
+        //                            : testName);
+        //}
 
         if (this.IsAMobileDevice())
         {
-            EnqueuePlatformField(DeviceName);
-            
-            if (!string.IsNullOrEmpty(DeviceOrientation))
-            {
-                EnqueuePlatformField(DeviceOrientation);
-            }
+            AppendPlatformField(DeviceName);
+
+            //if (!string.IsNullOrEmpty(DeviceOrientation))
+            //{
+            AppendPlatformField(DeviceOrientation!);
+            //}
         }
         else
         {
-            EnqueuePlatformField(Os);
-            EnqueuePlatformField(BrowserName);
-            EnqueuePlatformField(Name!);
-            
-            if (!string.IsNullOrEmpty(ScreenResolution))
-            {
-                EnqueuePlatformField(ScreenResolution);
-            }
+            AppendPlatformField(Os);
+            AppendPlatformField(BrowserName);
+            AppendPlatformField(Name!);
+
+            //if (!string.IsNullOrEmpty(ScreenResolution))
+            //{
+            AppendPlatformField(ScreenResolution!);
+            //}
         }
 
-        if(!TestNameQueue.IsEmpty) 
+        if(TestNameBuilder.Length > 0) 
         {
-            TestName = string.Join("", TestNameQueue);
+            TestName = TestNameBuilder.ToString();
         }
     }
 
-    private void EnqueuePlatformField(string fieldToAdd)
+    private void AppendPlatformField(string fieldToAdd)
     {
-        if(!string.IsNullOrEmpty(fieldToAdd) &&
-            !TestNameQueue.IsEmpty &&
-           !TestNameQueue.Contains(fieldToAdd)) 
+        if (!string.IsNullOrEmpty(fieldToAdd) &&
+            //!TestNameQueue.IsEmpty &&
+            !TestNameBuilder.ToString().Contains(fieldToAdd))
         {
-            TestNameQueue.Enqueue($"{SauceryConstants.UNDERSCORE}{fieldToAdd}");
+            lock (TestNameBuilder)
+            {
+                TestNameBuilder.Append($"{SauceryConstants.UNDERSCORE}{fieldToAdd}");
+            }
         }
     }
 }
