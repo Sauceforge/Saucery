@@ -3,7 +3,7 @@ using Saucery.Core.OnDemand;
 using Saucery.Core.OnDemand.Base;
 using Saucery.Core.RestAPI;
 using Saucery.Core.Util;
-using System.Text;
+using System.Collections.Concurrent;
 
 namespace Saucery.Core.Dojo;
 
@@ -37,7 +37,7 @@ public class BrowserVersion
 
     public List<string> ScreenResolutions { get; set; }
 
-    private StringBuilder TestNameBuilder { get; set; }
+    private ConcurrentQueue<string> TestNameQueue { get; set; }
 
     public BrowserVersion(SupportedPlatform sp, BrowserBase b)
     {
@@ -53,7 +53,7 @@ public class BrowserVersion
         RecommendedAppiumVersion = sp.recommended_backend_version!;
         SupportedBackendVersions = sp.supported_backend_versions!;
         DeprecatedBackendVersions = sp.deprecated_backend_versions!;
-        TestNameBuilder = new StringBuilder();
+        TestNameQueue = new ConcurrentQueue<string>();
     }
 
     public BrowserVersion(BrowserBase b, 
@@ -74,7 +74,7 @@ public class BrowserVersion
         SupportedBackendVersions = supportedBackendVersions!;
         DeprecatedBackendVersions = deprecatedBackendVersions!;
         ScreenResolutions = b.ScreenResolutions;
-        TestNameBuilder = new StringBuilder();
+        TestNameQueue = new ConcurrentQueue<string>();
     }
 
     public BrowserVersion(SaucePlatform platform) {
@@ -92,51 +92,53 @@ public class BrowserVersion
         ScreenResolution = string.Empty;
         PlatformType = platform.IsAnAndroidDevice() ? PlatformType.Android : PlatformType.Apple;
         ScreenResolutions = [];
-        TestNameBuilder = new StringBuilder(); 
+        TestNameQueue = new ConcurrentQueue<string>();
     }
 
     public void SetTestName(string testName)
     {
-        TestNameBuilder = new StringBuilder();
-        TestNameBuilder.Append(testName.Contains(SauceryConstants.LEFT_SQUARE_BRACKET)
-                                ? testName[..testName.IndexOf(SauceryConstants.LEFT_SQUARE_BRACKET, StringComparison.Ordinal)]
-                                : testName);
+        TestNameQueue = new ConcurrentQueue<string>();
+        if(!TestNameQueue.Contains(testName)) 
+        {
+            TestNameQueue.Enqueue(testName.Contains(SauceryConstants.LEFT_SQUARE_BRACKET)
+                                    ? testName[..testName.IndexOf(SauceryConstants.LEFT_SQUARE_BRACKET, StringComparison.Ordinal)]
+                                    : testName);
+        }
 
         if (this.IsAMobileDevice())
         {
-            AppendPlatformField(DeviceName);
+            EnqueuePlatformField(DeviceName);
             
             if (!string.IsNullOrEmpty(DeviceOrientation))
             {
-                AppendPlatformField(DeviceOrientation);
+                EnqueuePlatformField(DeviceOrientation);
             }
         }
         else
         {
-            AppendPlatformField(Os);
-            AppendPlatformField(BrowserName);
-            AppendPlatformField(Name!);
+            EnqueuePlatformField(Os);
+            EnqueuePlatformField(BrowserName);
+            EnqueuePlatformField(Name!);
             
             if (!string.IsNullOrEmpty(ScreenResolution))
             {
-                AppendPlatformField(ScreenResolution);
+                EnqueuePlatformField(ScreenResolution);
             }
         }
 
-        if(TestNameBuilder.Length > 0) 
+        if(!TestNameQueue.IsEmpty) 
         {
-            TestName = TestNameBuilder?.ToString();
+            TestName = string.Join("", TestNameQueue);
         }
     }
 
-    private void AppendPlatformField(string fieldToAdd)
+    private void EnqueuePlatformField(string fieldToAdd)
     {
         if(!string.IsNullOrEmpty(fieldToAdd) &&
-            //TestNameBuilder != null &&
-            TestNameBuilder?.Length > 0 &&
-           !TestNameBuilder.ToString().Contains(fieldToAdd)) 
+            !TestNameQueue.IsEmpty &&
+           !TestNameQueue.Contains(fieldToAdd)) 
         {
-            TestNameBuilder.Append($"{SauceryConstants.UNDERSCORE}{fieldToAdd}");
+            TestNameQueue.Enqueue($"{SauceryConstants.UNDERSCORE}{fieldToAdd}");
         }
     }
 }
