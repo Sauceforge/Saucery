@@ -241,7 +241,6 @@ public static class DojoExtensions
             "iOS 15" => platforms.GetPlatform<IOS15Platform>().FirstOrDefault(),
             "iOS 14" => platforms.GetPlatform<IOS14Platform>().FirstOrDefault(),
             "iOS 13" => platforms.GetPlatform<IOS13Platform>().FirstOrDefault(),
-            "iOS 12" => platforms.GetPlatform<IOS12Platform>().FirstOrDefault(),
             _ => null
         };
     }

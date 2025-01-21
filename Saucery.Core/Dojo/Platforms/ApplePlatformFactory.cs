@@ -41,7 +41,6 @@ public class ApplePlatformFactory
         "15" => new IOS15PlatformCreator(sp).Create(),
         "14" => new IOS14PlatformCreator(sp).Create(),
         "13" => new IOS13PlatformCreator(sp).Create(),
-        "12" => new IOS12PlatformCreator(sp).Create(),
         _ => null
     };
 }

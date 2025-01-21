@@ -16,7 +16,7 @@ public class NuGetIntegrationTests(BrowserVersion browserVersion) : SauceryBase(
     [Test]
     [TestCase(5)]
     [TestCase(4)]
-    public void DataDrivenTitleTest(int data) {
+    public void DataDrivenTest(int data) {
         var guineaPigPage = new GuineaPigPage(SauceryDriver(), "https://saucelabs.com/");
 
         guineaPigPage.TypeField(SauceryDriver(), "comments", data.ToString());

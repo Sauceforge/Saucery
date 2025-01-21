@@ -40,7 +40,7 @@ public partial class OpenSauceTests(BrowserVersion browserVersion) : SauceryBase
     [Test]
     [TestCase(5)]
     [TestCase(4)]
-    public async Task DataDrivenTitleTest(int data)
+    public async Task DataDrivenTest(int data)
     {
         await Page.GotoAsync("https://saucelabs.com/test/guinea-pig");
 
