@@ -15,7 +15,7 @@ namespace Saucery.Playwright.NUnit;
 public class SauceryBase : PageTest
 {
     private string? _testName;
-    private WebDriver? Driver;
+    private WebDriver? _driver;
     private readonly BrowserVersion? _browserVersion;
     private static readonly SauceLabsStatusNotifier SauceLabsStatusNotifier;
     private static readonly SauceLabsFlowController SauceLabsFlowController;
@@ -63,20 +63,20 @@ public class SauceryBase : PageTest
         try
         {
             _testName = null;
-            if (Driver != null)
+            if (_driver != null)
             {
                 var passed = Equals(TestContext.CurrentContext.Result.Outcome, ResultState.Success);
                 // log the result to SauceLabs
-                var sessionId = Driver.SessionId.ToString();
+                var sessionId = _driver.SessionId.ToString();
                 SauceLabsStatusNotifier.NotifyStatus(sessionId, passed);
                 Console.WriteLine("SessionID={0} job-name={1}", sessionId, _testName);
-                Driver.Quit();
+                _driver.Quit();
             }
         }
         catch (WebDriverException)
         {
             Console.WriteLine("Caught WebDriverException, quitting driver.");
-            Driver?.Quit();
+            _driver?.Quit();
         }
     }
 
@@ -85,7 +85,7 @@ public class SauceryBase : PageTest
         SauceLabsFlowController.ControlFlow(tuple.browserVersion.IsARealDevice());
         try
         {
-            Driver = new SauceryRemoteWebDriver(new Uri(SauceryConstants.SAUCELABS_HUB), tuple.opts, waitSecs);
+            _driver = new SauceryRemoteWebDriver(new Uri(SauceryConstants.SAUCELABS_HUB), tuple.opts, waitSecs);
             return true;
         }
         catch (Exception ex)
@@ -95,7 +95,7 @@ public class SauceryBase : PageTest
         }
     }
 
-    public SauceryRemoteWebDriver SauceryDriver() => (SauceryRemoteWebDriver)Driver!;
+    public SauceryRemoteWebDriver SauceryDriver() => (SauceryRemoteWebDriver)_driver!;
 }
 /*
 * Copyright Andrew Gray, SauceForge

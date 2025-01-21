@@ -103,32 +103,17 @@ public class BrowserVersion
             ? testName[..testName.IndexOf(SauceryConstants.LEFT_SQUARE_BRACKET, StringComparison.Ordinal)]
             : testName);
 
-        //if(!TestNameQueue.Contains(testName)) 
-        //{
-        //    TestNameQueue.Enqueue(testName.Contains(SauceryConstants.LEFT_SQUARE_BRACKET)
-        //                            ? testName[..testName.IndexOf(SauceryConstants.LEFT_SQUARE_BRACKET, StringComparison.Ordinal)]
-        //                            : testName);
-        //}
-
         if (this.IsAMobileDevice())
         {
             AppendPlatformField(DeviceName);
-
-            //if (!string.IsNullOrEmpty(DeviceOrientation))
-            //{
             AppendPlatformField(DeviceOrientation!);
-            //}
         }
         else
         {
             AppendPlatformField(Os);
             AppendPlatformField(BrowserName);
             AppendPlatformField(Name!);
-
-            //if (!string.IsNullOrEmpty(ScreenResolution))
-            //{
             AppendPlatformField(ScreenResolution!);
-            //}
         }
 
         if(TestNameBuilder.Length > 0) 
@@ -140,7 +125,6 @@ public class BrowserVersion
     private void AppendPlatformField(string fieldToAdd)
     {
         if (!string.IsNullOrEmpty(fieldToAdd) &&
-            //!TestNameQueue.IsEmpty &&
             !TestNameBuilder.ToString().Contains(fieldToAdd))
         {
             lock (TestNameBuilder)
