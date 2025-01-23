@@ -130,7 +130,7 @@ public class RestTests
         platform.Count.ShouldBe(1);
 
         //TypeOf Checks
-        platform.ShouldBeAssignableTo(typeof(List<T>));
+        platform.ShouldBeAssignableTo<List<T>>();
     }
 
     [Test]
