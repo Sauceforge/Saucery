@@ -18,7 +18,7 @@ public class SauceLabsStatusNotifier : RestBase {
     public virtual void NotifyStatus(string jobId, bool isPassed) {
         var request = BuildRequest(string.Format(SauceryConstants.JOB_REQUEST, UserName, jobId), Method.Put);
 
-        var jobStatusObject = new { passed = true };
+        var jobStatusObject = new { passed = isPassed };
         request.AddJsonBody(jobStatusObject);
 
         EnsureExecution(request);
