@@ -5,6 +5,7 @@
 [Oo]bj/
 dist/
 .vs/
+BenchmarkDotNet.Artifacts/
 storage.ide
 
 # mstest test results
