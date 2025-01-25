@@ -46,12 +46,12 @@ public static class DojoExtensions
         }
     }
 
-    public static PlatformBase? FindRealPlatform(this List<PlatformBase> platforms, SupportedPlatform sp) =>
+)    private static PlatformBase? FindRealPlatform(this List<PlatformBase> platforms, SupportedPlatform sp) =>
         platforms.FirstOrDefault(mp =>
             mp.Name.Equals(sp.Os, StringComparison.Ordinal) &&
             mp.PlatformVersion!.Equals(sp.OsVersion?.Split(".")[0], StringComparison.Ordinal));
 
-    public static PlatformBase? FindPlatform(this List<PlatformBase> platforms, SupportedPlatform sp)
+    private static PlatformBase? FindPlatform(this List<PlatformBase> platforms, SupportedPlatform sp)
     {
         var mobilePlatforms = platforms.Where(p => p.AutomationBackend.Equals("appium")).ToList();
         var desktopPlatforms = platforms.Where(p => p.AutomationBackend.Equals("webdriver")).ToList();
@@ -63,7 +63,7 @@ public static class DojoExtensions
             : desktopPlatforms.FirstOrDefault(dp => dp.Name.Equals(sp.Os, StringComparison.Ordinal));
     }
 
-    public static void AddBrowser(this List<BrowserBase> browsers, SupportedPlatform sp, List<string> screenResolutions)
+    private static void AddBrowser(this List<BrowserBase> browsers, SupportedPlatform sp, List<string> screenResolutions)
     {
         var browser = browsers.FindBrowser(sp);
         if (browser == null)
