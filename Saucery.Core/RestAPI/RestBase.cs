@@ -16,7 +16,7 @@ public abstract class RestBase {
     private static RestRequest? _request;
     private static RestAPILimitsChecker? _limitChecker;
 
-    internal static JsonSerializerOptions JsonOptions = new()
+    internal static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true
     };
@@ -30,6 +30,7 @@ public abstract class RestBase {
     {
         var request = BuildRequest(requestProforma, Method.Get);
         var response = GetResponse(request);
+        
         return response.Content;
     }
 
