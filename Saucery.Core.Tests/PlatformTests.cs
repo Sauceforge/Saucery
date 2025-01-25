@@ -10,7 +10,7 @@ namespace Saucery.Core.Tests;
 [TestFixture]
 public class MerlinPlatformTests {
     private PlatformConfigurator? PlatformConfigurator { get; set; }
-    private int ValidCount;
+    private int _validCount;
 
     [OneTimeSetUp]
     public void OneTimeSetUp() {
@@ -19,7 +19,7 @@ public class MerlinPlatformTests {
 
     [SetUp]
     public void Setup() {
-        ValidCount = 0;
+        _validCount = 0;
     }
 
     [Test]
@@ -64,16 +64,46 @@ public class MerlinPlatformTests {
         ProcessBrowserVersions(bvs);
     }
 
+    [Theory]
+    [TestCaseSource(typeof(PlatformDataClass), nameof(PlatformDataClass.DesktopPlatforms))]
+    [TestCaseSource(typeof(PlatformDataClass), nameof(PlatformDataClass.EmulatedAndroidPlatforms))]
+    [TestCaseSource(typeof(PlatformDataClass), nameof(PlatformDataClass.EmulatedIOSPlatforms))]
+    [TestCaseSource(typeof(PlatformDataClass), nameof(PlatformDataClass.RealAndroidDevices))]
+    [TestCaseSource(typeof(PlatformDataClass), nameof(PlatformDataClass.RealIOSDevices))]
+    public void TestNameTest(SaucePlatform platforms) {
+        var bvs = PlatformConfigurator!.FilterAll([platforms]);
+
+        foreach(var bv in bvs) {
+            bv.SetTestName(TestContext.CurrentContext.Test.Name);
+            bv.TestName.ShouldNotBeNullOrEmpty();
+
+            if (bv.IsAMobileDevice())
+            {
+                bv.TestName.ShouldContain(bv.DeviceName);
+                bv.TestName.ShouldContain(bv.DeviceOrientation!);
+            }
+            else
+            {
+                bv.TestName.ShouldContain(bv.Os);
+                bv.TestName.ShouldContain(bv.BrowserName);
+                bv.TestName.ShouldContain(bv.Name!);
+                if(!string.IsNullOrEmpty(bv.ScreenResolution)) {
+                    bv.TestName.ShouldContain(bv.ScreenResolution);
+                }
+            }
+        }
+    }
+
     private void ProcessBrowserVersions(List<BrowserVersion> browserVersions) {
         foreach(var bv in browserVersions) {
             if(bv != null)
-                ValidCount++;
+                _validCount++;
         }
 
-        ValidCount.ShouldBeEquivalentTo(browserVersions.Count);
+        _validCount.ShouldBeEquivalentTo(browserVersions.Count);
     }
 
-    private class PlatformDataClass {
+    private static class PlatformDataClass {
         public static List<SaucePlatform> DesktopPlatforms =>
         [
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "123"),
