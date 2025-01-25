@@ -10,6 +10,15 @@ namespace Saucery.Core.Tests;
 public class SauceryTestDataTests : SauceryTestData {
     [Test]
     public void AllPlatformsTest() {
+        SetPlatforms(PlatformDataClass.DesktopPlatforms);
+
+        Items.ShouldNotBeNull();
+        Items.Count().ShouldBeEquivalentTo(34); //Due to platform expansion.
+        GetAllPlatforms().Count().ShouldBeEquivalentTo(34);
+    }
+
+    [Test]
+    public void DesktopPlatformsTest() {
         SetPlatforms(PlatformDataClass.DesktopPlatforms, PlatformFilter.Emulated);
 
         Items.ShouldNotBeNull();
