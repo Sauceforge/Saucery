@@ -46,7 +46,7 @@ public static class DojoExtensions
         }
     }
 
-)    private static PlatformBase? FindRealPlatform(this List<PlatformBase> platforms, SupportedPlatform sp) =>
+    private static PlatformBase? FindRealPlatform(this List<PlatformBase> platforms, SupportedPlatform sp) =>
         platforms.FirstOrDefault(mp =>
             mp.Name.Equals(sp.Os, StringComparison.Ordinal) &&
             mp.PlatformVersion!.Equals(sp.OsVersion?.Split(".")[0], StringComparison.Ordinal));
