@@ -97,7 +97,7 @@ jobs:
     - name: Setup dotnet
       uses: actions/setup-dotnet@v4
       with:
-        # Check for latest at link at .NET 9 download page (https://dotnet.microsoft.com/download/dotnet/8.0)
+        # Check for latest at link at .NET 9 download page (https://dotnet.microsoft.com/download/dotnet/9.0)
         dotnet-version: 9.0.x
     
     - name: Compile solution
@@ -129,7 +129,7 @@ jobs:
     - name: Setup dotnet
       uses: actions/setup-dotnet@v4
       with:
-        # Check for latest at link at .NET 9 download page (https://dotnet.microsoft.com/download/dotnet/8.0)
+        # Check for latest at link at .NET 9 download page (https://dotnet.microsoft.com/download/dotnet/9.0)
         dotnet-version: 9.0.x
     
     - name: Compile solution
@@ -161,7 +161,7 @@ jobs:
     - name: Setup dotnet
       uses: actions/setup-dotnet@v4
       with:
-        # Check for latest at link at .NET 9 download page (https://dotnet.microsoft.com/download/dotnet/8.0)
+        # Check for latest at link at .NET 9 download page (https://dotnet.microsoft.com/download/dotnet/9.0)
         dotnet-version: 9.0.x
     
     - name: Compile solution
@@ -194,7 +194,7 @@ jobs:
     - name: Setup dotnet
       uses: actions/setup-dotnet@v4
       with:
-        # Check for latest at link at .NET 9 download page (https://dotnet.microsoft.com/download/dotnet/8.0)
+        # Check for latest at link at .NET 9 download page (https://dotnet.microsoft.com/download/dotnet/9.0)
         dotnet-version: 9.0.x
     
     - name: Compile solution
@@ -226,7 +226,7 @@ jobs:
     - name: Setup dotnet
       uses: actions/setup-dotnet@v4
       with:
-        # Check for latest at link at .NET 9 download page (https://dotnet.microsoft.com/download/dotnet/8.0)
+        # Check for latest at link at .NET 9 download page (https://dotnet.microsoft.com/download/dotnet/9.0)
         dotnet-version: 9.0.x
 
     - name: Compile solution
@@ -246,7 +246,7 @@ jobs:
     - name: Setup dotnet
       uses: actions/setup-dotnet@v3
       with:
-        # Check for latest at link at .NET 9 download page (https://dotnet.microsoft.com/download/dotnet/8.0)
+        # Check for latest at link at .NET 9 download page (https://dotnet.microsoft.com/download/dotnet/9.0)
         dotnet-version: 9.0.x
 
     - name: Compile solution
@@ -266,7 +266,7 @@ jobs:
     - name: Setup dotnet
       uses: actions/setup-dotnet@v4
       with:
-        # Check for latest at link at .NET 9 download page (https://dotnet.microsoft.com/download/dotnet/8.0)
+        # Check for latest at link at .NET 9 download page (https://dotnet.microsoft.com/download/dotnet/9.0)
         dotnet-version: 9.0.x
 
     - name: Compile solution
@@ -286,7 +286,7 @@ jobs:
     - name: Setup dotnet
       uses: actions/setup-dotnet@v3
       with:
-        # Check for latest at link at .NET 9 download page (https://dotnet.microsoft.com/download/dotnet/8.0)
+        # Check for latest at link at .NET 9 download page (https://dotnet.microsoft.com/download/dotnet/9.0)
         dotnet-version: 9.0.x
 
     - name: Compile solution
@@ -311,7 +311,7 @@ jobs:
     - name: Setup dotnet
       uses: actions/setup-dotnet@v4
       with:
-        # Check for latest at link at .NET 9 download page (https://dotnet.microsoft.com/download/dotnet/8.0)
+        # Check for latest at link at .NET 9 download page (https://dotnet.microsoft.com/download/dotnet/9.0)
         dotnet-version: 9.0.x
     
     - name: Compile solution
@@ -351,7 +351,7 @@ jobs:
     - name: Setup dotnet
       uses: actions/setup-dotnet@v4
       with:
-        # Check for latest at link at .NET 9 download page (https://dotnet.microsoft.com/download/dotnet/8.0)
+        # Check for latest at link at .NET 9 download page (https://dotnet.microsoft.com/download/dotnet/9.0)
         dotnet-version: 9.0.x
     
     - name: Compile solution
@@ -387,7 +387,7 @@ jobs:
     - name: Setup dotnet
       uses: actions/setup-dotnet@v3
       with:
-        # Check for latest at link at .NET 9 download page (https://dotnet.microsoft.com/download/dotnet/8.0)
+        # Check for latest at link at .NET 9 download page (https://dotnet.microsoft.com/download/dotnet/9.0)
         dotnet-version: 9.0.x
 
     - name: Compile solution
@@ -408,7 +408,7 @@ jobs:
     - name: Setup dotnet
       uses: actions/setup-dotnet@v3
       with:
-        # Check for latest at link at .NET 9 download page (https://dotnet.microsoft.com/download/dotnet/8.0)
+        # Check for latest at link at .NET 9 download page (https://dotnet.microsoft.com/download/dotnet/9.0)
         dotnet-version: 9.0.x
 
     - name: Compile solution
