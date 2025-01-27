@@ -11,7 +11,7 @@
 	<PropertyGroup>
 		<IsPackable>true</IsPackable>
 		<PackageId>Saucery.XUnit</PackageId>
-		<PackageVersion>4.5.13</PackageVersion>
+		<PackageVersion>4.5.14</PackageVersion>
         <PackageReadmeFile>README.md</PackageReadmeFile>
 		<Authors>Andrew Gray</Authors>
 		<Company>SauceForge</Company>
@@ -49,7 +49,7 @@
 	  <None Update="testhost.runtimeconfig.json">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-    <None Include="..\README.md" Pack="true" PackagePath="\" />
+    <None Include="README.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
 
 </Project>
