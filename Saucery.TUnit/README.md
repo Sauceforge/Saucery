@@ -2,9 +2,7 @@
 
 Saucery handles all the plumbing required to integrate with SauceLabs, making writing TUnit tests a breeze, so you only need to tell Saucery *what* you want. Saucery takes care of the *how*.
 
-## Getting Started
-
-The tests specified below are provided as examples only. Your tests, of course, will be specific to your System Under Test.
+Note: The tests specified below are provided as examples only. Your tests, of course, will be specific to your System Under Test.
 
 ### Initial Setup
 
@@ -12,9 +10,7 @@ The tests specified below are provided as examples only. Your tests, of course, 
 1. If you want to run your tests locally you need to set 2 environment variables, SAUCE_USER_NAME and SAUCE_API_KEY
 1. To run your test suite from your GitHub Actions pipeline you need to set two secrets SAUCE_USER_NAME and SAUCE_API_KEY. Instructions on how to set Github Secrets are [here](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository).
 
-### TUnit
-
-<img src="/Saucery.TUnit/Images/Saucery.TUnit.png" alt="Saucery.XUnit" width="100"/>
+### Writing TUnit Tests
 
 1. In your solution create a simple class library.
 1. Add a NuGet Reference to [Saucery.TUnit](https://www.nuget.org/packages/Saucery.TUnit).

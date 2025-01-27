@@ -17,7 +17,11 @@ Saucery
 
 </div>
 
-Saucery handles all the plumbing required to integrate with SauceLabs, making writing tests a breeze. Saucery comes in multiple flavors supporting popular test frameworks.
+Saucery handles all the plumbing required to integrate with SauceLabs, making writing tests a breeze. so you only need to tell Saucery *what* you want. Saucery takes care of the *how*.
+
+Saucery comes in multiple flavors supporting popular test frameworks.
+
+Note: The tests specified below are provided as examples only. Your tests, of course, will be specific to your System Under Test.
 
 ### Packages
 | Package | Badges |
@@ -31,13 +35,6 @@ We test Saucery itself on SauceLabs!
 
 [![Build Status](https://app.saucelabs.com/buildstatus/saucefauge)](https://app.saucelabs.com/u/saucefauge)
 
-
-## Getting Started
-
-Saucery takes care of the plumbing required to talk to SauceLabs, so you only need to tell Saucery *what* you want. Saucery takes care of the *how*.
-
-Your tests, of course, will be specific to your System Under Test. The ones specified below are provided as examples only.
-
 ### Initial Setup
 
 These steps apply to all flavors:
@@ -45,7 +42,7 @@ These steps apply to all flavors:
 1. If you want to run your tests locally you need to set 2 environment variables, SAUCE_USER_NAME and SAUCE_API_KEY
 1. To run your test suite from your GitHub Actions pipeline you need to set two secrets SAUCE_USER_NAME and SAUCE_API_KEY. Instructions on how to set Github Secrets are [here](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository).
 
-### NUnit
+### Writing NUnit Tests
 
 <img src="/Saucery/Images/Saucery.NUnit.png" alt="Saucery" width="100"/>
 
@@ -176,7 +173,7 @@ public class RequestedPlatformData : SauceryTestData
 
 The `List<SaucePlatform>` is what you will specify. The rest of the class is mandatory. Check out `SauceryConstants` for all the platform, browser and screenres enums.
 
-### XUnit
+### Writing XUnit Tests
 
 <img src="/Saucery.XUnit/Images/Saucery.XUnit.png" alt="Saucery.XUnit" width="100"/>
 
@@ -296,7 +293,7 @@ public class RequestedPlatformData : SauceryTestData
 
 The `List<SaucePlatform>` is what you will specify. The rest of the class is mandatory. Check out `SauceryConstants` for all the platform, browser and screenres enums.
 
-### TUnit
+### Writing TUnit Tests
 
 <img src="/Saucery.TUnit/Images/Saucery.TUnit.png" alt="Saucery.XUnit" width="100"/>
 
