@@ -1,4 +1,4 @@
-# Saucery
+# Saucery.XUnit
 
 Saucery handles all the plumbing required to integrate with SauceLabs, making writing XUnit tests a breeze, so you only need to tell Saucery *what* you want. Saucery takes care of the *how*.
 

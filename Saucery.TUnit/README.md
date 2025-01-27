@@ -1,4 +1,4 @@
-# Saucery
+# Saucery.TUnit
 
 Saucery handles all the plumbing required to integrate with SauceLabs, making writing TUnit tests a breeze, so you only need to tell Saucery *what* you want. Saucery takes care of the *how*.
 
