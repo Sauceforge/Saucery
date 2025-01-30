@@ -13,7 +13,7 @@ public class PageObjectBase(string url, string name, string title)
     {
         driver.Navigate().GoToUrl(url);
 
-        WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(1800)); 
+        WebDriverWait wait = new(driver, TimeSpan.FromSeconds(1800)); 
         wait.Until(ExpectedConditions.TitleIs(title));
         driver.Title.ShouldBe(title);
     }
