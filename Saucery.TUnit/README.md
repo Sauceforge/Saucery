@@ -35,6 +35,7 @@ Your Project file should look something like this:
 ```
 
 #### IDE Setup
+
 Follow the instructions [here](https://thomhurst.github.io/TUnit/docs/tutorial-basics/running-your-tests#visual-studio) to set up your IDE.
 
 The ExternalMerlin.TUnit dogfood integration tests use the following template:
@@ -138,6 +139,7 @@ public class RequestedPlatformData : SauceryTestData
 The `List<SaucePlatform>` is what you will specify. The rest of the class is mandatory. Check out `SauceryConstants` for all the platform, browser and screenres enums.
 
 ## Platform Range Expansion
+
 Platform range expansion is a feature unique to Saucery. Say you wanted to test on a range of browser versions but you didn't want to specify each individually. That's fine. Saucery supports specifying ranges.
 
 ```
@@ -147,4 +149,5 @@ Platform range expansion is a feature unique to Saucery. Say you wanted to test 
 This will test on Windows 11 Chrome all available versions from 100 to 119 inclusive.
 
 ## Real Devices
+
 Yes, Saucery supports Real Devices!

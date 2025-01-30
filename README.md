@@ -25,6 +25,7 @@ Saucery comes in multiple flavors supporting popular test frameworks.
 Note: The tests specified below are provided as examples only. Your tests, of course, will be specific to your System Under Test.
 
 ### Packages
+
 | Package | Badges |
 | --- | --- |
 | Saucery | [![nuget](https://img.shields.io/nuget/v/Saucery.svg)](https://www.nuget.org/packages/Saucery/)  [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery)](https://www.nuget.org/packages/Saucery/) |
@@ -32,6 +33,7 @@ Note: The tests specified below are provided as examples only. Your tests, of co
 | Saucery.TUnit | [![nuget](https://img.shields.io/nuget/v/Saucery.TUnit.svg)](https://www.nuget.org/packages/Saucery.TUnit/)  [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery.TUnit)](https://www.nuget.org/packages/Saucery.TUnit/) |
 
 ### Dog food Status
+
 We test Saucery itself on SauceLabs!
 
 [![Build Status](https://app.saucelabs.com/buildstatus/saucefauge)](https://app.saucelabs.com/u/saucefauge)
@@ -39,7 +41,8 @@ We test Saucery itself on SauceLabs!
 ### Initial Setup
 
 These steps apply to all flavors:
-1. You'll need a SauceLabs account. You can get a free trial account [here](https://saucelabs.com/sign-up).
+
+1. 1. You'll need a SauceLabs account. You can get a free trial account [here](https://saucelabs.com/sign-up).
 1. If you want to run your tests locally you need to set 2 environment variables, SAUCE_USER_NAME and SAUCE_API_KEY
 1. To run your test suite from your GitHub Actions pipeline you need to set two secrets SAUCE_USER_NAME and SAUCE_API_KEY. Instructions on how to set Github Secrets are [here](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository).
 
@@ -192,7 +195,7 @@ Your Project file should look something like this:
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
-	<IsTestProject>true</IsTestProject>
+    <IsTestProject>true</IsTestProject>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
   </PropertyGroup>
@@ -202,7 +205,7 @@ Your Project file should look something like this:
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-	<PackageReference Include="Saucery.XUnit" Version="4.5.7" />
+    <PackageReference Include="Saucery.XUnit" Version="4.5.7" />
   </ItemGroup>
 
 </Project>
@@ -321,6 +324,7 @@ Your Project file should look something like this:
 ```
 
 #### IDE Setup
+
 Follow the instructions [here](https://thomhurst.github.io/TUnit/docs/tutorial-basics/running-your-tests#visual-studio) to set up your IDE.
 
 The ExternalMerlin.TUnit dogfood integration tests use the following template:
@@ -424,6 +428,7 @@ public class RequestedPlatformData : SauceryTestData
 The `List<SaucePlatform>` is what you will specify. The rest of the class is mandatory. Check out `SauceryConstants` for all the platform, browser and screenres enums.
 
 ## Platform Range Expansion
+
 Platform range expansion is a feature unique to Saucery. Say you wanted to test on a range of browser versions but you didn't want to specify each individually. That's fine. Saucery supports specifying ranges.
 
 ```
@@ -433,12 +438,15 @@ Platform range expansion is a feature unique to Saucery. Say you wanted to test 
 This will test on Windows 11 Chrome all available versions from 100 to 119 inclusive.
 
 ## Real Devices
+
 Yes, Saucery supports Real Devices!
 
 ### Trends
+
 [Nuget downloads](https://nugettrends.com/packages?months=24&ids=Saucery&ids=Saucery.XUnit&ids=Saucery.TUnit)  
 [GitHub stars](https://star-history.com/#sauceforge/Saucery)
 
 ## Contact
+
 Author: Andrew Gray  
 Twitter: [@agrayz](https://twitter.com/agrayz)
