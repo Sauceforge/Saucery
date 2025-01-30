@@ -39,7 +39,7 @@ public class RealAndroidFactoryVersionTests
         tuple.opts.ShouldNotBeNull();
     }
 }
-public class RealAndroidDataClass
+public static class RealAndroidDataClass
 {
     public static IEnumerable SupportedTestCases
     {

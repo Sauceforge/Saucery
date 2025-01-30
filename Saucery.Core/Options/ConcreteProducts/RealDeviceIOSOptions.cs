@@ -21,13 +21,8 @@ internal class RealDeviceIOSOptions : BaseOptions {
             PlatformVersion = browserVersion.PlatformNameForOption
         };
 
-        //SauceOptions.Add("webviewConnectTimeout", SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
         SauceOptions.Add(SauceryConstants.SAUCE_APPIUM_VERSION_CAPABILITY, "latest");
 
-        //if (!string.IsNullOrEmpty(browserVersion.DeviceOrientation))
-        //{
-        //    SauceOptions.Add(SauceryConstants.SAUCE_DEVICE_ORIENTATION_CAPABILITY, browserVersion.DeviceOrientation);
-        //}
         options.AddAdditionalAppiumOption("webviewConnectTimeout", 50000);
         options.AddAdditionalAppiumOption("safariLogAllCommunication", true);
         options.AddAdditionalAppiumOption(SauceryConstants.SAUCE_OPTIONS_CAPABILITY, SauceOptions);

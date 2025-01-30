@@ -40,7 +40,7 @@ public class AndroidFactoryVersionTests
         opts.ShouldNotBeNull();
     }
 }
-public class AndroidDataClass
+public static class AndroidDataClass
 {
     public static IEnumerable SupportedTestCases
     {

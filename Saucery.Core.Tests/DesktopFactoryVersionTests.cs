@@ -38,7 +38,7 @@ public class DesktopFactoryVersionTests
     }
 }
 
-public class DesktopDataClass
+public static class DesktopDataClass
 {
     public static IEnumerable SupportedTestCases
     {
