@@ -3,7 +3,7 @@ using Saucery.Core.RestAPI;
 
 namespace Saucery.Core.Dojo.Platforms;
 
-public class PlatformFactory
+public static class PlatformFactory
 {
     public static PlatformBase? CreatePlatform(SupportedPlatform sp) => 
         sp.IsAndroidPlatform()

@@ -14,19 +14,19 @@ namespace Saucery.TUnit;
 
 public class BaseFixture
 {
-    public WebDriver? Driver;
+    protected WebDriver? Driver;
     
     internal readonly SauceLabsStatusNotifier SauceLabsStatusNotifier = new();
     
-    private readonly SauceLabsFlowController SauceLabsFlowController = new();
-    
-    public OptionFactory? OptionFactory;
+    private readonly SauceLabsFlowController _sauceLabsFlowController = new();
 
-    private readonly AppiumClientConfig AppiumClientConfig = new() { DirectConnect = true };
+    protected OptionFactory? OptionFactory;
 
-    public bool InitialiseDriver((DriverOptions opts, BrowserVersion browserVersion) tuple, int waitSecs)
+    private readonly AppiumClientConfig _appiumClientConfig = new() { DirectConnect = true };
+
+    protected bool InitialiseDriver((DriverOptions opts, BrowserVersion browserVersion) tuple, int waitSecs)
     {
-        SauceLabsFlowController.ControlFlow(tuple.browserVersion.IsARealDevice());
+        _sauceLabsFlowController.ControlFlow(tuple.browserVersion.IsARealDevice());
         try
         {
             Driver = OptionFactory!.IsApple()
@@ -34,13 +34,13 @@ public class BaseFixture
                     new Uri(SauceryConstants.SAUCELABS_HUB), 
                     tuple.opts, 
                     TimeSpan.FromSeconds(waitSecs),
-                    AppiumClientConfig)
+                    _appiumClientConfig)
                 : OptionFactory!.IsAndroid()
                     ? new AndroidDriver(
                         new Uri(SauceryConstants.SAUCELABS_HUB), 
                         tuple.opts, 
                         TimeSpan.FromSeconds(waitSecs),
-                        AppiumClientConfig)
+                        _appiumClientConfig)
                     : new SauceryRemoteWebDriver(
                         new Uri(SauceryConstants.SAUCELABS_HUB), 
                         tuple.opts, 
@@ -55,7 +55,7 @@ public class BaseFixture
         }
     }
 
-    public WebDriver SauceryDriver() => 
+    protected WebDriver SauceryDriver() => 
         Driver!;
 }
 /*

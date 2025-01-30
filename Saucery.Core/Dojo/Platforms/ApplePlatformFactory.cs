@@ -4,7 +4,7 @@ using Saucery.Core.RestAPI;
 
 namespace Saucery.Core.Dojo.Platforms;
 
-public class ApplePlatformFactory
+public static class ApplePlatformFactory
 {
     public static PlatformBase? CreatePlatform(SupportedPlatform sp) => sp.short_version switch
     {

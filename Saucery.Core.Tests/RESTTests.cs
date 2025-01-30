@@ -25,7 +25,6 @@ public class RestTests
     [Test]
     public void FlowControlTest() {
         var flowController = new SauceLabsFlowController();
-        //Console.WriteLine(@"RESTTests: About to call ControlFlow()");
         flowController.ControlFlow(false);
     }
 
@@ -33,7 +32,6 @@ public class RestTests
     public void FlowControlTestRealDevice()
     {
         var flowController = new SauceLabsFlowController();
-        //Console.WriteLine(@"RESTTests: About to call ControlFlow()");
         flowController.ControlFlow(true);
     }
 
@@ -150,17 +148,9 @@ public class RestTests
     [GenericTestCase(typeof(Mac11Platform), TestName = "Mac11BrowserCountTest")]
     [GenericTestCase(typeof(Mac12Platform), TestName = "Mac12BrowserCountTest")]
     [GenericTestCase(typeof(Mac13Platform), TestName = "Mac13BrowserCountTest")]
-    //[Ignore("Account has no minutes")]
     public void BrowserCountTest<T>() where T : PlatformBase
     {
-        //var windows10platforms = platforms.FindAll(w => w.os.Equals(SauceryConstants.PLATFORM_WINDOWS_10));
-        //var windows10platformbrowsers = windows10platforms.GroupBy(w => w.api_name);
-
         var availablePlatforms = _configurator!.AvailablePlatforms;
-                
-        //var browsers = availablePlatforms.SelectMany(i => i.Browsers).Distinct().ToList();
-        //var iosBrowsers = browsers.FindAll(x => x.DeviceName.Equals("iPhone XS Max Simulator") || x.DeviceName.Equals("iPhone 5s Simulator")).OrderBy(o=>o.DeviceName).ThenBy(o=>o.PlatformVersion);
-
         var platform = availablePlatforms.GetPlatform<T>();
 
         //Browser Count Checks

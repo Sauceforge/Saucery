@@ -10,20 +10,17 @@ namespace Saucery.TUnit;
 public class SauceryTBase : BaseFixture
 {
     private string? _testName;
-    private BrowserVersion? _browserVersion;
     
     protected bool InitialiseDriver(BrowserVersion browserVersion)
     {
-        _browserVersion = browserVersion;
         lock (browserVersion)
         {
-            _browserVersion.SetTestName(GetTestName());
-            _testName = _browserVersion.TestName;
+            browserVersion.SetTestName(GetTestName());
+            _testName = browserVersion.TestName;
         }
 
-        //DebugMessages.PrintPlatformDetails(platform);
         // set up the desired options
-        OptionFactory = new OptionFactory(_browserVersion);
+        OptionFactory = new OptionFactory(browserVersion);
         var tuple = OptionFactory.CreateOptions(_testName!);
 
         var driverInitialised = InitialiseDriver(tuple!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);

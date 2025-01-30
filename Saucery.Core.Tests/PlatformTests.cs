@@ -96,8 +96,10 @@ public class MerlinPlatformTests {
 
     private void ProcessBrowserVersions(List<BrowserVersion> browserVersions) {
         foreach(var bv in browserVersions) {
-            if(bv != null)
+            if (bv != null)
+            {
                 _validCount++;
+            }
         }
 
         _validCount.ShouldBeEquivalentTo(browserVersions.Count);

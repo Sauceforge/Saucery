@@ -17,19 +17,19 @@ public class TestBuilder {
 
     public static TestSuite MakeFixture(Type type) => new DefaultSuiteBuilder().BuildFrom(new TypeWrapper(type));
 
-    public static TestSuite MakeFixture(object fixture) {
+    private static TestSuite MakeFixture(object fixture) {
         var suite = MakeFixture(fixture.GetType());
         suite.Fixture = fixture;
         return suite;
     }
 
-    public static TestSuite MakeParameterizedMethodSuite(Type type, string methodName) {
+    private static TestSuite MakeParameterizedMethodSuite(Type type, string methodName) {
         var suite = MakeTestFromMethod(type, methodName) as TestSuite;
         Assert.That(suite != null, "Unable to create parameterized suite - most likely there is no data provided");
         return suite!;
     }
 
-    public static TestMethod MakeTestCase(Type type, string methodName) {
+    private static TestMethod MakeTestCase(Type type, string methodName) {
         var test = MakeTestFromMethod(type, methodName) as TestMethod;
         Assert.That(test != null, "Unable to create TestMethod from {0}", methodName);
         return test!;
@@ -37,7 +37,7 @@ public class TestBuilder {
 
     // Will return either a ParameterizedMethodSuite or an NUnitTestMethod
     // depending on whether the method takes arguments or not
-    internal static Test MakeTestFromMethod(Type type, string methodName) {
+    private static Test MakeTestFromMethod(Type type, string methodName) {
         var method = type.GetMethod(methodName, BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
         if (method == null) {
@@ -55,7 +55,7 @@ public class TestBuilder {
 
     public static WorkItem CreateWorkItem(Type type, string methodName) => CreateWorkItem(MakeTestFromMethod(type, methodName));
 
-    public static WorkItem CreateWorkItem(Test test) {
+    private static WorkItem CreateWorkItem(Test test) {
         var context = new TestExecutionContext
         {
             Dispatcher = new SuperSimpleDispatcher()
@@ -64,7 +64,7 @@ public class TestBuilder {
         return CreateWorkItem(test, context);
     }
 
-    public static WorkItem CreateWorkItem(Test test, object testObject) {
+    private static WorkItem CreateWorkItem(Test test, object testObject) {
         var context = new TestExecutionContext
         {
             TestObject = testObject,
@@ -74,7 +74,7 @@ public class TestBuilder {
         return CreateWorkItem(test, context);
     }
 
-    public static WorkItem CreateWorkItem(Test test, TestExecutionContext context) {
+    private static WorkItem CreateWorkItem(Test test, TestExecutionContext context) {
         var work = WorkItemBuilder.CreateWorkItem(test, TestFilter.Empty, true);
         work?.InitializeContext(context);
 
@@ -129,11 +129,11 @@ public class TestBuilder {
         return RunTest(testMethod);
     }
 
-    public static ITestResult RunTest(Test test) => RunTest(test, null);
+    private static ITestResult RunTest(Test test) => RunTest(test, null);
 
-    public static ITestResult RunTest(Test test, object? testObject) => ExecuteWorkItem(CreateWorkItem(test, testObject!));
+    private static ITestResult RunTest(Test test, object? testObject) => ExecuteWorkItem(CreateWorkItem(test, testObject!));
 
-    public static ITestResult ExecuteWorkItem(WorkItem work)
+    private static ITestResult ExecuteWorkItem(WorkItem work)
     {
         work.Execute();
 
@@ -157,7 +157,7 @@ public class TestBuilder {
     /// </summary>
     class SuperSimpleDispatcher : IWorkItemDispatcher
     {
-        public int LevelOfParallelism { get { return 0; } }
+        public int LevelOfParallelism => 0;
 
         public void Start(WorkItem topLevelWorkItem) => topLevelWorkItem.Execute();
 

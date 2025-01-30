@@ -32,11 +32,15 @@ internal static class Extensions
             while (skip-- > 0)
             {
                 if (!iterator.MoveNext())
+                {
                     yield break;
+                }
             }
 
             while (iterator.MoveNext())
+            {
                 yield return iterator.Current;
+            }
         }
     }
 }

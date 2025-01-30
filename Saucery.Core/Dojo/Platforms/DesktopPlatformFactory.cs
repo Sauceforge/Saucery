@@ -6,7 +6,7 @@ using Saucery.Core.Util;
 
 namespace Saucery.Core.Dojo.Platforms;
 
-public class DesktopPlatformFactory {
+public static class DesktopPlatformFactory {
     public static PlatformBase? CreatePlatform(SupportedPlatform sp) => sp.Os switch {
         SauceryConstants.PLATFORM_LINUX => new LinuxPlatformCreator(sp).Create(),
         SauceryConstants.PLATFORM_WINDOWS_11 => new Windows11PlatformCreator(sp).Create(),

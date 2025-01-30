@@ -17,7 +17,7 @@ public class IOSFactoryVersionTests
     [OneTimeSetUp]
     public void OneTimeSetUp()
     {
-        PlatformConfigurator = new(PlatformFilter.All);
+        PlatformConfigurator = new PlatformConfigurator(PlatformFilter.All);
     }
 
     [Test, TestCaseSource(typeof(IOSDataClass), nameof(IOSDataClass.NotSupportedTestCases))]
@@ -40,7 +40,7 @@ public class IOSFactoryVersionTests
         tuple.opts.ShouldNotBeNull();
     }
 }
-public class IOSDataClass
+internal static class IOSDataClass
 {
     public static IEnumerable SupportedTestCases
     {
