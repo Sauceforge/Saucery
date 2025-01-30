@@ -49,20 +49,4 @@ public partial class OpenSauceTests(BrowserVersion browserVersion) : SauceryBase
     private static partial Regex PlayWrightRegEx();
     [GeneratedRegex(".*intro")]
     private static partial Regex IntroRegex();
-
-    //Needs: Meziantou.Xunit.ParallelTestFramework NuGet package
-    //private override BrowserNewContextOptions ContextOptions()
-    //{
-    //    return new BrowserNewContextOptions()
-    //    {
-    //        ColorScheme = ColorScheme.Dark,
-    //        //ViewportSize = new()
-    //        //{
-    //        //    Width = 1920,
-    //        //    Height = 1080
-    //        //},
-    //        //BaseURL = "https://github.com",
-
-    //    };
-    //}
 }
