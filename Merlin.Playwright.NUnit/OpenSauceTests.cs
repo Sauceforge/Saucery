@@ -6,16 +6,9 @@ using System.Text.RegularExpressions;
 namespace Merlin.Playwright.NUnit;
 
 [Parallelizable(ParallelScope.Self)]
-//[Parallelizable(ParallelScope.All)]
 [TestFixtureSource(typeof(RequestedPlatformData))]
 public partial class OpenSauceTests(BrowserVersion browserVersion) : SauceryBase(browserVersion)
 {
-
-    //public OpenSauceTests()
-    //{
-
-    //}
-
     [Test]
     public async Task HomepageHasPlaywrightInTitleAndGetStartedLinkLinkingToTheIntroPage()
     {

@@ -13,18 +13,12 @@ public abstract class RestBase {
     internal static readonly string UserName = Enviro.SauceUserName!;
     internal static readonly string AccessKey = Enviro.SauceApiKey!;
     internal RestClient? Client;
-    private static RestRequest? _request;
-    private static RestAPILimitsChecker? _limitChecker;
+    private readonly RestAPILimitsChecker? _limitChecker = new();
 
     internal static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true
     };
-
-    protected RestBase() 
-    {
-        _limitChecker = new RestAPILimitsChecker();
-    }
 
     protected string? GetJsonResponse(string requestProforma)
     {
@@ -34,13 +28,15 @@ public abstract class RestBase {
         return response.Content;
     }
 
-    protected static RestRequest BuildRequest(string request, Method method) {
+    protected static RestRequest BuildRequest(string request, Method method)
+    {
         request = string.Format(request, UserName);
-        _request = new RestRequest(request, method);
-        _request.AddHeader("Content-Type", SauceryConstants.JSON_CONTENT_TYPE);
-        _request.RequestFormat = DataFormat.Json;
         
-        return _request;
+        RestRequest restRequest = new RestRequest(request, method);
+        restRequest.AddHeader("Content-Type", SauceryConstants.JSON_CONTENT_TYPE);
+        restRequest.RequestFormat = DataFormat.Json;
+        
+        return restRequest;
     }
     
     protected void EnsureExecution(RestRequest request)

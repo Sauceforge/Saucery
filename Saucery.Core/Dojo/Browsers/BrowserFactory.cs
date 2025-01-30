@@ -8,7 +8,7 @@ using Saucery.Core.Util;
 
 namespace Saucery.Core.Dojo.Browsers;
 
-public class BrowserFactory
+public static class BrowserFactory
 {
     public static BrowserBase? CreateBrowser(SupportedPlatform sp, List<string> screenResolutions) => sp.IsAndroidPlatform()
             ? new AndroidBrowserCreator(sp).Create("Android", null!)

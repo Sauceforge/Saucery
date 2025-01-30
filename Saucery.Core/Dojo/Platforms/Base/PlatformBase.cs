@@ -26,8 +26,9 @@ public abstract class PlatformBase
         SupportedBackendVersions = sp.supported_backend_versions!;
         DeprecatedBackendVersions = sp.deprecated_backend_versions!;
 
-        if(sp.automation_backend == null)
+        if(sp.automation_backend == null) {
             PlatformVersion = sp.OsVersion?.Split(".")[0];
+        }
         else {
             if(sp.IsMobilePlatform()) {
                 PlatformVersion = sp.short_version;

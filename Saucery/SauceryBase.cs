@@ -14,7 +14,7 @@ using Saucery.Core.Util;
 
 namespace Saucery;
 
-public class SauceryBase()
+public class SauceryBase
 {
     private string? _testName;
     protected WebDriver? Driver;
@@ -24,7 +24,7 @@ public class SauceryBase()
     private OptionFactory? _optionFactory;
     private readonly AppiumClientConfig _appiumClientConfig = new() { DirectConnect = true };
 
-    protected SauceryBase(BrowserVersion browserVersion) : this() => 
+    protected SauceryBase(BrowserVersion browserVersion) => 
         _browserVersion = browserVersion;
 
     [SetUp]
@@ -36,7 +36,6 @@ public class SauceryBase()
             _testName = _browserVersion?.TestName;
         }
 
-        //DebugMessages.PrintPlatformDetails(platform);
         // set up the desired options
         _optionFactory = new OptionFactory(_browserVersion!);
         var tuple = _optionFactory.CreateOptions(_testName!);
@@ -110,8 +109,3 @@ public class SauceryBase()
 * Date: 12th July 2014
 * 
 */
-
-//var isPassed = TestContext.CurrentContext.Result.Outcome.Status
-//                           == TestStatus.Passed;
-//            var script = "sauce:job-result=" + (isPassed ? "passed" : "failed");
-//            ((IJavaScriptExecutor) driver).ExecuteScript(script);

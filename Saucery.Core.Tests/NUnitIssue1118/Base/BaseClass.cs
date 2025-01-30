@@ -16,10 +16,12 @@ public class BaseClass
     [SetUp]
     public void Setup()
     {
+        //Testing purposes only
     }
 
     [TearDown]
     public void Cleanup()
     {
+        //Testing purposes only
     }
 }

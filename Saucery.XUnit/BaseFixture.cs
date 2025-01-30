@@ -21,15 +21,15 @@ public class BaseFixture : IDisposable
     
     internal readonly SauceLabsStatusNotifier SauceLabsStatusNotifier = new();
     
-    private readonly SauceLabsFlowController SauceLabsFlowController = new();
-    
+    private readonly SauceLabsFlowController _sauceLabsFlowController = new();
+
     public OptionFactory? OptionFactory;
 
-    private readonly AppiumClientConfig AppiumClientConfig = new() { DirectConnect = true };
+    private readonly AppiumClientConfig _appiumClientConfig = new() { DirectConnect = true };
 
     public bool InitialiseDriver((DriverOptions opts, BrowserVersion browserVersion) tuple, int waitSecs)
     {
-        SauceLabsFlowController.ControlFlow(tuple.browserVersion.IsARealDevice());
+        _sauceLabsFlowController.ControlFlow(tuple.browserVersion.IsARealDevice());
         try
         {
             Driver = OptionFactory!.IsApple()
@@ -37,13 +37,13 @@ public class BaseFixture : IDisposable
                     new Uri(SauceryConstants.SAUCELABS_HUB), 
                     tuple.opts, 
                     TimeSpan.FromSeconds(waitSecs),
-                    AppiumClientConfig)
+                    _appiumClientConfig)
                 : OptionFactory!.IsAndroid()
                     ? new AndroidDriver(
                         new Uri(SauceryConstants.SAUCELABS_HUB), 
                         tuple.opts, 
                         TimeSpan.FromSeconds(waitSecs),
-                        AppiumClientConfig)
+                        _appiumClientConfig)
                     : new SauceryRemoteWebDriver(
                         new Uri(SauceryConstants.SAUCELABS_HUB), 
                         tuple.opts, 

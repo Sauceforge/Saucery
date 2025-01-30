@@ -1,6 +1,6 @@
 ﻿namespace Saucery.Core.OnDemand;
 
-public class RangeClassifer
+public static class RangeClassifer
 {
     internal static PlatformRange Classify(string[] requestedVersions)
     {

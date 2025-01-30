@@ -42,7 +42,6 @@ public class SauceryBase : PageTest
             _testName = _browserVersion.TestName!;
         }
 
-        //DebugMessages.PrintPlatformDetails(platform);
         // set up the desired options
         var factory = new OptionFactory(_browserVersion);
         var tuple = factory.CreateOptions(_testName);

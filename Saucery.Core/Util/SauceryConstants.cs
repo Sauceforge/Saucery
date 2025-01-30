@@ -1,6 +1,6 @@
 ﻿namespace Saucery.Core.Util;
 
-public class SauceryConstants {
+public static class SauceryConstants {
     //ACTIVATION DETAILS
     internal const string MY_USERNAME = "saucefauge";
     public static readonly string MY_USERNAME_LOWER = MY_USERNAME.ToLower();
@@ -29,10 +29,9 @@ public class SauceryConstants {
     internal const string SOLUTION_FILE_PROJECT_LINE = "Project(";
 
     //TEST URL
-    //public const string SAUCELABS_HUB = "http://ondemand.saucelabs.com:80/wd/hub";
     public const string SAUCELABS_HUB = "https://ondemand.us-west-1.saucelabs.com:443/wd/hub";
     
-    public const int MISSING_CHROMIUM_VERSION = 82;
+    public static readonly int MISSING_CHROMIUM_VERSION = 82;
 
     //CAPABILITIES
     internal const string SCREEN_RESOLUTION_CAPABILITY = "screenResolution";
@@ -47,12 +46,10 @@ public class SauceryConstants {
     internal const string SAUCE_BROWSER_NAME_CAPABILITY = "browserName";
     internal const string SAUCE_PLATFORM_CAPABILITY = "platform";
     internal const string SAUCE_PLATFORM_NAME_CAPABILITY = "platformName";
-    //internal const string SAUCE_PLATFORM_VERSION_CAPABILITY = "platformVersion";
     internal const string SAUCE_PLATFORM_VERSION_CAPABILITY = "PlatformVersion";
     internal const string SAUCE_APPIUM_PLATFORM_VERSION_CAPABILITY = "platformVersion";
     internal const string SAUCE_VERSION_CAPABILITY = "version";
     internal const string SAUCE_DEVICE_CAPABILITY = "device";
-    //internal const string SAUCE_DEVICE_NAME_CAPABILITY = "deviceName";
     internal const string SAUCE_DEVICE_NAME_CAPABILITY = "DeviceName";
     internal const string SAUCE_APPIUM_DEVICE_NAME_CAPABILITY = "deviceName";
     internal const string SAUCE_DEVICE_ORIENTATION_CAPABILITY = "deviceOrientation";
@@ -61,8 +58,8 @@ public class SauceryConstants {
     internal const string SAUCE_OPTIONS_CAPABILITY = "sauce:options";
 
     //SAUCE ENVIRONMENT VARIABLES
-    public const string SAUCE_USER_NAME = "SAUCE_USER_NAME";
-    public const string SAUCE_API_KEY = "SAUCE_API_KEY";
+    public static readonly string SAUCE_USER_NAME = "SAUCE_USER_NAME";
+    public static readonly string SAUCE_API_KEY = "SAUCE_API_KEY";
     internal const string SAUCE_ONDEMAND_BROWSERS = "SAUCE_ONDEMAND_BROWSERS";
     internal const string SAUCE_NATIVE_APP = "SAUCE_NATIVE_APP";
     internal const string JENKINS_BUILD_NUMBER = "JENKINS_BUILD_NUMBER";
@@ -118,7 +115,7 @@ public class SauceryConstants {
     internal const string PASSED = "passed";
     internal const string FAILED = "failed";
     internal const string NULL_STRING = "null";
-    public const string DOT = ".";
+    public static readonly string DOT = ".";
     internal const string SPACE = " ";
     internal const string TWO_SPACES = "  ";
     internal const string ASTERIX = "*";
@@ -135,7 +132,6 @@ public class SauceryConstants {
     internal const string YEAR_FORMAT = "yyyy";
 
     //NOTIFICATION MESSAGES
-    //internal const string CONSOLE_RUNNER = "{0} Console Runner {1}";
     internal const string CONSOLE_RUNNER = "{0} Console Runner";
     internal const string COPYRIGHT_NOTICE = "Copyright (C) 2008-{0} Andrew Gray";
     internal const string TESTING_ON = "Testing on {0} {1}";
@@ -193,43 +189,43 @@ public class SauceryConstants {
     public const string BROWSER_SAFARI = "safari";
 
     //BROWSER VERSIONS
-    public const string BROWSER_VERSION_DEV = "dev";
-    public const string BROWSER_VERSION_BETA = "beta";
-    public const string BROWSER_VERSION_LATEST = "latest";
-    public const string BROWSER_VERSION_LATEST_MINUS1 = "latest-1";
-    public const string PLATFORM_SEPARATOR = "->";
-    internal static List<string> BROWSER_VERSIONS_LATEST = [BROWSER_VERSION_LATEST_MINUS1, BROWSER_VERSION_LATEST];
-    internal static List<string> BROWSER_VERSIONS_DEVS = [BROWSER_VERSION_BETA, BROWSER_VERSION_DEV];
-    internal static List<string> BROWSER_VERSIONS_NONNUMERIC = [.. BROWSER_VERSIONS_LATEST, .. BROWSER_VERSIONS_DEVS];
+    public static readonly string BROWSER_VERSION_DEV = "dev";
+    public static readonly string BROWSER_VERSION_BETA = "beta";
+    public static readonly string BROWSER_VERSION_LATEST = "latest";
+    public static readonly string BROWSER_VERSION_LATEST_MINUS1 = "latest-1";
+    public static readonly string PLATFORM_SEPARATOR = "->";
+    public static readonly List<string> BROWSER_VERSIONS_LATEST = [BROWSER_VERSION_LATEST_MINUS1, BROWSER_VERSION_LATEST];
+    public static readonly List<string> BROWSER_VERSIONS_DEVS = [BROWSER_VERSION_BETA, BROWSER_VERSION_DEV];
+    internal static readonly List<string> BROWSER_VERSIONS_NONNUMERIC = [.. BROWSER_VERSIONS_LATEST, .. BROWSER_VERSIONS_DEVS];
 
     //SCREEN RESOLUTIONS
-    public const string SCREENRES_800_600 = "800x600";
-    public const string SCREENRES_1024_768 = "1024x768";
-    public const string SCREENRES_1152_720 = "1152x720";
-    public const string SCREENRES_1152_864 = "1152x864";
-    public const string SCREENRES_1152_900 = "1152x900";
-    public const string SCREENRES_1280_720 = "1280x720";
-    public const string SCREENRES_1280_768 = "1280x768";
-    public const string SCREENRES_1280_800 = "1280x800";
-    public const string SCREENRES_1280_960 = "1280x960";
-    public const string SCREENRES_1280_1024 = "1280x1024";
-    public const string SCREENRES_1376_1032 = "1376x1032";
-    public const string SCREENRES_1400_1050 = "1400x1050";
-    public const string SCREENRES_1440_900 = "1440x900";
-    public const string SCREENRES_1600_900 = "1600x900";
-    public const string SCREENRES_1600_1200 = "1600x1200";
-    public const string SCREENRES_1680_1050 = "1680x1050";
-    public const string SCREENRES_1920_1080 = "1920x1080";
-    public const string SCREENRES_1920_1200 = "1920x1200";
-    public const string SCREENRES_1920_1440 = "1920x1440";
-    public const string SCREENRES_2048_1152 = "2048x1152";
-    public const string SCREENRES_2048_1536 = "2048x1536";
-    public const string SCREENRES_2360_1770 = "2360x1770";
-    public const string SCREENRES_2560_1600 = "2560x1600";
+    public static readonly string SCREENRES_800_600 = "800x600";
+    public static readonly string SCREENRES_1024_768 = "1024x768";
+    public static readonly string SCREENRES_1152_720 = "1152x720";
+    public static readonly string SCREENRES_1152_864 = "1152x864";
+    public static readonly string SCREENRES_1152_900 = "1152x900";
+    public static readonly string SCREENRES_1280_720 = "1280x720";
+    public static readonly string SCREENRES_1280_768 = "1280x768";
+    public static readonly string SCREENRES_1280_800 = "1280x800";
+    public static readonly string SCREENRES_1280_960 = "1280x960";
+    public static readonly string SCREENRES_1280_1024 = "1280x1024";
+    public static readonly string SCREENRES_1376_1032 = "1376x1032";
+    public static readonly string SCREENRES_1400_1050 = "1400x1050";
+    public static readonly string SCREENRES_1440_900 = "1440x900";
+    public static readonly string SCREENRES_1600_900 = "1600x900";
+    public static readonly string SCREENRES_1600_1200 = "1600x1200";
+    public static readonly string SCREENRES_1680_1050 = "1680x1050";
+    public static readonly string SCREENRES_1920_1080 = "1920x1080";
+    public static readonly string SCREENRES_1920_1200 = "1920x1200";
+    public static readonly string SCREENRES_1920_1440 = "1920x1440";
+    public static readonly string SCREENRES_2048_1152 = "2048x1152";
+    public static readonly string SCREENRES_2048_1536 = "2048x1536";
+    public static readonly string SCREENRES_2360_1770 = "2360x1770";
+    public static readonly string SCREENRES_2560_1600 = "2560x1600";
 
     //DEVICE ORIENTATIONS
-    public const string DEVICE_ORIENTATION_PORTRAIT = "portrait";
-    public const string DEVICE_ORIENTATION_LANDSCAPE = "landscape";
+    public static readonly string DEVICE_ORIENTATION_PORTRAIT = "portrait";
+    public static readonly string DEVICE_ORIENTATION_LANDSCAPE = "landscape";
 }
 /*
 * Copyright Andrew Gray, SauceForge

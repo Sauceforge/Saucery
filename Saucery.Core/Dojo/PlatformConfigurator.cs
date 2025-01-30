@@ -34,6 +34,8 @@ public class PlatformConfigurator
                 case PlatformFilter.RealDevice:
                     ConstructRealDevices();
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(filter), filter, null);
             }
         }
     }

@@ -45,6 +45,8 @@ public class PlatformExpander(PlatformConfigurator platformConfigurator, List<Sa
                 case PlatformRange.NumericNonNumeric:
                     AddMixedRange(platform, int.Parse(lowerBound), upperBound);
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
