@@ -4,13 +4,13 @@ Saucery handles all the plumbing required to integrate with SauceLabs, making wr
 
 Note: The tests specified below are provided as examples only. Your tests, of course, will be specific to your System Under Test.
 
-### Initial Setup
+## Initial Setup
 
 1. You'll need a SauceLabs account. You can get a free trial account [here](https://saucelabs.com/sign-up).
 1. If you want to run your tests locally you need to set 2 environment variables, SAUCE_USER_NAME and SAUCE_API_KEY
 1. To run your test suite from your GitHub Actions pipeline you need to set two secrets SAUCE_USER_NAME and SAUCE_API_KEY. Instructions on how to set Github Secrets are [here](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository).
 
-### Writing TUnit Tests
+## Writing TUnit Tests
 
 1. In your solution create a simple class library.
 1. Add a NuGet Reference to [Saucery.TUnit](https://www.nuget.org/packages/Saucery.TUnit).
@@ -34,7 +34,7 @@ Your Project file should look something like this:
 
 ```
 
-#### IDE Setup
+### IDE Setup
 
 Follow the instructions [here](https://thomhurst.github.io/TUnit/docs/tutorial-basics/running-your-tests#visual-studio) to set up your IDE.
 
@@ -78,7 +78,7 @@ public class DataDrivenTests : SauceryTBase
 
 The above code will run *2* unit tests (2 DataDrivenTitle tests) on *all* the platforms you specify, in parallel by default.
 
-#### Parallelism
+### Parallelism
 
 - Parallelism in TUnit is default out of the box. For SauceLabs it needs to be constrained. 
 - Have a look at MyParallelLimit.cs in the ExternalMerlin.TUnit project for an example of how to do that.

@@ -4,13 +4,13 @@ Saucery handles all the plumbing required to integrate with SauceLabs, making wr
 
 Note: The tests specified below are provided as examples only. Your tests, of course, will be specific to your System Under Test.
 
-### Initial Setup
+## Initial Setup
 
 1. You'll need a SauceLabs account. You can get a free trial account [here](https://saucelabs.com/sign-up).
 1. If you want to run your tests locally you need to set 2 environment variables, SAUCE_USER_NAME and SAUCE_API_KEY
 1. To run your test suite from your GitHub Actions pipeline you need to set two secrets SAUCE_USER_NAME and SAUCE_API_KEY. Instructions on how to set Github Secrets are [here](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository).
 
-### Writing NUnit Tests
+## Writing NUnit Tests
 
 1. In your solution create a simple class library.
 1. Add properties CopyLocalLockFileAssemblies and GenerateRuntimeConfigurationFiles to the top PropertyGroup of the project file and set them both to true.
@@ -83,7 +83,7 @@ public class NuGetIntegrationTests(BrowserVersion browserVersion) : SauceryBase(
 
 The above code will run *3* unit tests (1 ClickLink test and 2 DataDrivenTitle tests) on *all* the platforms you specify, in parallel.
 
-#### Parallelism
+### Parallelism
 
 - The Level of Parallelism is determined by the number of parallel threads you have paid for in your SauceLabs account.
 - We recommend 1 less than your limit. Our OpenSauce account has 5 so we specify 4 in our internal testing.

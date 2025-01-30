@@ -4,13 +4,13 @@ Saucery handles all the plumbing required to integrate with SauceLabs, making wr
 
 Note: The tests specified below are provided as examples only. Your tests, of course, will be specific to your System Under Test.
 
-### Initial Setup
+## Initial Setup
 
 1. You'll need a SauceLabs account. You can get a free trial account [here](https://saucelabs.com/sign-up).
 1. If you want to run your tests locally you need to set 2 environment variables, SAUCE_USER_NAME and SAUCE_API_KEY
 1. To run your test suite from your GitHub Actions pipeline you need to set two secrets SAUCE_USER_NAME and SAUCE_API_KEY. Instructions on how to set Github Secrets are [here](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository).
 
-### Writing XUnit Tests
+## Writing XUnit Tests
 
 1. In your solution create a simple class library.
 1. Add properties CopyLocalLockFileAssemblies and GenerateRuntimeConfigurationFiles to the top PropertyGroup of the project file and set them both to true.
@@ -26,7 +26,7 @@ Your Project file should look something like this:
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
-	<IsTestProject>true</IsTestProject>
+    <IsTestProject>true</IsTestProject>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
   </PropertyGroup>
@@ -36,7 +36,7 @@ Your Project file should look something like this:
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-	<PackageReference Include="Saucery.XUnit" Version="4.5.7" />
+    <PackageReference Include="Saucery.XUnit" Version="4.5.7" />
   </ItemGroup>
 
 </Project>
@@ -73,7 +73,7 @@ public class DataDrivenTests(ITestOutputHelper output, BaseFixture baseFixture) 
 
 The above code will run *2* unit tests (2 DataDrivenTitle tests) on *all* the platforms you specify.
 
-#### Parallelism
+### Parallelism
 
 - Parallelism in XUnit is currently achieved by having tests in multiple classes.
 - The Level of Parallelism is determined by the number of parallel threads you have paid for in your SauceLabs account.
