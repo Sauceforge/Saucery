@@ -427,11 +427,11 @@ jobs:
       with:
         # REQUIRED # The coverage reports that should be parsed (separated by semicolon). Globbing is supported.
         reports: ${{ env.UNIT_COVERAGE_FILENAME }};
-                 ${{ env.NUNIT_INTEGRATION_COVERAGE_FILENAME }};
-                 ${{ env.XUNIT_INTEGRATION_COVERAGE_FILENAME }};
-                 ${{ env.XUNIT_RD_INTEGRATION_COVERAGE_FILENAME }};
-                 ${{ env.NUNIT_RD_INTEGRATION_COVERAGE_FILENAME }};
-                 ${{ env.TUNIT_INTEGRATION_COVERAGE_FILENAME }}
+                 ${{ env.NUNIT_INT_DIR }}/${{ env.NUNIT_INTEGRATION_COVERAGE_FILENAME }};
+                 ${{ env.XUNIT_INT_DIR }}/${{ env.XUNIT_INTEGRATION_COVERAGE_FILENAME }};
+                 ${{ env.XUNIT_RD_INT_DIR }}/${{ env.XUNIT_RD_INTEGRATION_COVERAGE_FILENAME }};
+                 ${{ env.NUNIT_RD_INT_DIR }}/${{ env.NUNIT_RD_INTEGRATION_COVERAGE_FILENAME }};
+                 # ${{ env.TUNIT_INTEGRATION_COVERAGE_FILENAME }}
         targetdir: 'coveragereport' # REQUIRED # The directory where the generated report should be saved.
         reporttypes: 'HtmlInline;Cobertura' # The output formats and scope (separated by semicolon) Values: Badges, Clover, Cobertura, CsvSummary, Html, HtmlChart, HtmlInline, HtmlInline_AzurePipelines, HtmlInline_AzurePipelines_Dark, HtmlSummary, JsonSummary, Latex, LatexSummary, lcov, MarkdownSummary, MHtml, PngChart, SonarQube, TeamCitySummary, TextSummary, Xml, XmlSummary
 
