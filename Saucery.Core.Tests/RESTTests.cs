@@ -23,16 +23,11 @@ public class RestTests
     }
 
     [Test]
-    public void FlowControlTest() {
+    [TestCase(true)]
+    [TestCase(false)]
+    public void FlowControlTest(bool isRealDevice) {
         var flowController = new SauceLabsFlowController();
-        flowController.ControlFlow(false);
-    }
-
-    [Test]
-    public void FlowControlTestRealDevice()
-    {
-        var flowController = new SauceLabsFlowController();
-        flowController.ControlFlow(true);
+        flowController.ControlFlow(isRealDevice);
     }
 
     [Test]

@@ -6,6 +6,8 @@ using System.Text.Json;
 namespace Saucery.Core.RestAPI.FlowControl;
 
 public class SauceLabsFlowController : RestBase {
+    private readonly Lock _lock = new();
+
     public SauceLabsFlowController()
     {
         RestClientOptions clientOptions = new(SauceryConstants.SAUCE_REST_BASE)
@@ -16,13 +18,13 @@ public class SauceLabsFlowController : RestBase {
         Client = new RestClient(clientOptions);
     }
 
-    public virtual void ControlFlow(bool realDevices) {
+    public void ControlFlow(bool realDevices) {
         while(TooManyTests(realDevices)) {
             Thread.Sleep(SauceryConstants.SAUCELABS_FLOW_WAIT);
         }
     }
 
-    protected virtual bool TooManyTests(bool realDevices) {
+    private bool TooManyTests(bool realDevices) {
         //int maxParallelMacSessionsAllowed;  //Possible future use.
         var json = GetJsonResponse(SauceryConstants.ACCOUNT_CONCURRENCY_REQUEST);
 
@@ -36,10 +38,14 @@ public class SauceLabsFlowController : RestBase {
         var org = flowControl?.concurrency.organization;
         var current = org?.current;
         var allowed = org?.allowed;
-        var orgAllowed = realDevices ? allowed?.rds : allowed?.vms;
-        var orgCurrent = realDevices ? current?.rds : current?.vms;
 
-        return orgAllowed - orgCurrent <= 0;
+        lock (_lock)
+        {
+            var orgAllowed = realDevices ? allowed?.rds : allowed?.vms;
+            var orgCurrent = realDevices ? current?.rds : current?.vms;
+
+            return orgAllowed - orgCurrent <= 0;
+        }
     }
 }
 /*

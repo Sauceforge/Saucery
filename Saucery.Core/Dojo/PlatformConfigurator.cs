@@ -9,10 +9,10 @@ namespace Saucery.Core.Dojo;
 
 public class PlatformConfigurator
 {
-    private SauceLabsPlatformAcquirer PlatformAcquirer { get; set; } = new();
-    private SauceLabsRealDeviceAcquirer RealDeviceAcquirer { get; set; } = new();
-    public List<PlatformBase> AvailablePlatforms { get; set; } = [];
-    public List<PlatformBase> AvailableRealDevices { get; set; } = [];
+    private SauceLabsPlatformAcquirer PlatformAcquirer { get; } = new();
+    private SauceLabsRealDeviceAcquirer RealDeviceAcquirer { get; } = new();
+    public List<PlatformBase> AvailablePlatforms { get; } = [];
+    public List<PlatformBase> AvailableRealDevices { get; } = [];
 
     public PlatformConfigurator(PlatformFilter filter)
     {
@@ -179,7 +179,7 @@ public class PlatformConfigurator
         BrowserVersion? browserVersion = requested.PlatformType switch
         {
             PlatformType.Chrome or
-            PlatformType.Edge or
+            PlatformType.Edge or 
             PlatformType.Firefox or
             PlatformType.IE or
             PlatformType.Safari => AvailablePlatforms.FindDesktopBrowser(requested),
