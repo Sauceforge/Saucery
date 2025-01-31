@@ -419,8 +419,8 @@ jobs:
     - name: Present working directory
       run: pwd
 
-    # - name: Display structure of downloaded files
-    #   run: ls -R
+    - name: Display structure of downloaded files
+      run: ls -R
 
     - name: ReportGenerator
       uses: danielpalme/ReportGenerator-GitHub-Action@5.4.3
