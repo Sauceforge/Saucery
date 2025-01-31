@@ -42,7 +42,7 @@ We test Saucery itself on SauceLabs!
 
 These steps apply to all flavors:
 
-1. 1. You'll need a SauceLabs account. You can get a free trial account [here](https://saucelabs.com/sign-up).
+1. You'll need a SauceLabs account. You can get a free trial account [here](https://saucelabs.com/sign-up).
 1. If you want to run your tests locally you need to set 2 environment variables, SAUCE_USER_NAME and SAUCE_API_KEY
 1. To run your test suite from your GitHub Actions pipeline you need to set two secrets SAUCE_USER_NAME and SAUCE_API_KEY. Instructions on how to set Github Secrets are [here](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository).
 
