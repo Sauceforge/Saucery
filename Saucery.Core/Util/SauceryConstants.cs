@@ -81,9 +81,11 @@ public static class SauceryConstants {
     internal const string SAUCE_REAL_DEVICE_REST_BASE = "https://api.us-west-1.saucelabs.com/";
     internal const string ACCOUNT_CONCURRENCY_REQUEST = "v1.2/users/{0}/concurrency";
     internal const string JOB_REQUEST = "v1/{0}/jobs/{1}";
+    internal const string RD_JOB_REQUEST = "v1/rdc/jobs/{0}";
     internal const string RECOMMENDED_APPIUM_REQUEST = "v1/info/platforms/appium";
     internal const string SUPPORTED_PLATFORMS_REQUEST = "v1/info/platforms/all";
     internal const string SUPPORTED_REALDEVICE_PLATFORMS_REQUEST = "v1/rdc/devices";
+    internal const string RD_JOBS_REQUEST = "/v1/rdc/jobs";
     internal const string JSON_SEGMENT_CONTAINER = "{{{0}}}";
     internal const string NUGET_API = "https://packages.nuget.org/api/v2";
     internal const string NUGET_VERSION = "{0}.{1}.{2}";

@@ -1,6 +1,7 @@
 ﻿using OpenQA.Selenium;
 using Saucery.Core.DataSources;
 using Saucery.Core.Dojo;
+using Saucery.Core.OnDemand;
 using Saucery.Core.Options;
 using Saucery.Core.Util;
 using TUnit.Core.Enums;
@@ -10,11 +11,13 @@ namespace Saucery.TUnit;
 public class SauceryTBase : BaseFixture
 {
     private string? _testName;
-    
+    private BrowserVersion? _browserVersion;
+
     protected bool InitialiseDriver(BrowserVersion browserVersion)
     {
         lock (browserVersion)
         {
+            _browserVersion = browserVersion;
             browserVersion.SetTestName(GetTestName());
             _testName = browserVersion.TestName;
         }
@@ -45,9 +48,17 @@ public class SauceryTBase : BaseFixture
             {
                 var passed = TestContext.Current?.Result?.Status == Status.Passed;
                 // log the result to SauceLabs
-                var sessionId = Driver.SessionId.ToString();
-                SauceLabsStatusNotifier.NotifyStatus(sessionId, passed);
-                Console.WriteLine($"SessionID={sessionId} job-name={_testName}");
+                lock (_browserVersion!)
+                {
+                    if(_browserVersion.IsARealDevice()) {
+                        var realDeviceJobs = SauceLabsRealDeviceAcquirer.AcquireRealDeviceJobs();
+                        var job = realDeviceJobs?.entities.Find(x => x.name.Equals(_browserVersion.TestName));
+                        SauceLabsRealDeviceStatusNotifier.NotifyRealDeviceStatus(job!.id, passed);
+                    } else {
+                        SauceLabsEmulatedStatusNotifier.NotifyEmulatedStatus(Driver.SessionId.ToString(), passed);
+                    }
+                }
+
                 Driver.Quit();
                 Driver.Dispose();
                 GC.SuppressFinalize(this);

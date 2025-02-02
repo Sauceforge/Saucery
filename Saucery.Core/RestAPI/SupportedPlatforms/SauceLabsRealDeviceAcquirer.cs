@@ -2,6 +2,7 @@
 using RestSharp.Authenticators;
 using Saucery.Core.Util;
 using System.Text.Json;
+using Saucery.Core.RestAPI.TestStatus;
 
 namespace Saucery.Core.RestAPI.SupportedPlatforms;
 
@@ -21,5 +22,13 @@ public class SauceLabsRealDeviceAcquirer : RestBase {
         var supportedPlatforms = JsonSerializer.Deserialize<List<SupportedPlatform>>(json!, JsonOptions);
         
         return supportedPlatforms;
+    }
+
+    public virtual RealDeviceJobs? AcquireRealDeviceJobs()
+    {
+        var json = GetJsonResponse(SauceryConstants.RD_JOBS_REQUEST);
+        var realDeviceJobs = JsonSerializer.Deserialize<RealDeviceJobs>(json!, JsonOptions);
+
+        return realDeviceJobs;
     }
 }

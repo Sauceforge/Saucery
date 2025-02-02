@@ -9,6 +9,7 @@ using Saucery.Core.Driver;
 using Saucery.Core.OnDemand;
 using Saucery.Core.Options;
 using Saucery.Core.RestAPI.FlowControl;
+using Saucery.Core.RestAPI.SupportedPlatforms;
 using Saucery.Core.RestAPI.TestStatus;
 using Saucery.Core.Util;
 
@@ -19,8 +20,10 @@ public class SauceryBase
     private string? _testName;
     protected WebDriver? Driver;
     private readonly BrowserVersion? _browserVersion;
-    private readonly SauceLabsStatusNotifier _sauceLabsStatusNotifier = new();
+    private readonly SauceLabsEmulatedStatusNotifier _sauceLabsEmulatedStatusNotifier = new();
+    private readonly SauceLabsRealDeviceStatusNotifier _sauceLabsRealDeviceStatusNotifier = new();
     private readonly SauceLabsFlowController _sauceLabsFlowController = new();
+    private readonly SauceLabsRealDeviceAcquirer _sauceLabsRealDeviceAcquirer = new();
     private OptionFactory? _optionFactory;
     private readonly AppiumClientConfig _appiumClientConfig = new() { DirectConnect = true };
 
@@ -62,8 +65,20 @@ public class SauceryBase
                 var isPassed = TestContext.CurrentContext.Result.Outcome.Status == TestStatus.Passed;
                 // log the result to SauceLabs
                 var sessionId = Driver.SessionId.ToString();
-                _sauceLabsStatusNotifier.NotifyStatus(sessionId, isPassed);
-                Console.WriteLine($"SessionID={sessionId} job-name={_testName}");
+                lock (_browserVersion!)
+                {
+                    if (_browserVersion.IsARealDevice())
+                    {
+                        var realDeviceJobs = _sauceLabsRealDeviceAcquirer.AcquireRealDeviceJobs();
+                        var job = realDeviceJobs?.entities.Find(x => x.name.Equals(_browserVersion.TestName));
+                        _sauceLabsRealDeviceStatusNotifier.NotifyRealDeviceStatus(job!.id, isPassed);
+                    }
+                    else
+                    {
+                        _sauceLabsEmulatedStatusNotifier.NotifyEmulatedStatus(Driver.SessionId.ToString(), isPassed);
+                    }
+                }
+
                 Driver.Quit();
             }
 
