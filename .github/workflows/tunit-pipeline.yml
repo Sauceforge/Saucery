@@ -1,4 +1,4 @@
-name: Build Pipeline
+name: TUnit Only
 
 on:
   push:
