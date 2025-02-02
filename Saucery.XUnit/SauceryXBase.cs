@@ -3,6 +3,7 @@ using Saucery.Core.DataSources;
 using Saucery.Core.Dojo;
 using Saucery.Core.OnDemand;
 using Saucery.Core.Options;
+using Saucery.Core.RestAPI.TestStatus;
 using Saucery.Core.Util;
 using System.Reflection;
 
@@ -57,8 +58,10 @@ public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>
                 lock(_lock) {
                     if(_browserVersion!.IsARealDevice()) {
                         var realDeviceJobs = BaseFixture.SauceLabsRealDeviceAcquirer.AcquireRealDeviceJobs();
-                        var job = realDeviceJobs?.entities.Find(x => x.name.Equals(_browserVersion!.TestName));
-                        BaseFixture.SauceLabsRealDeviceStatusNotifier.NotifyRealDeviceStatus(job!.id, passed);
+                        var jobs = realDeviceJobs?.entities.FindAll(x => x.name.Equals(_browserVersion!.TestName));
+                        foreach(var job in jobs!) {
+                            BaseFixture.SauceLabsRealDeviceStatusNotifier.NotifyRealDeviceStatus(job.id, passed);
+                        }
                     } else {
                         BaseFixture.SauceLabsEmulatedStatusNotifier.NotifyEmulatedStatus(BaseFixture.Driver.SessionId.ToString(), passed);
                     }

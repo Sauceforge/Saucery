@@ -4,6 +4,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Appium.Android;
 using OpenQA.Selenium.Appium.iOS;
 using OpenQA.Selenium.Appium.Service;
+using OpenQA.Selenium.BiDi.Modules.Input;
 using Saucery.Core.Dojo;
 using Saucery.Core.Driver;
 using Saucery.Core.OnDemand;
@@ -71,8 +72,10 @@ public class SauceryBase
                     if (_browserVersion!.IsARealDevice())
                     {
                         var realDeviceJobs = _sauceLabsRealDeviceAcquirer.AcquireRealDeviceJobs();
-                        var job = realDeviceJobs?.entities.Find(x => x.name.Equals(_browserVersion!.TestName));
-                        _sauceLabsRealDeviceStatusNotifier.NotifyRealDeviceStatus(job!.id, isPassed);
+                        var jobs = realDeviceJobs?.entities.FindAll(x => x.name.Equals(_browserVersion!.TestName));
+                        foreach(var job in jobs!) {
+                            _sauceLabsRealDeviceStatusNotifier.NotifyRealDeviceStatus(job.id, isPassed);
+                        }
                     }
                     else
                     {
