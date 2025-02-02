@@ -32,7 +32,7 @@ public abstract class RestBase {
     {
         request = string.Format(request, UserName);
         
-        RestRequest restRequest = new RestRequest(request, method);
+        RestRequest restRequest = new(request, method);
         restRequest.AddHeader("Content-Type", SauceryConstants.JSON_CONTENT_TYPE);
         restRequest.RequestFormat = DataFormat.Json;
         

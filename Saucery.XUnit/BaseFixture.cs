@@ -7,6 +7,7 @@ using Saucery.Core.Driver;
 using Saucery.Core.OnDemand;
 using Saucery.Core.Options;
 using Saucery.Core.RestAPI.FlowControl;
+using Saucery.Core.RestAPI.SupportedPlatforms;
 using Saucery.Core.RestAPI.TestStatus;
 using Saucery.Core.Util;
 
@@ -19,9 +20,13 @@ public class BaseFixture : IDisposable
 {
     public WebDriver? Driver;
     
-    internal readonly SauceLabsStatusNotifier SauceLabsStatusNotifier = new();
-    
+    internal readonly SauceLabsEmulatedStatusNotifier SauceLabsEmulatedStatusNotifier = new();
+
+    internal readonly SauceLabsRealDeviceStatusNotifier SauceLabsRealDeviceStatusNotifier = new();
+
     private readonly SauceLabsFlowController _sauceLabsFlowController = new();
+    
+    internal readonly SauceLabsRealDeviceAcquirer SauceLabsRealDeviceAcquirer = new();
 
     public OptionFactory? OptionFactory;
 

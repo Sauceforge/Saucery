@@ -1,6 +1,7 @@
 ﻿using OpenQA.Selenium;
 using Saucery.Core.DataSources;
 using Saucery.Core.Dojo;
+using Saucery.Core.OnDemand;
 using Saucery.Core.Options;
 using Saucery.Core.Util;
 using System.Reflection;
@@ -12,11 +13,18 @@ public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>
     protected readonly BaseFixture BaseFixture;
     private string? _testName;
     private readonly ITestOutputHelper _outputHelper;
+    private BrowserVersion? _browserVersion;
+
+    protected SauceryXBase(ITestOutputHelper outputHelper, BaseFixture baseFixture) : base(outputHelper) {
+        BaseFixture = baseFixture;
+        _outputHelper = outputHelper;
+    }
 
     protected void InitialiseDriver(BrowserVersion browserVersion)
     {
         lock (browserVersion)
         {
+            _browserVersion = browserVersion;
             browserVersion.SetTestName(GetTestName());
             _testName = browserVersion.TestName;
         }
@@ -44,9 +52,17 @@ public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>
             {
                 var passed = Context.TestException == null;
                 // log the result to SauceLabs
-                var sessionId = BaseFixture.Driver.SessionId.ToString();
-                BaseFixture.SauceLabsStatusNotifier.NotifyStatus(sessionId, passed);
-                Console.WriteLine($"SessionID={sessionId} job-name={_testName}");
+                
+                lock(_browserVersion!) {
+                    if(_browserVersion.IsARealDevice()) {
+                        var realDeviceJobs = BaseFixture.SauceLabsRealDeviceAcquirer.AcquireRealDeviceJobs();
+                        var job = realDeviceJobs?.entities.Find(x => x.name.Equals(_browserVersion.TestName));
+                        BaseFixture.SauceLabsRealDeviceStatusNotifier.NotifyRealDeviceStatus(job!.id, passed);
+                    } else {
+                        BaseFixture.SauceLabsEmulatedStatusNotifier.NotifyEmulatedStatus(BaseFixture.Driver.SessionId.ToString(), passed);
+                    }
+                }
+
                 BaseFixture.Driver.Quit();
                 GC.SuppressFinalize(this);
             }
@@ -56,12 +72,6 @@ public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>
             Console.WriteLine("Caught WebDriverException, quitting driver.");
             BaseFixture.Driver?.Quit();
         }
-    }
-
-    protected SauceryXBase(ITestOutputHelper outputHelper, BaseFixture baseFixture) : base(outputHelper)
-    {
-        BaseFixture = baseFixture;
-        _outputHelper = outputHelper;
     }
 
     private string GetTestName()
