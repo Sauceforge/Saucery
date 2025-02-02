@@ -9,9 +9,13 @@ public static class PlatformExtensions {
         IsAnAndroidDevice(browserVersion) || 
         IsAnAppleDevice(browserVersion);
 
-    public static bool IsARealDevice(this BrowserVersion browserVersion) => 
-        !browserVersion.DeviceName.Contains("Simulator") && 
+    public static bool IsARealDevice(this BrowserVersion browserVersion) =>
+        (browserVersion.IsAnAndroidDevice() ||
+         browserVersion.IsAnAppleDevice()) &&
+        !browserVersion.DeviceName.Contains("Simulator") &&
         !browserVersion.DeviceName.Contains("Emulator");
+        //!browserVersion.DeviceName.Contains("Simulator") && 
+        //!browserVersion.DeviceName.Contains("Emulator");
 
     public static bool IsARealDevice(this SaucePlatform platform) => 
         (platform.IsAnAndroidDevice() ||
