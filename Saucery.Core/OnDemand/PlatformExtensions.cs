@@ -11,17 +11,15 @@ public static class PlatformExtensions {
 
     public static bool IsARealDevice(this BrowserVersion browserVersion) =>
         (browserVersion.IsAnAndroidDevice() ||
-         browserVersion.IsAnAppleDevice()) &&
-        !browserVersion.DeviceName.Contains("Simulator") &&
-        !browserVersion.DeviceName.Contains("Emulator");
-        //!browserVersion.DeviceName.Contains("Simulator") && 
-        //!browserVersion.DeviceName.Contains("Emulator");
-
+         browserVersion.IsAnAppleDevice()) && 
+       !(browserVersion.DeviceName.Contains("Simulator") ||
+         browserVersion.DeviceName.Contains("Emulator"));
+        
     public static bool IsARealDevice(this SaucePlatform platform) => 
         (platform.IsAnAndroidDevice() ||
-        platform.IsAnAppleDevice()) &&
-        !platform.LongName.Contains("Simulator") && 
-        !platform.LongName.Contains("Emulator");
+         platform.IsAnAppleDevice()) &&
+       !(platform.LongName.Contains("Simulator") || 
+         platform.LongName.Contains("Emulator"));
 
     public static bool IsAnAndroidDevice(this BrowserVersion browserVersion) => 
         browserVersion.Os != null && 
@@ -36,7 +34,7 @@ public static class PlatformExtensions {
         browserVersion.DeviceName != null && 
         browserVersion.DeviceName.Contains(SauceryConstants.APPLE_IPHONE, StringComparison.CurrentCultureIgnoreCase);
 
-    public static bool IsAnIPad(this BrowserVersion browserVersion) => 
+    private static bool IsAnIPad(this BrowserVersion browserVersion) => 
         browserVersion.DeviceName != null && 
         browserVersion.DeviceName.Contains(SauceryConstants.APPLE_IPAD, StringComparison.CurrentCultureIgnoreCase);
 
@@ -44,11 +42,11 @@ public static class PlatformExtensions {
         IsAnIPhone(platform) || 
         IsAnIPad(platform);
 
-    public static bool IsAnIPhone(this SaucePlatform platform) => 
+    private static bool IsAnIPhone(this SaucePlatform platform) => 
         platform.LongName != null && 
         platform.LongName.Contains(SauceryConstants.APPLE_IPHONE, StringComparison.CurrentCultureIgnoreCase);
 
-    public static bool IsAnIPad(this SaucePlatform platform) => 
+    private static bool IsAnIPad(this SaucePlatform platform) => 
         platform.LongName != null && 
         platform.LongName.Contains(SauceryConstants.APPLE_IPAD, StringComparison.CurrentCultureIgnoreCase);
 

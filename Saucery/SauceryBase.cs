@@ -17,6 +17,7 @@ namespace Saucery;
 
 public class SauceryBase
 {
+    private readonly Lock _lock = new();
     private string? _testName;
     protected WebDriver? Driver;
     private readonly BrowserVersion? _browserVersion;
@@ -65,12 +66,12 @@ public class SauceryBase
                 var isPassed = TestContext.CurrentContext.Result.Outcome.Status == TestStatus.Passed;
                 // log the result to SauceLabs
                 var sessionId = Driver.SessionId.ToString();
-                lock (_browserVersion!)
+                lock (_lock)
                 {
-                    if (_browserVersion.IsARealDevice())
+                    if (_browserVersion!.IsARealDevice())
                     {
                         var realDeviceJobs = _sauceLabsRealDeviceAcquirer.AcquireRealDeviceJobs();
-                        var job = realDeviceJobs?.entities.Find(x => x.name.Equals(_browserVersion.TestName));
+                        var job = realDeviceJobs?.entities.Find(x => x.name.Equals(_browserVersion!.TestName));
                         _sauceLabsRealDeviceStatusNotifier.NotifyRealDeviceStatus(job!.id, isPassed);
                     }
                     else

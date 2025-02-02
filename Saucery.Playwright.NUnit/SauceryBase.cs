@@ -15,6 +15,7 @@ namespace Saucery.Playwright.NUnit;
 
 public class SauceryBase : PageTest
 {
+    private readonly Lock _lock = new();
     private string? _testName;
     private WebDriver? _driver;
     private readonly BrowserVersion? _browserVersion;
@@ -71,10 +72,10 @@ public class SauceryBase : PageTest
             {
                 var passed = Equals(TestContext.CurrentContext.Result.Outcome, ResultState.Success);
                 // log the result to SauceLabs
-                lock(_browserVersion!) {
-                    if(_browserVersion.IsARealDevice()) {
+                lock(_lock) {
+                    if(_browserVersion!.IsARealDevice()) {
                         var realDeviceJobs = SauceLabsRealDeviceAcquirer.AcquireRealDeviceJobs();
-                        var job = realDeviceJobs?.entities.Find(x => x.name.Equals(_browserVersion.TestName));
+                        var job = realDeviceJobs?.entities.Find(x => x.name.Equals(_browserVersion!.TestName));
                         SauceLabsRealDeviceStatusNotifier.NotifyRealDeviceStatus(job!.id, passed);
                     } else {
                         SauceLabsEmulatedStatusNotifier.NotifyEmulatedStatus(_driver.SessionId.ToString(), passed);

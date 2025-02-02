@@ -10,6 +10,7 @@ namespace Saucery.TUnit;
 
 public class SauceryTBase : BaseFixture
 {
+    private readonly Lock _lock = new();
     private string? _testName;
     private BrowserVersion? _browserVersion;
 
@@ -48,11 +49,11 @@ public class SauceryTBase : BaseFixture
             {
                 var passed = TestContext.Current?.Result?.Status == Status.Passed;
                 // log the result to SauceLabs
-                lock (_browserVersion!)
+                lock (_lock)
                 {
-                    if(_browserVersion.IsARealDevice()) {
+                    if(_browserVersion!.IsARealDevice()) {
                         var realDeviceJobs = SauceLabsRealDeviceAcquirer.AcquireRealDeviceJobs();
-                        var job = realDeviceJobs?.entities.Find(x => x.name.Equals(_browserVersion.TestName));
+                        var job = realDeviceJobs?.entities.Find(x => x.name.Equals(_browserVersion!.TestName));
                         SauceLabsRealDeviceStatusNotifier.NotifyRealDeviceStatus(job!.id, passed);
                     } else {
                         SauceLabsEmulatedStatusNotifier.NotifyEmulatedStatus(Driver.SessionId.ToString(), passed);

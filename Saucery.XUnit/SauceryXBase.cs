@@ -10,6 +10,7 @@ namespace Saucery.XUnit;
 
 public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>
 {
+    private readonly Lock _lock = new();
     protected readonly BaseFixture BaseFixture;
     private string? _testName;
     private readonly ITestOutputHelper _outputHelper;
@@ -53,10 +54,10 @@ public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>
                 var passed = Context.TestException == null;
                 // log the result to SauceLabs
                 
-                lock(_browserVersion!) {
-                    if(_browserVersion.IsARealDevice()) {
+                lock(_lock) {
+                    if(_browserVersion!.IsARealDevice()) {
                         var realDeviceJobs = BaseFixture.SauceLabsRealDeviceAcquirer.AcquireRealDeviceJobs();
-                        var job = realDeviceJobs?.entities.Find(x => x.name.Equals(_browserVersion.TestName));
+                        var job = realDeviceJobs?.entities.Find(x => x.name.Equals(_browserVersion!.TestName));
                         BaseFixture.SauceLabsRealDeviceStatusNotifier.NotifyRealDeviceStatus(job!.id, passed);
                     } else {
                         BaseFixture.SauceLabsEmulatedStatusNotifier.NotifyEmulatedStatus(BaseFixture.Driver.SessionId.ToString(), passed);
