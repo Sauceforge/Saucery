@@ -15,6 +15,7 @@ Saucery
 ![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/Sauceforge/Saucery/pipeline.yml) 
 ![Created](https://img.shields.io/github/created-at/sauceforge/saucery)
 ![Commits](https://img.shields.io/github/commit-activity/t/sauceforge/saucery)
+![Codacy coverage](https://img.shields.io/codacy/coverage/0ba3cb69efe14366af8c84e485e80077)
 ![GitHub last commit (master)](https://img.shields.io/github/last-commit/Sauceforge/Saucery/master)
 ![Website](https://img.shields.io/website?url=https%3A%2F%2Fsauceforge.github.io)
 ![License](https://img.shields.io/github/license/Sauceforge/Saucery) 
