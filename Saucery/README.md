@@ -32,8 +32,8 @@ Your Project file should look something like this:
   </PropertyGroup>
 
   <ItemGroup> 
-    <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
-    <PackageReference Include="Saucery" Version="4.5.7" />
+    <PackageReference Include="NUnit3TestAdapter" Version="5.0.0" />
+    <PackageReference Include="Saucery" Version="4.5.21" />
   </ItemGroup>
 
 </Project>

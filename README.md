@@ -70,8 +70,8 @@ Your Project file should look something like this:
   </PropertyGroup>
 
   <ItemGroup> 
-    <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
-    <PackageReference Include="Saucery" Version="4.5.7" />
+    <PackageReference Include="NUnit3TestAdapter" Version="5.0.0" />
+    <PackageReference Include="Saucery" Version="4.5.21" />
   </ItemGroup>
 
 </Project>
@@ -201,11 +201,11 @@ Your Project file should look something like this:
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.0.2">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Saucery.XUnit" Version="4.5.7" />
+    <PackageReference Include="Saucery.XUnit" Version="4.5.21" />
   </ItemGroup>
 
 </Project>
@@ -316,7 +316,7 @@ Your Project file should look something like this:
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Saucery.TUnit" Version="0.6.0" />
+    <PackageReference Include="Saucery.TUnit" Version="0.12.17" />
   </ItemGroup>
 
 </Project>
