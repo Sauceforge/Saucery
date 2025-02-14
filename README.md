@@ -36,7 +36,7 @@ Note: The tests specified below are provided as examples only. Your tests, of co
 
 We test Saucery itself on SauceLabs!
 
-[![Build Status](https://app.saucelabs.com/buildstatus/saucefauge)](https://app.saucelabs.com/u/saucefauge)
+[![Build Status](https://app.saucelabs.com/buildstatus/saucefauge?saucy)](https://app.saucelabs.com/buildstatus/saucefauge?saucy)
 
 ### Initial Setup
 
