@@ -35,6 +35,7 @@ env:
   EM_RD_TUNIT_PROJECT: ExternalMerlin.TUnit.RealDevices/ExternalMerlin.TUnit.RealDevices.csproj # full path to xunit external integration test project file
   SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
   SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
+  CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
   CONFIG: Release
   APP_PACKAGE_PATH: 'published'                                                                 # set this to the path to your web app project, defaults to the repository root
   COVERAGE_FORMAT: opencover
