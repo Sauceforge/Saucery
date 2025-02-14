@@ -1,5 +1,4 @@
 ﻿using OpenQA.Selenium;
-//using Saucery.Core.DataSources;
 using Saucery.Core.Dojo;
 using Saucery.Core.OnDemand;
 using Saucery.Core.Options;
@@ -76,19 +75,6 @@ public class SauceryTBase : BaseFixture
     }
 
     private static string GetTestName() => TestContext.Current?.TestDetails.TestName ?? "";
-
-    //protected static IEnumerable<object[]> GetAllCombinations(object[] data) {
-    //    List<object[]> allCombinations = [];
-
-    //    foreach(var platform in SauceryTestData.Items)
-    //    {
-    //        allCombinations
-    //            .AddRange(data
-    //                .Select(datum => (object[]) [platform, datum]));
-    //    }
-
-    //    return allCombinations;
-    //}
 }
 
 /*
