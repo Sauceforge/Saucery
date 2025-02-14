@@ -59,9 +59,9 @@ public class BaseFixture
             return false;
         }
     }
-
     protected WebDriver SauceryDriver() => 
         Driver!;
+
 }
 /*
 * Copyright Andrew Gray, SauceForge

@@ -27,7 +27,7 @@ public class DataDrivenTests : SauceryTBase
         RequestedPlatformData
         .AllPlatforms()
         .SelectMany(
-            browserVersionFunc => data,
+            _ => data,
             (browserVersionFunc, datum) => new Func<(BrowserVersion, int)>(() => (browserVersionFunc(), datum))
         );
 }
