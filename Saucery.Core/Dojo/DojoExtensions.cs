@@ -114,12 +114,6 @@ public static class DojoExtensions
             SauceryConstants.PLATFORM_MAC_13 => platforms.GetPlatform<Mac13Platform>().FirstOrDefault(),
             SauceryConstants.PLATFORM_MAC_12 => platforms.GetPlatform<Mac12Platform>().FirstOrDefault(),
             SauceryConstants.PLATFORM_MAC_11 => platforms.GetPlatform<Mac11Platform>().FirstOrDefault(),
-            SauceryConstants.PLATFORM_MAC_1015 => platforms.GetPlatform<Mac1015Platform>().FirstOrDefault(),
-            SauceryConstants.PLATFORM_MAC_1014 => platforms.GetPlatform<Mac1014Platform>().FirstOrDefault(),
-            SauceryConstants.PLATFORM_MAC_1013 => platforms.GetPlatform<Mac1013Platform>().FirstOrDefault(),
-            SauceryConstants.PLATFORM_MAC_1012 => platforms.GetPlatform<Mac1012Platform>().FirstOrDefault(),
-            SauceryConstants.PLATFORM_MAC_1011 => platforms.GetPlatform<Mac1011Platform>().FirstOrDefault(),
-            SauceryConstants.PLATFORM_MAC_1010 => platforms.GetPlatform<Mac1010Platform>().FirstOrDefault(),
             _ => null
         };
 
@@ -204,17 +198,6 @@ public static class DojoExtensions
             "iOS 14.4" => platforms.GetPlatform<IOS144Platform>().FirstOrDefault(),
             "iOS 14.3" => platforms.GetPlatform<IOS143Platform>().FirstOrDefault(),
             "iOS 14.0" => platforms.GetPlatform<IOS14Platform>().FirstOrDefault(),
-            "iOS 13.4" => platforms.GetPlatform<IOS134Platform>().FirstOrDefault(),
-            "iOS 13.2" => platforms.GetPlatform<IOS132Platform>().FirstOrDefault(),
-            "iOS 13.0" => platforms.GetPlatform<IOS13Platform>().FirstOrDefault(),
-            "iOS 12.4" => platforms.GetPlatform<IOS124Platform>().FirstOrDefault(),
-            "iOS 12.2" => platforms.GetPlatform<IOS122Platform>().FirstOrDefault(),
-            "iOS 12.0" => platforms.GetPlatform<IOS12Platform>().FirstOrDefault(),
-            "iOS 11.3" => platforms.GetPlatform<IOS113Platform>().FirstOrDefault(),
-            "iOS 11.2" => platforms.GetPlatform<IOS112Platform>().FirstOrDefault(),
-            "iOS 11.1" => platforms.GetPlatform<IOS111Platform>().FirstOrDefault(),
-            "iOS 11.0" => platforms.GetPlatform<IOS11Platform>().FirstOrDefault(),
-            "iOS 10.3" => platforms.GetPlatform<IOS103Platform>().FirstOrDefault(),
             _ => null
         };
 

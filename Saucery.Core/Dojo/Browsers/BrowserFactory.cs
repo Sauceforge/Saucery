@@ -25,12 +25,6 @@ public static class BrowserFactory
                 SauceryConstants.PLATFORM_MAC_13 => new Mac13BrowserCreator(sp).Create("macOS 13", screenResolutions),
                 SauceryConstants.PLATFORM_MAC_12 => new Mac12BrowserCreator(sp).Create("macOS 12", screenResolutions),
                 SauceryConstants.PLATFORM_MAC_11 => new Mac11BrowserCreator(sp).Create("macOS 11.00", screenResolutions),
-                SauceryConstants.PLATFORM_MAC_1015 => new Mac1015BrowserCreator(sp).Create("macOS 10.15", screenResolutions),
-                SauceryConstants.PLATFORM_MAC_1014 => new Mac1014BrowserCreator(sp).Create("macOS 10.14", screenResolutions),
-                SauceryConstants.PLATFORM_MAC_1013 => new Mac1013BrowserCreator(sp).Create("macOS 10.13", screenResolutions),
-                SauceryConstants.PLATFORM_MAC_1012 => new Mac1012BrowserCreator(sp).Create("macOS 10.12", screenResolutions),
-                SauceryConstants.PLATFORM_MAC_1011 => new Mac1011BrowserCreator(sp).Create("OS X 10.11", screenResolutions),
-                SauceryConstants.PLATFORM_MAC_1010 => new Mac1010BrowserCreator(sp).Create("OS X 10.10", screenResolutions),
                 _ => null,
             };
 }

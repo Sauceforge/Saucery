@@ -19,13 +19,7 @@ internal class ChromeBrowser(SupportedPlatform sp, List<string> screenResolution
         SauceryConstants.PLATFORM_WINDOWS_8 or
         SauceryConstants.PLATFORM_WINDOWS_7 or
         SauceryConstants.PLATFORM_MAC_12 or
-        SauceryConstants.PLATFORM_MAC_11 or
-        SauceryConstants.PLATFORM_MAC_1015 or
-        SauceryConstants.PLATFORM_MAC_1014 or
-        SauceryConstants.PLATFORM_MAC_1013 or
-        SauceryConstants.PLATFORM_MAC_1012 or
-        SauceryConstants.PLATFORM_MAC_1011 or
-        SauceryConstants.PLATFORM_MAC_1010 => 75,
+        SauceryConstants.PLATFORM_MAC_11 => 75,
         _ => 0,
     };
 

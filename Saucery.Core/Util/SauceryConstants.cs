@@ -173,12 +173,6 @@ public static class SauceryConstants {
     public const string PLATFORM_MAC_13 = "Mac 13";
     public const string PLATFORM_MAC_12 = "Mac 12";
     public const string PLATFORM_MAC_11 = "Mac 11";
-    public const string PLATFORM_MAC_1015 = "Mac 10.15";
-    public const string PLATFORM_MAC_1014 = "Mac 10.14";
-    public const string PLATFORM_MAC_1013 = "Mac 10.13";
-    public const string PLATFORM_MAC_1012 = "Mac 10.12";
-    public const string PLATFORM_MAC_1011 = "Mac 10.11";
-    public const string PLATFORM_MAC_1010 = "Mac 10.10";
     public const string PLATFORM_IOS = "iOS";
     public const string PLATFORM_LINUX = "Linux";
 

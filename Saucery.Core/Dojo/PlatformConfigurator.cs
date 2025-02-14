@@ -76,15 +76,9 @@ public class PlatformConfigurator
             ..FindWindowsPlatforms(supportedPlatforms),
             ..FindMacPlatforms(supportedPlatforms,
             [
-                SauceryConstants.PLATFORM_MAC_1010,
-                SauceryConstants.PLATFORM_MAC_1011,
-                SauceryConstants.PLATFORM_MAC_1012,
-                SauceryConstants.PLATFORM_MAC_1013,
-                SauceryConstants.PLATFORM_MAC_1014,
-                SauceryConstants.PLATFORM_MAC_1015,
-                SauceryConstants.PLATFORM_MAC_11,
+                SauceryConstants.PLATFORM_MAC_13,
                 SauceryConstants.PLATFORM_MAC_12,
-                SauceryConstants.PLATFORM_MAC_13
+                SauceryConstants.PLATFORM_MAC_11
             ]),
             ..FindMobilePlatforms(supportedPlatforms, ["iphone", "ipad"]),
             ..FindMobilePlatforms(supportedPlatforms, ["android"])

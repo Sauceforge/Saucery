@@ -17,12 +17,6 @@ public static class DesktopPlatformFactory {
         SauceryConstants.PLATFORM_MAC_13 => new Mac13PlatformCreator(sp).Create(),
         SauceryConstants.PLATFORM_MAC_12 => new Mac12PlatformCreator(sp).Create(),
         SauceryConstants.PLATFORM_MAC_11 => new Mac11PlatformCreator(sp).Create(),
-        SauceryConstants.PLATFORM_MAC_1015 => new Mac1015PlatformCreator(sp).Create(),
-        SauceryConstants.PLATFORM_MAC_1014 => new Mac1014PlatformCreator(sp).Create(),
-        SauceryConstants.PLATFORM_MAC_1013 => new Mac1013PlatformCreator(sp).Create(),
-        SauceryConstants.PLATFORM_MAC_1012 => new Mac1012PlatformCreator(sp).Create(),
-        SauceryConstants.PLATFORM_MAC_1011 => new Mac1011PlatformCreator(sp).Create(),
-        SauceryConstants.PLATFORM_MAC_1010 => new Mac1010PlatformCreator(sp).Create(),
         _ => null
     };
 }

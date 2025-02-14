@@ -13,11 +13,10 @@ internal class SafariBrowser(SupportedPlatform sp, List<string> screenResolution
 
     public int MinimumVersion(SupportedPlatform sp) => sp.Os switch
     {
+        SauceryConstants.PLATFORM_MAC_13 => 16,
         SauceryConstants.PLATFORM_MAC_12 => 15,
         SauceryConstants.PLATFORM_MAC_11 => 14,
-        SauceryConstants.PLATFORM_MAC_1015 => 13,
-        SauceryConstants.PLATFORM_MAC_1014 => 12,
-        SauceryConstants.PLATFORM_MAC_1013 => 12,
+        
         _ => 0,
     };
 
