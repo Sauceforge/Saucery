@@ -1,5 +1,5 @@
-﻿using Saucery.Core.Util;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
+using Saucery.Core.Util;
 
 namespace Saucery.Core.OnDemand.Base;
 

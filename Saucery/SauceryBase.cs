@@ -4,7 +4,6 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Appium.Android;
 using OpenQA.Selenium.Appium.iOS;
 using OpenQA.Selenium.Appium.Service;
-using OpenQA.Selenium.BiDi.Modules.Input;
 using Saucery.Core.Dojo;
 using Saucery.Core.Driver;
 using Saucery.Core.OnDemand;

@@ -1,7 +1,7 @@
-﻿using RestSharp;
-using Saucery.Core.Util;
-using System.Net;
+﻿using System.Net;
 using System.Text.Json;
+using RestSharp;
+using Saucery.Core.Util;
 
 //Hello from January 2020 :)
 //Donald Trump is the President of the United States.

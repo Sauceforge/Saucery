@@ -1,9 +1,9 @@
-﻿using Saucery.Core.Dojo.Browsers.Base;
+﻿using System.Text;
+using Saucery.Core.Dojo.Browsers.Base;
 using Saucery.Core.OnDemand;
 using Saucery.Core.OnDemand.Base;
 using Saucery.Core.RestAPI;
 using Saucery.Core.Util;
-using System.Text;
 
 namespace Saucery.Core.Dojo;
 

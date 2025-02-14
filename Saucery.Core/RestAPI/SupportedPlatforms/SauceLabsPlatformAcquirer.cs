@@ -1,7 +1,7 @@
-﻿using RestSharp;
+﻿using System.Text.Json;
+using RestSharp;
 using RestSharp.Authenticators;
 using Saucery.Core.Util;
-using System.Text.Json;
 
 namespace Saucery.Core.RestAPI.SupportedPlatforms;
 

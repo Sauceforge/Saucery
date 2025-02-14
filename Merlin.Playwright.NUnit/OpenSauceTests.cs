@@ -1,7 +1,7 @@
+using System.Text.RegularExpressions;
 using Microsoft.Playwright;
 using Saucery.Core.Dojo;
 using Saucery.Playwright.NUnit;
-using System.Text.RegularExpressions;
 
 namespace Merlin.Playwright.NUnit;
 

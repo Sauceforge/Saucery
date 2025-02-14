@@ -1,10 +1,10 @@
-﻿using NUnit.Framework;
+﻿using System.Collections;
+using NUnit.Framework;
 using Saucery.Core.Dojo;
 using Saucery.Core.OnDemand;
 using Saucery.Core.OnDemand.Base;
 using Saucery.Core.Options;
 using Shouldly;
-using System.Collections;
 
 namespace Saucery.Core.Tests;
 
