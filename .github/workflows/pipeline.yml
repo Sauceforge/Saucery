@@ -434,6 +434,9 @@ jobs:
 
     - name: Setup Java JDK for Codacy Code Coverage
       uses: actions/setup-java@v4.7.0
+      with:
+        distribution: 'oracle'
+        java-version: '21'
     
     - name: Codacy Code Coverage
       run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -l CSharp -r ${{env.UNIT_COVERAGE_FILENAME}} -r ${{env.NUNIT_INTEGRATION_COVERAGE_FILENAME}} -r ${{env.XUNIT_INTEGRATION_COVERAGE_FILENAME}} -r ${{env.XUNIT_RD_INTEGRATION_COVERAGE_FILENAME}} -r ${{env.NUNIT_RD_INTEGRATION_COVERAGE_FILENAME}}
