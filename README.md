@@ -13,7 +13,9 @@ Saucery
 ![GitHub Repo stars](https://img.shields.io/github/stars/Sauceforge/Saucery) 
 [![GitHub Sponsors](https://img.shields.io/github/sponsors/Sauceforge)](https://github.com/sponsors/Sauceforge)
 ![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/Sauceforge/Saucery/pipeline.yml) 
-![GitHub last commit (branch)](https://img.shields.io/github/last-commit/Sauceforge/Saucery/master) 
+![Created](https://img.shields.io/github/created-at/sauceforge/saucery)
+![Commits](https://img.shields.io/github/commit-activity/t/sauceforge/saucery)
+![GitHub last commit (master)](https://img.shields.io/github/last-commit/Sauceforge/Saucery/master)
 ![License](https://img.shields.io/github/license/Sauceforge/Saucery) 
 
 </div>
