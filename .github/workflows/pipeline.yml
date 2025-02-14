@@ -430,12 +430,18 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: xunit-real-integration-test-results
-    
-    - name: Present working directory
-      run: pwd
 
-    - name: Display structure of downloaded files
-      run: ls -R
+    - name: Setup Java JDK for Codacy Code Coverage
+      uses: actions/setup-java@v4.7.0
+    
+    - name: Codacy Code Coverage
+      run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -l CSharp -r ${{env.UNIT_COVERAGE_FILENAME}} -r ${{env.NUNIT_INTEGRATION_COVERAGE_FILENAME}} -r ${{env.XUNIT_INTEGRATION_COVERAGE_FILENAME}} -r ${{env.XUNIT_RD_INTEGRATION_COVERAGE_FILENAME}} -r ${{env.NUNIT_RD_INTEGRATION_COVERAGE_FILENAME}}
+    
+    # - name: Present working directory
+    #   run: pwd
+
+    # - name: Display structure of downloaded files
+    #   run: ls -R
 
     - name: ReportGenerator
       uses: danielpalme/ReportGenerator-GitHub-Action@5.4.4
