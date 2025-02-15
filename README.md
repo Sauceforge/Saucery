@@ -447,7 +447,7 @@ Yes, Saucery supports Real Devices!
 
 ### Trends
 
-[Nuget downloads](https://nugettrends.com/packages?months=24&ids=Saucery&ids=Saucery.XUnit&ids=Saucery.TUnit)  
+[Nuget downloads](https://nugettrends.com/packages?months=24&ids=Saucery&ids=Saucery.XUnit&ids=Saucery.TUnit&ids=Saucery.Core)  
 [GitHub stars](https://star-history.com/#sauceforge/Saucery)
 
 ## Contact
