@@ -24,8 +24,11 @@ internal class RealDeviceAndroidOptions : BaseOptions {
         options.AddAdditionalAppiumOption("platformName", "Android");
         options.AddAdditionalAppiumOption("w3c", true);
         options.AddAdditionalAppiumOption("autoGrantPermissions", true);
-        
-        SauceOptions.Add("appiumVersion", "latest");
+
+        SauceOptions.Add("appiumVersion",
+            !string.IsNullOrEmpty(browserVersion.RecommendedAppiumVersion)
+                ? browserVersion.RecommendedAppiumVersion
+                : "latest");
 
         options.AddAdditionalAppiumOption(SauceryConstants.SAUCE_OPTIONS_CAPABILITY, SauceOptions);
         Opts = options;

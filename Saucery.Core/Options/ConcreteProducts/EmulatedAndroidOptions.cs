@@ -23,10 +23,16 @@ internal class EmulatedAndroidOptions : BaseOptions {
         };
 
         options.AddAdditionalAppiumOption("platformName", "Android");
-        options.AddAdditionalAppiumOption("appiumVersion", browserVersion.RecommendedAppiumVersion);
         options.AddAdditionalAppiumOption("w3c", true);
         options.AddAdditionalAppiumOption("autoGrantPermissions", true);
-        
+
+        //options.AddAdditionalAppiumOption("appiumVersion", browserVersion.RecommendedAppiumVersion);
+
+        options.AddAdditionalAppiumOption("appiumVersion",
+            !string.IsNullOrEmpty(browserVersion.RecommendedAppiumVersion)
+                ? browserVersion.RecommendedAppiumVersion
+                : "latest");
+
         if(!string.IsNullOrEmpty(browserVersion.DeviceOrientation)) {
             SauceOptions.Add(SauceryConstants.SAUCE_DEVICE_ORIENTATION_CAPABILITY, browserVersion.DeviceOrientation);
         }
