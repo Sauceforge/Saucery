@@ -20,7 +20,11 @@ internal class EmulatedIOSOptions : BaseOptions {
             PlatformVersion = browserVersion.Name
         };
         
-        SauceOptions.Add(SauceryConstants.SAUCE_APPIUM_VERSION_CAPABILITY, browserVersion.RecommendedAppiumVersion);
+        SauceOptions.Add(SauceryConstants.SAUCE_APPIUM_VERSION_CAPABILITY,
+            !string.IsNullOrEmpty(browserVersion.RecommendedAppiumVersion)
+                ? browserVersion.RecommendedAppiumVersion
+                : "latest");
+
         if (!string.IsNullOrEmpty(browserVersion.DeviceOrientation))
         {
             SauceOptions.Add(SauceryConstants.SAUCE_DEVICE_ORIENTATION_CAPABILITY, browserVersion.DeviceOrientation);

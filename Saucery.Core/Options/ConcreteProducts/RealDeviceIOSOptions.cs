@@ -21,7 +21,10 @@ internal class RealDeviceIOSOptions : BaseOptions {
             PlatformVersion = browserVersion.PlatformNameForOption
         };
 
-        SauceOptions.Add(SauceryConstants.SAUCE_APPIUM_VERSION_CAPABILITY, "latest");
+        SauceOptions.Add(SauceryConstants.SAUCE_APPIUM_VERSION_CAPABILITY,
+            !string.IsNullOrEmpty(browserVersion.RecommendedAppiumVersion)
+                ? browserVersion.RecommendedAppiumVersion
+                : "latest");
 
         options.AddAdditionalAppiumOption("webviewConnectTimeout", 50000);
         options.AddAdditionalAppiumOption("safariLogAllCommunication", true);
