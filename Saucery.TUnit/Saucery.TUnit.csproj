@@ -11,7 +11,7 @@
   <PropertyGroup>
 	<IsPackable>true</IsPackable>
 	<PackageId>Saucery.TUnit</PackageId>
-	<PackageVersion>0.13.9</PackageVersion>
+	<PackageVersion>0.13.13</PackageVersion>
 	<PackageReadmeFile>README.md</PackageReadmeFile>
 	<Authors>Andrew Gray</Authors>
 	<Company>SauceForge</Company>
@@ -29,11 +29,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="SauceryTBase.cs~RF9d8e4a.TMP" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="TUnit" Version="0.13.9" />
+    <PackageReference Include="TUnit" Version="0.13.13" />
     <None Include="Images\Saucery.TUnit.128x128.png" Pack="true" PackagePath="\" />
     <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
