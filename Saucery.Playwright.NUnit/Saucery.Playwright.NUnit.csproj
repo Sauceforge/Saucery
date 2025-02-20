@@ -12,18 +12,18 @@
   <PropertyGroup>
 	  <IsPackable>true</IsPackable>
 	  <PackageId>Saucery</PackageId>
-      <PackageVersion>4.5.23</PackageVersion>
-      <PackageReadmeFile>README.md</PackageReadmeFile>
-      <Authors>Andrew Gray</Authors>
-      <Company>SauceForge</Company>
-      <Copyright>Copyright Andrew Gray 2014</Copyright>
-      <Description>Sorcery for SauceLabs - Unlocking SauceLabs capability</Description>
-      <PackageReleaseNotes>
-        ChangeLog:
-        v4.1.1
-        - Initial Release with dependency on Saucery.Core
-      </PackageReleaseNotes>
-      <PackageProjectUrl>https://github.com/Sauceforge/Saucery</PackageProjectUrl>
+    <PackageVersion>4.5.24</PackageVersion>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Authors>Andrew Gray</Authors>
+    <Company>SauceForge</Company>
+    <Copyright>Copyright Andrew Gray 2014</Copyright>
+    <Description>Sorcery for SauceLabs - Unlocking SauceLabs capability</Description>
+    <PackageReleaseNotes>
+      ChangeLog:
+      v4.1.1
+      - Initial Release with dependency on Saucery.Core
+    </PackageReleaseNotes>
+    <PackageProjectUrl>https://github.com/Sauceforge/Saucery</PackageProjectUrl>
 	  <PackageIcon>Saucery.NUnit.128x128.png</PackageIcon>
       <PackageTags>nunit saucelabs test testing tdd framework assert</PackageTags>
 	  <Title>Sorcery for SauceLabs and NUnit</Title>
