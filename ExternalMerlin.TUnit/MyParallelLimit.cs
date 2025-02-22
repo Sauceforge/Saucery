@@ -4,5 +4,5 @@ namespace ExternalMerlin.TUnit;
 
 public record MyParallelLimit : IParallelLimit
 {
-    public int Limit => 3;
+    public int Limit => 4;
 }

@@ -22,6 +22,8 @@
     <ProjectReference Include="..\Saucery.Core\Saucery.Core.csproj" />
     <ProjectReference Include="..\Saucery.Tests.Common\Saucery.Tests.Common.csproj" />
     <ProjectReference Include="..\Saucery.TUnit\Saucery.TUnit.csproj" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+    <PackageReference Include="Microsoft.CodeCoverage" Version="17.13.0" />
   </ItemGroup>
 
 </Project>
