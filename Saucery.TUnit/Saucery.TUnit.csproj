@@ -6,8 +6,8 @@
     <Nullable>enable</Nullable>
 	  <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
 	  <GenerateRuntimeConfigDevFile>true</GenerateRuntimeConfigDevFile>
-    <EnableStaticNativeInstrumentation>false</EnableStaticNativeInstrumentation>
-    <EnableDynamicNativeInstrumentation>false</EnableDynamicNativeInstrumentation>
+    <!--<EnableStaticNativeInstrumentation>false</EnableStaticNativeInstrumentation>
+    <EnableDynamicNativeInstrumentation>false</EnableDynamicNativeInstrumentation>-->
   </PropertyGroup>
 
   <PropertyGroup>
