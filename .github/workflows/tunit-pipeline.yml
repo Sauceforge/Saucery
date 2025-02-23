@@ -117,7 +117,7 @@ jobs:
     - name: Run TUnit Integration Tests
       #run: dotnet test -c ${{ env.CONFIG }} --collect "Code Coverage;Format=cobertura" ${{ env.M_TUNIT_PROJECT }}
       #run: dotnet test -c ${{ env.CONFIG }} --collect "Code Coverage;Format=${{ env.COVERAGE_FORMAT }}" ${{ env.M_TUNIT_PROJECT }}
-      run: dotnet test -c Release --logger GitHubActions
+      run: dotnet test -c ${{ env.CONFIG }} ${{ env.M_TUNIT_PROJECT }} --logger GitHubActions
 
     - name: Display structure of downloaded files
       run: ls -R
