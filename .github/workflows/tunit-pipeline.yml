@@ -96,27 +96,14 @@ jobs:
     - name: Compile solution
       run: dotnet build -c ${{ env.CONFIG }}
 
-    - name: Run TUnit Integration Tests
-      uses: b3b00/coverlet-action@11.9
-      with:
-        testProject: ${{ env.M_TUNIT_PROJECT }}
-        output: ${{ env.TUNIT_INTEGRATION_COVERAGE_FILENAME }}
-        outputFormat: ${{ env.COVERAGE_FORMAT }}
-        #threshold: ${{ env.COVERAGE_THRESHOLD }}
-        excludes: '[Merlin.TUnit]Tests.*'
-
-    - name: Display structure of downloaded files
-      run: ls -R
-
-    - name: Publish Artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: tunit-integration-test-results
-        path: ${{ env.TUNIT_INT_DIR }}/${{env.TUNIT_INTEGRATION_COVERAGE_FILENAME}}
-        
     # - name: Run TUnit Integration Tests
-    #   run: dotnet test -c ${{ env.CONFIG }} --collect "Code Coverage;Format=cobertura" ${{ env.M_TUNIT_PROJECT }}
-    #   #run: dotnet test -c ${{ env.CONFIG }} --collect "Code Coverage;Format=${{ env.COVERAGE_FORMAT }}" ${{ env.M_TUNIT_PROJECT }}
+    #   uses: b3b00/coverlet-action@11.9
+    #   with:
+    #     testProject: ${{ env.M_TUNIT_PROJECT }}
+    #     output: ${{ env.TUNIT_INTEGRATION_COVERAGE_FILENAME }}
+    #     outputFormat: ${{ env.COVERAGE_FORMAT }}
+    #     #threshold: ${{ env.COVERAGE_THRESHOLD }}
+    #     excludes: '[Merlin.TUnit]Tests.*'
 
     # - name: Display structure of downloaded files
     #   run: ls -R
@@ -126,6 +113,20 @@ jobs:
     #   with:
     #     name: tunit-integration-test-results
     #     path: ${{ env.TUNIT_INT_DIR }}/${{env.TUNIT_INTEGRATION_COVERAGE_FILENAME}}
+        
+    - name: Run TUnit Integration Tests
+      #run: dotnet test -c ${{ env.CONFIG }} --collect "Code Coverage;Format=cobertura" ${{ env.M_TUNIT_PROJECT }}
+      #run: dotnet test -c ${{ env.CONFIG }} --collect "Code Coverage;Format=${{ env.COVERAGE_FORMAT }}" ${{ env.M_TUNIT_PROJECT }}
+      run: dotnet test -c Release --logger GitHubActions
+
+    - name: Display structure of downloaded files
+      run: ls -R
+
+    - name: Publish Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: tunit-integration-test-results
+        path: ${{ env.TUNIT_INT_DIR }}/${{env.TUNIT_INTEGRATION_COVERAGE_FILENAME}}
 
   tunit-real-integration-tests:
     runs-on: ubuntu-latest
