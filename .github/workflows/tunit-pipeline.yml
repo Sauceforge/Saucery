@@ -36,6 +36,7 @@ env:
   TUNIT_INTEGRATION_COVERAGE_FILENAME: opencover.tunit.integration.xml
   TUNIT_RD_INTEGRATION_COVERAGE_FILENAME: opencover.tunit.realdevice.integration.xml
   COVERAGE_THRESHOLD: 80
+  GITHUB_ACTIONS: true
 
 jobs:
   build:
