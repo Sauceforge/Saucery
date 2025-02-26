@@ -36,7 +36,6 @@ env:
   TUNIT_INTEGRATION_COVERAGE_FILENAME: opencover.tunit.integration.xml
   TUNIT_RD_INTEGRATION_COVERAGE_FILENAME: opencover.tunit.realdevice.integration.xml
   COVERAGE_THRESHOLD: 80
-  GITHUB_ACTIONS: true
 
 jobs:
   build:
@@ -118,7 +117,9 @@ jobs:
     - name: Run TUnit Integration Tests
       #run: dotnet test -c ${{ env.CONFIG }} --collect "Code Coverage;Format=cobertura" ${{ env.M_TUNIT_PROJECT }}
       #run: dotnet test -c ${{ env.CONFIG }} --collect "Code Coverage;Format=${{ env.COVERAGE_FORMAT }}" ${{ env.M_TUNIT_PROJECT }}
-      run: dotnet test -c ${{ env.CONFIG }} ${{ env.M_TUNIT_PROJECT }} --logger GitHubActions
+      #run: dotnet test -c ${{ env.CONFIG }} ${{ env.M_TUNIT_PROJECT }} --logger GitHubActions
+      #run: dotnet test -c ${{ env.CONFIG }} ${{ env.M_TUNIT_PROJECT }} --no-build --logger GitHubActions
+      run: dotnet test -c ${{ env.CONFIG }} ${{ env.M_TUNIT_PROJECT }} --no-build /p:CoverletOutput=${{ env.TUNIT_INTEGRATION_COVERAGE_FILENAME }}
 
     - name: Display structure of downloaded files
       run: ls -R
