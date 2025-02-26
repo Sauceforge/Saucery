@@ -26,7 +26,7 @@
     <PackageProjectUrl>https://github.com/Sauceforge/Saucery</PackageProjectUrl>
 	  <PackageIcon>Saucery.NUnit.128x128.png</PackageIcon>
       <PackageTags>nunit saucelabs test testing tdd framework assert</PackageTags>
-	  <Title>Sorcery for SauceLabs and NUnit</Title>
+	  <Title>Sorcery for SauceLabs and Playwright.NUnit</Title>
   </PropertyGroup>
 
   <ItemGroup>
