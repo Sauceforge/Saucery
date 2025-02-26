@@ -18,7 +18,7 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="TUnit" Version="0.14.6" />
+		<PackageReference Include="TUnit" Version="0.14.13" />
     <PackageReference Include="GitHubActionsTestLogger" Version="2.4.1" PrivateAssets="All" />
 	</ItemGroup>
 

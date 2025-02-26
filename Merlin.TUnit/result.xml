@@ -2,9 +2,9 @@
 <CoverageSession>
   <Summary numSequencePoints="1790" visitedSequencePoints="1198" numBranchPoints="971" visitedBranchPoints="438" sequenceCoverage="66.92" branchCoverage="45.1" maxCyclomaticComplexity="1322" minCyclomaticComplexity="5" visitedClasses="135" numClasses="165" visitedMethods="383" numMethods="507" />
   <Modules>
-    <Module hash="72904E1E-A158-4ABF-98AD-7CFFAEAB1DE6">
+    <Module hash="B96B9D3F-C23F-4AD5-8479-021C36EF4D22">
       <ModulePath>Saucery.Core.dll</ModulePath>
-      <ModuleTime>2025-02-26T02:46:30</ModuleTime>
+      <ModuleTime>2025-02-26T03:39:40</ModuleTime>
       <ModuleName>Saucery.Core</ModuleName>
       <Files>
         <File uid="1" fullPath="C:\gitrepos\Saucery\Saucery.Core\Util\DebugMessages.cs" />
@@ -8864,9 +8864,9 @@
         </Class>
       </Classes>
     </Module>
-    <Module hash="5FE7B969-90EC-4BB8-ADA3-A4E76F5BE851">
+    <Module hash="8AC1A836-04D9-4B63-8F2D-5C7D2772B0D3">
       <ModulePath>Saucery.Tests.Common.dll</ModulePath>
-      <ModuleTime>2025-02-26T02:46:30</ModuleTime>
+      <ModuleTime>2025-02-26T03:39:40</ModuleTime>
       <ModuleName>Saucery.Tests.Common</ModuleName>
       <Files>
         <File uid="156" fullPath="C:\gitrepos\Saucery\Saucery.Tests.Common\PageObjects\GuineaPigPage.cs" />
@@ -8945,9 +8945,9 @@
         </Class>
       </Classes>
     </Module>
-    <Module hash="9DF481A3-03D0-4EC1-A500-857BEF3F0AA6">
+    <Module hash="FBE00A9E-72FC-44A1-BDCE-CBAD5CB235B8">
       <ModulePath>Saucery.TUnit.dll</ModulePath>
-      <ModuleTime>2025-02-26T02:46:30</ModuleTime>
+      <ModuleTime>2025-02-26T03:39:40</ModuleTime>
       <ModuleName>Saucery.TUnit</ModuleName>
       <Files>
         <File uid="157" fullPath="C:\gitrepos\Saucery\Saucery.TUnit\BaseFixture.cs" />
