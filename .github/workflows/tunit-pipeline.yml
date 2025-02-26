@@ -95,30 +95,8 @@ jobs:
     
     - name: Compile solution
       run: dotnet build -c ${{ env.CONFIG }}
-
-    # - name: Run TUnit Integration Tests
-    #   uses: b3b00/coverlet-action@11.9
-    #   with:
-    #     testProject: ${{ env.M_TUNIT_PROJECT }}
-    #     output: ${{ env.TUNIT_INTEGRATION_COVERAGE_FILENAME }}
-    #     outputFormat: ${{ env.COVERAGE_FORMAT }}
-    #     #threshold: ${{ env.COVERAGE_THRESHOLD }}
-    #     excludes: '[Merlin.TUnit]Tests.*'
-
-    # - name: Display structure of downloaded files
-    #   run: ls -R
-
-    # - name: Publish Artifacts
-    #   uses: actions/upload-artifact@v4
-    #   with:
-    #     name: tunit-integration-test-results
-    #     path: ${{ env.TUNIT_INT_DIR }}/${{env.TUNIT_INTEGRATION_COVERAGE_FILENAME}}
-        
+    
     - name: Run TUnit Integration Tests
-      #run: dotnet test -c ${{ env.CONFIG }} --collect "Code Coverage;Format=cobertura" ${{ env.M_TUNIT_PROJECT }}
-      #run: dotnet test -c ${{ env.CONFIG }} --collect "Code Coverage;Format=${{ env.COVERAGE_FORMAT }}" ${{ env.M_TUNIT_PROJECT }}
-      #run: dotnet test -c ${{ env.CONFIG }} ${{ env.M_TUNIT_PROJECT }} --logger GitHubActions
-      #run: dotnet test -c ${{ env.CONFIG }} ${{ env.M_TUNIT_PROJECT }} --no-build --logger GitHubActions
       run: dotnet test -c ${{ env.CONFIG }} ${{ env.M_TUNIT_PROJECT }} --no-build /p:CoverletOutput=${{ env.TUNIT_INTEGRATION_COVERAGE_FILENAME }}
 
     - name: Display structure of downloaded files
@@ -147,7 +125,13 @@ jobs:
       run: dotnet build -c ${{ env.CONFIG }}
 
     - name: Run TUnit Real Integration Tests
-      run: dotnet test -c ${{ env.CONFIG }} ${{ env.M_RD_TUNIT_PROJECT }}
+      run: dotnet test -c ${{ env.CONFIG }} ${{ env.M_RD_TUNIT_PROJECT }} --no-build /p:CoverletOutput=${{ env.TUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}
+
+    - name: Publish Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: tunit-real-integration-test-results
+        path: ${{ env.TUNIT_INT_DIR }}/${{env.TUNIT_RD_INTEGRATION_COVERAGE_FILENAME}}
 
   tunit-external-tests:
     runs-on: ubuntu-latest
@@ -167,7 +151,7 @@ jobs:
       run: dotnet build -c ${{ env.CONFIG }}
 
     - name: Run External TUnit Integration Tests
-      run: dotnet test -c ${{ env.CONFIG }} ${{ env.EM_TUNIT_PROJECT }}
+      run: dotnet test -c ${{ env.CONFIG }} ${{ env.EM_TUNIT_PROJECT }} --no-build
 
   tunit-real-external-tests:
     runs-on: ubuntu-latest
@@ -187,7 +171,7 @@ jobs:
       run: dotnet build -c ${{ env.CONFIG }}
 
     - name: Run External TUnit Real Integration Tests
-      run: dotnet test -c ${{ env.CONFIG }} ${{ env.EM_RD_TUNIT_PROJECT }}
+      run: dotnet test -c ${{ env.CONFIG }} ${{ env.EM_RD_TUNIT_PROJECT }} --no-build
 
   generate-report:
     runs-on: ubuntu-latest
@@ -202,6 +186,16 @@ jobs:
       with:
         name: unit-test-results
 
+    - name: Download tunit-integration-test results
+      uses: actions/download-artifact@v4
+      with:
+        name: tunit-integration-test-results
+
+    - name: Download tunit-real-integration-test results
+      uses: actions/download-artifact@v4
+      with:
+        name: tunit-real-integration-test-results
+
     - name: Setup Java JDK for Codacy Code Coverage
       uses: actions/setup-java@v4.7.0
       with:
@@ -209,7 +203,10 @@ jobs:
         java-version: '21'
     
     - name: Codacy Code Coverage
-      run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -l CSharp -r ${{env.UNIT_COVERAGE_FILENAME}}
+      run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -l CSharp \
+           -r ${{env.UNIT_COVERAGE_FILENAME}} \
+           -r ${{env.TUNIT_INTEGRATION_COVERAGE_FILENAME}} \
+           -r ${{env.TUNIT_RD_INTEGRATION_COVERAGE_FILENAME}} --partial
     
     # - name: Present working directory
     #   run: pwd
