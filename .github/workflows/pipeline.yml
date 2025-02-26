@@ -22,17 +22,17 @@ env:
   TUNIT_RD_INT_DIR: Merlin.TUnit.RealDevices
   UT_PROJECT: Saucery.Core.Tests/Saucery.Core.Tests.csproj                                      # full path to your unit test project file
   M_NUNIT_PROJECT: Merlin.NUnit/Merlin.NUnit.csproj                                             # full path to nunit internal integration test project file
-  M_RD_NUNIT_PROJECT: Merlin.NUnit.RealDevices/Merlin.NUnit.RealDevices.csproj                  # full path to nunit internal integration test project file
+  M_RD_NUNIT_PROJECT: Merlin.NUnit.RealDevices/Merlin.NUnit.RealDevices.csproj                  # full path to nunit internal real device integration test project file
   EM_NUNIT_PROJECT: ExternalMerlin.NUnit/ExternalMerlin.NUnit.csproj                            # full path to nunit external integration test project file
-  EM_RD_NUNIT_PROJECT: ExternalMerlin.NUnit.RealDevices/ExternalMerlin.NUnit.RealDevices.csproj # full path to nunit external integration test project file
+  EM_RD_NUNIT_PROJECT: ExternalMerlin.NUnit.RealDevices/ExternalMerlin.NUnit.RealDevices.csproj # full path to nunit external real device integration test project file
   M_XUNIT_PROJECT: Merlin.XUnit/Merlin.XUnit.csproj                                             # full path to xunit internal integration test project file
-  M_RD_XUNIT_PROJECT: Merlin.XUnit.RealDevices/Merlin.XUnit.RealDevices.csproj                  # full path to xunit internal integration test project file
+  M_RD_XUNIT_PROJECT: Merlin.XUnit.RealDevices/Merlin.XUnit.RealDevices.csproj                  # full path to xunit internal real device integration test project file
   EM_XUNIT_PROJECT: ExternalMerlin.XUnit/ExternalMerlin.XUnit.csproj                            # full path to xunit external integration test project file
-  EM_RD_XUNIT_PROJECT: ExternalMerlin.XUnit.RealDevices/ExternalMerlin.XUnit.RealDevices.csproj # full path to xunit external integration test project file
-  M_TUNIT_PROJECT: Merlin.TUnit/Merlin.TUnit.csproj                                             # full path to xunit internal integration test project file
-  M_RD_TUNIT_PROJECT: Merlin.TUnit.RealDevices/Merlin.TUnit.RealDevices.csproj                  # full path to xunit internal integration test project file
-  EM_TUNIT_PROJECT: ExternalMerlin.TUnit/ExternalMerlin.TUnit.csproj                            # full path to xunit external integration test project file
-  EM_RD_TUNIT_PROJECT: ExternalMerlin.TUnit.RealDevices/ExternalMerlin.TUnit.RealDevices.csproj # full path to xunit external integration test project file
+  EM_RD_XUNIT_PROJECT: ExternalMerlin.XUnit.RealDevices/ExternalMerlin.XUnit.RealDevices.csproj # full path to xunit external real device integration test project file
+  M_TUNIT_PROJECT: Merlin.TUnit/Merlin.TUnit.csproj                                             # full path to tunit internal integration test project file
+  M_RD_TUNIT_PROJECT: Merlin.TUnit.RealDevices/Merlin.TUnit.RealDevices.csproj                  # full path to tunit internal real device integration test project file
+  EM_TUNIT_PROJECT: ExternalMerlin.TUnit/ExternalMerlin.TUnit.csproj                            # full path to tunit external integration test project file
+  EM_RD_TUNIT_PROJECT: ExternalMerlin.TUnit.RealDevices/ExternalMerlin.TUnit.RealDevices.csproj # full path to tunit external real device integration test project file
   SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
   SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
   CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
@@ -333,7 +333,13 @@ jobs:
       run: dotnet build -c ${{ env.CONFIG }}
 
     - name: Run TUnit Integration Tests
-      run: dotnet test -c ${{ env.CONFIG }} ${{ env.M_TUNIT_PROJECT }}
+      run: dotnet test -c ${{ env.CONFIG }} ${{ env.M_TUNIT_PROJECT }} --no-build /p:CoverletOutput=${{ env.TUNIT_INTEGRATION_COVERAGE_FILENAME }}
+
+    - name: Publish Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: tunit-integration-test-results
+        path: ${{ env.TUNIT_INT_DIR }}/${{env.TUNIT_INTEGRATION_COVERAGE_FILENAME}}
 
   tunit-real-integration-tests:
     runs-on: ubuntu-latest
@@ -357,7 +363,13 @@ jobs:
       run: dotnet build -c ${{ env.CONFIG }}
 
     - name: Run TUnit Real Integration Tests
-      run: dotnet test -c ${{ env.CONFIG }} ${{ env.M_RD_TUNIT_PROJECT }}
+      run: dotnet test -c ${{ env.CONFIG }} ${{ env.M_RD_TUNIT_PROJECT }} --no-build /p:CoverletOutput=${{ env.TUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}
+
+    - name: Publish Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: tunit-real-integration-test-results
+        path: ${{ env.TUNIT_RD_INT_DIR }}/${{env.TUNIT_RD_INTEGRATION_COVERAGE_FILENAME}}
 
   tunit-external-tests:
     runs-on: ubuntu-latest
@@ -377,7 +389,7 @@ jobs:
       run: dotnet build -c ${{ env.CONFIG }}
 
     - name: Run External TUnit Integration Tests
-      run: dotnet test -c ${{ env.CONFIG }} ${{ env.EM_TUNIT_PROJECT }}
+      run: dotnet test -c ${{ env.CONFIG }} ${{ env.EM_TUNIT_PROJECT }} --no-build
 
   tunit-real-external-tests:
     runs-on: ubuntu-latest
@@ -397,7 +409,7 @@ jobs:
       run: dotnet build -c ${{ env.CONFIG }}
 
     - name: Run External TUnit Real Integration Tests
-      run: dotnet test -c ${{ env.CONFIG }} ${{ env.EM_RD_TUNIT_PROJECT }}
+      run: dotnet test -c ${{ env.CONFIG }} ${{ env.EM_RD_TUNIT_PROJECT }} --no-build
 
   generate-report:
     runs-on: ubuntu-latest
@@ -432,6 +444,16 @@ jobs:
       with:
         name: xunit-real-integration-test-results
 
+    - name: Download tunit-integration-test results
+      uses: actions/download-artifact@v4
+      with:
+        name: tunit-integration-test-results
+
+    - name: Download tunit-real-integration-test results
+      uses: actions/download-artifact@v4
+      with:
+        name: tunit-real-integration-test-results
+
     - name: Setup Java JDK for Codacy Code Coverage
       uses: actions/setup-java@v4.7.0
       with:
@@ -439,7 +461,14 @@ jobs:
         java-version: '21'
     
     - name: Codacy Code Coverage
-      run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -l CSharp -r ${{env.UNIT_COVERAGE_FILENAME}} -r ${{env.NUNIT_INTEGRATION_COVERAGE_FILENAME}} -r ${{env.XUNIT_INTEGRATION_COVERAGE_FILENAME}} -r ${{env.XUNIT_RD_INTEGRATION_COVERAGE_FILENAME}} -r ${{env.NUNIT_RD_INTEGRATION_COVERAGE_FILENAME}}
+      run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -l CSharp \
+           -r ${{env.UNIT_COVERAGE_FILENAME}} \
+           -r ${{env.NUNIT_INTEGRATION_COVERAGE_FILENAME}} \
+           -r ${{env.XUNIT_INTEGRATION_COVERAGE_FILENAME}} \
+           -r ${{env.TUNIT_INTEGRATION_COVERAGE_FILENAME}} \
+           -r ${{env.NUNIT_RD_INTEGRATION_COVERAGE_FILENAME}} \
+           -r ${{env.XUNIT_RD_INTEGRATION_COVERAGE_FILENAME}} \
+           -r ${{env.TUNIT_RD_INTEGRATION_COVERAGE_FILENAME}}
     
     # - name: Present working directory
     #   run: pwd
@@ -451,7 +480,7 @@ jobs:
       uses: danielpalme/ReportGenerator-GitHub-Action@5.4.4
       with:
         # REQUIRED # The coverage reports that should be parsed (separated by semicolon). Globbing is supported.
-        reports: ${{env.UNIT_COVERAGE_FILENAME}};${{env.NUNIT_INTEGRATION_COVERAGE_FILENAME}};${{env.XUNIT_INTEGRATION_COVERAGE_FILENAME}};${{env.XUNIT_RD_INTEGRATION_COVERAGE_FILENAME}};${{env.NUNIT_RD_INTEGRATION_COVERAGE_FILENAME}}
+        reports: ${{env.UNIT_COVERAGE_FILENAME}};${{env.NUNIT_INTEGRATION_COVERAGE_FILENAME}};${{env.XUNIT_INTEGRATION_COVERAGE_FILENAME}};${{env.TUNIT_INTEGRATION_COVERAGE_FILENAME}};${{env.NUNIT_RD_INTEGRATION_COVERAGE_FILENAME}}${{env.XUNIT_RD_INTEGRATION_COVERAGE_FILENAME}};${{env.TUNIT_RD_INTEGRATION_COVERAGE_FILENAME}}
         targetdir: 'coveragereport' # REQUIRED # The directory where the generated report should be saved.
         reporttypes: 'HtmlInline;Cobertura' # The output formats and scope (separated by semicolon) Values: Badges, Clover, Cobertura, CsvSummary, Html, HtmlChart, HtmlInline, HtmlInline_AzurePipelines, HtmlInline_AzurePipelines_Dark, HtmlSummary, JsonSummary, Latex, LatexSummary, lcov, MarkdownSummary, MHtml, PngChart, SonarQube, TeamCitySummary, TextSummary, Xml, XmlSummary
 
