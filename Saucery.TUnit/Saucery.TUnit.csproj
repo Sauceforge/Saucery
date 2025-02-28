@@ -11,11 +11,11 @@
   <PropertyGroup>
 	<IsPackable>true</IsPackable>
 	<PackageId>Saucery.TUnit</PackageId>
-	<PackageVersion>0.15.18</PackageVersion>
+	<PackageVersion>0.15.30</PackageVersion>
 	<PackageReadmeFile>README.md</PackageReadmeFile>
 	<Authors>Andrew Gray</Authors>
 	<Company>SauceForge</Company>
-	<Copyright>Copyright Andrew Gray 2014</Copyright>
+	<Copyright>Copyright (c) Andrew Gray 2014</Copyright>
 	<Description>Sorcery for SauceLabs - Unlocking SauceLabs capability</Description>
 	<PackageReleaseNotes>
 		ChangeLog:
@@ -31,7 +31,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
     <PackageReference Include="Microsoft.CodeCoverage" Version="17.13.0" />
-    <PackageReference Include="TUnit" Version="0.15.18" />
+    <PackageReference Include="TUnit" Version="0.15.30" />
     <None Include="Images\Saucery.TUnit.128x128.png" Pack="true" PackagePath="\" />
     <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>

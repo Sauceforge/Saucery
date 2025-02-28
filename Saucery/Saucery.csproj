@@ -16,7 +16,7 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Authors>Andrew Gray</Authors>
     <Company>SauceForge</Company>
-    <Copyright>Copyright Andrew Gray 2014</Copyright>
+    <Copyright>Copyright (c) Andrew Gray 2014</Copyright>
     <Description>Sorcery for SauceLabs - Unlocking SauceLabs capability</Description>
     <PackageReleaseNotes>
       ChangeLog:
