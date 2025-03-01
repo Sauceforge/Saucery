@@ -77,7 +77,7 @@ The above code will run *2* unit tests (2 DataDrivenTitle tests) on *all* the pl
 
 - Parallelism in XUnit is currently achieved by having tests in multiple classes.
 - The Level of Parallelism is determined by the number of parallel threads you have paid for in your SauceLabs account.
-- Parallism is optional so you can exclude `[assembly: CollectionBehavior(MaxParallelThreads = 5)]` lines if you wish. We recommend placing this line in a `Usings.cs` as it will apply to all your TestFixtures.
+- Parallelism is optional so you can exclude `[assembly: CollectionBehavior(MaxParallelThreads = 5)]` lines if you wish. We recommend placing this line in a `Usings.cs` as it will apply to all your TestFixtures.
 
 Next, let's break down the key line.
 

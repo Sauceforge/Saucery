@@ -86,7 +86,7 @@ The above code will run *3* unit tests (1 ClickLink test and 2 DataDrivenTitle t
 
 - The Level of Parallelism is determined by the number of parallel threads you have paid for in your SauceLabs account.
 - We recommend 1 less than your limit. Our OpenSauce account has 5 so we specify 4 in our internal testing.
-- Parallism is optional so you can exclude the `[assembly: LevelOfParallelism(4)]` and `[Parallelizable]` lines if you wish.
+- Parallelism is optional so you can exclude the `[assembly: LevelOfParallelism(4)]` and `[Parallelizable]` lines if you wish.
 
 The other lines are mandatory. Let's break the key lines down.
 
