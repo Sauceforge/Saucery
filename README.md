@@ -61,7 +61,7 @@ These steps apply to all flavors:
 
 Your Project file should look something like this:
 
-```
+```xml
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
@@ -191,7 +191,7 @@ The `List<SaucePlatform>` is what you will specify. The rest of the class is man
 
 Your Project file should look something like this:
 
-```
+```xml
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
@@ -314,7 +314,7 @@ If you are using Visual Studio 17.12 or earlier, follow the instructions [here](
 
 Your Project file should look something like this:
 
-```
+```xml
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>

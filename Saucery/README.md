@@ -18,7 +18,7 @@ Note: The tests specified below are provided as examples only. Your tests, of co
 
 Your Project file should look something like this:
 
-```
+```xml
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
