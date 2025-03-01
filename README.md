@@ -76,7 +76,7 @@ Your Project file should look something like this:
 
   <ItemGroup> 
     <PackageReference Include="NUnit3TestAdapter" Version="5.0.0" />
-    <PackageReference Include="Saucery" Version="4.5.21" />
+    <PackageReference Include="Saucery" Version="4.5.24" />
   </ItemGroup>
 
 </Project>
@@ -209,7 +209,7 @@ Your Project file should look something like this:
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Saucery.XUnit" Version="4.5.21" />
+    <PackageReference Include="Saucery.XUnit" Version="4.5.24" />
   </ItemGroup>
 
 </Project>
