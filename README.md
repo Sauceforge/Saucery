@@ -324,7 +324,7 @@ Your Project file should look something like this:
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Saucery.TUnit" Version="0.12.17" />
+    <PackageReference Include="Saucery.TUnit" Version="0.15.30" />
   </ItemGroup>
 
 </Project>
@@ -333,11 +333,11 @@ Your Project file should look something like this:
 The ExternalMerlin.TUnit dogfood integration tests use the following template:
 
 ```csharp
-using ExternalMerlin.XUnit.PageObjects;
+using ExternalMerlin.TUnit.PageObjects;
 using Saucery.Core.Dojo;
 using Saucery.TUnit;
 
-namespace Merlin.TUnit.RealDevices;
+namespace ExternalMerlin.TUnit;
 
 public class DataDrivenTests : SauceryTBase
 {
@@ -353,12 +353,12 @@ public class DataDrivenTests : SauceryTBase
 
         var commentField = guineaPigPage.GetField(SauceryDriver(), "comments");
         await Assert.That(commentField).IsNotNull();
-
+        
         var commentText = commentField.GetDomProperty("value");
         await Assert.That(commentText).Contains(data.ToString());
     }
 
-    public static IEnumerable<Func<(BrowserVersion, int)>> AllCombinations(int[] data) =>
+    public static IEnumerable<Func<(BrowserVersion, int)>> AllCombinations(int[] data) => 
         RequestedPlatformData
         .AllPlatforms()
         .SelectMany(
@@ -426,6 +426,7 @@ public class RequestedPlatformData : SauceryTestData
     }
 
     public static List<Func<BrowserVersion>> AllPlatforms() => GetAllPlatformsAsFunc();
+}
 ```
 
 The `List<SaucePlatform>` is what you will specify. The rest of the class is mandatory. Check out `SauceryConstants` for all the platform, browser and screenres enums.

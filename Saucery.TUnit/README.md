@@ -31,7 +31,7 @@ Your Project file should look something like this:
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Saucery.TUnit" Version="0.12.17" />
+    <PackageReference Include="Saucery.TUnit" Version="0.15.30" />
   </ItemGroup>
 
 </Project>
@@ -41,11 +41,11 @@ Your Project file should look something like this:
 The ExternalMerlin.TUnit dogfood integration tests use the following template:
 
 ```csharp
-using ExternalMerlin.XUnit.PageObjects;
 using Saucery.Core.Dojo;
+using Saucery.Tests.Common.PageObjects;
 using Saucery.TUnit;
 
-namespace Merlin.TUnit.RealDevices;
+namespace Merlin.TUnit;
 
 public class DataDrivenTests : SauceryTBase
 {
@@ -70,7 +70,7 @@ public class DataDrivenTests : SauceryTBase
         RequestedPlatformData
         .AllPlatforms()
         .SelectMany(
-            browserVersionFunc => data,
+            _ => data,
             (browserVersionFunc, datum) => new Func<(BrowserVersion, int)>(() => (browserVersionFunc(), datum))
         );
 }
