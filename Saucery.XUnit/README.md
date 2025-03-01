@@ -45,30 +45,30 @@ Your Project file should look something like this:
 The ExternalMerlin.XUnit dogfood integration tests use the following template:
 
 ```csharp
-    using ExternalMerlin.XUnit.PageObjects;
-    using Saucery.Core.Dojo;
-    using Saucery.XUnit;
-    using Xunit.Abstractions;
+using ExternalMerlin.XUnit.PageObjects;
+using Saucery.Core.Dojo;
+using Saucery.XUnit;
+using Xunit.Abstractions;
 
-    [assembly: CollectionBehavior(MaxParallelThreads = 5)]
+[assembly: CollectionBehavior(MaxParallelThreads = 5)]
 
-    namespace ExternalMerlin.XUnit;
+namespace ExternalMerlin.XUnit;
 
-    public class DataDrivenTests(ITestOutputHelper output, BaseFixture baseFixture) : SauceryXBase(output, baseFixture)
+public class DataDrivenTests(ITestOutputHelper output, BaseFixture baseFixture) : SauceryXBase(output, baseFixture)
+{
+    [Theory]
+    [MemberData(nameof(AllCombinations))]
+    public void DataDrivenTest(BrowserVersion requestedPlatform, int data)
     {
-        [Theory]
-        [MemberData(nameof(AllCombinations))]
-        public void DataDrivenTest(BrowserVersion requestedPlatform, int data)
-        {
-            InitialiseDriver(requestedPlatform);
+        InitialiseDriver(requestedPlatform);
 
-            var guineaPigPage = new GuineaPigPage(BaseFixture.SauceryDriver(), "https://saucelabs.com/");
+        var guineaPigPage = new GuineaPigPage(BaseFixture.SauceryDriver(), "https://saucelabs.com/");
 
-            guineaPigPage.TypeField(BaseFixture.SauceryDriver(), "comments", data.ToString());
-        }
-
-        public static IEnumerable<object[]> AllCombinations => GetAllCombinations([4, 5]);
+        guineaPigPage.TypeField(BaseFixture.SauceryDriver(), "comments", data.ToString());
     }
+
+    public static IEnumerable<object[]> AllCombinations => GetAllCombinations([4, 5]);
+}
 ```
 
 The above code will run *2* unit tests (2 DataDrivenTitle tests) on *all* the platforms you specify.
