@@ -18,7 +18,7 @@ namespace Saucery.XUnit;
 
 public class BaseFixture : IDisposable
 {
-    public WebDriver? Driver;
+    internal WebDriver? Driver;
     
     internal readonly SauceLabsEmulatedStatusNotifier SauceLabsEmulatedStatusNotifier = new();
 
@@ -28,7 +28,7 @@ public class BaseFixture : IDisposable
     
     internal readonly SauceLabsRealDeviceAcquirer SauceLabsRealDeviceAcquirer = new();
 
-    public OptionFactory? OptionFactory;
+    internal OptionFactory? OptionFactory;
 
     private readonly AppiumClientConfig _appiumClientConfig = new() { DirectConnect = true };
 

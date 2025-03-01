@@ -125,7 +125,7 @@ public class NuGetIntegrationTests(BrowserVersion browserVersion) : SauceryBase(
 
 The above code will run *3* unit tests (1 ClickLink test and 2 DataDrivenTitle tests) on *all* the platforms you specify, in parallel.
 
-#### Parallelism
+#### NUnit Parallelism
 
 - The Level of Parallelism is determined by the number of parallel threads you have paid for in your SauceLabs account.
 - We recommend 1 less than your limit. Our OpenSauce account has 5 so we specify 4 in our internal testing.
@@ -246,7 +246,7 @@ public class DataDrivenTests(ITestOutputHelper output, BaseFixture baseFixture) 
 
 The above code will run *2* unit tests (2 DataDrivenTitle tests) on *all* the platforms you specify.
 
-#### Parallelism
+#### XUnit Parallelism
 
 - Parallelism in XUnit is currently achieved by having tests in multiple classes.
 - The Level of Parallelism is determined by the number of parallel threads you have paid for in your SauceLabs account.
@@ -370,7 +370,7 @@ public class DataDrivenTests : SauceryTBase
 
 The above code will run *2* unit tests (2 DataDrivenTitle tests) on *all* the platforms you specify, in parallel by default.
 
-#### Parallelism
+#### TUnit Parallelism
 
 - Parallelism in TUnit is default out of the box. For SauceLabs it needs to be constrained. 
 - Have a look at MyParallelLimit.cs in the ExternalMerlin.TUnit project for an example of how to do that.
