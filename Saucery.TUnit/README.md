@@ -4,6 +4,10 @@ Saucery handles all the plumbing required to integrate with SauceLabs, making wr
 
 Note: The tests specified below are provided as examples only. Your tests, of course, will be specific to your System Under Test.
 
+### IDE Setup
+
+If you are using Visual Studio 17.12 or earlier, follow the instructions [here](https://thomhurst.github.io/TUnit/docs/tutorial-basics/running-your-tests#visual-studio) to set up your IDE.
+
 ## Initial Setup
 
 1. You'll need a SauceLabs account. You can get a free trial account [here](https://saucelabs.com/sign-up).
@@ -34,46 +38,42 @@ Your Project file should look something like this:
 
 ```
 
-### IDE Setup
-
-Follow the instructions [here](https://thomhurst.github.io/TUnit/docs/tutorial-basics/running-your-tests#visual-studio) to set up your IDE.
-
 The ExternalMerlin.TUnit dogfood integration tests use the following template:
 
-```
-using ExternalMerlin.XUnit.PageObjects;
-using Saucery.Core.Dojo;
-using Saucery.TUnit;
+```csharp
+    using ExternalMerlin.XUnit.PageObjects;
+    using Saucery.Core.Dojo;
+    using Saucery.TUnit;
 
-namespace Merlin.TUnit.RealDevices;
+    namespace Merlin.TUnit.RealDevices;
 
-public class DataDrivenTests : SauceryTBase
-{
-    [Test]
-    [MethodDataSource(nameof(AllCombinations), Arguments = [new[] { 4, 5 }])]
-    public async Task DataDrivenTest(BrowserVersion requestedPlatform, int data)
+    public class DataDrivenTests : SauceryTBase
     {
-        InitialiseDriver(requestedPlatform);
+        [Test]
+        [MethodDataSource(nameof(AllCombinations), Arguments = [new[] { 4, 5 }])]
+        public async Task DataDrivenTest(BrowserVersion requestedPlatform, int data)
+        {
+            InitialiseDriver(requestedPlatform);
 
-        var guineaPigPage = new GuineaPigPage(SauceryDriver(), "https://saucelabs.com/");
+            var guineaPigPage = new GuineaPigPage(SauceryDriver(), "https://saucelabs.com/");
 
-        guineaPigPage.TypeField(SauceryDriver(), "comments", data.ToString());
+            guineaPigPage.TypeField(SauceryDriver(), "comments", data.ToString());
 
-        var commentField = guineaPigPage.GetField(SauceryDriver(), "comments");
-        await Assert.That(commentField).IsNotNull();
+            var commentField = guineaPigPage.GetField(SauceryDriver(), "comments");
+            await Assert.That(commentField).IsNotNull();
 
-        var commentText = commentField.GetDomProperty("value");
-        await Assert.That(commentText).Contains(data.ToString());
+            var commentText = commentField.GetDomProperty("value");
+            await Assert.That(commentText).Contains(data.ToString());
+        }
+
+        public static IEnumerable<Func<(BrowserVersion, int)>> AllCombinations(int[] data) =>
+            RequestedPlatformData
+            .AllPlatforms()
+            .SelectMany(
+                browserVersionFunc => data,
+                (browserVersionFunc, datum) => new Func<(BrowserVersion, int)>(() => (browserVersionFunc(), datum))
+            );
     }
-
-    public static IEnumerable<Func<(BrowserVersion, int)>> AllCombinations(int[] data) =>
-        RequestedPlatformData
-        .AllPlatforms()
-        .SelectMany(
-            browserVersionFunc => data,
-            (browserVersionFunc, datum) => new Func<(BrowserVersion, int)>(() => (browserVersionFunc(), datum))
-        );
-}
 ```
 
 The above code will run *2* unit tests (2 DataDrivenTitle tests) on *all* the platforms you specify, in parallel by default.
@@ -86,18 +86,18 @@ The above code will run *2* unit tests (2 DataDrivenTitle tests) on *all* the pl
 
 The other lines are mandatory. Let's break the key lines down.
 
-```
-public class DataDrivenTests : SauceryTBase
+```csharp
+    public class DataDrivenTests : SauceryTBase
 ```
 
 Your class must subclass `SauceryTBase`. SauceryT will take care of the rest.
 
 A data driven test is specified like this:
 
-```
-[Test]
-[MethodDataSource(nameof(AllCombinations), Arguments = [new[] { 4, 5 }])]
-public async Task DataDrivenTest(Func<BrowserVersion> requestedPlatform, int data)
+```csharp
+    [Test]
+    [MethodDataSource(nameof(AllCombinations), Arguments = [new[] { 4, 5 }])]
+    public async Task DataDrivenTest(Func<BrowserVersion> requestedPlatform, int data)
 ```
 
 You can call the class what you like but it must take a `Func<BrowserVersion>` and the `data` as a parameter and subclass `SauceryTBase`.
@@ -106,34 +106,34 @@ You can call the class what you like but it must take a `Func<BrowserVersion>` a
 
 Let's look at what it should contain.
 
-```
-using Saucery.Core.DataSources;
-using Saucery.Core.Dojo;
-using Saucery.Core.OnDemand;
-using Saucery.Core.OnDemand.Base;
-using Saucery.Core.Util;
+```csharp
+    using Saucery.Core.DataSources;
+    using Saucery.Core.Dojo;
+    using Saucery.Core.OnDemand;
+    using Saucery.Core.OnDemand.Base;
+    using Saucery.Core.Util;
 
-namespace ExternalMerlin.TUnit;
+    namespace ExternalMerlin.TUnit;
 
-public class RequestedPlatformData : SauceryTestData
-{
-    static RequestedPlatformData()
+    public class RequestedPlatformData : SauceryTestData
     {
-        var platforms = new List<SaucePlatform>
+        static RequestedPlatformData()
         {
-            //Emulated Mobile Platforms
-            new AndroidPlatform("Google Pixel 8 Pro GoogleAPI Emulator", "15.0", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT),
-            new IOSPlatform("iPhone 14 Pro Max Simulator", "16.2", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
+            var platforms = new List<SaucePlatform>
+            {
+                //Emulated Mobile Platforms
+                new AndroidPlatform("Google Pixel 8 Pro GoogleAPI Emulator", "15.0", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT),
+                new IOSPlatform("iPhone 14 Pro Max Simulator", "16.2", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
 
-            //Desktop Platforms
-            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "123"),
-            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_CHROME, "124", SauceryConstants.SCREENRES_2560_1600)
-        };
+                //Desktop Platforms
+                new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "123"),
+                new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_CHROME, "124", SauceryConstants.SCREENRES_2560_1600)
+            };
 
-        SetPlatforms(platforms, PlatformFilter.Emulated);
-    }
+            SetPlatforms(platforms, PlatformFilter.Emulated);
+        }
 
-    public static List<Func<BrowserVersion>> AllPlatforms() => GetAllPlatformsAsFunc();
+        public static List<Func<BrowserVersion>> AllPlatforms() => GetAllPlatformsAsFunc();
 ```
 
 The `List<SaucePlatform>` is what you will specify. The rest of the class is mandatory. Check out `SauceryConstants` for all the platform, browser and screenres enums.
@@ -142,7 +142,7 @@ The `List<SaucePlatform>` is what you will specify. The rest of the class is man
 
 Platform range expansion is a feature unique to Saucery. Say you wanted to test on a range of browser versions but you didn't want to specify each individually. That's fine. Saucery supports specifying ranges.
 
-```
+```csharp
     new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "100->119")
 ```
 

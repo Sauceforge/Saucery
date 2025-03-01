@@ -41,44 +41,43 @@ Your Project file should look something like this:
 
 The ExternalMerlin.NUnit dogfood integration tests use the following template:
 
-```
-using ExternalMerlin.XUnit.PageObjects;
-using NUnit.Framework;
-using Saucery;
-using Saucery.Core.Dojo;
-using Shouldly;
+```csharp
+    using ExternalMerlin.XUnit.PageObjects;
+    using NUnit.Framework;
+    using Saucery;
+    using Saucery.Core.Dojo;
+    using Shouldly;
 
-[assembly: LevelOfParallelism(4)]
+    [assembly: LevelOfParallelism(4)]
 
-namespace ExternalMerlin.NUnit;
+    namespace ExternalMerlin.NUnit;
 
-[TestFixture]
-[Parallelizable]
-[TestFixtureSource(typeof(RequestedPlatformData))]
-public class NuGetIntegrationTests(BrowserVersion browserVersion) : SauceryBase(browserVersion) 
-{
-    [Test]
-    [TestCase(5)]
-    [TestCase(4)]
-    public void DataDrivenTest(int data) {
-        var guineaPigPage = new GuineaPigPage(SauceryDriver(), "https://saucelabs.com/");
+    [TestFixture]
+    [Parallelizable]
+    [TestFixtureSource(typeof(RequestedPlatformData))]
+    public class NuGetIntegrationTests(BrowserVersion browserVersion) : SauceryBase(browserVersion) 
+    {
+        [Test]
+        [TestCase(5)]
+        [TestCase(4)]
+        public void DataDrivenTest(int data) {
+            var guineaPigPage = new GuineaPigPage(SauceryDriver(), "https://saucelabs.com/");
 
-        guineaPigPage.TypeField(SauceryDriver(), "comments", data.ToString());
-        Driver?.Title.ShouldContain("I am a page title - Sauce Labs");
-    }
+            guineaPigPage.TypeField(SauceryDriver(), "comments", data.ToString());
+            Driver?.Title.ShouldContain("I am a page title - Sauce Labs");
+        }
 
-    [Test]
-    public void ClickLinkTest() {
-        var guineaPigPage = new GuineaPigPage(SauceryDriver(), "https://saucelabs.com/");
+        [Test]
+        public void ClickLinkTest() {
+            var guineaPigPage = new GuineaPigPage(SauceryDriver(), "https://saucelabs.com/");
     
-        // find and click the link on the page
-        guineaPigPage.ClickLink(SauceryDriver());
+            // find and click the link on the page
+            guineaPigPage.ClickLink(SauceryDriver());
 
-        // verify the browser was navigated to the correct page
-        Driver?.Url.ShouldContain("saucelabs.com/test-guinea-pig2.html");
+            // verify the browser was navigated to the correct page
+            Driver?.Url.ShouldContain("saucelabs.com/test-guinea-pig2.html");
+        }
     }
-}
-
 ```
 
 The above code will run *3* unit tests (1 ClickLink test and 2 DataDrivenTitle tests) on *all* the platforms you specify, in parallel.
@@ -91,11 +90,11 @@ The above code will run *3* unit tests (1 ClickLink test and 2 DataDrivenTitle t
 
 The other lines are mandatory. Let's break the key lines down.
 
-```
-[TestFixture]
-[Parallelizable]
-[TestFixtureSource(typeof(RequestedPlatformData))]
-public class NuGetIntegrationTests(BrowserVersion browserVersion) : SauceryBase(browserVersion)
+```csharp
+    [TestFixture]
+    [Parallelizable]
+    [TestFixtureSource(typeof(RequestedPlatformData))]
+    public class NuGetIntegrationTests(BrowserVersion browserVersion) : SauceryBase(browserVersion)
 ```
 
 You can call the class what you like but it must take a `BrowserVersion` as a parameter and subclass `SauceryBase`.
@@ -104,37 +103,37 @@ You can call the class what you like but it must take a `BrowserVersion` as a pa
 
 Let's look at what it should contain.
 
-```
-using Saucery.Core.DataSources;
-using Saucery.Core.OnDemand;
-using Saucery.Core.OnDemand.Base;
-using Saucery.Core.Util;
+```csharp
+    using Saucery.Core.DataSources;
+    using Saucery.Core.OnDemand;
+    using Saucery.Core.OnDemand.Base;
+    using Saucery.Core.Util;
 
-namespace ExternalMerlin.NUnit;
+    namespace ExternalMerlin.NUnit;
 
-public class RequestedPlatformData : SauceryTestData
-{
-    static RequestedPlatformData()
+    public class RequestedPlatformData : SauceryTestData
     {
-        List<SaucePlatform> platforms =
-        [
-            //Real Devices
-            new AndroidRealDevice("Google Pixel 8 Pro", "14"),
-            new IOSRealDevice("iPhone 14 Pro Max", "16"),
+        static RequestedPlatformData()
+        {
+            List<SaucePlatform> platforms =
+            [
+                //Real Devices
+                new AndroidRealDevice("Google Pixel 8 Pro", "14"),
+                new IOSRealDevice("iPhone 14 Pro Max", "16"),
 
-            //Emulated Mobile Platforms
-            new AndroidPlatform("Google Pixel 8 Pro GoogleAPI Emulator", "14.0", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT),
-            new IOSPlatform("iPhone 14 Pro Max Simulator", "16.2", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
+                //Emulated Mobile Platforms
+                new AndroidPlatform("Google Pixel 8 Pro GoogleAPI Emulator", "14.0", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT),
+                new IOSPlatform("iPhone 14 Pro Max Simulator", "16.2", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
 
-            //Desktop Platforms
-            new DesktopPlatform(SauceryConstants.PLATFORM_LINUX, SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_VERSION_LATEST),
-            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "75"),
-            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_CHROME, "76", SauceryConstants.SCREENRES_2560_1600)
-        ];
+                //Desktop Platforms
+                new DesktopPlatform(SauceryConstants.PLATFORM_LINUX, SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_VERSION_LATEST),
+                new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "75"),
+                new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_CHROME, "76", SauceryConstants.SCREENRES_2560_1600)
+            ];
 
-        SetPlatforms(platforms, PlatformFilter.Emulated);
+            SetPlatforms(platforms, PlatformFilter.Emulated);
+        }
     }
-}
 ```
 
 The `List<SaucePlatform>` is what you will specify. The rest of the class is mandatory. Check out `SauceryConstants` for all the platform, browser and screenres enums.
@@ -143,7 +142,7 @@ The `List<SaucePlatform>` is what you will specify. The rest of the class is man
 
 Platform range expansion is a feature unique to Saucery. Say you wanted to test on a range of browser versions but you didn't want to specify each individually. That's fine. Saucery supports specifying ranges.
 
-```
+```csharp
     new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "100->119")
 ```
 
