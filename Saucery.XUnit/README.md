@@ -82,7 +82,7 @@ The above code will run *2* unit tests (2 DataDrivenTitle tests) on *all* the pl
 Next, let's break down the key line.
 
 ```csharp
-    public class DataDrivenTests(ITestOutputHelper output, BaseFixture baseFixture) : SauceryXBase(output, baseFixture)
+public class DataDrivenTests(ITestOutputHelper output, BaseFixture baseFixture) : SauceryXBase(output, baseFixture)
 ```
 
 Your class must subclass `SauceryXBase` and pass an `ITestOutputHelper` and a `BaseFixture`. SauceryX will take care of the rest.
@@ -92,38 +92,38 @@ You need to specify a class to tell SauceryX what platforms you want to test on.
 Let's look at what it should contain.
 
 ```csharp
-    using Saucery.Core.DataSources;
-    using Saucery.Core.OnDemand;
-    using Saucery.Core.OnDemand.Base;
-    using Saucery.Core.Util;
+using Saucery.Core.DataSources;
+using Saucery.Core.OnDemand;
+using Saucery.Core.OnDemand.Base;
+using Saucery.Core.Util;
 
-    namespace ExternalMerlin.XUnit;
+namespace ExternalMerlin.XUnit;
 
-    public class RequestedPlatformData : SauceryTestData
+public class RequestedPlatformData : SauceryTestData
+{
+    static RequestedPlatformData()
     {
-        static RequestedPlatformData()
-        {
-            List<SaucePlatform> platforms =
-            [
-                //Real Devices
-                new AndroidRealDevice("Google Pixel 8 Pro", "14"),
-                new IOSRealDevice("iPhone 14 Pro Max", "16"),
+        List<SaucePlatform> platforms =
+        [
+            //Real Devices
+            new AndroidRealDevice("Google Pixel 8 Pro", "14"),
+            new IOSRealDevice("iPhone 14 Pro Max", "16"),
 
-                //Emulated Mobile Platforms
-                new AndroidPlatform("Google Pixel 8 Pro GoogleAPI Emulator", "14.0", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT),
-                new IOSPlatform("iPhone 14 Pro Max Simulator", "16.2", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
+            //Emulated Mobile Platforms
+            new AndroidPlatform("Google Pixel 8 Pro GoogleAPI Emulator", "14.0", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT),
+            new IOSPlatform("iPhone 14 Pro Max Simulator", "16.2", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
 
-                //Desktop Platforms
-                new DesktopPlatform(SauceryConstants.PLATFORM_LINUX, SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_VERSION_LATEST),
-                new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "75"),
-                new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_CHROME, "76", SauceryConstants.SCREENRES_2560_1600)
-            ];
+            //Desktop Platforms
+            new DesktopPlatform(SauceryConstants.PLATFORM_LINUX, SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_VERSION_LATEST),
+            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "75"),
+            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_CHROME, "76", SauceryConstants.SCREENRES_2560_1600)
+        ];
 
-            SetPlatforms(platforms, PlatformFilter.Emulated);
-        }
-
-        public static IEnumerable<object[]> AllPlatforms => GetAllPlatforms();
+        SetPlatforms(platforms, PlatformFilter.Emulated);
     }
+
+    public static IEnumerable<object[]> AllPlatforms => GetAllPlatforms();
+}
 ```
 
 The `List<SaucePlatform>` is what you will specify. The rest of the class is mandatory. Check out `SauceryConstants` for all the platform, browser and screenres enums.
@@ -133,7 +133,7 @@ The `List<SaucePlatform>` is what you will specify. The rest of the class is man
 Platform range expansion is a feature unique to Saucery. Say you wanted to test on a range of browser versions but you didn't want to specify each individually. That's fine. Saucery supports specifying ranges.
 
 ```csharp
-    new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "100->119")
+new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "100->119")
 ```
 
 This will test on Windows 11 Chrome all available versions from 100 to 119 inclusive.
