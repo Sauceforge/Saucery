@@ -4,6 +4,9 @@ Saucery handles all the plumbing required to integrate with SauceLabs, making wr
 
 Note: The tests specified below are provided as examples only. Your tests, of course, will be specific to your System Under Test.
 
+## Sponsoring
+Saucery has been developed as an open-source project for over 10 years. If you find it valuable for your projects and team work, please consider supporting it and becoming a  [![](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/Sauceforge)
+
 ## Initial Setup
 
 1. You'll need a SauceLabs account. You can get a free trial account [here](https://saucelabs.com/sign-up).

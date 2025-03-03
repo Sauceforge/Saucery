@@ -37,6 +37,9 @@ Note: The tests specified below are provided as examples only. Your tests, of co
 | Saucery.XUnit | [![nuget](https://img.shields.io/nuget/v/Saucery.XUnit.svg)](https://www.nuget.org/packages/Saucery.XUnit/)  [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery.XUnit)](https://www.nuget.org/packages/Saucery.XUnit/) |
 | Saucery.TUnit | [![nuget](https://img.shields.io/nuget/v/Saucery.TUnit.svg)](https://www.nuget.org/packages/Saucery.TUnit/)  [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery.TUnit)](https://www.nuget.org/packages/Saucery.TUnit/) |
 
+### Sponsoring
+Saucery has been developed as an open-source project for over 10 years. If you find it valuable for your projects and team work, please consider supporting it and becoming a  [![](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/Sauceforge)
+
 ### Dog food Status
 
 We test Saucery itself on SauceLabs!
