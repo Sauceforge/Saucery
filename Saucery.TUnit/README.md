@@ -31,7 +31,7 @@ Your Project file should look something like this:
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Saucery.TUnit" Version="0.15.30" />
+    <PackageReference Include="Saucery.TUnit" Version="0.16.4" />
   </ItemGroup>
 
 </Project>
