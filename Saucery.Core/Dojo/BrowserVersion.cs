@@ -37,6 +37,8 @@ public class BrowserVersion
 
     public List<string> ScreenResolutions { get; set; }
 
+    private readonly Lock _testNameLock = new();
+
     private StringBuilder TestNameBuilder { get; set; }
 
     public BrowserVersion(SupportedPlatform sp, BrowserBase b)
@@ -116,7 +118,10 @@ public class BrowserVersion
             AppendPlatformField(ScreenResolution!);
         }
 
-        AppendPlatformField(DateTime.Now.ToString("yyyyMMddHHmmssffff"));
+        lock (_testNameLock)
+        {
+            AppendPlatformField(DateTime.Now.ToString("yyyyMMddHHmmssffff"));
+        }
 
         if(TestNameBuilder.Length > 0) 
         {
