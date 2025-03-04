@@ -116,6 +116,8 @@ public class BrowserVersion
             AppendPlatformField(ScreenResolution!);
         }
 
+        AppendPlatformField(DateTime.Now.ToString("yyyyMMddHHmmssffff"));
+
         if(TestNameBuilder.Length > 0) 
         {
             TestName = TestNameBuilder.ToString();
