@@ -27,7 +27,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Appium.WebDriver" Version="7.1.0" />
-		<PackageReference Include="Castle.Core" Version="5.1.1" />
+		<PackageReference Include="Castle.Core" Version="5.2.1" />
 		<PackageReference Include="DotNetSeleniumExtras.PageObjects.Core" Version="4.14.1" />
 		<PackageReference Include="DotNetSeleniumExtras.WaitHelpers" Version="3.11.0" />
 		<PackageReference Include="RestSharp" Version="112.1.0" />
