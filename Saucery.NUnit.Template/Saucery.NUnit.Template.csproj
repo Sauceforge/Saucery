@@ -23,14 +23,13 @@
 
   <ItemGroup>
     <!-- Include the content files for the template -->
-    <None Include="content\**\*" Pack="true" PackagePath="content\" />
+    <!--<None Include="content\**\*" Exclude="content\**\bin\**;content\**\obj\**" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="content\" />-->
+    <None Include="content\**\*" Exclude="content\**\bin\**;content\**\obj\**" CopyToOutputDirectory="PreserveNewest" PackagePath="content\" />
+    <Compile Remove="**\*" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="NUnit" Version="4.3.2" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Saucery.Core\Saucery.Core.csproj" />
     <ProjectReference Include="..\Saucery\Saucery.csproj" />
   </ItemGroup>
