@@ -75,6 +75,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Benchmark", "Benchmark", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Saucery.Benchmark", "Saucery.Benchmark\Saucery.Benchmark.csproj", "{C394E74B-52F9-47A7-8F3B-AC91F1F54EF2}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Saucery.NUnit.Template", "Saucery.NUnit.Template\Saucery.NUnit.Template.csproj", "{E3C3D904-F6EC-3ED6-1133-3E9252A9EFFF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -165,6 +169,10 @@ Global
 		{C394E74B-52F9-47A7-8F3B-AC91F1F54EF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C394E74B-52F9-47A7-8F3B-AC91F1F54EF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C394E74B-52F9-47A7-8F3B-AC91F1F54EF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3C3D904-F6EC-3ED6-1133-3E9252A9EFFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3C3D904-F6EC-3ED6-1133-3E9252A9EFFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3C3D904-F6EC-3ED6-1133-3E9252A9EFFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3C3D904-F6EC-3ED6-1133-3E9252A9EFFF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -196,6 +204,7 @@ Global
 		{64B75EEC-FF07-409F-B9CB-0F9A028C9593} = {B6394A10-FE50-410E-8217-697FC6688616}
 		{B6AA08DF-C226-4572-9D7F-C7E5A6CC6C90} = {B6394A10-FE50-410E-8217-697FC6688616}
 		{C394E74B-52F9-47A7-8F3B-AC91F1F54EF2} = {C619E424-C15A-40BF-A464-5BB2803BEBA3}
+		{E3C3D904-F6EC-3ED6-1133-3E9252A9EFFF} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B287ECB9-947E-4E9C-B745-27048D5CC522}

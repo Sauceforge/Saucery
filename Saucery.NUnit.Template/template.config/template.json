@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Andrew Gray",
+  "classifications": [ "Test", "NUnit", "Saucery" ],
+  "identity": "Saucery.NUnit.Template",
+  "name": "Saucery NUnit Test Project",
+  "shortName": "saucery-nunit",
+  "sourceName": "ExternalMerlin.NUnit",
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "preferNameDirectory": true,
+  "symbols": {
+    "ProjectName": {
+      "type": "parameter",
+      "description": "The name of the project",
+      "replaces": "ExternalMerlin.NUnit"
+    }
+  }
+}
