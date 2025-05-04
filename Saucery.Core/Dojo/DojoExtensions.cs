@@ -111,6 +111,7 @@ public static class DojoExtensions
             SauceryConstants.PLATFORM_WINDOWS_81 => platforms.GetPlatform<Windows81Platform>().FirstOrDefault(),
             SauceryConstants.PLATFORM_WINDOWS_8 => platforms.GetPlatform<Windows8Platform>().FirstOrDefault(),
             SauceryConstants.PLATFORM_WINDOWS_7 => platforms.GetPlatform<Windows7Platform>().FirstOrDefault(),
+            SauceryConstants.PLATFORM_MAC_14 => platforms.GetPlatform<Mac14Platform>().FirstOrDefault(),
             SauceryConstants.PLATFORM_MAC_13 => platforms.GetPlatform<Mac13Platform>().FirstOrDefault(),
             SauceryConstants.PLATFORM_MAC_12 => platforms.GetPlatform<Mac12Platform>().FirstOrDefault(),
             SauceryConstants.PLATFORM_MAC_11 => platforms.GetPlatform<Mac11Platform>().FirstOrDefault(),
@@ -187,10 +188,13 @@ public static class DojoExtensions
         string platformToSearchFor = $"{sp.Os} {sp.LongVersion}";
         PlatformBase? platform = platformToSearchFor switch
         {
+            "iOS 18.0" => platforms.GetPlatform<IOS18Platform>().FirstOrDefault(),
+            "iOS 17.5" => platforms.GetPlatform<IOS175Platform>().FirstOrDefault(),
             "iOS 17.0" => platforms.GetPlatform<IOS17Platform>().FirstOrDefault(),
             "iOS 16.2" => platforms.GetPlatform<IOS162Platform>().FirstOrDefault(),
             "iOS 16.1" => platforms.GetPlatform<IOS161Platform>().FirstOrDefault(),
             "iOS 16.0" => platforms.GetPlatform<IOS16Platform>().FirstOrDefault(),
+            "iOS 15.5" => platforms.GetPlatform<IOS155Platform>().FirstOrDefault(),
             "iOS 15.4" => platforms.GetPlatform<IOS154Platform>().FirstOrDefault(),
             "iOS 15.2" => platforms.GetPlatform<IOS152Platform>().FirstOrDefault(),
             "iOS 15.0" => platforms.GetPlatform<IOS15Platform>().FirstOrDefault(),
