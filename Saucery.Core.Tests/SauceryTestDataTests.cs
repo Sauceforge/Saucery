@@ -13,8 +13,8 @@ public class SauceryTestDataTests : SauceryTestData {
         SetPlatforms(PlatformDataClass.DesktopPlatforms);
 
         Items.ShouldNotBeNull();
-        Items.Count().ShouldBeEquivalentTo(34); //Due to platform expansion.
-        GetAllPlatforms().Count().ShouldBeEquivalentTo(34);
+        Items.Count().ShouldBeEquivalentTo(35); //Due to platform expansion.
+        GetAllPlatforms().Count().ShouldBeEquivalentTo(35);
     }
 
     [Test]
@@ -22,8 +22,8 @@ public class SauceryTestDataTests : SauceryTestData {
         SetPlatforms(PlatformDataClass.DesktopPlatforms, PlatformFilter.Emulated);
 
         Items.ShouldNotBeNull();
-        Items.Count().ShouldBeEquivalentTo(34); //Due to platform expansion.
-        GetAllPlatforms().Count().ShouldBeEquivalentTo(34);
+        Items.Count().ShouldBeEquivalentTo(35); //Due to platform expansion.
+        GetAllPlatforms().Count().ShouldBeEquivalentTo(35);
     }
 
     [Test]

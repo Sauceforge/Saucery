@@ -2,6 +2,7 @@
 using Saucery.Core.Dojo;
 using Saucery.Core.Options.Base;
 using Saucery.Core.Util;
+using System.Xml.Linq;
 
 namespace Saucery.Core.Options.ConcreteProducts;
 
@@ -18,6 +19,10 @@ internal class ChromeBrowserOptions : BaseOptions {
             PlatformName = browserVersion.Os,
             //UseSpecCompliantProtocol = true
         };
+
+        if (browserVersion.PlatformNameForOption.Equals("macOS 14")) {
+            SauceOptions.Add("armRequired", true);
+        }
 
         if (!string.IsNullOrEmpty(browserVersion.ScreenResolution))
         {

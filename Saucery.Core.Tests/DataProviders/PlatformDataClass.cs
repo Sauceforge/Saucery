@@ -18,6 +18,7 @@ public static class PlatformDataClass {
         new DesktopPlatform(SauceryConstants.PLATFORM_MAC_11, SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_VERSION_LATEST),
         new DesktopPlatform(SauceryConstants.PLATFORM_MAC_12, SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_VERSION_LATEST),
         new DesktopPlatform(SauceryConstants.PLATFORM_MAC_13, SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_VERSION_LATEST),
+        new DesktopPlatform(SauceryConstants.PLATFORM_MAC_14, SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_VERSION_LATEST),
         new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_IE, "11"),
         new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_IE, "11", SauceryConstants.SCREENRES_800_600),
         new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_EDGE, "99"),
@@ -32,6 +33,7 @@ public static class PlatformDataClass {
     public static List<SaucePlatform> EmulatedIOSPlatforms =>
     [
         new IOSPlatform("iPhone 15 Pro Max Simulator", "17.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
+        new IOSPlatform("iPhone 15 Pro Max Simulator", "17.5", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
     ];
 
     public static List<SaucePlatform> RealAndroidDevices =>

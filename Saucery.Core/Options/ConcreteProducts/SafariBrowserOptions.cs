@@ -18,6 +18,10 @@ internal class SafariBrowserOptions : BaseOptions {
             BrowserVersion = browserVersion.Name
         };
 
+        if (browserVersion.PlatformNameForOption.Equals("macOS 14")) {
+            SauceOptions.Add("armRequired", true);
+        }
+
         if (!string.IsNullOrEmpty(browserVersion.ScreenResolution))
         {
             SauceOptions.Add(SauceryConstants.SCREEN_RESOLUTION_CAPABILITY, browserVersion.ScreenResolution);
