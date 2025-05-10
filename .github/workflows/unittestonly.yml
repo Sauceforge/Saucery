@@ -53,7 +53,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: unit-test-results
-        path: ${{ env.UT_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}
+        path: ./TestResults/${{ env.UNIT_COVERAGE_FILENAME }}
 
   generate-report:
     runs-on: ubuntu-latest
