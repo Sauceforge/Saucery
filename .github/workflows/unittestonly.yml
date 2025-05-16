@@ -41,7 +41,7 @@ jobs:
     #    build-breaking: true
 
     - name: Run Unit Tests
-      uses: b3b00/coverlet-action@1.3.4
+      uses: b3b00/coverlet-action@1.3.5-alpha2
       with:
         testProject: ${{ env.UT_PROJECT }}
         output: ${{ env.UNIT_COVERAGE_FILENAME }}
@@ -75,7 +75,7 @@ jobs:
       run: ls -R
 
     - name: ReportGenerator
-      uses: danielpalme/ReportGenerator-GitHub-Action@5.4.6
+      uses: danielpalme/ReportGenerator-GitHub-Action@5.4.7
       with:
         reports: ${{ env.UNIT_COVERAGE_FILENAME }} # REQUIRED # The coverage reports that should be parsed (separated by semicolon). Globbing is supported.
         targetdir: 'coveragereport' # REQUIRED # The directory where the generated report should be saved.
