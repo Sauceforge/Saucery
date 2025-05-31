@@ -18,6 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 		.github\workflows\tunit-pipeline.yml = .github\workflows\tunit-pipeline.yml
 		.github\workflows\unittestonly.yml = .github\workflows\unittestonly.yml
+		.github\workflows\xunit3-pipeline.yml = .github\workflows\xunit3-pipeline.yml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Saucery.Core.Tests", "Saucery.Core.Tests\Saucery.Core.Tests.csproj", "{932385AE-EA11-44BB-A5C6-9ED9DFA3EFF4}"
