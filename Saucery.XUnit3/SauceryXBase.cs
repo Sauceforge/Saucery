@@ -14,7 +14,7 @@ public class SauceryXBase : IClassFixture<BaseFixture>, IDisposable {
     protected readonly BaseFixture _baseFixture;
     private string? _testName;
     private BrowserVersion? _browserVersion;
-    private readonly ITestContextAccessor _testContextAccessor;
+    protected readonly ITestContextAccessor _testContextAccessor;
 
     protected SauceryXBase(ITestContextAccessor contextAccessor, BaseFixture baseFixture) {
         _testContextAccessor = contextAccessor;
@@ -25,7 +25,7 @@ public class SauceryXBase : IClassFixture<BaseFixture>, IDisposable {
     protected void InitialiseDriver(BrowserVersion browserVersion, ITest test) {
         lock(browserVersion) {
             _browserVersion = browserVersion;
-            browserVersion.SetTestName(test.TestDisplayName);
+            browserVersion.SetTestName(test.TestCase.TestMethod.MethodName);
             _testName = browserVersion.TestName;
         }
 
@@ -48,7 +48,6 @@ public class SauceryXBase : IClassFixture<BaseFixture>, IDisposable {
             if(_baseFixture.Driver != null) {
                 var passed = _testContextAccessor.Current?.TestState?.Result == TestResult.Passed;
                 // log the result to SauceLabs
-
 
                 if(_browserVersion!.IsARealDevice()) {
                     lock(_testStatusLock) {

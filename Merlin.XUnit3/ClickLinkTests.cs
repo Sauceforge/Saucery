@@ -2,7 +2,6 @@ using Saucery.Core.Dojo;
 using Saucery.Tests.Common.PageObjects;
 using Saucery.XUnit3;
 using Shouldly;
-using Xunit.Sdk;
 
 namespace Merlin.XUnit3;
 
@@ -10,8 +9,8 @@ public class ClickLinkTests(ITestContextAccessor context, BaseFixture baseFixtur
 {
     [Theory]
     [MemberData(nameof(RequestedPlatformData.AllPlatforms), MemberType = typeof(RequestedPlatformData))]
-    public void ClickLinkTest(BrowserVersion requestedPlatform, ITest test) {
-        InitialiseDriver(requestedPlatform, test);
+    public void ClickLinkTest(BrowserVersion requestedPlatform) {
+        InitialiseDriver(requestedPlatform, _testContextAccessor.Current?.Test!);
 
         var guineaPigPage = new GuineaPigPage(_baseFixture.SauceryDriver(), "https://saucelabs.com/");
 

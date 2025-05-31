@@ -1,7 +1,6 @@
 ﻿using Saucery.Core.Dojo;
 using Saucery.Tests.Common.PageObjects;
 using Saucery.XUnit3;
-using Xunit.Sdk;
 
 namespace Merlin.XUnit3;
 
@@ -9,9 +8,9 @@ public class DataDrivenTests(ITestContextAccessor context, BaseFixture baseFixtu
 {
     [Theory]
     [MemberData(nameof(AllCombinations))]
-    public void DataDrivenTest(BrowserVersion requestedPlatform, int data, ITest test)
+    public void DataDrivenTest(BrowserVersion requestedPlatform, int data)
     {
-        InitialiseDriver(requestedPlatform, test);
+        InitialiseDriver(requestedPlatform, _testContextAccessor.Current?.Test!);
 
         var guineaPigPage = new GuineaPigPage(_baseFixture.SauceryDriver(), "https://saucelabs.com/");
 
