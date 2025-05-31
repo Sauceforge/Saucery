@@ -16,19 +16,28 @@ env:
   COVERLET_DIR: ./TestResults
   NUNIT_INT_DIR: Merlin.NUnit
   XUNIT_INT_DIR: Merlin.XUnit
+  XUNIT3_INT_DIR: Merlin.XUnit3
   TUNIT_INT_DIR: Merlin.TUnit
   NUNIT_RD_INT_DIR: Merlin.NUnit.RealDevices
   XUNIT_RD_INT_DIR: Merlin.XUnit.RealDevices
+  XUNIT3_RD_INT_DIR: Merlin.XUnit3.RealDevices
   TUNIT_RD_INT_DIR: Merlin.TUnit.RealDevices
   UT_PROJECT: Saucery.Core.Tests/Saucery.Core.Tests.csproj                                      # full path to your unit test project file
   M_NUNIT_PROJECT: Merlin.NUnit/Merlin.NUnit.csproj                                             # full path to nunit internal integration test project file
   M_RD_NUNIT_PROJECT: Merlin.NUnit.RealDevices/Merlin.NUnit.RealDevices.csproj                  # full path to nunit internal real device integration test project file
   EM_NUNIT_PROJECT: ExternalMerlin.NUnit/ExternalMerlin.NUnit.csproj                            # full path to nunit external integration test project file
   EM_RD_NUNIT_PROJECT: ExternalMerlin.NUnit.RealDevices/ExternalMerlin.NUnit.RealDevices.csproj # full path to nunit external real device integration test project file
+  
   M_XUNIT_PROJECT: Merlin.XUnit/Merlin.XUnit.csproj                                             # full path to xunit internal integration test project file
   M_RD_XUNIT_PROJECT: Merlin.XUnit.RealDevices/Merlin.XUnit.RealDevices.csproj                  # full path to xunit internal real device integration test project file
   EM_XUNIT_PROJECT: ExternalMerlin.XUnit/ExternalMerlin.XUnit.csproj                            # full path to xunit external integration test project file
   EM_RD_XUNIT_PROJECT: ExternalMerlin.XUnit.RealDevices/ExternalMerlin.XUnit.RealDevices.csproj # full path to xunit external real device integration test project file
+  
+  M_XUNIT3_PROJECT: Merlin.XUnit3/Merlin.XUnit3.csproj                                             # full path to xunit internal integration test project file
+  M_RD_XUNIT3_PROJECT: Merlin.XUnit3.RealDevices/Merlin.XUnit3.RealDevices.csproj                  # full path to xunit internal real device integration test project file
+  EM_XUNIT3_PROJECT: ExternalMerlin.XUnit3/ExternalMerlin.XUnit3.csproj                            # full path to xunit external integration test project file
+  EM_RD_XUNIT3_PROJECT: ExternalMerlin.XUnit3.RealDevices/ExternalMerlin.XUnit3.RealDevices.csproj # full path to xunit external real device integration test project file  
+  
   M_TUNIT_PROJECT: Merlin.TUnit/Merlin.TUnit.csproj                                             # full path to tunit internal integration test project file
   M_RD_TUNIT_PROJECT: Merlin.TUnit.RealDevices/Merlin.TUnit.RealDevices.csproj                  # full path to tunit internal real device integration test project file
   EM_TUNIT_PROJECT: ExternalMerlin.TUnit/ExternalMerlin.TUnit.csproj                            # full path to tunit external integration test project file
@@ -42,9 +51,11 @@ env:
   UNIT_COVERAGE_FILENAME: opencover.unit.xml
   NUNIT_INTEGRATION_COVERAGE_FILENAME: opencover.nunit.integration.xml
   XUNIT_INTEGRATION_COVERAGE_FILENAME: opencover.xunit.integration.xml
+  XUNIT3_INTEGRATION_COVERAGE_FILENAME: opencover.xunit3.integration.xml
   TUNIT_INTEGRATION_COVERAGE_FILENAME: opencover.tunit.integration.xml
   NUNIT_RD_INTEGRATION_COVERAGE_FILENAME: opencover.nunit.realdevice.integration.xml
   XUNIT_RD_INTEGRATION_COVERAGE_FILENAME: opencover.xunit.realdevice.integration.xml
+  XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME: opencover.xunit3.realdevice.integration.xml
   TUNIT_RD_INTEGRATION_COVERAGE_FILENAME: opencover.tunit.realdevice.integration.xml
   COVERAGE_THRESHOLD: 80
 
@@ -414,10 +425,45 @@ jobs:
     - name: Run External TUnit Real Integration Tests
       run: dotnet test -c ${{ env.CONFIG }} ${{ env.EM_RD_TUNIT_PROJECT }} --no-build
 
+
+  xunit3-integration-tests:
+    runs-on: ubuntu-latest
+    needs: [tunit-real-external-tests, 
+            tunit-external-tests]
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v4
+      with:
+        # Check for latest at link at .NET 9 download page (https://dotnet.microsoft.com/download/dotnet/9.0)
+        dotnet-version: 9.0.x
+    
+    - name: Compile solution
+      run: dotnet build -c ${{ env.CONFIG }}
+
+    - name: Run XUnit Integration Tests
+      uses: b3b00/coverlet-action@1.3.5-alpha2
+      with:
+        testProject: ${{ env.M_XUNIT3_PROJECT }}
+        output: ${{ env.XUNIT3_INTEGRATION_COVERAGE_FILENAME }}
+        outputFormat: ${{ env.COVERAGE_FORMAT }}
+        #threshold: ${{ env.COVERAGE_THRESHOLD }}
+        excludes: '[Merlin.XUnit3]Tests.*'
+
+    - name: Display structure of downloaded files
+      run: ls -R
+
+    - name: Publish Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: xunit-integration-test-results
+        path: ${{ env.COVERLET_DIR }}/${{env.XUNIT3_INTEGRATION_COVERAGE_FILENAME}}
+
   generate-report:
     runs-on: ubuntu-latest
-    needs: [tunit-external-tests,
-            tunit-real-external-tests]
+    needs: [xunit3-integration-tests]
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
