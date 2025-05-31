@@ -2,6 +2,12 @@ name: TUnit Only
 
 on:
   push:
+    paths:
+      - 'Saucery.TUnit/**'
+      - 'ExternalMerlin.TUnit/**'
+      - 'ExternalMerlin.TUnit.RealDevices/**'
+      - 'Merlin.TUnit/**'
+      - 'Merlin.TUnit.RealDevices/**'
     branches:
       - master
       - 'dependabot/**'
