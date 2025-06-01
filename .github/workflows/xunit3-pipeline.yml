@@ -7,8 +7,8 @@ on:
       - 'Saucery.XUnit3/**'
       - 'ExternalMerlin.XUnit3/**'
       - 'ExternalMerlin.XUnit3.RealDevices/**'
-      - 'Merlin.XUnit/**'
-      - 'Merlin.XUnit.RealDevices/**'
+      - 'Merlin.XUnit3/**'
+      - 'Merlin.XUnit3.RealDevices/**'
     branches:
       - master
       - 'dependabot/**'
