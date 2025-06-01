@@ -94,12 +94,25 @@ jobs:
       with:
         # Check for latest at link at .NET 9 download page (https://dotnet.microsoft.com/download/dotnet/9.0)
         dotnet-version: 9.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore --force
+
+    - name: Build project
+      run: dotnet build -c Release
+
+    - name: Run xUnit tests with coverage
+      run: >
+          dotnet run -c ${{ env.CONFIG }} --project {{ env.M_XUNIT3_PROJECT }}
+          --coverage
+          --coverage-output-format ${{ env.COVERAGE_FORMAT }}
+          --coverage-output ${{ env.XUNIT3_INTEGRATION_COVERAGE_FILENAME }}    
     
-    - name: Compile solution
-      run: dotnet build -c ${{ env.CONFIG }}
+    # - name: Compile solution
+    #   run: dotnet build -c ${{ env.CONFIG }}
     
-    - name: Run XUnit3 Integration Tests
-      run: dotnet run -c ${{ env.CONFIG }} --project ${{ env.M_XUNIT3_PROJECT }} -- --coverage --coverage-output-format ${{ env.COVERAGE_FORMAT }} --coverage-output ${{ env.XUNIT3_INTEGRATION_COVERAGE_FILENAME }}
+    # - name: Run XUnit3 Integration Tests
+    #   run: dotnet run -c ${{ env.CONFIG }} --project ${{ env.M_XUNIT3_PROJECT }} -- --coverage --coverage-output-format ${{ env.COVERAGE_FORMAT }} --coverage-output ${{ env.XUNIT3_INTEGRATION_COVERAGE_FILENAME }}
 
     - name: Display structure of downloaded files
       run: ls -R
