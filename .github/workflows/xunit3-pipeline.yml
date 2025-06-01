@@ -36,8 +36,8 @@ env:
   APP_PACKAGE_PATH: 'published'                                                                 # set this to the path to your web app project, defaults to the repository root
   COVERAGE_FORMAT: cobertura
   UNIT_COVERAGE_FILENAME: opencover.unit.xml
-  TUNIT_INTEGRATION_COVERAGE_FILENAME: cobertura.xunit3.integration.xml
-  TUNIT_RD_INTEGRATION_COVERAGE_FILENAME: cobertura.xunit3.realdevice.integration.xml
+  XUNIT3_INTEGRATION_COVERAGE_FILENAME: cobertura.xunit3.integration.xml
+  XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME: cobertura.xunit3.realdevice.integration.xml
   COVERAGE_THRESHOLD: 80
 
 jobs:
