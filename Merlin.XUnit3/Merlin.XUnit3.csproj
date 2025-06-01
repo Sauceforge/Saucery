@@ -31,8 +31,4 @@
     <ProjectReference Include="..\Saucery.XUnit3\Saucery.XUnit3.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Using Include="Xunit" />
-  </ItemGroup>
-
 </Project>
