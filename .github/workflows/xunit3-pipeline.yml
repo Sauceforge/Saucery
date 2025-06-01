@@ -101,12 +101,12 @@ jobs:
     - name: Build project
       run: dotnet build -c Release
 
-    - name: Run xUnit tests with coverage
-      run: >
-          dotnet run -c ${{ env.CONFIG }} --project ${{ env.M_XUNIT3_PROJECT }}
-          --coverage
-          --coverage-output-format ${{ env.COVERAGE_FORMAT }}
-          --coverage-output ${{ env.XUNIT3_INTEGRATION_COVERAGE_FILENAME }}    
+    - name: Run XUnit3 tests with coverage
+      run: |
+          dotnet run -c ${{ env.CONFIG }} --project ${{ env.M_XUNIT3_PROJECT }} \
+          --coverage \
+          --coverage-output-format ${{ env.COVERAGE_FORMAT }} \
+          --coverage-output ${{ env.XUNIT3_INTEGRATION_COVERAGE_FILENAME }}
     
     # - name: Compile solution
     #   run: dotnet build -c ${{ env.CONFIG }}
