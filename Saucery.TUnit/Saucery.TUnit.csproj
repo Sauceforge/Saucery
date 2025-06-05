@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -29,9 +29,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.0" />
-    <PackageReference Include="Microsoft.CodeCoverage" Version="17.14.0" />
-    <PackageReference Include="TUnit" Version="0.23.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="Microsoft.CodeCoverage" Version="17.14.1" />
+    <PackageReference Include="TUnit" Version="0.25.0" />
     <None Include="Images\Saucery.TUnit.128x128.png" Pack="true" PackagePath="\" />
     <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
