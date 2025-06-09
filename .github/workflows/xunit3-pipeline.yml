@@ -21,12 +21,10 @@ on:
 env:
   PROJECT_NAME: Saucery
   SOLN_FILE: Saucery.sln                                                                        # full path to your solution file
-  #TEST_RESULTS_DIR: ./TestResults                                                               
-  TEST_RESULTS_PATH: bin/${{ env.CONFIG }}/net9.0/TestResults                                                               
   XUNIT3_INT_DIR: Merlin.XUnit3
   XUNIT3_RD_INT_DIR: Merlin.XUnit3.RealDevices         
-  XUNIT3_INT_TEST_RESULTS_DIR: ${{ env.XUNIT3_INT_DIR }}/${{ env.TEST_RESULTS_PATH }}
-  XUNIT3_RD_INT_TEST_RESULTS_DIR: ${{ env.XUNIT3_RD_INT_DIR }}/${{ env.TEST_RESULTS_PATH }}
+  XUNIT3_INT_TEST_RESULTS_DIR: Merlin.XUnit3/bin/Release/net9.0/TestResults
+  XUNIT3_RD_INT_TEST_RESULTS_DIR: Merlin.XUnit3.RealDevices/bin/Release/net9.0/TestResults
   COVERLET_DIR: ./TestResults
   UT_PROJECT: Saucery.Core.Tests/Saucery.Core.Tests.csproj                                      # full path to your unit test project file
   M_XUNIT3_PROJECT: Merlin.XUnit3/Merlin.XUnit3.csproj                                             # full path to xunit internal integration test project file
