@@ -16,6 +16,7 @@ on:
       - 'feature/**'
       - 'fix/**'
       - 'test/**'
+      - 'bug/**'
 
 env:
   PROJECT_NAME: Saucery

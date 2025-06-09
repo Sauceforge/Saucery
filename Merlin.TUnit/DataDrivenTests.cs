@@ -7,7 +7,7 @@ namespace Merlin.TUnit;
 public class DataDrivenTests : SauceryTBase
 {
     [Test]
-    [MethodDataSource(nameof(AllCombinations), Arguments = [new[] { 4, 5 }])]
+    [MethodDataSource(nameof(AllCombinations), Arguments = new object?[] { new int[] { 4, 5 } })]
     public async Task DataDrivenTest(BrowserVersion requestedPlatform, int data)
     {
         InitialiseDriver(requestedPlatform);
