@@ -9,6 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{87A95FF4-6
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{55213913-D55D-41EC-ADEC-F87672492ECB}"
 	ProjectSection(SolutionItems) = preProject
+		.github\workflows\json-yaml-validate.yml = .github\workflows\json-yaml-validate.yml
 		.github\workflows\pipeline.yml = .github\workflows\pipeline.yml
 		.github\workflows\publish-core.yml = .github\workflows\publish-core.yml
 		.github\workflows\publish-tunit.yml = .github\workflows\publish-tunit.yml
