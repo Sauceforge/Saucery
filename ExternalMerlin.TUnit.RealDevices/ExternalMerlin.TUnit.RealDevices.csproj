@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <PackageReference Include="Saucery.TUnit" Version="0.25.6" />
-    <PackageReference Include="TUnit" Version="0.25.6" />
   </ItemGroup>
 
 </Project>
