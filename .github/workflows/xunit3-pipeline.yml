@@ -135,8 +135,8 @@ jobs:
     - name: Build project
       run: dotnet build -c ${{ env.CONFIG }}
 
-     - name: Run XUnit3 Real Integration Tests
-       run: dotnet run -c ${{ env.CONFIG }} --project ${{ env.M_RD_XUNIT3_PROJECT }} -- --coverage --coverage-output-format ${{ env.COVERAGE_FORMAT }} --coverage-output ${{ env.XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME }}
+    - name: Run XUnit3 Real Integration Tests
+      run: dotnet run -c ${{ env.CONFIG }} --project ${{ env.M_RD_XUNIT3_PROJECT }} -- --coverage --coverage-output-format ${{ env.COVERAGE_FORMAT }} --coverage-output ${{ env.XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME }}
      
      # - name: Run XUnit3 Real Integration Tests
      #   run: dotnet test -c ${{ env.CONFIG }} ${{ env.M_RD_XUNIT3_PROJECT }} --no-build /p:CoverletOutput=${{ env.XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME }}
