@@ -442,7 +442,7 @@ jobs:
     - name: Compile solution
       run: dotnet build -c ${{ env.CONFIG }}
 
-    - name: Run XUnit Integration Tests
+    - name: Run XUnit3 Integration Tests
       uses: b3b00/coverlet-action@1.3.5-alpha2
       with:
         testProject: ${{ env.M_XUNIT3_PROJECT }}
@@ -477,7 +477,7 @@ jobs:
     - name: Compile solution
       run: dotnet build -c ${{ env.CONFIG }}
 
-    - name: Run XUnit Real Integration Tests
+    - name: Run XUnit3 Real Integration Tests
       uses: b3b00/coverlet-action@1.3.5-alpha2
       with:
         testProject: ${{ env.M_RD_XUNIT3_PROJECT }}
