@@ -442,7 +442,7 @@ jobs:
     - name: Compile solution
       run: dotnet build -c ${{ env.CONFIG }}
 
-    - name: Run XUnit3 Integration Tests
+    - name: Run XUnit3 Integration Tests # as per https://xunit.net/docs/getting-started/v3/code-coverage-with-mtp
       run: dotnet run -c ${{ env.CONFIG }} --project ${{ env.M_XUNIT3_PROJECT }} -- --coverage --coverage-output-format ${{ env.COVERAGE_FORMAT }} --coverage-output ${{ env.XUNIT3_INTEGRATION_COVERAGE_FILENAME }}
 
     - name: Display structure of downloaded files
@@ -471,7 +471,7 @@ jobs:
     - name: Compile solution
       run: dotnet build -c ${{ env.CONFIG }}
 
-    - name: Run XUnit3 Real Integration Tests
+    - name: Run XUnit3 Real Integration Tests # as per https://xunit.net/docs/getting-started/v3/code-coverage-with-mtp
       run: dotnet run -c ${{ env.CONFIG }} --project ${{ env.M_RD_XUNIT3_PROJECT }} -- --coverage --coverage-output-format ${{ env.COVERAGE_FORMAT }} --coverage-output ${{ env.XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME }}
 
     - name: Display structure of downloaded files
