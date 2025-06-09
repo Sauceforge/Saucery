@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Saucery.TUnit" Version="0.22.31" />
-    <PackageReference Include="TUnit" Version="0.23.0" />
+    <PackageReference Include="Saucery.TUnit" Version="0.23.0" />
+    <PackageReference Include="TUnit" Version="0.25.6" />
   </ItemGroup>
 
 </Project>
