@@ -16,7 +16,7 @@ public class RequestedPlatformData : SauceryTestData
             new IOSRealDevice("iPhone 14 Pro Max", "16"),
         ];
 
-        SetPlatforms(platforms, PlatformFilter.Emulated);
+        SetPlatforms(platforms, PlatformFilter.RealDevice);
     }
 
     public static IEnumerable<object[]> AllPlatforms => GetAllPlatforms();
