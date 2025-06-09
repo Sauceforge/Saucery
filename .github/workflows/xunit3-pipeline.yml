@@ -21,8 +21,12 @@ on:
 env:
   PROJECT_NAME: Saucery
   SOLN_FILE: Saucery.sln                                                                        # full path to your solution file
+  #TEST_RESULTS_DIR: ./TestResults                                                               
+  TEST_RESULTS_PATH: bin/${{ env.CONFIG }}/net9.0/TestResults                                                               
   XUNIT3_INT_DIR: Merlin.XUnit3
-  XUNIT3_RD_INT_DIR: Merlin.XUnit3.RealDevices
+  XUNIT3_RD_INT_DIR: Merlin.XUnit3.RealDevices         
+  XUNIT3_INT_TEST_RESULTS_DIR: ${{ env.XUNIT3_INT_DIR }}/${{ env.TEST_RESULTS_PATH }}
+  XUNIT3_RD_INT_TEST_RESULTS_DIR: ${{ env.XUNIT3_RD_INT_DIR }}/${{ env.TEST_RESULTS_PATH }}
   COVERLET_DIR: ./TestResults
   UT_PROJECT: Saucery.Core.Tests/Saucery.Core.Tests.csproj                                      # full path to your unit test project file
   M_XUNIT3_PROJECT: Merlin.XUnit3/Merlin.XUnit3.csproj                                             # full path to xunit internal integration test project file
@@ -104,9 +108,6 @@ jobs:
     - name: Run XUnit3 Integration Tests
       run: dotnet run -c ${{ env.CONFIG }} --project ${{ env.M_XUNIT3_PROJECT }} -- --coverage --coverage-output-format ${{ env.COVERAGE_FORMAT }} --coverage-output ${{ env.XUNIT3_INTEGRATION_COVERAGE_FILENAME }}
      
-     # - name: Run XUnit3 Integration Tests
-     #   run: dotnet test -c ${{ env.CONFIG }} ${{ env.M_XUNIT3_PROJECT }} --no-build /p:CoverletOutput=${{ env.XUNIT3_INTEGRATION_COVERAGE_FILENAME }}
-
     - name: Display structure of downloaded files
       run: ls -R
 
@@ -114,7 +115,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: xunit3-integration-test-results
-        path: ${{ env.XUNIT3_INT_DIR }}/${{env.XUNIT3_INTEGRATION_COVERAGE_FILENAME}}
+        path: ${{ env.XUNIT3_INT_TEST_RESULTS_DIR }}/${{env.XUNIT3_INTEGRATION_COVERAGE_FILENAME}}
 
   xunit3-real-integration-tests:
     runs-on: ubuntu-latest
@@ -137,15 +138,12 @@ jobs:
 
     - name: Run XUnit3 Real Integration Tests
       run: dotnet run -c ${{ env.CONFIG }} --project ${{ env.M_RD_XUNIT3_PROJECT }} -- --coverage --coverage-output-format ${{ env.COVERAGE_FORMAT }} --coverage-output ${{ env.XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME }}
-     
-     # - name: Run XUnit3 Real Integration Tests
-     #   run: dotnet test -c ${{ env.CONFIG }} ${{ env.M_RD_XUNIT3_PROJECT }} --no-build /p:CoverletOutput=${{ env.XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME }}
-      
+       
     - name: Publish Artifacts
       uses: actions/upload-artifact@v4
       with:
         name: xunit3-real-integration-test-results
-        path: ${{ env.XUNIT3_RD_INT_DIR }}/${{env.XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME}}
+        path: ${{ env.XUNIT3_RD_INT_TEST_RESULTS_DIR }}/${{env.XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME}}
 
   # xunit3-external-tests:
   #   runs-on: ubuntu-latest
