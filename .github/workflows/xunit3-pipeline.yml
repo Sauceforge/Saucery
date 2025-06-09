@@ -101,10 +101,11 @@ jobs:
     - name: Build project
       run: dotnet build -c ${{ env.CONFIG }}
 
-    # - name: Run XUnit3 Integration Tests
-    #   run: dotnet run -c ${{ env.CONFIG }} --project ${{ env.M_XUNIT3_PROJECT }} -- --coverage --coverage-output-format ${{ env.COVERAGE_FORMAT }} --coverage-output ${{ env.XUNIT3_INTEGRATION_COVERAGE_FILENAME }}
     - name: Run XUnit3 Integration Tests
-      run: dotnet test -c ${{ env.CONFIG }} ${{ env.M_XUNIT3_PROJECT }} --no-build /p:CoverletOutput=${{ env.XUNIT3_INTEGRATION_COVERAGE_FILENAME }}
+      run: dotnet run -c ${{ env.CONFIG }} --project ${{ env.M_XUNIT3_PROJECT }} -- --coverage --coverage-output-format ${{ env.COVERAGE_FORMAT }} --coverage-output ${{ env.XUNIT3_INTEGRATION_COVERAGE_FILENAME }}
+     
+     # - name: Run XUnit3 Integration Tests
+     #   run: dotnet test -c ${{ env.CONFIG }} ${{ env.M_XUNIT3_PROJECT }} --no-build /p:CoverletOutput=${{ env.XUNIT3_INTEGRATION_COVERAGE_FILENAME }}
 
     - name: Display structure of downloaded files
       run: ls -R
@@ -134,10 +135,11 @@ jobs:
     - name: Build project
       run: dotnet build -c ${{ env.CONFIG }}
 
-    # - name: Run XUnit3 Real Integration Tests
-    #   run: dotnet run -c ${{ env.CONFIG }} --project ${{ env.M_RD_XUNIT3_PROJECT }} -- --coverage --coverage-output-format ${{ env.COVERAGE_FORMAT }} --coverage-output ${{ env.XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME }}
-    - name: Run XUnit3 Real Integration Tests
-      run: dotnet test -c ${{ env.CONFIG }} ${{ env.M_RD_XUNIT3_PROJECT }} --no-build /p:CoverletOutput=${{ env.XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME }}
+     - name: Run XUnit3 Real Integration Tests
+       run: dotnet run -c ${{ env.CONFIG }} --project ${{ env.M_RD_XUNIT3_PROJECT }} -- --coverage --coverage-output-format ${{ env.COVERAGE_FORMAT }} --coverage-output ${{ env.XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME }}
+     
+     # - name: Run XUnit3 Real Integration Tests
+     #   run: dotnet test -c ${{ env.CONFIG }} ${{ env.M_RD_XUNIT3_PROJECT }} --no-build /p:CoverletOutput=${{ env.XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME }}
       
     - name: Publish Artifacts
       uses: actions/upload-artifact@v4
