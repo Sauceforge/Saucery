@@ -13,8 +13,8 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" Version="0.15.0" />
-    <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.15.0" />
+    <PackageReference Include="BenchmarkDotNet" Version="0.15.1" />
+    <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.15.1" />
     <PackageReference Include="Saucery.Core" Version="4.5.35" />
   </ItemGroup>
 </Project>
