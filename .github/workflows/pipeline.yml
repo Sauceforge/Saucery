@@ -17,10 +17,12 @@ env:
   NUNIT_INT_DIR: Merlin.NUnit
   XUNIT_INT_DIR: Merlin.XUnit
   XUNIT3_INT_DIR: Merlin.XUnit3
+  XUNIT3_INT_TEST_RESULTS_DIR: Merlin.XUnit3/bin/Release/net9.0/TestResults
   TUNIT_INT_DIR: Merlin.TUnit
   NUNIT_RD_INT_DIR: Merlin.NUnit.RealDevices
   XUNIT_RD_INT_DIR: Merlin.XUnit.RealDevices
   XUNIT3_RD_INT_DIR: Merlin.XUnit3.RealDevices
+  XUNIT3_RD_INT_TEST_RESULTS_DIR: Merlin.XUnit3.RealDevices/bin/Release/net9.0/TestResults
   TUNIT_RD_INT_DIR: Merlin.TUnit.RealDevices
   UT_PROJECT: Saucery.Core.Tests/Saucery.Core.Tests.csproj                                      # full path to your unit test project file
   M_NUNIT_PROJECT: Merlin.NUnit/Merlin.NUnit.csproj                                             # full path to nunit internal integration test project file
@@ -452,7 +454,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: xunit3-integration-test-results
-        path: ${{ env.COVERLET_DIR }}/${{env.XUNIT3_INTEGRATION_COVERAGE_FILENAME}}
+        path: ${{ env.XUNIT3_INT_TEST_RESULTS_DIR }}/${{env.XUNIT3_INTEGRATION_COVERAGE_FILENAME}}
 
   xunit3-real-integration-tests:
     runs-on: ubuntu-latest
@@ -481,7 +483,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: xunit3-real-integration-test-results
-        path: ${{ env.COVERLET_DIR }}/${{env.XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME}}
+        path: ${{ env.XUNIT3_RD_INT_TEST_RESULTS_DIR }}/${{env.XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME}}
 
   # xunit3-external-tests:
   #   runs-on: ubuntu-latest
