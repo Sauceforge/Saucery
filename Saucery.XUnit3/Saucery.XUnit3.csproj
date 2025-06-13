@@ -24,8 +24,8 @@
 		</PackageReleaseNotes>
 		<PackageProjectUrl>https://github.com/Sauceforge/Saucery</PackageProjectUrl>
 		<PackageIcon>Saucery.XUnit.128x128.png</PackageIcon>
-		<PackageTags>xunit saucelabs test testing tdd framework assert</PackageTags>
-		<Title>Sorcery for SauceLabs and XUnit</Title>
+		<PackageTags>xunit.v3 saucelabs test testing tdd framework assert</PackageTags>
+		<Title>Sorcery for SauceLabs and XUnit.v3</Title>
 	</PropertyGroup>
 
 	<ItemGroup>
