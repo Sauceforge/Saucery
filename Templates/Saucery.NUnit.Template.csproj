@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>true</IsPackable>
+    
+    <PackageId>Saucery.NUnit.Template</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Andrew Gray</Authors>
+    <Company>SauceForge</Company>
+    <Description>A .NET template for creating NUnit projects with Saucery integration.</Description>
+    <PackageTags>template dotnet nunit saucelabs testing</PackageTags>
+    <PackageProjectUrl>https://github.com/Sauceforge/Saucery</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Sauceforge/Saucery</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+
+    <PackageType>Template</PackageType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\Saucery.NUnit.Template\.template.config\**\*" Pack="true" />
+    <None Include="..\Saucery.NUnit.Template\ExternalMerlin.NUnit\**\*" Pack="true" />
+    <Compile Remove="..\Saucery.NUnit.Template\ExternalMerlin.NUnit\**\*" />
+  </ItemGroup>
+
+</Project>
