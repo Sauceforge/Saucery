@@ -6,7 +6,7 @@ namespace Saucery.Benchmark;
 [MemoryDiagnoser]
 public class Benchmarks
 {
-    private PlatformConfigurator? PlatformConfigurator { get; set; }
+    private PlatformConfigurator PlatformConfigurator { get; set; }
 
     [Benchmark(Baseline = true)]
     public void All()

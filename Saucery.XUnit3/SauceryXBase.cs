@@ -25,7 +25,7 @@ public class SauceryXBase : IClassFixture<BaseFixture>, IDisposable {
     protected void InitialiseDriver(BrowserVersion browserVersion, ITest test) {
         lock(browserVersion) {
             _browserVersion = browserVersion;
-            browserVersion.SetTestName(test.TestCase.TestMethod.MethodName);
+            browserVersion.SetTestName(test.TestCase.TestMethod?.MethodName!);
             _testName = browserVersion.TestName;
         }
 
