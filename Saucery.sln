@@ -80,8 +80,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Saucery.Benchmark", "Saucer
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Saucery.NUnit.Template", "Saucery.NUnit.Template\Saucery.NUnit.Template.csproj", "{E3C3D904-F6EC-3ED6-1133-3E9252A9EFFF}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XUnit3", "XUnit3", "{F92F11A9-75E8-4A75-828E-F9AD281CF34D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Merlin.XUnit3", "Merlin.XUnit3\Merlin.XUnit3.csproj", "{F4C8604D-341A-4C5D-99CD-D21BA345527D}"
@@ -89,6 +87,16 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Saucery.XUnit3", "Saucery.XUnit3\Saucery.XUnit3.csproj", "{48CCB660-6E13-020E-6D40-D360B6F8A9E0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Merlin.XUnit3.RealDevices", "Merlin.XUnit3.RealDevices\Merlin.XUnit3.RealDevices.csproj", "{837BCC43-22F1-CB5A-3FDC-7DBDD69B7100}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NUnit", "NUnit", "{784563EB-4394-4C8F-9C58-871307483D53}"
+	ProjectSection(SolutionItems) = preProject
+		Templates\NUnit\ExternalMerlin.NUnit.csproj = Templates\NUnit\ExternalMerlin.NUnit.csproj
+		Templates\NUnit\NuGetIntegrationTests.cs = Templates\NUnit\NuGetIntegrationTests.cs
+		Templates\NUnit\RequestedPlatformData.cs = Templates\NUnit\RequestedPlatformData.cs
+		Templates\NUnit\.template.config\template.json = Templates\NUnit\.template.config\template.json
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExternalMerlin.XUnit3", "ExternalMerlin.XUnit3\ExternalMerlin.XUnit3.csproj", "{B8B8D7B8-C39D-4C0B-B9D3-CD080D08A611}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -180,10 +188,6 @@ Global
 		{C394E74B-52F9-47A7-8F3B-AC91F1F54EF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C394E74B-52F9-47A7-8F3B-AC91F1F54EF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C394E74B-52F9-47A7-8F3B-AC91F1F54EF2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E3C3D904-F6EC-3ED6-1133-3E9252A9EFFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E3C3D904-F6EC-3ED6-1133-3E9252A9EFFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E3C3D904-F6EC-3ED6-1133-3E9252A9EFFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E3C3D904-F6EC-3ED6-1133-3E9252A9EFFF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F4C8604D-341A-4C5D-99CD-D21BA345527D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F4C8604D-341A-4C5D-99CD-D21BA345527D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F4C8604D-341A-4C5D-99CD-D21BA345527D}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -196,6 +200,10 @@ Global
 		{837BCC43-22F1-CB5A-3FDC-7DBDD69B7100}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{837BCC43-22F1-CB5A-3FDC-7DBDD69B7100}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{837BCC43-22F1-CB5A-3FDC-7DBDD69B7100}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8B8D7B8-C39D-4C0B-B9D3-CD080D08A611}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8B8D7B8-C39D-4C0B-B9D3-CD080D08A611}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8B8D7B8-C39D-4C0B-B9D3-CD080D08A611}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8B8D7B8-C39D-4C0B-B9D3-CD080D08A611}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -227,11 +235,12 @@ Global
 		{64B75EEC-FF07-409F-B9CB-0F9A028C9593} = {B6394A10-FE50-410E-8217-697FC6688616}
 		{B6AA08DF-C226-4572-9D7F-C7E5A6CC6C90} = {B6394A10-FE50-410E-8217-697FC6688616}
 		{C394E74B-52F9-47A7-8F3B-AC91F1F54EF2} = {C619E424-C15A-40BF-A464-5BB2803BEBA3}
-		{E3C3D904-F6EC-3ED6-1133-3E9252A9EFFF} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{F92F11A9-75E8-4A75-828E-F9AD281CF34D} = {34E82214-CDA9-4CD5-9AE6-A5DAD5411F5F}
 		{F4C8604D-341A-4C5D-99CD-D21BA345527D} = {F92F11A9-75E8-4A75-828E-F9AD281CF34D}
 		{48CCB660-6E13-020E-6D40-D360B6F8A9E0} = {BB2F463B-7D69-4C48-B301-FCFCFA77439B}
 		{837BCC43-22F1-CB5A-3FDC-7DBDD69B7100} = {F92F11A9-75E8-4A75-828E-F9AD281CF34D}
+		{784563EB-4394-4C8F-9C58-871307483D53} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{B8B8D7B8-C39D-4C0B-B9D3-CD080D08A611} = {F92F11A9-75E8-4A75-828E-F9AD281CF34D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B287ECB9-947E-4E9C-B745-27048D5CC522}

@@ -5,7 +5,8 @@ using Xunit.Abstractions;
 
 namespace ExternalMerlin.XUnit;
 
-public class DataDrivenTests(ITestOutputHelper output, BaseFixture baseFixture) : SauceryXBase(output, baseFixture) {
+public class DataDrivenTests(ITestOutputHelper output, BaseFixture baseFixture) : SauceryXBase(output, baseFixture)
+{
     [Theory]
     [MemberData(nameof(AllCombinations))]
     public void DataDrivenTest(BrowserVersion requestedPlatform, int data) {

@@ -3,10 +3,9 @@ using OpenQA.Selenium.Support.UI;
 using Saucery.Core.PageObjects;
 using SeleniumExtras.PageObjects;
 
-namespace ExternalMerlin.XUnit.PageObjects;
+namespace ExternalMerlin.XUnit3.PageObjects;
 
-public class GuineaPigPage : PageObjectBase 
-{
+public class GuineaPigPage : PageObjectBase {
     public GuineaPigPage(WebDriver driver, string urlRoot)
         : base(urlRoot + "test/guinea-pig", "GuineaPig", "I am a page title - Sauce Labs") {
         GetPage(driver);
