@@ -4,12 +4,10 @@ using Saucery.TUnit;
 
 namespace ExternalMerlin.TUnit;
 
-public class DataDrivenTests : SauceryTBase
-{
+public class DataDrivenTests : SauceryTBase {
     [Test]
-    [MethodDataSource(nameof(AllCombinations), Arguments = [new[] { 4, 5 }])]
-    public async Task DataDrivenTest(BrowserVersion requestedPlatform, int data)
-    {
+    [MethodDataSource(nameof(AllCombinations), Arguments = new object?[] { new int[] { 4, 5 } })]
+    public async Task DataDrivenTest(BrowserVersion requestedPlatform, int data) {
         InitialiseDriver(requestedPlatform);
 
         var guineaPigPage = new GuineaPigPage(SauceryDriver(), "https://saucelabs.com/");
@@ -18,12 +16,12 @@ public class DataDrivenTests : SauceryTBase
 
         var commentField = guineaPigPage.GetField(SauceryDriver(), "comments");
         await Assert.That(commentField).IsNotNull();
-        
+
         var commentText = commentField.GetDomProperty("value");
         await Assert.That(commentText).Contains(data.ToString());
     }
 
-    public static IEnumerable<Func<(BrowserVersion, int)>> AllCombinations(int[] data) => 
+    public static IEnumerable<Func<(BrowserVersion, int)>> AllCombinations(int[] data) =>
         RequestedPlatformData
         .AllPlatforms()
         .SelectMany(

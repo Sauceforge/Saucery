@@ -36,6 +36,7 @@ Note: The tests specified below are provided as examples only. Your tests, of co
 | Saucery | [![nuget](https://img.shields.io/nuget/v/Saucery.svg)](https://www.nuget.org/packages/Saucery/)  [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery)](https://www.nuget.org/packages/Saucery/) |
 | Saucery.XUnit | [![nuget](https://img.shields.io/nuget/v/Saucery.XUnit.svg)](https://www.nuget.org/packages/Saucery.XUnit/)  [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery.XUnit)](https://www.nuget.org/packages/Saucery.XUnit/) |
 | Saucery.TUnit | [![nuget](https://img.shields.io/nuget/v/Saucery.TUnit.svg)](https://www.nuget.org/packages/Saucery.TUnit/)  [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery.TUnit)](https://www.nuget.org/packages/Saucery.TUnit/) |
+| Saucery.XUnit.v3 | [![nuget](https://img.shields.io/nuget/v/Saucery.XUnit.v3.svg)](https://www.nuget.org/packages/Saucery.XUnit.v3/)  [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery.XUnit.v3)](https://www.nuget.org/packages/Saucery.XUnit.v3/) |
 
 ### Sponsoring
 Saucery has been developed as an open-source project for over 10 years. If you find it valuable for your projects and team work, please consider supporting it and becoming a  [![](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/Sauceforge)
@@ -450,7 +451,7 @@ Yes, Saucery supports Real Devices!
 
 ### Trends
 
-[Nuget downloads](https://nugettrends.com/packages?months=24&ids=Saucery&ids=Saucery.XUnit&ids=Saucery.TUnit&ids=Saucery.Core)  
+[Nuget downloads](https://nugettrends.com/packages?months=24&ids=Saucery&ids=Saucery.XUnit&ids=Saucery.TUnit&ids=Saucery.Core&ids=Saucery.XUnit.v3)  
 [GitHub stars](https://star-history.com/#sauceforge/Saucery)
 
 ## Contact

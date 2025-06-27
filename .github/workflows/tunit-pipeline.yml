@@ -2,6 +2,12 @@ name: TUnit Only
 
 on:
   push:
+    paths:
+      - 'Saucery.TUnit/**'
+      - 'ExternalMerlin.TUnit/**'
+      - 'ExternalMerlin.TUnit.RealDevices/**'
+      - 'Merlin.TUnit/**'
+      - 'Merlin.TUnit.RealDevices/**'
     branches:
       - master
       - 'dependabot/**'
@@ -10,6 +16,7 @@ on:
       - 'feature/**'
       - 'fix/**'
       - 'test/**'
+      - 'bug/**'
 
 env:
   PROJECT_NAME: Saucery
@@ -215,7 +222,7 @@ jobs:
     #   run: ls -R
 
     - name: ReportGenerator
-      uses: danielpalme/ReportGenerator-GitHub-Action@5.4.7
+      uses: danielpalme/ReportGenerator-GitHub-Action@5.4.8
       with:
         # REQUIRED # The coverage reports that should be parsed (separated by semicolon). Globbing is supported.
         reports: ${{env.UNIT_COVERAGE_FILENAME}}
