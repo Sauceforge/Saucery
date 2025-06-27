@@ -11,29 +11,23 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Using Include="Xunit" />
+    <Content Include="xunit.runner.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
-    <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" Version="17.14.2" />
-    <PackageReference Include="xunit.v3" Version="2.0.3" />
+    <Using Include="Xunit" />
+  </ItemGroup>
+  
+  <ItemGroup>
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Saucery.XUnit.v3" Version="1.0.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Saucery.Core\Saucery.Core.csproj" />
-    <ProjectReference Include="..\Saucery.Tests.Common\Saucery.Tests.Common.csproj" />
-    <ProjectReference Include="..\Saucery.XUnit3\Saucery.XUnit3.csproj" />
-  </ItemGroup>
-
-  <ProjectExtensions><VisualStudio><UserProperties xunit_1runner_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
+  
 
 </Project>

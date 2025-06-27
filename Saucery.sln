@@ -96,6 +96,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NUnit", "NUnit", "{784563EB
 		Templates\NUnit\.template.config\template.json = Templates\NUnit\.template.config\template.json
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExternalMerlin.XUnit3", "ExternalMerlin.XUnit3\ExternalMerlin.XUnit3.csproj", "{B8B8D7B8-C39D-4C0B-B9D3-CD080D08A611}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -198,6 +200,10 @@ Global
 		{837BCC43-22F1-CB5A-3FDC-7DBDD69B7100}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{837BCC43-22F1-CB5A-3FDC-7DBDD69B7100}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{837BCC43-22F1-CB5A-3FDC-7DBDD69B7100}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8B8D7B8-C39D-4C0B-B9D3-CD080D08A611}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8B8D7B8-C39D-4C0B-B9D3-CD080D08A611}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8B8D7B8-C39D-4C0B-B9D3-CD080D08A611}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8B8D7B8-C39D-4C0B-B9D3-CD080D08A611}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -234,6 +240,7 @@ Global
 		{48CCB660-6E13-020E-6D40-D360B6F8A9E0} = {BB2F463B-7D69-4C48-B301-FCFCFA77439B}
 		{837BCC43-22F1-CB5A-3FDC-7DBDD69B7100} = {F92F11A9-75E8-4A75-828E-F9AD281CF34D}
 		{784563EB-4394-4C8F-9C58-871307483D53} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{B8B8D7B8-C39D-4C0B-B9D3-CD080D08A611} = {F92F11A9-75E8-4A75-828E-F9AD281CF34D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B287ECB9-947E-4E9C-B745-27048D5CC522}
