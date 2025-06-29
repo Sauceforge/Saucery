@@ -6,7 +6,7 @@ using sourceName.PageObjects;
 
 [assembly: LevelOfParallelism(4)]
 
-namespace sourceName;
+namespace __sourceName__;
 
 [TestFixture]
 [Parallelizable]

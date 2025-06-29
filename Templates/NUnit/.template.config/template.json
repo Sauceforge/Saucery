@@ -10,5 +10,13 @@
   "tags": {
     "language": "C#",
     "type": "project"
+  },
+  "symbols": {
+    "sourceName": {
+      "type": "parameter",
+      "datatype": "string",
+      "replaces": "ExternalMerlin.NUnit",
+      "defaultValue": "MyNamespace"
+    }
   }
 }

@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.TemplateEngine.Authoring.TemplateVerifier;
-using NUnit.Framework;
 using Shouldly;
 
 namespace Template.Tests;
@@ -17,7 +16,7 @@ public class NUnitTemplateTests {
             TemplatePath = TemplateFolder,
             //SnapshotsDirectory = Path.Combine(TestContext.CurrentContext.TestDirectory, "Snapshots"),
             OutputDirectory = Path.Combine(Path.GetTempPath(), "NUnit", Path.GetRandomFileName()),
-            //TemplateSpecificArgs = ["--name", "MyTestProject"],
+            TemplateSpecificArgs = ["--name", "MyTestProject"],
             DisableDiffTool = true
         };
 
