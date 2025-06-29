@@ -6,7 +6,7 @@ using sourceName.PageObjects;
 
 [assembly: LevelOfParallelism(4)]
 
-namespace ExternalMerlin.NUnit;
+namespace MyTestProject;
 
 [TestFixture]
 [Parallelizable]
