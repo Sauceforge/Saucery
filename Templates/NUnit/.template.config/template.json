@@ -15,8 +15,14 @@
     "sourceName": {
       "type": "parameter",
       "datatype": "string",
-      "replaces": "ExternalMerlin.NUnit",
-      "defaultValue": "MyNamespace"
+      "replaces": "ExternalMerlin.NUnit"
+    }
+  },
+  "namespace": {
+    "type": "generated",
+    "generator": "csharp.namespace",
+    "parameters": {
+      "baseNamespace": "%name%"
     }
   }
 }

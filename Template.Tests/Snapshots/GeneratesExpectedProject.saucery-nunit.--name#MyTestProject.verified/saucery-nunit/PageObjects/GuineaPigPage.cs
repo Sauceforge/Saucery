@@ -3,7 +3,7 @@ using OpenQA.Selenium.Support.UI;
 using Saucery.Core.PageObjects;
 using SeleniumExtras.PageObjects;
 
-namespace ExternalMerlin.NUnit.PageObjects;
+namespace MyTestProject.PageObjects;
 
 public class GuineaPigPage : PageObjectBase {
     public GuineaPigPage(WebDriver driver, string urlRoot)

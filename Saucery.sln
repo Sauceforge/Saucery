@@ -102,6 +102,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExternalMerlin.XUnit3.RealD
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Template.Tests", "Template.Tests\Template.Tests.csproj", "{A0651925-743E-4C7C-A531-14FA9D43EC8D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PageObjects", "PageObjects", "{191A9F29-E5B6-468A-90D8-543C745C097C}"
+	ProjectSection(SolutionItems) = preProject
+		Templates\NUnit\PageObjects\GuineaPigPage.cs = Templates\NUnit\PageObjects\GuineaPigPage.cs
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -255,6 +260,7 @@ Global
 		{B8B8D7B8-C39D-4C0B-B9D3-CD080D08A611} = {F92F11A9-75E8-4A75-828E-F9AD281CF34D}
 		{9C1F3863-212F-43B6-A51C-A2B1FF565A95} = {F92F11A9-75E8-4A75-828E-F9AD281CF34D}
 		{A0651925-743E-4C7C-A531-14FA9D43EC8D} = {CF280516-B466-4694-B96B-09149CA9A5CF}
+		{191A9F29-E5B6-468A-90D8-543C745C097C} = {784563EB-4394-4C8F-9C58-871307483D53}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B287ECB9-947E-4E9C-B745-27048D5CC522}
