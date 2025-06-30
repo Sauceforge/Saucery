@@ -10,5 +10,19 @@
   "tags": {
     "language": "C#",
     "type": "project"
+  },
+  "symbols": {
+    "sourceName": {
+      "type": "parameter",
+      "datatype": "string",
+      "replaces": "ExternalMerlin.NUnit"
+    }
+  },
+  "namespace": {
+    "type": "generated",
+    "generator": "csharp.namespace",
+    "parameters": {
+      "baseNamespace": "%name%"
+    }
   }
 }
