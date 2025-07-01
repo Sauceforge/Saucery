@@ -122,6 +122,37 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PageObjects", "PageObjects"
 		Templates\XUnit\PageObjects\GuineaPigPage.cs = Templates\XUnit\PageObjects\GuineaPigPage.cs
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TUnit", "TUnit", "{EA9B5142-2BC9-42D1-9251-567535D4AC23}"
+	ProjectSection(SolutionItems) = preProject
+		Templates\TUnit\ClickLinkTests.cs = Templates\TUnit\ClickLinkTests.cs
+		Templates\TUnit\DataDrivenTests.cs = Templates\TUnit\DataDrivenTests.cs
+		Templates\TUnit\MyParallelLimit.cs = Templates\TUnit\MyParallelLimit.cs
+		Templates\TUnit\MyTestProject.csproj = Templates\TUnit\MyTestProject.csproj
+		Templates\TUnit\RequestedPlatformData.cs = Templates\TUnit\RequestedPlatformData.cs
+		Templates\TUnit\.template.config\template.json = Templates\TUnit\.template.config\template.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PageObjects", "PageObjects", "{DC9E431C-A315-4DFF-96D2-8B49417599E7}"
+	ProjectSection(SolutionItems) = preProject
+		Templates\TUnit\PageObjects\GuineaPigPage.cs = Templates\TUnit\PageObjects\GuineaPigPage.cs
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XUnit3", "XUnit3", "{828B3618-3800-4F3E-8DA9-A08A91678B31}"
+	ProjectSection(SolutionItems) = preProject
+		Templates\XUnit3\ClickLinkTests.cs = Templates\XUnit3\ClickLinkTests.cs
+		Templates\XUnit3\DataDrivenTests.cs = Templates\XUnit3\DataDrivenTests.cs
+		Templates\XUnit3\MyTestProject.csproj = Templates\XUnit3\MyTestProject.csproj
+		Templates\XUnit3\RequestedPlatformData.cs = Templates\XUnit3\RequestedPlatformData.cs
+		Templates\XUnit3\.template.config\template.json = Templates\XUnit3\.template.config\template.json
+		Templates\XUnit3\Usings.cs = Templates\XUnit3\Usings.cs
+		Templates\XUnit3\xunit.runner.json = Templates\XUnit3\xunit.runner.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PageObjects", "PageObjects", "{2AC6B766-4BE7-495B-B3F6-E24A6F09DC60}"
+	ProjectSection(SolutionItems) = preProject
+		Templates\XUnit3\PageObjects\GuineaPigPage.cs = Templates\XUnit3\PageObjects\GuineaPigPage.cs
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -278,6 +309,10 @@ Global
 		{191A9F29-E5B6-468A-90D8-543C745C097C} = {784563EB-4394-4C8F-9C58-871307483D53}
 		{9AFD0EE5-7104-4BEB-B195-A88DAEC2276F} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{57287105-4276-4398-8187-92C038139028} = {9AFD0EE5-7104-4BEB-B195-A88DAEC2276F}
+		{EA9B5142-2BC9-42D1-9251-567535D4AC23} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{DC9E431C-A315-4DFF-96D2-8B49417599E7} = {EA9B5142-2BC9-42D1-9251-567535D4AC23}
+		{828B3618-3800-4F3E-8DA9-A08A91678B31} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{2AC6B766-4BE7-495B-B3F6-E24A6F09DC60} = {828B3618-3800-4F3E-8DA9-A08A91678B31}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B287ECB9-947E-4E9C-B745-27048D5CC522}

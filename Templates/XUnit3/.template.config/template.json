@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Andrew Gray",
+  "classifications": [ "Test", "XUnit3", "Saucery" ],
+  "identity": "Saucery.XUnit3.Template",
+  "name": "Saucery XUnit3 Test Project",
+  "shortName": "saucery-xunit3",
+  "sourceName": "ExternalMerlin.XUnit3",
+  "preferNameDirectory": true,
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "symbols": {
+    "sourceName": {
+      "type": "parameter",
+      "datatype": "string",
+      "replaces": "ExternalMerlin.XUnit3"
+    }
+  },
+  "namespace": {
+    "type": "generated",
+    "generator": "csharp.namespace",
+    "parameters": {
+      "baseNamespace": "%name%"
+    }
+  }
+}
