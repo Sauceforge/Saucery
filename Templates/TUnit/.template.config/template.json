@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Andrew Gray",
+  "classifications": [ "Test", "TUnit", "Saucery" ],
+  "identity": "Saucery.TUnit.Template",
+  "name": "Saucery TUnit Test Project",
+  "shortName": "saucery-tunit",
+  "sourceName": "ExternalMerlin.TUnit",
+  "preferNameDirectory": true,
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "symbols": {
+    "sourceName": {
+      "type": "parameter",
+      "datatype": "string",
+      "replaces": "ExternalMerlin.TUnit"
+    }
+  },
+  "namespace": {
+    "type": "generated",
+    "generator": "csharp.namespace",
+    "parameters": {
+      "baseNamespace": "%name%"
+    }
+  }
+}

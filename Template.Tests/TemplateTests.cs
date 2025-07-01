@@ -65,11 +65,36 @@ public class TemplateTests : IAsyncLifetime {
     [Fact]
     [Trait("Category", "TUnit")]
     public async Task GeneratesExpectedTUnitProject() {
+        var options = GetVerifierOptions(_tunitTemplateName!, _tunitTemplateFolder);
+
+        await _engine!.Execute(options);
+
+        AssertFiles([
+            [options.OutputDirectory!, _tunitTemplateName!, "PageObjects", "GuineaPigPage.cs"],
+            [options.OutputDirectory!, _tunitTemplateName!, "ClickLinkTests.cs"],
+            [options.OutputDirectory!, _tunitTemplateName!, "DataDrivenTests.cs"],
+            [options.OutputDirectory!, _tunitTemplateName!, "MyParallelLimit.cs"],
+            [options.OutputDirectory!, _tunitTemplateName!, "MyTestProject.csproj"],
+            [options.OutputDirectory!, _tunitTemplateName!, "RequestedPlatformData.cs"]
+        ]);
     }
 
     [Fact]
     [Trait("Category", "XUnit3")]
     public async Task GeneratesExpectedXUnit3Project() {
+        var options = GetVerifierOptions(_xunit3TemplateName!, _xunit3TemplateFolder);
+
+        await _engine!.Execute(options);
+
+        AssertFiles([
+            [options.OutputDirectory!, _xunit3TemplateName!, "PageObjects", "GuineaPigPage.cs"],
+            [options.OutputDirectory!, _xunit3TemplateName!, "ClickLinkTests.cs"],
+            [options.OutputDirectory!, _xunit3TemplateName!, "DataDrivenTests.cs"],
+            [options.OutputDirectory!, _xunit3TemplateName!, "MyTestProject.csproj"],
+            [options.OutputDirectory!, _xunit3TemplateName!, "RequestedPlatformData.cs"],
+            [options.OutputDirectory!, _xunit3TemplateName!, "Usings.cs"],
+            [options.OutputDirectory!, _xunit3TemplateName!, "xunit.runner.json"]
+        ]);
     }
 
     public Task DisposeAsync() {
