@@ -68,257 +68,44 @@ dotnet new install .\NUnit
 dotnet new saucery-nunit -n "MyTestProject"
 ```
 
-Checkout our dogfood project ExternalMerlin.NUnit for more.
-
-### Writing XUnit Tests
+### XUnit
 
 <img src="/Saucery.XUnit/Images/Saucery.XUnit.png" alt="Saucery.XUnit" width="100"/>
 
-1. In your solution create a simple class library.
-1. Add properties CopyLocalLockFileAssemblies and GenerateRuntimeConfigurationFiles to the top PropertyGroup of the project file and set them both to true.
-1. Add a NuGet Reference to [Saucery.XUnit](https://www.nuget.org/packages/saucery.xunit) and [xunit.runner.visualstudio](https://www.nuget.org/packages/xunit.runner.visualstudio).
+#### 🏁 Quick Start
 
-Your Project file should look something like this:
-
-```xml
-<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <IsPackable>false</IsPackable>
-    <IsTestProject>true</IsTestProject>
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="xunit.runner.visualstudio" Version="3.0.2">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Saucery.XUnit" Version="4.5.24" />
-  </ItemGroup>
-
-</Project>
+#### Using the Project Template (Recommended)
+```bash
+cd Templates
+dotnet new install .\XUnit
+dotnet new saucery-xunit -n "MyTestProject"
 ```
 
-The ExternalMerlin.XUnit dogfood integration tests use the following template:
-
-```csharp
-using ExternalMerlin.XUnit.PageObjects;
-using Saucery.Core.Dojo;
-using Saucery.XUnit;
-using Xunit.Abstractions;
-
-[assembly: CollectionBehavior(MaxParallelThreads = 5)]
-
-namespace ExternalMerlin.XUnit;
-
-public class DataDrivenTests(ITestOutputHelper output, BaseFixture baseFixture) : SauceryXBase(output, baseFixture)
-{
-    [Theory]
-    [MemberData(nameof(AllCombinations))]
-    public void DataDrivenTest(BrowserVersion requestedPlatform, int data)
-    {
-        InitialiseDriver(requestedPlatform);
-
-        var guineaPigPage = new GuineaPigPage(BaseFixture.SauceryDriver(), "https://saucelabs.com/");
-
-        guineaPigPage.TypeField(BaseFixture.SauceryDriver(), "comments", data.ToString());
-    }
-
-    public static IEnumerable<object[]> AllCombinations => GetAllCombinations([4, 5]);
-}
-```
-
-The above code will run *2* unit tests (2 DataDrivenTitle tests) on *all* the platforms you specify.
-
-#### XUnit Parallelism
-
-- Parallelism in XUnit is currently achieved by having tests in multiple classes.
-- The Level of Parallelism is determined by the number of parallel threads you have paid for in your SauceLabs account.
-- Parallelism is optional so you can exclude `[assembly: CollectionBehavior(MaxParallelThreads = 5)]` lines if you wish. We recommend placing this line in a `Usings.cs` as it will apply to all your TestFixtures.
-
-Next, let's break down the key line.
-
-```csharp
-public class DataDrivenTests(ITestOutputHelper output, BaseFixture baseFixture) : SauceryXBase(output, baseFixture)
-```
-
-Your class must subclass `SauceryXBase` and pass an `ITestOutputHelper` and a `BaseFixture`. SauceryX will take care of the rest.
-
-You need to specify a class to tell SauceryX what platforms you want to test on. In this example its called `RequestedPlatformData` but you can call it anything you like.
-
-Let's look at what it should contain.
-
-```csharp
-using Saucery.Core.DataSources;
-using Saucery.Core.OnDemand;
-using Saucery.Core.OnDemand.Base;
-using Saucery.Core.Util;
-
-namespace ExternalMerlin.XUnit;
-
-public class RequestedPlatformData : SauceryTestData
-{
-    static RequestedPlatformData()
-    {
-        List<SaucePlatform> platforms =
-        [
-            //Real Devices
-            new AndroidRealDevice("Google Pixel 8 Pro", "14"),
-            new IOSRealDevice("iPhone 14 Pro Max", "16"),
-
-            //Emulated Mobile Platforms
-            new AndroidPlatform("Google Pixel 8 Pro GoogleAPI Emulator", "14.0", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT),
-            new IOSPlatform("iPhone 14 Pro Max Simulator", "16.2", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
-
-            //Desktop Platforms
-            new DesktopPlatform(SauceryConstants.PLATFORM_LINUX, SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_VERSION_LATEST),
-            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "75"),
-            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_CHROME, "76", SauceryConstants.SCREENRES_2560_1600)
-        ];
-
-        SetPlatforms(platforms, PlatformFilter.Emulated);
-    }
-
-    public static IEnumerable<object[]> AllPlatforms => GetAllPlatforms();
-}
-```
-
-The `List<SaucePlatform>` is what you will specify. The rest of the class is mandatory. Check out `SauceryConstants` for all the platform, browser and screenres enums.
-
-### IDE Setup
-
-If you are using Visual Studio 17.12 or earlier, follow the instructions [here](https://thomhurst.github.io/TUnit/docs/tutorial-basics/running-your-tests#visual-studio) to set up your IDE.
-
-### Writing TUnit Tests
+### TUnit
 
 <img src="/Saucery.TUnit/Images/Saucery.TUnit.png" alt="Saucery.XUnit" width="100"/>
 
-1. In your solution create a simple class library.
-1. Add a NuGet Reference to [Saucery.TUnit](https://www.nuget.org/packages/Saucery.TUnit).
+#### 🏁 Quick Start
 
-Your Project file should look something like this:
-
-```xml
-<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Saucery.TUnit" Version="0.16.4" />
-  </ItemGroup>
-
-</Project>
+#### Using the Project Template (Recommended)
+```bash
+cd Templates
+dotnet new install .\TUnit
+dotnet new saucery-tunit -n "MyTestProject"
 ```
 
-The ExternalMerlin.TUnit dogfood integration tests use the following template:
+### XUnit-v3
 
-```csharp
-using ExternalMerlin.TUnit.PageObjects;
-using Saucery.Core.Dojo;
-using Saucery.TUnit;
+<img src="/Saucery.XUnit/Images/Saucery.XUnit.png" alt="Saucery.XUnit" width="100"/>
 
-namespace ExternalMerlin.TUnit;
+#### 🏁 Quick Start
 
-public class DataDrivenTests : SauceryTBase
-{
-    [Test]
-    [MethodDataSource(nameof(AllCombinations), Arguments = [new[] { 4, 5 }])]
-    public async Task DataDrivenTest(BrowserVersion requestedPlatform, int data)
-    {
-        InitialiseDriver(requestedPlatform);
-
-        var guineaPigPage = new GuineaPigPage(SauceryDriver(), "https://saucelabs.com/");
-
-        guineaPigPage.TypeField(SauceryDriver(), "comments", data.ToString());
-
-        var commentField = guineaPigPage.GetField(SauceryDriver(), "comments");
-        await Assert.That(commentField).IsNotNull();
-        
-        var commentText = commentField.GetDomProperty("value");
-        await Assert.That(commentText).Contains(data.ToString());
-    }
-
-    public static IEnumerable<Func<(BrowserVersion, int)>> AllCombinations(int[] data) => 
-        RequestedPlatformData
-        .AllPlatforms()
-        .SelectMany(
-            browserVersionFunc => data,
-            (browserVersionFunc, datum) => new Func<(BrowserVersion, int)>(() => (browserVersionFunc(), datum))
-        );
-}
+#### Using the Project Template (Recommended)
+```bash
+cd Templates
+dotnet new install .\XUnit3
+dotnet new saucery-xunit3 -n "MyTestProject"
 ```
-
-The above code will run *2* unit tests (2 DataDrivenTitle tests) on *all* the platforms you specify, in parallel by default.
-
-#### TUnit Parallelism
-
-- Parallelism in TUnit is default out of the box. For SauceLabs it needs to be constrained. 
-- Have a look at MyParallelLimit.cs in the ExternalMerlin.TUnit project for an example of how to do that.
-- We recommend 2 less than your limit. Our OpenSauce account has 5 so we specify 3 in our internal testing.
-
-The other lines are mandatory. Let's break the key lines down.
-
-```csharp
-public class DataDrivenTests : SauceryTBase
-```
-
-Your class must subclass `SauceryTBase`. SauceryT will take care of the rest.
-
-A data driven test is specified like this:
-
-```csharp
-[Test]
-[MethodDataSource(nameof(AllCombinations), Arguments = [new[] { 4, 5 }])]
-public async Task DataDrivenTest(Func<BrowserVersion> requestedPlatform, int data)
-```
-
-You can call the class what you like but it must take a `Func<BrowserVersion>` and the `data` as a parameter and subclass `SauceryTBase`.
-
-`[MethodDataSource(nameof(AllCombinations)...]` is how you tell SauceryT what platforms you want to test on. You need to specify a class to do that. In this example its called `RequestedPlatformData` but you can call it anything you like.
-
-Let's look at what it should contain.
-
-```csharp
-using Saucery.Core.DataSources;
-using Saucery.Core.Dojo;
-using Saucery.Core.OnDemand;
-using Saucery.Core.OnDemand.Base;
-using Saucery.Core.Util;
-
-namespace ExternalMerlin.TUnit;
-
-public class RequestedPlatformData : SauceryTestData
-{
-    static RequestedPlatformData()
-    {
-        var platforms = new List<SaucePlatform>
-        {
-            //Emulated Mobile Platforms
-            new AndroidPlatform("Google Pixel 8 Pro GoogleAPI Emulator", "15.0", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT),
-            new IOSPlatform("iPhone 14 Pro Max Simulator", "16.2", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
-
-            //Desktop Platforms
-            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "123"),
-            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_CHROME, "124", SauceryConstants.SCREENRES_2560_1600)
-        };
-
-        SetPlatforms(platforms, PlatformFilter.Emulated);
-    }
-
-    public static List<Func<BrowserVersion>> AllPlatforms() => GetAllPlatformsAsFunc();
-}
-```
-
-The `List<SaucePlatform>` is what you will specify. The rest of the class is mandatory. Check out `SauceryConstants` for all the platform, browser and screenres enums.
 
 ## Platform Range Expansion
 
