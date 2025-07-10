@@ -31,7 +31,7 @@ public class TemplateTests : IAsyncLifetime {
     }
 
     [Fact]
-    [Trait("Category", "NUnit")]
+    [Trait("Group", "NUnit")]
     public async Task GeneratesExpectedNUnitProject() {
         var options = GetVerifierOptions(_nunitTemplateName!, _nunitTemplateFolder);
 
@@ -46,7 +46,7 @@ public class TemplateTests : IAsyncLifetime {
     }
 
     [Fact]
-    [Trait("Category", "XUnit")]
+    [Trait("Group", "XUnit")]
     public async Task GeneratesExpectedXUnitProject() {
         var options = GetVerifierOptions(_xunitTemplateName!, _xunitTemplateFolder);
 
@@ -63,7 +63,7 @@ public class TemplateTests : IAsyncLifetime {
     }
 
     [Fact]
-    [Trait("Category", "TUnit")]
+    [Trait("Group", "TUnit")]
     public async Task GeneratesExpectedTUnitProject() {
         var options = GetVerifierOptions(_tunitTemplateName!, _tunitTemplateFolder);
 
@@ -80,7 +80,7 @@ public class TemplateTests : IAsyncLifetime {
     }
 
     [Fact]
-    [Trait("Category", "XUnit3")]
+    [Trait("Group", "XUnit3")]
     public async Task GeneratesExpectedXUnit3Project() {
         var options = GetVerifierOptions(_xunit3TemplateName!, _xunit3TemplateFolder);
 
