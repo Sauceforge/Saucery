@@ -229,7 +229,7 @@ jobs:
     #   run: ls -R
 
     - name: ReportGenerator
-      uses: danielpalme/ReportGenerator-GitHub-Action@5.4.9
+      uses: danielpalme/ReportGenerator-GitHub-Action@5.4.10
       with:
         # REQUIRED # The coverage reports that should be parsed (separated by semicolon). Globbing is supported.
         reports: ${{env.UNIT_COVERAGE_FILENAME}};{{env.XUNIT3_INTEGRATION_COVERAGE_FILENAME}};{{env.XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME}}
