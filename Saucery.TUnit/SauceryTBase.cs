@@ -46,7 +46,7 @@ public class SauceryTBase : BaseFixture
             _testName = null;
             if (Driver != null)
             {
-                var passed = TestContext.Current?.Result?.Status == Status.Passed;
+                var passed = TestContext.Current?.Result?.State == TestState.Passed;
                 // log the result to SauceLabs
                 lock (_lock)
                 {
