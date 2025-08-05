@@ -107,6 +107,7 @@ public class RestTests
         platform.ShouldBeAssignableTo<List<T>>();
     }
 
+    [GenericTestCase(typeof(IOS26Platform), TestName = "IOS26SupportedRealDeviceTest")]
     [GenericTestCase(typeof(IOS18Platform), TestName = "IOS18SupportedRealDeviceTest")]
     [GenericTestCase(typeof(IOS17Platform), TestName = "IOS17SupportedRealDeviceTest")]
     [GenericTestCase(typeof(IOS16Platform), TestName = "IOS16SupportedRealDeviceTest")]
