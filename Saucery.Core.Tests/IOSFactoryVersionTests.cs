@@ -49,7 +49,7 @@ internal static class IOSDataClass
             var versions = new [] { "14.0", "14.3", "14.4", "14.5", 
                                     "15.0", "15.2", "15.4", 
                                     "16.0", "16.1", "16.2",
-                                    "17.0" };
+                                    "17.0", "17.5", "18.0" };
             foreach (var v in versions)
             {
                 yield return new IOSPlatform("iPhone Simulator", v, SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);

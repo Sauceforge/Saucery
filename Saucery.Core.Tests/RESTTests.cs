@@ -64,6 +64,7 @@ public class RestTests
     [GenericTestCase(typeof(Mac13Platform), TestName = "Mac13SupportedPlatformTest")]
     [GenericTestCase(typeof(Mac12Platform), TestName = "Mac12SupportedPlatformTest")]
     [GenericTestCase(typeof(Mac11Platform), TestName = "Mac11SupportedPlatformTest")]
+    [GenericTestCase(typeof(IOS175Platform), TestName = "IOS175SupportedRealDeviceTest")]
     [GenericTestCase(typeof(IOS17Platform), TestName = "IOS17SupportedPlatformTest")]
     [GenericTestCase(typeof(IOS162Platform), TestName = "IOS162SupportedPlatformTest")]
     [GenericTestCase(typeof(IOS161Platform), TestName = "IOS161SupportedPlatformTest")]
