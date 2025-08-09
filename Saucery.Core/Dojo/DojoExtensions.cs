@@ -98,8 +98,8 @@ public static class DojoExtensions
         }
     }
 
-    public static IList<T> GetPlatform<T>(this List<PlatformBase> availablePlatforms) where T : PlatformBase =>
-        availablePlatforms.OfType<T>().ToList();
+    public static IList<T> GetPlatform<T>(this List<PlatformBase> availablePlatforms) where T : PlatformBase 
+        => [.. availablePlatforms.OfType<T>()];
 
     public static BrowserVersion? FindDesktopBrowser(this List<PlatformBase> platforms, SaucePlatform sp)
     {
@@ -111,6 +111,7 @@ public static class DojoExtensions
             SauceryConstants.PLATFORM_WINDOWS_81 => platforms.GetPlatform<Windows81Platform>().FirstOrDefault(),
             SauceryConstants.PLATFORM_WINDOWS_8 => platforms.GetPlatform<Windows8Platform>().FirstOrDefault(),
             SauceryConstants.PLATFORM_WINDOWS_7 => platforms.GetPlatform<Windows7Platform>().FirstOrDefault(),
+            SauceryConstants.PLATFORM_MAC_15 => platforms.GetPlatform<Mac15Platform>().FirstOrDefault(),
             SauceryConstants.PLATFORM_MAC_14 => platforms.GetPlatform<Mac14Platform>().FirstOrDefault(),
             SauceryConstants.PLATFORM_MAC_13 => platforms.GetPlatform<Mac13Platform>().FirstOrDefault(),
             SauceryConstants.PLATFORM_MAC_12 => platforms.GetPlatform<Mac12Platform>().FirstOrDefault(),
