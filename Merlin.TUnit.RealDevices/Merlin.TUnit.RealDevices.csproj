@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <CollectCoverage>true</CollectCoverage>
+    <CoverletExclude>tunit.generated*</CoverletExclude>
     <CoverletOutputFormat>opencover</CoverletOutputFormat>
   </PropertyGroup>
 

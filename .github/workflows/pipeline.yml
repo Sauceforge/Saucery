@@ -337,7 +337,6 @@ jobs:
             nunit-external-tests,
             xunit-real-external-tests,
             nunit-real-external-tests]
-
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
