@@ -51,7 +51,7 @@ jobs:
 
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Setup dotnet
       uses: actions/setup-dotnet@v4
@@ -96,7 +96,7 @@ jobs:
 
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Setup dotnet
       uses: actions/setup-dotnet@v4
@@ -124,7 +124,7 @@ jobs:
     needs: [build]
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Setup dotnet
       uses: actions/setup-dotnet@v4
@@ -150,7 +150,7 @@ jobs:
             tunit-integration-tests]
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Setup dotnet
       uses: actions/setup-dotnet@v3
@@ -170,7 +170,7 @@ jobs:
             tunit-integration-tests]
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Setup dotnet
       uses: actions/setup-dotnet@v3
@@ -190,7 +190,7 @@ jobs:
             tunit-real-external-tests]
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Download unit-test results
       uses: actions/download-artifact@v5
