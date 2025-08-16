@@ -27,7 +27,7 @@ Saucery handles all the plumbing required to integrate with SauceLabs, making wr
 
 Saucery comes in multiple flavors supporting popular test frameworks.
 
-Note: The tests specified below are provided as examples only. Your tests, of course, will be specific to your System Under Test.
+The templates below include example tests.
 
 ### Packages
 
