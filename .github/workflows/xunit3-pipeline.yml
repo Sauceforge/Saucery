@@ -60,13 +60,6 @@ jobs:
     - name: Compile solution
       run: dotnet build -c ${{ env.CONFIG }}
 
-    ## Run code analysis for all projects/solutions, such that code analysis violations break the build.
-    #- name: Run .NET Code Analysis
-    #  uses: dotnet/code-analysis@v1
-    #  id: code-analysis
-    #  with:
-    #    build-breaking: true
-
     - name: Run Unit Tests
       uses: b3b00/coverlet-action@1.3.5-alpha2
       with:
