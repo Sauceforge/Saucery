@@ -203,18 +203,6 @@ jobs:
       with:
         name: xunit3-real-integration-test-results
 
-    - name: Setup Java JDK for Codacy Code Coverage
-      uses: actions/setup-java@v4.7.1
-      with:
-        distribution: 'oracle'
-        java-version: '21'
-    
-    - name: Codacy Code Coverage
-      run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -l CSharp \
-           -r ${{env.UNIT_COVERAGE_FILENAME}} \
-           -r ${{env.XUNIT3_INTEGRATION_COVERAGE_FILENAME}} \
-           -r ${{env.XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME}} --partial
-    
     # - name: Present working directory
     #   run: pwd
 
