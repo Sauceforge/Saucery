@@ -1,0 +1,40 @@
+name: Update Year Count
+
+on:
+  schedule:
+    # Run at 00:00 on June 1 every year
+    - cron: "0 0 1 6 *"
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Calculate years since June 2014
+        id: calc
+        run: |
+          start_year=2014
+          start_month=6
+          today_year=$(date +%Y)
+          today_month=$(date +%-m)
+
+          years=$(( today_year - start_year ))
+          if [ "$today_month" -lt "$start_month" ]; then
+            years=$(( years - 1 ))
+          fi
+
+          echo "years=$years" >> $GITHUB_OUTPUT
+
+      - name: Write YEAR.md
+        run: |
+          echo "${{ steps.calc.outputs.years }}" > YEAR.md
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add YEAR.md
+          git commit -m "chore: update YEARS.md to ${{ steps.calc.outputs.years }}"
+          git push
