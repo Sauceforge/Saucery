@@ -35,6 +35,6 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          git add YEAR.md
+          git add YEARS.md
           git commit -m "chore: update YEARS.md to ${{ steps.calc.outputs.years }}"
           git push
