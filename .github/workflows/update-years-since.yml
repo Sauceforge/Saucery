@@ -1,40 +1,75 @@
-name: Update Year Count
+name: Update Years in all READMEs
 
 on:
   schedule:
-    # Run at 00:00 on June 1 every year
-    - cron: "0 0 1 6 *"
+    - cron: "0 0 1 6 *"   # 00:00 UTC every June 1
   workflow_dispatch:
 
 jobs:
-  update:
+  update-years:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Calculate years since June 2014
+      - name: Calculate full years since June 1, 2014 (UTC)
         id: calc
+        shell: bash
         run: |
           start_year=2014
           start_month=6
-          today_year=$(date +%Y)
-          today_month=$(date +%-m)
+          start_day=1
 
-          years=$(( today_year - start_year ))
-          if [ "$today_month" -lt "$start_month" ]; then
+          y=$(date -u +%Y)
+          m=$(date -u +%-m)
+          d=$(date -u +%-d)
+
+          years=$(( y - start_year ))
+          if [ "$m" -lt "$start_month" ] || { [ "$m" -eq "$start_month" ] && [ "$d" -lt "$start_day" ]; }; then
             years=$(( years - 1 ))
           fi
 
-          echo "years=$years" >> $GITHUB_OUTPUT
+          echo "years=$years" >> "$GITHUB_OUTPUT"
+          echo "Years computed: $years"
 
-      - name: Write YEAR.md
+      - name: Update all README.md files
+        shell: bash
         run: |
-          echo "${{ steps.calc.outputs.years }}" > YEAR.md
+          years='${{ steps.calc.outputs.years }}'
+          echo "Replacing markers with: $years"
 
-      - name: Commit and push changes
+          # Find all README.md files (case-insensitive just in case)
+          mapfile -d '' files < <(find . -type f \( -iname "README.md" \) -print0)
+
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "No README.md files found."
+            exit 0
+          fi
+
+          changed=0
+          for f in "${files[@]}"; do
+            if grep -q "<!--YEARS-->" "$f"; then
+              # Replace ANY content between markers while keeping the markers
+              sed -i -E "s/(<!--YEARS-->).*(<!--ENDYEARS-->)/\1${years}\2/g" "$f"
+              changed=1
+              echo "Updated: $f"
+            else
+              echo "No YEARS markers in: $f"
+            fi
+          done
+
+          if [ $changed -eq 0 ]; then
+            echo "No files updated (no markers found)."
+          fi
+
+      - name: Commit and push if changes
+        shell: bash
         run: |
+          if git diff --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          git add YEARS.md
-          git commit -m "chore: update YEARS.md to ${{ steps.calc.outputs.years }}"
+          git add -A
+          git commit -m "chore: update YEARS markers to ${{ steps.calc.outputs.years }}"
           git push
