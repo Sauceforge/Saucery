@@ -2,7 +2,7 @@
 
 Saucery handles all the plumbing required to integrate with SauceLabs, making writing NUnit tests a breeze, so you only need to tell Saucery *what* you want. Saucery takes care of the *how*.
 
-Saucery targets all [platforms](https://saucelabs.com/products/platform-configurator) (Appium and Selenium 4+).
+Saucery targets all real and emulated [platforms](https://saucelabs.com/products/platform-configurator) for Appium and Selenium 4+.
 
 The template below includes example tests.
 
