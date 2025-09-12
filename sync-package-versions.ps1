@@ -54,6 +54,8 @@ $Projects = @(
     "Saucery.TUnit"
 )
 
+cls
+
 Write-Host "Running syncs from $Root ..."
 foreach ($p in $Projects) {
     Invoke-Sync -Project $p -Root $Root -ScriptName $ScriptName
