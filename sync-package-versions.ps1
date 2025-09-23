@@ -73,6 +73,15 @@ cls
 .\Update-NuGetNext-All.ps1 -PackageId "xunit.v3" -Root "C:\gitrepos\Saucery\Saucery.XUnit3\"
 .\Update-NuGetNext-All.ps1 -PackageId "xunit.runner.visualstudio" -Root "C:\gitrepos\Saucery\Saucery.XUnit3\"
 
+
+
+
+.\Update-NuGetNext-All.ps1 -PackageId "TUnit" -Root "C:\gitrepos\Saucery\Merlin.TUnit\"
+.\Update-NuGetNext-All.ps1 -PackageId "TUnit" -Root "C:\gitrepos\Saucery\Merlin.TUnit.RealDevices\"
+
+
+
+
 Write-Host "Running syncs from $Root ..."
 foreach ($p in $Projects) {
     Invoke-Sync -Project $p -Root $Root -ScriptName $ScriptName
