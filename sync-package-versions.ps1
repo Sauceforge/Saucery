@@ -56,6 +56,8 @@ $Projects = @(
 
 cls
 
+# FrontEnd
+
 .\Update-NuGetNext-All.ps1 -PackageId "NUnit" -Root "C:\gitrepos\Saucery\Saucery\"
 .\Update-NuGetNext-All.ps1 -PackageId "Microsoft.NET.Test.Sdk" -Root "C:\gitrepos\Saucery\Saucery\"
 .\Update-NuGetNext-All.ps1 -PackageId "NUnit3TestAdapter" -Root "C:\gitrepos\Saucery\Saucery\"
@@ -73,14 +75,59 @@ cls
 .\Update-NuGetNext-All.ps1 -PackageId "xunit.v3" -Root "C:\gitrepos\Saucery\Saucery.XUnit3\"
 .\Update-NuGetNext-All.ps1 -PackageId "xunit.runner.visualstudio" -Root "C:\gitrepos\Saucery\Saucery.XUnit3\"
 
+#MERLINS
+#NUnit
+.\Update-NuGetNext-All.ps1 -PackageId "DotNetSeleniumExtras.PageObjects.Core" -Root "C:\gitrepos\Saucery\Merlin.NUnit\"
+.\Update-NuGetNext-All.ps1 -PackageId "Microsoft.NET.Test.Sdk" -Root "C:\gitrepos\Saucery\Merlin.NUnit\"
+.\Update-NuGetNext-All.ps1 -PackageId "Microsoft.Web.Xdt" -Root "C:\gitrepos\Saucery\Merlin.NUnit\"
+.\Update-NuGetNext-All.ps1 -PackageId "NUnit" -Root "C:\gitrepos\Saucery\Merlin.NUnit\"
+.\Update-NuGetNext-All.ps1 -PackageId "NUnit3TestAdapter" -Root "C:\gitrepos\Saucery\Merlin.NUnit\"
 
+#NUnit.RealDevice
+.\Update-NuGetNext-All.ps1 -PackageId "coverlet.msbuild" -Root "C:\gitrepos\Saucery\Merlin.NUnit.RealDevices\"
+.\Update-NuGetNext-All.ps1 -PackageId "DotNetSeleniumExtras.PageObjects.Core" -Root "C:\gitrepos\Saucery\Merlin.NUnit.RealDevices\"
+.\Update-NuGetNext-All.ps1 -PackageId "Microsoft.NET.Test.Sdk" -Root "C:\gitrepos\Saucery\Merlin.NUnit.RealDevices\"
+.\Update-NuGetNext-All.ps1 -PackageId "Microsoft.Web.Xdt" -Root "C:\gitrepos\Saucery\Merlin.NUnit.RealDevices\"
+.\Update-NuGetNext-All.ps1 -PackageId "NUnit" -Root "C:\gitrepos\Saucery\Merlin.NUnit.RealDevices\"
+.\Update-NuGetNext-All.ps1 -PackageId "NUnit3TestAdapter" -Root "C:\gitrepos\Saucery\Merlin.NUnit.RealDevices\"
 
+#XUnit
+.\Update-NuGetNext-All.ps1 -PackageId "Meziantou.Xunit.ParallelTestFramework" -Root "C:\gitrepos\Saucery\Merlin.XUnit\"
+.\Update-NuGetNext-All.ps1 -PackageId "Microsoft.NET.Test.Sdk" -Root "C:\gitrepos\Saucery\Merlin.XUnit\"
+.\Update-NuGetNext-All.ps1 -PackageId "xunit" -Root "C:\gitrepos\Saucery\Merlin.XUnit\"
+.\Update-NuGetNext-All.ps1 -PackageId "xunit.runner.visualstudio" -Root "C:\gitrepos\Saucery\Merlin.XUnit\"
+.\Update-NuGetNext-All.ps1 -PackageId "coverlet.collector" -Root "C:\gitrepos\Saucery\Merlin.XUnit\"
+.\Update-NuGetNext-All.ps1 -PackageId "coverlet.msbuild" -Root "C:\gitrepos\Saucery\Merlin.XUnit\"
 
+#XUnit.RealDevice
+.\Update-NuGetNext-All.ps1 -PackageId "Meziantou.Xunit.ParallelTestFramework" -Root "C:\gitrepos\Saucery\Merlin.XUnit.RealDevices\"
+.\Update-NuGetNext-All.ps1 -PackageId "Microsoft.NET.Test.Sdk" -Root "C:\gitrepos\Saucery\Merlin.XUnit.RealDevices\"
+.\Update-NuGetNext-All.ps1 -PackageId "xunit" -Root "C:\gitrepos\Saucery\Merlin.XUnit.RealDevices\"
+.\Update-NuGetNext-All.ps1 -PackageId "xunit.runner.visualstudio" -Root "C:\gitrepos\Saucery\Merlin.XUnit.RealDevices\"
+.\Update-NuGetNext-All.ps1 -PackageId "coverlet.collector" -Root "C:\gitrepos\Saucery\Merlin.XUnit.RealDevices\"
+.\Update-NuGetNext-All.ps1 -PackageId "coverlet.msbuild" -Root "C:\gitrepos\Saucery\Merlin.XUnit.RealDevices\"
+
+#TUnit
+.\Update-NuGetNext-All.ps1 -PackageId "coverlet.collector" -Root "C:\gitrepos\Saucery\Merlin.TUnit\"
+.\Update-NuGetNext-All.ps1 -PackageId "coverlet.msbuild" -Root "C:\gitrepos\Saucery\Merlin.TUnit\"
 .\Update-NuGetNext-All.ps1 -PackageId "TUnit" -Root "C:\gitrepos\Saucery\Merlin.TUnit\"
+
+#TUnit.RealDevice
+.\Update-NuGetNext-All.ps1 -PackageId "coverlet.collector" -Root "C:\gitrepos\Saucery\Merlin.TUnit.RealDevices\"
+.\Update-NuGetNext-All.ps1 -PackageId "coverlet.msbuild" -Root "C:\gitrepos\Saucery\Merlin.TUnit.RealDevices\"
 .\Update-NuGetNext-All.ps1 -PackageId "TUnit" -Root "C:\gitrepos\Saucery\Merlin.TUnit.RealDevices\"
 
+#XUnit3
+.\Update-NuGetNext-All.ps1 -PackageId "Microsoft.NET.Test.Sdk" -Root "C:\gitrepos\Saucery\Merlin.XUnit3\"
+.\Update-NuGetNext-All.ps1 -PackageId "Microsoft.Testing.Extensions.CodeCoverage" -Root "C:\gitrepos\Saucery\Merlin.XUnit3\"
+.\Update-NuGetNext-All.ps1 -PackageId "xunit.v3" -Root "C:\gitrepos\Saucery\Merlin.XUnit3\"
+.\Update-NuGetNext-All.ps1 -PackageId "xunit.runner.visualstudio" -Root "C:\gitrepos\Saucery\Merlin.XUnit3\"
 
-
+#XUnit3.RealDevice
+.\Update-NuGetNext-All.ps1 -PackageId "Microsoft.NET.Test.Sdk" -Root "C:\gitrepos\Saucery\Merlin.XUnit3.RealDevices\"
+.\Update-NuGetNext-All.ps1 -PackageId "Microsoft.Testing.Extensions.CodeCoverage" -Root "C:\gitrepos\Saucery\Merlin.XUnit3.RealDevices\"
+.\Update-NuGetNext-All.ps1 -PackageId "xunit.v3" -Root "C:\gitrepos\Saucery\Merlin.XUnit3.RealDevices\"
+.\Update-NuGetNext-All.ps1 -PackageId "xunit.runner.visualstudio" -Root "C:\gitrepos\Saucery\Merlin.XUnit3.RealDevices\"
 
 Write-Host "Running syncs from $Root ..."
 foreach ($p in $Projects) {
