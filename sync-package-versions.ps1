@@ -83,7 +83,7 @@ cls
 .\Update-NuGetNext-All.ps1 -PackageId "NUnit" -Root "C:\gitrepos\Saucery\Merlin.NUnit\"
 .\Update-NuGetNext-All.ps1 -PackageId "NUnit3TestAdapter" -Root "C:\gitrepos\Saucery\Merlin.NUnit\"
 
-#NUnit.RealDevice
+#NUnit.RealDevices
 .\Update-NuGetNext-All.ps1 -PackageId "coverlet.msbuild" -Root "C:\gitrepos\Saucery\Merlin.NUnit.RealDevices\"
 .\Update-NuGetNext-All.ps1 -PackageId "DotNetSeleniumExtras.PageObjects.Core" -Root "C:\gitrepos\Saucery\Merlin.NUnit.RealDevices\"
 .\Update-NuGetNext-All.ps1 -PackageId "Microsoft.NET.Test.Sdk" -Root "C:\gitrepos\Saucery\Merlin.NUnit.RealDevices\"
@@ -99,7 +99,7 @@ cls
 .\Update-NuGetNext-All.ps1 -PackageId "coverlet.collector" -Root "C:\gitrepos\Saucery\Merlin.XUnit\"
 .\Update-NuGetNext-All.ps1 -PackageId "coverlet.msbuild" -Root "C:\gitrepos\Saucery\Merlin.XUnit\"
 
-#XUnit.RealDevice
+#XUnit.RealDevices
 .\Update-NuGetNext-All.ps1 -PackageId "Meziantou.Xunit.ParallelTestFramework" -Root "C:\gitrepos\Saucery\Merlin.XUnit.RealDevices\"
 .\Update-NuGetNext-All.ps1 -PackageId "Microsoft.NET.Test.Sdk" -Root "C:\gitrepos\Saucery\Merlin.XUnit.RealDevices\"
 .\Update-NuGetNext-All.ps1 -PackageId "xunit" -Root "C:\gitrepos\Saucery\Merlin.XUnit.RealDevices\"
@@ -112,7 +112,7 @@ cls
 .\Update-NuGetNext-All.ps1 -PackageId "coverlet.msbuild" -Root "C:\gitrepos\Saucery\Merlin.TUnit\"
 .\Update-NuGetNext-All.ps1 -PackageId "TUnit" -Root "C:\gitrepos\Saucery\Merlin.TUnit\"
 
-#TUnit.RealDevice
+#TUnit.RealDevices
 .\Update-NuGetNext-All.ps1 -PackageId "coverlet.collector" -Root "C:\gitrepos\Saucery\Merlin.TUnit.RealDevices\"
 .\Update-NuGetNext-All.ps1 -PackageId "coverlet.msbuild" -Root "C:\gitrepos\Saucery\Merlin.TUnit.RealDevices\"
 .\Update-NuGetNext-All.ps1 -PackageId "TUnit" -Root "C:\gitrepos\Saucery\Merlin.TUnit.RealDevices\"
@@ -123,11 +123,40 @@ cls
 .\Update-NuGetNext-All.ps1 -PackageId "xunit.v3" -Root "C:\gitrepos\Saucery\Merlin.XUnit3\"
 .\Update-NuGetNext-All.ps1 -PackageId "xunit.runner.visualstudio" -Root "C:\gitrepos\Saucery\Merlin.XUnit3\"
 
-#XUnit3.RealDevice
+#XUnit3.RealDevices
 .\Update-NuGetNext-All.ps1 -PackageId "Microsoft.NET.Test.Sdk" -Root "C:\gitrepos\Saucery\Merlin.XUnit3.RealDevices\"
 .\Update-NuGetNext-All.ps1 -PackageId "Microsoft.Testing.Extensions.CodeCoverage" -Root "C:\gitrepos\Saucery\Merlin.XUnit3.RealDevices\"
 .\Update-NuGetNext-All.ps1 -PackageId "xunit.v3" -Root "C:\gitrepos\Saucery\Merlin.XUnit3.RealDevices\"
 .\Update-NuGetNext-All.ps1 -PackageId "xunit.runner.visualstudio" -Root "C:\gitrepos\Saucery\Merlin.XUnit3.RealDevices\"
+
+#EXTERNALMERLINS
+#NUnit
+.\Update-NuGetNext-All.ps1 -PackageId "NUnit3TestAdapter" -Root "C:\gitrepos\Saucery\ExternalMerlin.NUnit\"
+.\Update-NuGetNext-All.ps1 -PackageId "Saucery" -Root "C:\gitrepos\Saucery\ExternalMerlin.NUnit\"
+
+#NUnit.RealDevices
+.\Update-NuGetNext-All.ps1 -PackageId "NUnit3TestAdapter" -Root "C:\gitrepos\Saucery\ExternalMerlin.NUnit.RealDevices\"
+.\Update-NuGetNext-All.ps1 -PackageId "Saucery" -Root "C:\gitrepos\Saucery\ExternalMerlin.NUnit.RealDevices\"
+
+#XUnit
+.\Update-NuGetNext-All.ps1 -PackageId "Saucery.XUnit" -Root "C:\gitrepos\Saucery\ExternalMerlin.XUnit\"
+
+#XUnit.RealDevices
+.\Update-NuGetNext-All.ps1 -PackageId "Saucery.XUnit" -Root "C:\gitrepos\Saucery\ExternalMerlin.XUnit.RealDevices\"
+
+#TUnit
+.\Update-NuGetNext-All.ps1 -PackageId "Saucery.TUnit" -Root "C:\gitrepos\Saucery\ExternalMerlin.TUnit\"
+
+#TUnit.RealDevices
+.\Update-NuGetNext-All.ps1 -PackageId "Saucery.TUnit" -Root "C:\gitrepos\Saucery\ExternalMerlin.TUnit.RealDevices\"
+
+#XUnit3
+.\Update-NuGetNext-All.ps1 -PackageId "xunit.runner.visualstudio" -Root "C:\gitrepos\Saucery\ExternalMerlin.XUnit3\"
+.\Update-NuGetNext-All.ps1 -PackageId "Saucery.XUnit.v3" -Root "C:\gitrepos\Saucery\ExternalMerlin.XUnit3\"
+
+#XUnit3.RealDevices
+.\Update-NuGetNext-All.ps1 -PackageId "xunit.runner.visualstudio" -Root "C:\gitrepos\Saucery\ExternalMerlin.XUnit3.RealDevices\"
+.\Update-NuGetNext-All.ps1 -PackageId "Saucery.XUnit.v3" -Root "C:\gitrepos\Saucery\ExternalMerlin.XUnit3.RealDevices\"
 
 Write-Host "Running syncs from $Root ..."
 foreach ($p in $Projects) {
