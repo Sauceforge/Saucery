@@ -16,7 +16,6 @@ internal class IEBrowser(SupportedPlatform sp, List<string> screenResolutions, s
         SauceryConstants.PLATFORM_WINDOWS_10 => 11,
         SauceryConstants.PLATFORM_WINDOWS_81 => 11,
         SauceryConstants.PLATFORM_WINDOWS_8 => 10,
-        SauceryConstants.PLATFORM_WINDOWS_7 => 10,
         _ => 0,
     };
 

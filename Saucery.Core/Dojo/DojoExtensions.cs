@@ -110,7 +110,6 @@ public static class DojoExtensions
             SauceryConstants.PLATFORM_WINDOWS_10 => platforms.GetPlatform<Windows10Platform>().FirstOrDefault(),
             SauceryConstants.PLATFORM_WINDOWS_81 => platforms.GetPlatform<Windows81Platform>().FirstOrDefault(),
             SauceryConstants.PLATFORM_WINDOWS_8 => platforms.GetPlatform<Windows8Platform>().FirstOrDefault(),
-            SauceryConstants.PLATFORM_WINDOWS_7 => platforms.GetPlatform<Windows7Platform>().FirstOrDefault(),
             SauceryConstants.PLATFORM_MAC_15 => platforms.GetPlatform<Mac15Platform>().FirstOrDefault(),
             SauceryConstants.PLATFORM_MAC_14 => platforms.GetPlatform<Mac14Platform>().FirstOrDefault(),
             SauceryConstants.PLATFORM_MAC_13 => platforms.GetPlatform<Mac13Platform>().FirstOrDefault(),

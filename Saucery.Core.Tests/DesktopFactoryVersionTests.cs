@@ -33,8 +33,8 @@ public class DesktopFactoryVersionTests
         var factory = new OptionFactory(validPlatform);
         factory.ShouldNotBeNull();
 
-        var tuple = factory.CreateOptions("DesktopOptionTest");
-        tuple.opts.ShouldNotBeNull();
+        var (opts, browserVersion) = factory.CreateOptions("DesktopOptionTest");
+        opts.ShouldNotBeNull();
     }
 }
 
@@ -56,7 +56,6 @@ public static class DesktopDataClass
             yield return new TestCaseData(new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "99"));
             yield return new TestCaseData(new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_81, SauceryConstants.BROWSER_CHROME, "99"));
             yield return new TestCaseData(new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_8, SauceryConstants.BROWSER_CHROME, "99"));
-            yield return new TestCaseData(new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_7, SauceryConstants.BROWSER_CHROME, "99"));
             yield return new TestCaseData(new DesktopPlatform(SauceryConstants.PLATFORM_MAC_13, SauceryConstants.BROWSER_SAFARI, "16"));
             yield return new TestCaseData(new DesktopPlatform(SauceryConstants.PLATFORM_MAC_12, SauceryConstants.BROWSER_CHROME, "99"));
             yield return new TestCaseData(new DesktopPlatform(SauceryConstants.PLATFORM_MAC_11, SauceryConstants.BROWSER_CHROME, "99"));
