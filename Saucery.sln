@@ -21,6 +21,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.github\workflows\tunit-pipeline.yml = .github\workflows\tunit-pipeline.yml
 		.github\workflows\unittestonly.yml = .github\workflows\unittestonly.yml
 		Update-NuGetNext-All.ps1 = Update-NuGetNext-All.ps1
+		.github\workflows\xunit-pipeline.yml = .github\workflows\xunit-pipeline.yml
 		.github\workflows\xunit3-pipeline.yml = .github\workflows\xunit3-pipeline.yml
 	EndProjectSection
 EndProject
