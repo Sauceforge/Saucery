@@ -1,14 +1,7 @@
 name: Build Pipeline
 
-on:
-  push:
-    branches:
-      - master
-      - 'dependabot/**'
-      - 'releases/**'
-      - 'feat/**'
-      - 'feature/**'
-      - 'fix/**'
+on: 
+    workflow_dispatch:
 
 env:
   PROJECT_NAME: Saucery
