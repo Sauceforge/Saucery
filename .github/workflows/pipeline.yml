@@ -3,6 +3,8 @@ name: Build Pipeline
 on: 
     workflow_dispatch:
 
+run-name: ${{ github.event.head_commit.message || github.event.inputs.message || 'Manual Run' }}
+
 env:
   PROJECT_NAME: Saucery
   SOLN_FILE: Saucery.sln                                                                        # full path to your solution file
