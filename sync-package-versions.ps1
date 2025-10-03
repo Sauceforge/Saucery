@@ -56,6 +56,29 @@ $Projects = @(
 
 cls
 
+#Core
+
+.\Update-NuGetNext-All.ps1 -PackageId "Appium.WebDriver" -Root "C:\gitrepos\Saucery\Saucery.Core\"
+.\Update-NuGetNext-All.ps1 -PackageId "Castle.Core" -Root "C:\gitrepos\Saucery\Saucery.Core\"
+.\Update-NuGetNext-All.ps1 -PackageId "DotNetSeleniumExtras.PageObjects.Core" -Root "C:\gitrepos\Saucery\Saucery.Core\"
+.\Update-NuGetNext-All.ps1 -PackageId "DotNetSeleniumExtras.WaitHelpers" -Root "C:\gitrepos\Saucery\Saucery.Core\"
+.\Update-NuGetNext-All.ps1 -PackageId "RestSharp" -Root "C:\gitrepos\Saucery\Saucery.Core\"
+.\Update-NuGetNext-All.ps1 -PackageId "Selenium.Support" -Root "C:\gitrepos\Saucery\Saucery.Core\"
+.\Update-NuGetNext-All.ps1 -PackageId "Selenium.WebDriver" -Root "C:\gitrepos\Saucery\Saucery.Core\"
+.\Update-NuGetNext-All.ps1 -PackageId "Shouldly" -Root "C:\gitrepos\Saucery\Saucery.Core\"
+
+# Core Tests
+
+.\Update-NuGetNext-All.ps1 -PackageId "coverlet.msbuild" -Root "C:\gitrepos\Saucery\Saucery.Core.Tests\"
+.\Update-NuGetNext-All.ps1 -PackageId "DotNetSeleniumExtras.PageObjects.Core" -Root "C:\gitrepos\Saucery\Saucery.Core.Tests\"
+.\Update-NuGetNext-All.ps1 -PackageId "Microsoft.NET.Test.Sdk" -Root "C:\gitrepos\Saucery\Saucery.Core.Tests\"
+.\Update-NuGetNext-All.ps1 -PackageId "Microsoft.Web.Xdt" -Root "C:\gitrepos\Saucery\Saucery.Core.Tests\"
+.\Update-NuGetNext-All.ps1 -PackageId "NUnit" -Root "C:\gitrepos\Saucery\Saucery.Core.Tests\"
+.\Update-NuGetNext-All.ps1 -PackageId "NUnit3TestAdapter" -Root "C:\gitrepos\Saucery\Saucery.Core.Tests\"
+.\Update-NuGetNext-All.ps1 -PackageId "RestSharp" -Root "C:\gitrepos\Saucery\Saucery.Core.Tests\"
+.\Update-NuGetNext-All.ps1 -PackageId "Selenium.Support" -Root "C:\gitrepos\Saucery\Saucery.Core.Tests\"
+.\Update-NuGetNext-All.ps1 -PackageId "Shouldly" -Root "C:\gitrepos\Saucery\Saucery.Core.Tests\"
+
 # FrontEnd
 
 .\Update-NuGetNext-All.ps1 -PackageId "NUnit" -Root "C:\gitrepos\Saucery\Saucery\"
