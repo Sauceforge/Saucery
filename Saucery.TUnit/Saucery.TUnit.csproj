@@ -31,7 +31,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
     <PackageReference Include="Microsoft.CodeCoverage" Version="18.0.0" />
-    <PackageReference Include="TUnit" Version="0.63.0" />
+    <PackageReference Include="TUnit" Version="0.63.3" />
     <None Include="Images\Saucery.TUnit.128x128.png" Pack="true" PackagePath="\" />
     <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
