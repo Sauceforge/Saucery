@@ -2,7 +2,7 @@
 using Shouldly;
 using Xunit;
 
-namespace Saucery.Core.Tests;
+namespace Saucery.Core.Tests.REST;
 
 public class SupportedPlatformTests {
     [Fact]

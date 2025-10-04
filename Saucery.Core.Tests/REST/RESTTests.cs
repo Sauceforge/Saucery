@@ -1,18 +1,14 @@
-﻿using Saucery.Core.Dojo;
-using Saucery.Core.Dojo.Platforms.Base;
-using Saucery.Core.Dojo.Platforms.ConcreteProducts.Apple;
-using Saucery.Core.Dojo.Platforms.ConcreteProducts.Google;
-using Saucery.Core.Dojo.Platforms.ConcreteProducts.Linux;
-using Saucery.Core.Dojo.Platforms.ConcreteProducts.PC;
+﻿using Saucery.Core.Dojo.Platforms.Base;
 using Saucery.Core.RestAPI.FlowControl;
 using Saucery.Core.Tests.Fixtures;
+using Saucery.Core.Tests.REST.Data;
 using Shouldly;
 using System.Collections;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Xunit;
 
-namespace Saucery.Core.Tests;
+namespace Saucery.Core.Tests.REST;
 
 public class RestTests(PlatformConfiguratorAllFixture fixture) : IClassFixture<PlatformConfiguratorAllFixture>
 {
@@ -27,7 +23,7 @@ public class RestTests(PlatformConfiguratorAllFixture fixture) : IClassFixture<P
     }
 
     [Theory]
-    [MemberData(nameof(SupportedPlatformTypes))]
+    [MemberData(nameof(PlatformTypes.SupportedPlatformTypes), MemberType = typeof(PlatformTypes))]
     public void SupportedPlatformTheory(Type platformType) {
         var availablePlatforms = _fixture.PlatformConfigurator!.AvailablePlatforms;
         availablePlatforms.ShouldNotBeNull();
@@ -44,51 +40,8 @@ public class RestTests(PlatformConfiguratorAllFixture fixture) : IClassFixture<P
         platformList.GetType().ShouldBe(typeof(List<>).MakeGenericType(platformType));
     }
 
-    public static IEnumerable<object[]> SupportedPlatformTypes =>
-        new[]
-        {
-            typeof(LinuxPlatform),
-            typeof(Windows11Platform),
-            typeof(Windows10Platform),
-            typeof(Windows81Platform),
-            typeof(Windows8Platform),
-            typeof(Mac15Platform),
-            typeof(Mac14Platform),
-            typeof(Mac13Platform),
-            typeof(Mac12Platform),
-            typeof(Mac11Platform),
-            typeof(IOS175Platform),
-            typeof(IOS17Platform),
-            typeof(IOS162Platform),
-            typeof(IOS161Platform),
-            typeof(IOS16Platform),
-            typeof(IOS155Platform),
-            typeof(IOS154Platform),
-            typeof(IOS152Platform),
-            typeof(IOS15Platform),
-            typeof(IOS145Platform),
-            typeof(IOS144Platform),
-            typeof(IOS143Platform),
-            typeof(IOS14Platform),
-            typeof(Android16Platform),
-            typeof(Android15Platform),
-            typeof(Android14Platform),
-            typeof(Android13Platform),
-            typeof(Android12Platform),
-            typeof(Android11Platform),
-            typeof(Android10Platform),
-            typeof(Android9Platform),
-            typeof(Android81Platform),
-            typeof(Android8Platform),
-            typeof(Android71Platform),
-            typeof(Android7Platform),
-            typeof(Android6Platform),
-            typeof(Android51Platform),
-        }.Select(t => new object[] { t });
-
-
     [Theory]
-    [MemberData(nameof(SupportedRealDeviceTypes))]
+    [MemberData(nameof(PlatformTypes.SupportedRealDeviceTypes), MemberType = typeof(PlatformTypes))]
     public void SupportedRealDeviceTheory(Type realDeviceType) {
         var realDevices = _fixture.PlatformConfigurator!.AvailableRealDevices;
         realDevices.ShouldNotBeNull();
@@ -105,28 +58,8 @@ public class RestTests(PlatformConfiguratorAllFixture fixture) : IClassFixture<P
         platformList.GetType().ShouldBe(typeof(List<>).MakeGenericType(realDeviceType));
     }
 
-    public static IEnumerable<object[]> SupportedRealDeviceTypes =>
-        new[]
-        {
-            typeof(IOS26Platform),
-            typeof(IOS18Platform),
-            typeof(IOS17Platform),
-            typeof(IOS16Platform),
-            typeof(IOS15Platform),
-            typeof(IOS14Platform),
-            typeof(IOS13Platform),
-            typeof(Android16Platform),
-            typeof(Android15Platform),
-            typeof(Android14Platform),
-            typeof(Android13Platform),
-            typeof(Android12Platform),
-            typeof(Android11Platform),
-            typeof(Android10Platform),
-            typeof(Android9Platform)
-        }.Select(t => new object[] { t });
-
     [Theory]
-    [MemberData(nameof(PlatformsWithBrowsersTypes))]
+    [MemberData(nameof(PlatformTypes.PlatformsWithBrowsersTypes), MemberType = typeof(PlatformTypes))]
     public void BrowserCountTest(Type platformsWithBrowsersType)
     {
         var availablePlatforms = _fixture.PlatformConfigurator!.AvailablePlatforms;
@@ -136,21 +69,6 @@ public class RestTests(PlatformConfiguratorAllFixture fixture) : IClassFixture<P
         var first = (PlatformBase)platformList[0]!;
         first.Browsers.Count.ShouldBeEquivalentTo(first.Selenium4BrowserNames!.Count);
     }
-
-    public static IEnumerable<object[]> PlatformsWithBrowsersTypes =>
-        new[]
-        {
-            typeof(LinuxPlatform),
-            typeof(Windows11Platform),
-            typeof(Windows10Platform),
-            typeof(Windows81Platform),
-            typeof(Windows8Platform),
-            typeof(Mac15Platform),
-            typeof(Mac14Platform),
-            typeof(Mac13Platform),
-            typeof(Mac12Platform),
-            typeof(Mac11Platform)
-        }.Select(t => new object[] { t });
 
     private static IList InvokeGetPlatformGeneric(object groups, Type platformType) {
         var groupsType = groups.GetType();
@@ -176,7 +94,7 @@ public class RestTests(PlatformConfiguratorAllFixture fixture) : IClassFixture<P
                    where m.Name == "GetPlatform"
                          && m.IsGenericMethodDefinition
                          && m.GetGenericArguments().Length == 1
-                         && m.GetCustomAttributes(typeof(ExtensionAttribute), false).Any()
+                         && m.GetCustomAttributes(typeof(ExtensionAttribute), false).Length != 0
                    let pars = m.GetParameters()
                    where pars.Length == 1 && ParameterAccepts(pars[0].ParameterType, groupsType)
                    select m).FirstOrDefault()
