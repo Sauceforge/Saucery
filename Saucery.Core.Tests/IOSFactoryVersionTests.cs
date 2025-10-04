@@ -1,55 +1,66 @@
-﻿using System.Collections;
-using NUnit.Framework;
-using Saucery.Core.Dojo;
+﻿using Saucery.Core.Dojo;
 using Saucery.Core.OnDemand;
 using Saucery.Core.OnDemand.Base;
 using Saucery.Core.Options;
 using Saucery.Core.Util;
 using Shouldly;
+using Xunit;
 
 namespace Saucery.Core.Tests;
 
-[TestFixture]
-public class IOSFactoryVersionTests
+public class IOSFactoryVersionTests(PlatformConfiguratorFixture fixture) : IClassFixture<PlatformConfiguratorFixture> 
 {
-    private PlatformConfigurator? PlatformConfigurator { get; set; }
+    private readonly PlatformConfiguratorFixture _fixture = fixture;
 
-    [OneTimeSetUp]
-    public void OneTimeSetUp()
+    public static IEnumerable<object[]> SupportedTestCases()
     {
-        PlatformConfigurator = new PlatformConfigurator(PlatformFilter.All);
+        foreach (var testCase in IOSDataClass.SupportedTestCases)
+        {
+            yield return new object[] { testCase };
+        }
     }
 
-    [Test, TestCaseSource(typeof(IOSDataClass), nameof(IOSDataClass.NotSupportedTestCases))]
+    public static IEnumerable<object[]> NotSupportedTestCases()
+    {
+        foreach (var testCase in IOSDataClass.NotSupportedTestCases)
+        {
+            yield return new object[] { testCase };
+        }
+    }
+
+    [Theory]
+    [MemberData(nameof(NotSupportedTestCases))]
     public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform)
     {
-        var validPlatform = PlatformConfigurator!.Filter(saucePlatform);
+        var validPlatform = _fixture.PlatformConfigurator.Filter(saucePlatform);
         validPlatform.ShouldBeNull();
     }
 
-    [Test, TestCaseSource(typeof(IOSDataClass), nameof(IOSDataClass.SupportedTestCases))]
+    [Theory]
+    [MemberData(nameof(SupportedTestCases))]
     public void AppiumIOSOptionTest(SaucePlatform saucePlatform)
     {
-        var validPlatform = PlatformConfigurator!.Filter(saucePlatform);
+        var validPlatform = _fixture.PlatformConfigurator.Filter(saucePlatform);
         validPlatform.ShouldNotBeNull();
 
         var factory = new OptionFactory(validPlatform);
         factory.ShouldNotBeNull();
-        
+
         var tuple = factory.CreateOptions("AppiumIOSOptionTest");
         tuple.opts.ShouldNotBeNull();
     }
 }
+
 internal static class IOSDataClass
 {
-    public static IEnumerable SupportedTestCases
+    public static IEnumerable<SaucePlatform> SupportedTestCases
     {
         get
         {
-            var versions = new [] { "14.0", "14.3", "14.4", "14.5", 
-                                    "15.0", "15.2", "15.4", 
-                                    "16.0", "16.1", "16.2",
-                                    "17.0", "17.5", "18.0" };
+            var versions = new[] { "14.0", "14.3", "14.4", "14.5",
+                                   "15.0", "15.2", "15.4",
+                                   "16.0", "16.1", "16.2",
+                                   "17.0", "17.5", "18.0" };
             foreach (var v in versions)
             {
                 yield return new IOSPlatform("iPhone Simulator", v, SauceryConstants.DEVICE_ORIENTATION_PORTRAIT);
@@ -57,7 +68,7 @@ internal static class IOSDataClass
         }
     }
 
-    public static IEnumerable NotSupportedTestCases
+    public static IEnumerable<SaucePlatform> NotSupportedTestCases
     {
         get
         {

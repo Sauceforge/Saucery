@@ -1,36 +1,31 @@
-﻿using NUnit.Framework;
-using Saucery.Core.Dojo;
+﻿using Saucery.Core.Dojo;
 using Saucery.Core.Dojo.Platforms.Base;
 using Saucery.Core.Dojo.Platforms.ConcreteProducts.Apple;
 using Saucery.Core.Dojo.Platforms.ConcreteProducts.Google;
 using Saucery.Core.Dojo.Platforms.ConcreteProducts.Linux;
 using Saucery.Core.Dojo.Platforms.ConcreteProducts.PC;
 using Saucery.Core.RestAPI.FlowControl;
-using Saucery.Core.Tests.Util;
 using Shouldly;
+using System.Collections;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using Xunit;
 
 namespace Saucery.Core.Tests;
 
-[TestFixture]
-public class RestTests 
+public class RestTests(PlatformConfiguratorFixture fixture) : IClassFixture<PlatformConfiguratorFixture>
 {
-    private PlatformConfigurator? _configurator;
+    private readonly PlatformConfiguratorFixture _fixture = fixture;
 
-    [OneTimeSetUp]
-    public void Setup()
-    {
-        _configurator = new PlatformConfigurator(PlatformFilter.All);
-    }
-
-    [Test]
-    [TestCase(true)]
-    [TestCase(false)]
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
     public void FlowControlTest(bool isRealDevice) {
         var flowController = new SauceLabsFlowController();
         flowController.ControlFlow(isRealDevice);
     }
 
-    [Test]
+    [Fact]
     public void SupportedRealDevicePlatformTest()
     {
         PlatformConfigurator configurator = new(PlatformFilter.RealDevice);
@@ -41,10 +36,11 @@ public class RestTests
         realDevices.ShouldNotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void SupportedEmulatedPlatformTest()
     {
         PlatformConfigurator configurator = new(PlatformFilter.Emulated);
+
         var availablePlatforms = configurator.AvailablePlatforms;
         var realDevices = configurator.AvailableRealDevices;
 
@@ -52,111 +48,176 @@ public class RestTests
         realDevices.ShouldBeEmpty();
     }
 
-    [Test]
-    [GenericTestCase(typeof(LinuxPlatform), TestName = "LinuxSupportedPlatformTest")]
-    [GenericTestCase(typeof(Windows11Platform), TestName = "Windows11SupportedPlatformTest")]
-    [GenericTestCase(typeof(Windows10Platform), TestName = "Windows10SupportedPlatformTest")]
-    [GenericTestCase(typeof(Windows81Platform), TestName = "Windows81SupportedPlatformTest")]
-    [GenericTestCase(typeof(Windows8Platform), TestName = "Windows8SupportedPlatformTest")]
-    [GenericTestCase(typeof(Mac15Platform), TestName = "Mac15SupportedPlatformTest")]
-    [GenericTestCase(typeof(Mac14Platform), TestName = "Mac14SupportedPlatformTest")]
-    [GenericTestCase(typeof(Mac13Platform), TestName = "Mac13SupportedPlatformTest")]
-    [GenericTestCase(typeof(Mac12Platform), TestName = "Mac12SupportedPlatformTest")]
-    [GenericTestCase(typeof(Mac11Platform), TestName = "Mac11SupportedPlatformTest")]
-    [GenericTestCase(typeof(IOS175Platform), TestName = "IOS175SupportedRealDeviceTest")]
-    [GenericTestCase(typeof(IOS17Platform), TestName = "IOS17SupportedPlatformTest")]
-    [GenericTestCase(typeof(IOS162Platform), TestName = "IOS162SupportedPlatformTest")]
-    [GenericTestCase(typeof(IOS161Platform), TestName = "IOS161SupportedPlatformTest")]
-    [GenericTestCase(typeof(IOS16Platform), TestName = "IOS16SupportedPlatformTest")]
-    [GenericTestCase(typeof(IOS155Platform), TestName = "IOS155SupportedPlatformTest")]
-    [GenericTestCase(typeof(IOS154Platform), TestName = "IOS154SupportedPlatformTest")]
-    [GenericTestCase(typeof(IOS152Platform), TestName = "IOS152SupportedPlatformTest")]
-    [GenericTestCase(typeof(IOS15Platform), TestName = "IOS15SupportedPlatformTest")]
-    [GenericTestCase(typeof(IOS145Platform), TestName = "IOS145SupportedPlatformTest")]
-    [GenericTestCase(typeof(IOS144Platform), TestName = "IOS144SupportedPlatformTest")]
-    [GenericTestCase(typeof(IOS143Platform), TestName = "IOS143SupportedPlatformTest")]
-    [GenericTestCase(typeof(IOS14Platform), TestName = "IOS14SupportedPlatformTest")]
-    [GenericTestCase(typeof(Android16Platform), TestName = "Android16SupportedPlatformTest")]
-    [GenericTestCase(typeof(Android15Platform), TestName = "Android15SupportedPlatformTest")]
-    [GenericTestCase(typeof(Android14Platform), TestName = "Android14SupportedPlatformTest")]
-    [GenericTestCase(typeof(Android13Platform), TestName = "Android13SupportedPlatformTest")]
-    [GenericTestCase(typeof(Android12Platform), TestName = "Android12SupportedPlatformTest")]
-    [GenericTestCase(typeof(Android11Platform), TestName = "Android11SupportedPlatformTest")]
-    [GenericTestCase(typeof(Android10Platform), TestName = "Android10SupportedPlatformTest")]
-    [GenericTestCase(typeof(Android9Platform), TestName = "Android9SupportedPlatformTest")]
-    [GenericTestCase(typeof(Android81Platform), TestName = "Android81SupportedPlatformTest")]
-    [GenericTestCase(typeof(Android8Platform), TestName = "Android8SupportedPlatformTest")]
-    [GenericTestCase(typeof(Android71Platform), TestName = "Android71SupportedPlatformTest")]
-    [GenericTestCase(typeof(Android7Platform), TestName = "Android7SupportedPlatformTest")]
-    [GenericTestCase(typeof(Android6Platform), TestName = "Android6SupportedPlatformTest")]
-    [GenericTestCase(typeof(Android51Platform), TestName = "Android51SupportedPlatformTest")]
-    public void SupportedPlatformTheory<T>() where T : PlatformBase
-    {
-        var availablePlatforms = _configurator!.AvailablePlatforms;
-        
+    [Theory]
+    [MemberData(nameof(SupportedPlatformTypes))]
+    public void SupportedPlatformTheory(Type platformType) {
+        var availablePlatforms = _fixture.PlatformConfigurator!.AvailablePlatforms;
         availablePlatforms.ShouldNotBeNull();
-        
-        var platform = availablePlatforms.GetPlatform<T>();
 
-        //Null Check
-        platform.ShouldNotBeNull();
+        var platformList = InvokeGetPlatformGeneric(availablePlatforms, platformType);
 
-        //Count Checks
-        platform.Count.ShouldBe(1);
+        // Null Check
+        platformList.ShouldNotBeNull();
 
-        //TypeOf Checks
-        platform.ShouldBeAssignableTo<List<T>>();
+        // Count Checks
+        platformList.Count.ShouldBe(1);
+
+        // TypeOf Checks: List<T>
+        platformList.GetType().ShouldBe(typeof(List<>).MakeGenericType(platformType));
     }
 
-    [GenericTestCase(typeof(IOS26Platform), TestName = "IOS26SupportedRealDeviceTest")]
-    [GenericTestCase(typeof(IOS18Platform), TestName = "IOS18SupportedRealDeviceTest")]
-    [GenericTestCase(typeof(IOS17Platform), TestName = "IOS17SupportedRealDeviceTest")]
-    [GenericTestCase(typeof(IOS16Platform), TestName = "IOS16SupportedRealDeviceTest")]
-    [GenericTestCase(typeof(IOS15Platform), TestName = "IOS15SupportedRealDeviceTest")]
-    [GenericTestCase(typeof(IOS14Platform), TestName = "IOS14SupportedRealDeviceTest")]
-    [GenericTestCase(typeof(IOS13Platform), TestName = "IOS13SupportedRealDeviceTest")]
-    [GenericTestCase(typeof(Android16Platform), TestName = "Android16SupportedRealDeviceTest")]
-    [GenericTestCase(typeof(Android15Platform), TestName = "Android15SupportedRealDeviceTest")]
-    [GenericTestCase(typeof(Android14Platform), TestName = "Android14SupportedRealDeviceTest")]
-    [GenericTestCase(typeof(Android13Platform), TestName = "Android13SupportedRealDeviceTest")]
-    [GenericTestCase(typeof(Android12Platform), TestName = "Android12SupportedRealDeviceTest")]
-    [GenericTestCase(typeof(Android11Platform), TestName = "Android11SupportedRealDeviceTest")]
-    [GenericTestCase(typeof(Android10Platform), TestName = "Android10SupportedRealDeviceTest")]
-    [GenericTestCase(typeof(Android9Platform), TestName = "Android9SupportedRealDeviceTest")]
-    public void SupportedRealDeviceTheory<T>() where T : PlatformBase {
-        var realDevices = _configurator!.AvailableRealDevices;
+    public static IEnumerable<object[]> SupportedPlatformTypes =>
+        new[]
+        {
+            typeof(LinuxPlatform),
+            typeof(Windows11Platform),
+            typeof(Windows10Platform),
+            typeof(Windows81Platform),
+            typeof(Windows8Platform),
+            typeof(Mac15Platform),
+            typeof(Mac14Platform),
+            typeof(Mac13Platform),
+            typeof(Mac12Platform),
+            typeof(Mac11Platform),
+            typeof(IOS175Platform),
+            typeof(IOS17Platform),
+            typeof(IOS162Platform),
+            typeof(IOS161Platform),
+            typeof(IOS16Platform),
+            typeof(IOS155Platform),
+            typeof(IOS154Platform),
+            typeof(IOS152Platform),
+            typeof(IOS15Platform),
+            typeof(IOS145Platform),
+            typeof(IOS144Platform),
+            typeof(IOS143Platform),
+            typeof(IOS14Platform),
+            typeof(Android16Platform),
+            typeof(Android15Platform),
+            typeof(Android14Platform),
+            typeof(Android13Platform),
+            typeof(Android12Platform),
+            typeof(Android11Platform),
+            typeof(Android10Platform),
+            typeof(Android9Platform),
+            typeof(Android81Platform),
+            typeof(Android8Platform),
+            typeof(Android71Platform),
+            typeof(Android7Platform),
+            typeof(Android6Platform),
+            typeof(Android51Platform),
+        }.Select(t => new object[] { t });
+
+
+    [Theory]
+    [MemberData(nameof(SupportedRealDeviceTypes))]
+    public void SupportedRealDeviceTheory(Type realDeviceType) {
+        var realDevices = _fixture.PlatformConfigurator!.AvailableRealDevices;
         
         realDevices.ShouldNotBeNull();
-        
-        var platform = realDevices.GetPlatform<T>();
-        
+
+        var platformList = InvokeGetPlatformGeneric(realDevices, realDeviceType);
+
         //Null Check
-        platform.ShouldNotBeNull();
-        
+        platformList.ShouldNotBeNull();
+
         //Count Checks
-        platform.Count.ShouldBe(1);
-        
+        platformList.Count.ShouldBe(1);
+
         //TypeOf Checks
-        platform.ShouldBeAssignableTo<List<T>>();
+        platformList.GetType().ShouldBe(typeof(List<>).MakeGenericType(realDeviceType));
     }
 
-    [Test]
-    [GenericTestCase(typeof(LinuxPlatform), TestName = "LinuxBrowserCountTest")]
-    [GenericTestCase(typeof(Windows11Platform), TestName = "Windows11BrowserCountTest")]
-    [GenericTestCase(typeof(Windows10Platform), TestName = "Windows10BrowserCountTest")]
-    [GenericTestCase(typeof(Windows81Platform), TestName = "Windows81BrowserCountTest")]
-    [GenericTestCase(typeof(Windows8Platform), TestName = "Windows8BrowserCountTest")]
-    [GenericTestCase(typeof(Mac15Platform), TestName = "Mac15BrowserCountTest")]
-    [GenericTestCase(typeof(Mac14Platform), TestName = "Mac14BrowserCountTest")]
-    [GenericTestCase(typeof(Mac13Platform), TestName = "Mac13BrowserCountTest")]
-    [GenericTestCase(typeof(Mac12Platform), TestName = "Mac12BrowserCountTest")]
-    [GenericTestCase(typeof(Mac11Platform), TestName = "Mac11BrowserCountTest")]
-    public void BrowserCountTest<T>() where T : PlatformBase
+    public static IEnumerable<object[]> SupportedRealDeviceTypes =>
+        new[]
+        {
+            typeof(IOS26Platform),
+            typeof(IOS18Platform),
+            typeof(IOS17Platform),
+            typeof(IOS16Platform),
+            typeof(IOS15Platform),
+            typeof(IOS14Platform),
+            typeof(IOS13Platform),
+            typeof(Android16Platform),
+            typeof(Android15Platform),
+            typeof(Android14Platform),
+            typeof(Android13Platform),
+            typeof(Android12Platform),
+            typeof(Android11Platform),
+            typeof(Android10Platform),
+            typeof(Android9Platform)
+        }.Select(t => new object[] { t });
+
+    [Theory]
+    [MemberData(nameof(PlatformsWithBrowsersTypes))]
+    public void BrowserCountTest(Type platformsWithBrowsersType)
     {
-        var availablePlatforms = _configurator!.AvailablePlatforms;
-        var platform = availablePlatforms.GetPlatform<T>();
+        var availablePlatforms = _fixture.PlatformConfigurator!.AvailablePlatforms;
+        var platformList = InvokeGetPlatformGeneric(availablePlatforms, platformsWithBrowsersType);
 
         //Browser Count Checks
-        platform[0].Browsers.Count.ShouldBeEquivalentTo(platform[0].Selenium4BrowserNames!.Count);
+        var first = (PlatformBase)platformList[0]!;
+        first.Browsers.Count.ShouldBeEquivalentTo(first.Selenium4BrowserNames!.Count);
+    }
+
+    public static IEnumerable<object[]> PlatformsWithBrowsersTypes =>
+        new[]
+        {
+            typeof(LinuxPlatform),
+            typeof(Windows11Platform),
+            typeof(Windows10Platform),
+            typeof(Windows81Platform),
+            typeof(Windows8Platform),
+            typeof(Mac15Platform),
+            typeof(Mac14Platform),
+            typeof(Mac13Platform),
+            typeof(Mac12Platform),
+            typeof(Mac11Platform)
+        }.Select(t => new object[] { t });
+
+    private static IList InvokeGetPlatformGeneric(object groups, Type platformType) {
+        var groupsType = groups.GetType();
+
+        // 1) Try an instance generic method named GetPlatform<T>() with no parameters
+        var inst = groupsType
+            .GetMethods(BindingFlags.Public | BindingFlags.Instance)
+            .FirstOrDefault(m =>
+                m.Name == "GetPlatform" &&
+                m.IsGenericMethodDefinition &&
+                m.GetGenericArguments().Length == 1 &&
+                m.GetParameters().Length == 0);
+
+        if(inst is not null) {
+            return (IList)inst.MakeGenericMethod(platformType).Invoke(groups, null)!;
+        }
+
+        // 2) Otherwise, locate an extension method: public static List<T> GetPlatform<T>(this X groups)
+        var ext = (from asm in AppDomain.CurrentDomain.GetAssemblies()
+                   from type in GetLoadableTypes(asm)
+                   where type.IsSealed && type.IsAbstract // static class
+                   from m in type.GetMethods(BindingFlags.Public | BindingFlags.Static)
+                   where m.Name == "GetPlatform"
+                         && m.IsGenericMethodDefinition
+                         && m.GetGenericArguments().Length == 1
+                         && m.GetCustomAttributes(typeof(ExtensionAttribute), false).Any()
+                   let pars = m.GetParameters()
+                   where pars.Length == 1 && ParameterAccepts(pars[0].ParameterType, groupsType)
+                   select m).FirstOrDefault()
+                   ?? throw new InvalidOperationException($"Cannot find GetPlatform<T> as instance or extension for receiver type {groupsType.FullName}.");
+        var gm = ext.MakeGenericMethod(platformType);
+        
+        return (IList)gm.Invoke(null, [groups])!;
+    }
+
+    private static bool ParameterAccepts(Type paramType, Type actual) =>
+        paramType.IsAssignableFrom(actual) ||
+        actual.GetInterfaces().Any(paramType.IsAssignableFrom);
+
+    private static IEnumerable<Type> GetLoadableTypes(Assembly asm) {
+        try {
+            return asm.GetTypes();
+        } catch(ReflectionTypeLoadException ex) {
+            return ex.Types.Where(t => t is not null)!;
+        }
     }
 }

@@ -1,61 +1,45 @@
-﻿using System.Collections;
-using NUnit.Framework;
-using Saucery.Core.Dojo;
-using Saucery.Core.OnDemand;
+﻿using Saucery.Core.OnDemand;
 using Saucery.Core.OnDemand.Base;
 using Saucery.Core.Options;
 using Shouldly;
+using Xunit;
 
 namespace Saucery.Core.Tests;
 
-[TestFixture]
-public class RealIOSFactoryVersionTests
-{
-    private PlatformConfigurator? PlatformConfigurator { get; set; }
+public class RealIOSFactoryVersionTests(PlatformConfiguratorFixture fixture) : IClassFixture<PlatformConfiguratorFixture> {
+    private readonly PlatformConfiguratorFixture _fixture = fixture;
 
-    [OneTimeSetUp]
-    public void OneTimeSetUp()
-    {
-        PlatformConfigurator = new PlatformConfigurator(PlatformFilter.All);
-    }
-
-    [Test, TestCaseSource(typeof(RealIOSDataClass), nameof(RealIOSDataClass.NotSupportedTestCases))]
-    public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform)
-    {
-        var validPlatform = PlatformConfigurator!.Filter(saucePlatform);
+    [Theory]
+    [MemberData(nameof(RealIOSDataClass.NotSupportedTestCases), MemberType = typeof(RealIOSDataClass))]
+    public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform) {
+        var validPlatform = _fixture.PlatformConfigurator.Filter(saucePlatform);
         validPlatform.ShouldBeNull();
     }
 
-    [Test, TestCaseSource(typeof(RealIOSDataClass), nameof(RealIOSDataClass.SupportedTestCases))]
-    public void AppiumIOSOptionTest(SaucePlatform saucePlatform)
-    {
-        var validPlatform = PlatformConfigurator!.Filter(saucePlatform);
+    [Theory]
+    [MemberData(nameof(RealIOSDataClass.SupportedTestCases), MemberType = typeof(RealIOSDataClass))]
+    public void AppiumIOSOptionTest(SaucePlatform saucePlatform) {
+        var validPlatform = _fixture.PlatformConfigurator.Filter(saucePlatform);
         validPlatform.ShouldNotBeNull();
 
-        var factory = new OptionFactory(validPlatform);
+        var factory = new OptionFactory(validPlatform!);
         factory.ShouldNotBeNull();
-        
+
         var tuple = factory.CreateOptions("AppiumRealIOSOptionTest");
         tuple.opts.ShouldNotBeNull();
     }
 }
-public static class RealIOSDataClass
-{
-    public static IEnumerable SupportedTestCases
-    {
-        get
-        {
-            var versions = new [] { "13", "14", "15", "16", "17", "18", "26" };
-            return from v in versions
-                   select new IOSRealDevice("iPhone.*", v);
-        }
-    }
 
-    public static IEnumerable NotSupportedTestCases
+public static class RealIOSDataClass {
+    public static IEnumerable<object?[]> SupportedTestCases =>
+        new[] { "13", "14", "15", "16", "17", "18", "26" }
+            .Select(v => new object?[] { new IOSRealDevice("iPhone.*", v) });
+
+    public static IEnumerable<object?[]> NotSupportedTestCases
     {
         get
         {
-            yield return new IOSRealDevice("NonExistent", "11");
+            yield return new object?[] { new IOSRealDevice("NonExistent", "11") };
         }
     }
 }

@@ -11,8 +11,8 @@ public class SauceryTestData : IEnumerable
 
     public IEnumerator GetEnumerator() => BrowserVersions?.GetEnumerator()!;
 
-    protected static void SetPlatforms(List<SaucePlatform> platforms) => 
-        ExpandAndFilter(platforms, new(PlatformFilter.All));
+    protected static void SetPlatforms(List<SaucePlatform> platforms, PlatformConfigurator configurator) => 
+        ExpandAndFilter(platforms, configurator);
 
     protected static void SetPlatforms(List<SaucePlatform> platforms, PlatformFilter filter) => 
         ExpandAndFilter(platforms, new(filter));
@@ -36,8 +36,8 @@ public class SauceryTestData : IEnumerable
         return allPlatforms.AsEnumerable();
     }
 
-    protected static List<Func<BrowserVersion>> GetAllPlatformsAsFunc() => 
-        Items.Select(platform => (Func<BrowserVersion>)(() => platform)).ToList();
+    protected static List<Func<BrowserVersion>> GetAllPlatformsAsFunc() =>
+        [.. Items.Select(platform => (Func<BrowserVersion>)(() => platform))];
 }
 /*
 * Copyright Andrew Gray, SauceForge

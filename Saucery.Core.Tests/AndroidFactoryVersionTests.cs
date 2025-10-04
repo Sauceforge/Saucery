@@ -1,36 +1,45 @@
-﻿using System.Collections;
-using NUnit.Framework;
-using Saucery.Core.Dojo;
-using Saucery.Core.OnDemand;
+﻿using Saucery.Core.OnDemand;
 using Saucery.Core.OnDemand.Base;
 using Saucery.Core.Options;
 using Saucery.Core.Util;
 using Shouldly;
+using Xunit;
 
 namespace Saucery.Core.Tests;
 
-[TestFixture]
-public class AndroidFactoryVersionTests
+public class AndroidFactoryVersionTests(PlatformConfiguratorFixture fixture) : IClassFixture<PlatformConfiguratorFixture> 
 {
-    private PlatformConfigurator? PlatformConfigurator { get; set; }
+    private readonly PlatformConfiguratorFixture _fixture = fixture;
 
-    [OneTimeSetUp]
-    public void OneTimeSetUp()
+    public static IEnumerable<object[]> NotSupportedTestCases()
     {
-        PlatformConfigurator = new PlatformConfigurator(PlatformFilter.All);
+        foreach (var testCase in AndroidDataClass.NotSupportedTestCases)
+        {
+            yield return new object[] { testCase };
+        }
     }
 
-    [Test, TestCaseSource(typeof(AndroidDataClass), nameof(AndroidDataClass.NotSupportedTestCases))]
+    public static IEnumerable<object[]> SupportedTestCases()
+    {
+        foreach (var testCase in AndroidDataClass.SupportedTestCases)
+        {
+            yield return new object[] { testCase };
+        }
+    }
+
+    [Theory]
+    [MemberData(nameof(NotSupportedTestCases))]
     public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform)
     {
-        var validPlatform = PlatformConfigurator!.Filter(saucePlatform);
+        var validPlatform = _fixture.PlatformConfigurator.Filter(saucePlatform);
         validPlatform.ShouldBeNull();
     }
 
-    [Test, TestCaseSource(typeof(AndroidDataClass), nameof(AndroidDataClass.SupportedTestCases))]
+    [Theory]
+    [MemberData(nameof(SupportedTestCases))]
     public void AppiumAndroidOptionTest(SaucePlatform saucePlatform)
     {
-        var validPlatform = PlatformConfigurator!.Filter(saucePlatform);
+        var validPlatform = _fixture.PlatformConfigurator.Filter(saucePlatform);
         validPlatform.ShouldNotBeNull();
 
         var factory = new OptionFactory(validPlatform);
@@ -40,9 +49,10 @@ public class AndroidFactoryVersionTests
         opts.ShouldNotBeNull();
     }
 }
+
 public static class AndroidDataClass
 {
-    public static IEnumerable SupportedTestCases
+    public static IEnumerable<SaucePlatform> SupportedTestCases
     {
         get
         {
@@ -63,7 +73,7 @@ public static class AndroidDataClass
         }
     }
 
-    public static IEnumerable NotSupportedTestCases
+    public static IEnumerable<SaucePlatform> NotSupportedTestCases
     {
         get
         {

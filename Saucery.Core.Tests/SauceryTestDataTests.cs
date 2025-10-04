@@ -1,64 +1,65 @@
-﻿using NUnit.Framework;
-using Saucery.Core.DataSources;
+﻿using Saucery.Core.DataSources;
 using Saucery.Core.Dojo;
 using Saucery.Core.Tests.DataProviders;
 using Shouldly;
+using Xunit;
 
 namespace Saucery.Core.Tests;
 
-[TestFixture]
-public class SauceryTestDataTests : SauceryTestData {
-    [Test]
+public class SauceryTestDataTests(PlatformConfiguratorFixture fixture) : SauceryTestData, IClassFixture<PlatformConfiguratorFixture> {
+    private readonly PlatformConfiguratorFixture _fixture = fixture;
+
+    [Fact]
     public void AllPlatformsTest() {
-        SetPlatforms(PlatformDataClass.DesktopPlatforms);
+        SetPlatforms(PlatformDataClass.DesktopPlatforms, _fixture.PlatformConfigurator);
 
         Items.ShouldNotBeNull();
-        Items.Count().ShouldBeEquivalentTo(34); //Due to platform expansion.
-        GetAllPlatforms().Count().ShouldBeEquivalentTo(34);
+        Items.Count().ShouldBe(34); // Due to platform expansion.
+        GetAllPlatforms().Count().ShouldBe(34);
     }
 
-    [Test]
+    [Fact]
     public void DesktopPlatformsTest() {
         SetPlatforms(PlatformDataClass.DesktopPlatforms, PlatformFilter.Emulated);
 
         Items.ShouldNotBeNull();
-        Items.Count().ShouldBeEquivalentTo(34); //Due to platform expansion.
-        GetAllPlatforms().Count().ShouldBeEquivalentTo(34);
+        Items.Count().ShouldBe(34); // Due to platform expansion.
+        GetAllPlatforms().Count().ShouldBe(34);
     }
 
-    [Test]
+    [Fact]
     public void RealAndroidDeviceTest() {
         SetPlatforms(PlatformDataClass.RealAndroidDevices, PlatformFilter.RealDevice);
 
         Items.ShouldNotBeNull();
-        Items.Count().ShouldBeEquivalentTo(PlatformDataClass.RealAndroidDevices.Count);
-        GetAllPlatforms().Count().ShouldBeEquivalentTo(PlatformDataClass.RealAndroidDevices.Count);
+        Items.Count().ShouldBe(PlatformDataClass.RealAndroidDevices.Count);
+        GetAllPlatforms().Count().ShouldBe(PlatformDataClass.RealAndroidDevices.Count);
     }
 
-    [Test]
+    [Fact]
     public void RealAppleDeviceTest() {
         SetPlatforms(PlatformDataClass.RealIOSDevices, PlatformFilter.RealDevice);
 
         Items.ShouldNotBeNull();
-        Items.Count().ShouldBeEquivalentTo(PlatformDataClass.RealIOSDevices.Count);
-        GetAllPlatforms().Count().ShouldBeEquivalentTo(PlatformDataClass.RealIOSDevices.Count);
+        Items.Count().ShouldBe(PlatformDataClass.RealIOSDevices.Count);
+        GetAllPlatforms().Count().ShouldBe(PlatformDataClass.RealIOSDevices.Count);
     }
 
-    [Test]
+    [Fact]
     public void EmulatedAndroidDeviceTest() {
         SetPlatforms(PlatformDataClass.EmulatedAndroidPlatforms, PlatformFilter.Emulated);
 
         Items.ShouldNotBeNull();
-        Items.Count().ShouldBeEquivalentTo(PlatformDataClass.EmulatedAndroidPlatforms.Count);
-        GetAllPlatforms().Count().ShouldBeEquivalentTo(PlatformDataClass.EmulatedAndroidPlatforms.Count);
+        Items.Count().ShouldBe(PlatformDataClass.EmulatedAndroidPlatforms.Count);
+        GetAllPlatforms().Count().ShouldBe(PlatformDataClass.EmulatedAndroidPlatforms.Count);
     }
 
-    [Test]
+    [Fact]
     public void EmulatedAppleDeviceTest() {
         SetPlatforms(PlatformDataClass.EmulatedIOSPlatforms, PlatformFilter.Emulated);
 
         Items.ShouldNotBeNull();
-        Items.Count().ShouldBeEquivalentTo(PlatformDataClass.EmulatedIOSPlatforms.Count);
-        GetAllPlatforms().Count().ShouldBeEquivalentTo(PlatformDataClass.EmulatedIOSPlatforms.Count);
+        Items.Count().ShouldBe(PlatformDataClass.EmulatedIOSPlatforms.Count);
+        GetAllPlatforms().Count().ShouldBe(PlatformDataClass.EmulatedIOSPlatforms.Count);
     }
 }
