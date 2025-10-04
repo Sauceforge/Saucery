@@ -1,13 +1,12 @@
-﻿using NUnit.Framework;
-using Saucery.Core.Util;
+﻿using Saucery.Core.Util;
 using Shouldly;
+using Xunit;
 
 namespace Saucery.Core.Tests;
 
-[TestFixture]
-internal class IdGeneratorTests
+public class IdGeneratorTests
 {
-    [Test]
+    [Fact]
     public void SingleRunTest()
     {
         var generator = IdGenerator.Instance;
@@ -15,7 +14,7 @@ internal class IdGeneratorTests
         IdGenerator.Id.ShouldNotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void MultipleRunTest()
     {
         var generator = IdGenerator.Instance;

@@ -1,24 +1,16 @@
-﻿using NUnit.Framework;
-using Saucery.Core.Dojo;
-using Saucery.Core.OnDemand;
+﻿using Saucery.Core.OnDemand;
 using Saucery.Core.OnDemand.Base;
 using Saucery.Core.Util;
 using Shouldly;
+using Xunit;
 
 namespace Saucery.Core.Tests;
 
-[TestFixture]
-public class PlatformExpansionTests
+public class PlatformExpansionTests(PlatformConfiguratorFixture fixture) : IClassFixture<PlatformConfiguratorFixture> 
 {
-    private PlatformConfigurator? PlatformConfigurator { get; set; }
+    private readonly PlatformConfiguratorFixture _fixture = fixture;
 
-    [OneTimeSetUp]
-    public void OneTimeSetUp()
-    {
-        PlatformConfigurator = new PlatformConfigurator(PlatformFilter.All);
-    }
-
-    [Test]
+    [Fact]
     public void NumericNonNumericRangeTest()
     {
         List<SaucePlatform> platforms =
@@ -30,7 +22,7 @@ public class PlatformExpansionTests
                 SauceryConstants.SCREENRES_2560_1600)
         ];
 
-        PlatformExpander expander = new(PlatformConfigurator!, platforms);
+        PlatformExpander expander = new(_fixture.PlatformConfigurator, platforms);
         var expandedSet = expander.Expand();
         expandedSet
             .Find(e => e.BrowserVersion.Equals("82"))
@@ -38,7 +30,7 @@ public class PlatformExpansionTests
         expandedSet.Count.ShouldBeGreaterThanOrEqualTo(31);
     }
 
-    [Test]
+    [Fact]
     public void NoExpansionTest()
     {
         List<SaucePlatform> platforms =
@@ -56,12 +48,12 @@ public class PlatformExpansionTests
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_EDGE, "99")
         ];
 
-        PlatformExpander expander = new(PlatformConfigurator!, platforms);
+        PlatformExpander expander = new(_fixture.PlatformConfigurator, platforms);
         var expandedSet = expander.Expand();
         expandedSet.Count.ShouldBe(platforms.Count);
     }
 
-    [Test]
+    [Fact]
     public void NumericOnlyRangeTest()
     {
         List<SaucePlatform> platforms =
@@ -78,12 +70,12 @@ public class PlatformExpansionTests
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_EDGE, "79->101")
         ];
 
-        PlatformExpander expander = new(PlatformConfigurator!, platforms);
+        PlatformExpander expander = new(_fixture.PlatformConfigurator, platforms);
         var expandedSet = expander.Expand();
         expandedSet.Count.ShouldBe(103);
     }
 
-    [Test]
+    [Fact]
     public void NonNumericOnlyRangeTest()
     {
         List<SaucePlatform> platforms =
@@ -100,12 +92,12 @@ public class PlatformExpansionTests
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, $"{SauceryConstants.BROWSER_VERSION_BETA}->{SauceryConstants.BROWSER_VERSION_DEV}", SauceryConstants.SCREENRES_2560_1600)                     //2
         ];
 
-        PlatformExpander expander = new(PlatformConfigurator!, platforms);
+        PlatformExpander expander = new(_fixture.PlatformConfigurator, platforms);
         var expandedSet = expander.Expand();
         expandedSet.Count.ShouldBe(20);
     }
 
-    [Test]
+    [Fact]
     public void BadRangeTest()
     {
         List<SaucePlatform> platforms =
@@ -118,12 +110,12 @@ public class PlatformExpansionTests
                 SauceryConstants.SCREENRES_2560_1600),
         ];
 
-        PlatformExpander expander = new(PlatformConfigurator!, platforms);
+        PlatformExpander expander = new(_fixture.PlatformConfigurator, platforms);
         var expandedSet = expander.Expand();
         expandedSet.Count.ShouldBe(0);
     }
 
-    [Test]
+    [Fact]
     public void MobileExpansionTest()
     {
         List<SaucePlatform> platforms =
@@ -132,7 +124,7 @@ public class PlatformExpansionTests
             new IOSPlatform("iPhone 13 Pro Max Simulator", "15.2->15.4", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
         ];
 
-        PlatformExpander expander = new(PlatformConfigurator!, platforms);
+        PlatformExpander expander = new(_fixture.PlatformConfigurator, platforms);
         var expandedSet = expander.Expand();
         
         //It is not the job of the PlatformExpander to remove this from the requested set so just return it.

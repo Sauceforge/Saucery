@@ -1,20 +1,20 @@
-﻿using NUnit.Framework;
-using Saucery.Core.Util;
+﻿using Saucery.Core.Util;
 using Shouldly;
+using Xunit;
 
 namespace Saucery.Core.Tests;
 
-[TestFixture]
 public class ConversionTests
 {
-    [Test]
+    [Fact]
     public void SanitisedLongVersionTest()
     {
         const string longVersion = "10.0.";
         var result = longVersion.EndsWith(SauceryConstants.DOT)
-                        ? longVersion.Trim().Remove(longVersion.Length - 1)
+                        ? longVersion.Trim()[..(longVersion.Length - 1)]
                         : longVersion.Trim();
-        Console.WriteLine("SanitisedLongVersion returning string '{0}'", result);
+        // Optionally log the result if needed
+        // Console.WriteLine($"SanitisedLongVersion returning string '{result}'");
         result.ShouldBe("10.0");
     }
 }
