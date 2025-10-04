@@ -1,14 +1,15 @@
 ﻿using Saucery.Core.OnDemand;
 using Saucery.Core.OnDemand.Base;
+using Saucery.Core.Tests.Fixtures;
 using Saucery.Core.Util;
 using Shouldly;
 using Xunit;
 
 namespace Saucery.Core.Tests;
 
-public class PlatformExpansionTests(PlatformConfiguratorFixture fixture) : IClassFixture<PlatformConfiguratorFixture> 
+public class PlatformExpansionTests(PlatformConfiguratorAllFixture fixture) : IClassFixture<PlatformConfiguratorAllFixture> 
 {
-    private readonly PlatformConfiguratorFixture _fixture = fixture;
+    private readonly PlatformConfiguratorAllFixture _fixture = fixture;
 
     [Fact]
     public void NumericNonNumericRangeTest()

@@ -2,14 +2,15 @@ using Saucery.Core.Dojo;
 using Saucery.Core.OnDemand;
 using Saucery.Core.OnDemand.Base;
 using Saucery.Core.Tests.DataProviders;
+using Saucery.Core.Tests.Fixtures;
 using Shouldly;
 using Xunit;
 
 namespace Saucery.Core.Tests;
 
-public class MerlinPlatformTests(PlatformConfiguratorFixture fixture) : IClassFixture<PlatformConfiguratorFixture> 
+public class MerlinPlatformTests(PlatformConfiguratorAllFixture fixture) : IClassFixture<PlatformConfiguratorAllFixture> 
 {
-    private readonly PlatformConfiguratorFixture _fixture = fixture;
+    private readonly PlatformConfiguratorAllFixture _fixture = fixture;
     private int _validCount = 0;
 
     [Fact]

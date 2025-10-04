@@ -1,15 +1,16 @@
 ﻿using Saucery.Core.OnDemand;
 using Saucery.Core.OnDemand.Base;
 using Saucery.Core.Options;
+using Saucery.Core.Tests.Fixtures;
 using Saucery.Core.Util;
 using Shouldly;
 using Xunit;
 
 namespace Saucery.Core.Tests;
 
-public class AndroidFactoryVersionTests(PlatformConfiguratorFixture fixture) : IClassFixture<PlatformConfiguratorFixture> 
+public class AndroidFactoryVersionTests(PlatformConfiguratorAllFixture fixture) : IClassFixture<PlatformConfiguratorAllFixture> 
 {
-    private readonly PlatformConfiguratorFixture _fixture = fixture;
+    private readonly PlatformConfiguratorAllFixture _fixture = fixture;
 
     public static IEnumerable<object[]> NotSupportedTestCases()
     {

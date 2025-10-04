@@ -1,13 +1,14 @@
 ﻿using Saucery.Core.OnDemand;
 using Saucery.Core.OnDemand.Base;
 using Saucery.Core.Options;
+using Saucery.Core.Tests.Fixtures;
 using Shouldly;
 using Xunit;
 
 namespace Saucery.Core.Tests;
 
-public class RealIOSFactoryVersionTests(PlatformConfiguratorFixture fixture) : IClassFixture<PlatformConfiguratorFixture> {
-    private readonly PlatformConfiguratorFixture _fixture = fixture;
+public class RealIOSFactoryVersionTests(PlatformConfiguratorAllFixture fixture) : IClassFixture<PlatformConfiguratorAllFixture> {
+    private readonly PlatformConfiguratorAllFixture _fixture = fixture;
 
     [Theory]
     [MemberData(nameof(RealIOSDataClass.NotSupportedTestCases), MemberType = typeof(RealIOSDataClass))]

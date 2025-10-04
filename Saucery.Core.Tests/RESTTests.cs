@@ -5,6 +5,7 @@ using Saucery.Core.Dojo.Platforms.ConcreteProducts.Google;
 using Saucery.Core.Dojo.Platforms.ConcreteProducts.Linux;
 using Saucery.Core.Dojo.Platforms.ConcreteProducts.PC;
 using Saucery.Core.RestAPI.FlowControl;
+using Saucery.Core.Tests.Fixtures;
 using Shouldly;
 using System.Collections;
 using System.Reflection;
@@ -13,9 +14,9 @@ using Xunit;
 
 namespace Saucery.Core.Tests;
 
-public class RestTests(PlatformConfiguratorFixture fixture) : IClassFixture<PlatformConfiguratorFixture>
+public class RestTests(PlatformConfiguratorAllFixture fixture) : IClassFixture<PlatformConfiguratorAllFixture>
 {
-    private readonly PlatformConfiguratorFixture _fixture = fixture;
+    private readonly PlatformConfiguratorAllFixture _fixture = fixture;
 
     [Theory]
     [InlineData(true)]

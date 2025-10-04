@@ -1,15 +1,16 @@
 ﻿using Saucery.Core.OnDemand;
 using Saucery.Core.OnDemand.Base;
 using Saucery.Core.Options;
+using Saucery.Core.Tests.Fixtures;
 using Saucery.Core.Util;
 using Shouldly;
 using Xunit;
 
 namespace Saucery.Core.Tests;
 
-public class DesktopFactoryVersionTests(PlatformConfiguratorFixture fixture) : IClassFixture<PlatformConfiguratorFixture> 
+public class DesktopFactoryVersionTests(PlatformConfiguratorAllFixture fixture) : IClassFixture<PlatformConfiguratorAllFixture> 
 {
-    private readonly PlatformConfiguratorFixture _fixture = fixture;
+    private readonly PlatformConfiguratorAllFixture _fixture = fixture;
 
     public static IEnumerable<object[]> SupportedTestCases()
     {
