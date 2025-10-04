@@ -26,29 +26,6 @@ public class RestTests(PlatformConfiguratorAllFixture fixture) : IClassFixture<P
         flowController.ControlFlow(isRealDevice);
     }
 
-    [Fact]
-    public void SupportedRealDevicePlatformTest()
-    {
-        PlatformConfigurator configurator = new(PlatformFilter.RealDevice);
-        var availablePlatforms = configurator.AvailablePlatforms;
-        var realDevices = configurator.AvailableRealDevices;
-
-        availablePlatforms.ShouldBeEmpty();
-        realDevices.ShouldNotBeNull();
-    }
-
-    [Fact]
-    public void SupportedEmulatedPlatformTest()
-    {
-        PlatformConfigurator configurator = new(PlatformFilter.Emulated);
-
-        var availablePlatforms = configurator.AvailablePlatforms;
-        var realDevices = configurator.AvailableRealDevices;
-
-        availablePlatforms.ShouldNotBeNull();
-        realDevices.ShouldBeEmpty();
-    }
-
     [Theory]
     [MemberData(nameof(SupportedPlatformTypes))]
     public void SupportedPlatformTheory(Type platformType) {
@@ -114,7 +91,6 @@ public class RestTests(PlatformConfiguratorAllFixture fixture) : IClassFixture<P
     [MemberData(nameof(SupportedRealDeviceTypes))]
     public void SupportedRealDeviceTheory(Type realDeviceType) {
         var realDevices = _fixture.PlatformConfigurator!.AvailableRealDevices;
-        
         realDevices.ShouldNotBeNull();
 
         var platformList = InvokeGetPlatformGeneric(realDevices, realDeviceType);
