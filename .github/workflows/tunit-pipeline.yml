@@ -46,6 +46,9 @@ env:
   TUNIT_RD_INTEGRATION_COVERAGE_FILENAME: opencover.tunit.realdevice.integration.xml
   COVERAGE_THRESHOLD: 80
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
