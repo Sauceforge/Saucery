@@ -43,6 +43,9 @@ env:
   XUNIT_RD_INTEGRATION_COVERAGE_FILENAME: cobertura.xunit.realdevice.integration.xml
   COVERAGE_THRESHOLD: 80
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
