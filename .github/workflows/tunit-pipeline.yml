@@ -3,6 +3,7 @@ name: TUnit Only
 on:
   push:
     paths:
+      - '.github/workflows/tunit-pipeline.yml'
       - 'Saucery.TUnit/**'
       - 'ExternalMerlin.TUnit/**'
       - 'ExternalMerlin.TUnit.RealDevices/**'
