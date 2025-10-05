@@ -22,7 +22,7 @@ env:
   PROJECT_NAME: Saucery
   SOLN_FILE: Saucery.sln                                                                        # full path to your solution file
   XUNIT_INT_DIR: Merlin.XUnit
-  XUNIT_RD_INT_DIR: Merlin.XUnit.RealDevices         
+  XUNIT_RD_INT_DIR: Merlin.XUnit.RealDevices
   XUNIT_INT_TEST_RESULTS_DIR: Merlin.XUnit/bin/Release/net9.0/TestResults
   XUNIT_RD_INT_TEST_RESULTS_DIR: Merlin.XUnit.RealDevices/bin/Release/net9.0/TestResults
   COVERLET_DIR: ./TestResults
