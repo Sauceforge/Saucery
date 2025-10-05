@@ -6,24 +6,29 @@ using Shouldly;
 using System.Collections;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using Xunit;
 
 namespace Saucery.Core.Tests.REST;
 
-public class RestTests(PlatformConfiguratorAllFixture fixture) : IClassFixture<PlatformConfiguratorAllFixture>
+public class RestTests()
 {
-    private readonly PlatformConfiguratorAllFixture _fixture = fixture;
+    private static PlatformConfiguratorAllFixture _fixture = null!;
 
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
+    [Before(Class)]
+    public static void SetupFixture(ClassHookContext context)
+    {
+        _fixture = new PlatformConfiguratorAllFixture();
+    }
+
+    [Test]
+    [Arguments(true)]
+    [Arguments(false)]
     public void FlowControlTest(bool isRealDevice) {
         var flowController = new SauceLabsFlowController();
         flowController.ControlFlow(isRealDevice);
     }
 
-    [Theory]
-    [MemberData(nameof(PlatformTypes.SupportedPlatformTypes), MemberType = typeof(PlatformTypes))]
+    [Test]
+    [MethodDataSource(typeof(PlatformTypes), nameof(PlatformTypes.SupportedPlatformTypes))]
     public void SupportedPlatformTheory(Type platformType) {
         var availablePlatforms = _fixture.PlatformConfigurator!.AvailablePlatforms;
         availablePlatforms.ShouldNotBeNull();
@@ -40,8 +45,8 @@ public class RestTests(PlatformConfiguratorAllFixture fixture) : IClassFixture<P
         platformList.GetType().ShouldBe(typeof(List<>).MakeGenericType(platformType));
     }
 
-    [Theory]
-    [MemberData(nameof(PlatformTypes.SupportedRealDeviceTypes), MemberType = typeof(PlatformTypes))]
+    [Test]
+    [MethodDataSource(typeof(PlatformTypes), nameof(PlatformTypes.SupportedRealDeviceTypes))]
     public void SupportedRealDeviceTheory(Type realDeviceType) {
         var realDevices = _fixture.PlatformConfigurator!.AvailableRealDevices;
         realDevices.ShouldNotBeNull();
@@ -58,8 +63,8 @@ public class RestTests(PlatformConfiguratorAllFixture fixture) : IClassFixture<P
         platformList.GetType().ShouldBe(typeof(List<>).MakeGenericType(realDeviceType));
     }
 
-    [Theory]
-    [MemberData(nameof(PlatformTypes.PlatformsWithBrowsersTypes), MemberType = typeof(PlatformTypes))]
+    [Test]
+    [MethodDataSource(typeof(PlatformTypes), nameof(PlatformTypes.PlatformsWithBrowsersTypes))]
     public void BrowserCountTest(Type platformsWithBrowsersType)
     {
         var availablePlatforms = _fixture.PlatformConfigurator!.AvailablePlatforms;

@@ -1,17 +1,21 @@
-﻿using Saucery.Core.Dojo;
-using Saucery.Core.OnDemand;
+﻿using Saucery.Core.OnDemand;
 using Saucery.Core.OnDemand.Base;
 using Saucery.Core.Options;
 using Saucery.Core.Tests.Fixtures;
 using Saucery.Core.Util;
 using Shouldly;
-using Xunit;
 
 namespace Saucery.Core.Tests;
 
-public class IOSFactoryVersionTests(PlatformConfiguratorAllFixture fixture) : IClassFixture<PlatformConfiguratorAllFixture> 
+public class IOSFactoryVersionTests() 
 {
-    private readonly PlatformConfiguratorAllFixture _fixture = fixture;
+    private static PlatformConfiguratorAllFixture _fixture = null!;
+
+    [Before(Class)]
+    public static void SetupFixture(ClassHookContext context) 
+    {
+        _fixture = new PlatformConfiguratorAllFixture();
+    }
 
     public static IEnumerable<object[]> SupportedTestCases()
     {
@@ -29,16 +33,16 @@ public class IOSFactoryVersionTests(PlatformConfiguratorAllFixture fixture) : IC
         }
     }
 
-    [Theory]
-    [MemberData(nameof(NotSupportedTestCases))]
+    [Test]
+    [MethodDataSource(nameof(NotSupportedTestCases))]
     public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform)
     {
         var validPlatform = _fixture.PlatformConfigurator.Filter(saucePlatform);
         validPlatform.ShouldBeNull();
     }
 
-    [Theory]
-    [MemberData(nameof(SupportedTestCases))]
+    [Test]
+    [MethodDataSource(nameof(SupportedTestCases))]
     public void AppiumIOSOptionTest(SaucePlatform saucePlatform)
     {
         var validPlatform = _fixture.PlatformConfigurator.Filter(saucePlatform);

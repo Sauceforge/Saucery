@@ -1,12 +1,11 @@
 ﻿using Saucery.Core.Util;
 using Shouldly;
-using Xunit;
 
 namespace Saucery.Core.Tests;
 
 public class ConversionTests
 {
-    [Fact]
+    [Test]
     public void SanitisedLongVersionTest()
     {
         const string longVersion = "10.0.";

@@ -3,24 +3,29 @@ using Saucery.Core.OnDemand.Base;
 using Saucery.Core.Options;
 using Saucery.Core.Tests.Fixtures;
 using Shouldly;
-using Xunit;
 
 namespace Saucery.Core.Tests;
 
-public class RealAndroidFactoryVersionTests(PlatformConfiguratorAllFixture fixture) : IClassFixture<PlatformConfiguratorAllFixture>
+public class RealAndroidFactoryVersionTests()
 {
-    private readonly PlatformConfiguratorAllFixture _fixture = fixture;
+    private static PlatformConfiguratorAllFixture _fixture = null!;
 
-    [Theory]
-    [MemberData(nameof(RealAndroidDataClass.NotSupportedTestCases), MemberType = typeof(RealAndroidDataClass))]
+    [Before(Class)]
+    public static void SetupFixture(ClassHookContext context)
+    {
+        _fixture = new PlatformConfiguratorAllFixture();
+    }
+
+    [Test]
+    [MethodDataSource(typeof(RealAndroidDataClass), nameof(RealAndroidDataClass.NotSupportedTestCases))]
     public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform)
     {
         var validPlatform = _fixture.PlatformConfigurator.Filter(saucePlatform);
         validPlatform.ShouldBeNull();
     }
 
-    [Theory]
-    [MemberData(nameof(RealAndroidDataClass.SupportedTestCases), MemberType = typeof(RealAndroidDataClass))]
+    [Test]
+    [MethodDataSource(typeof(RealAndroidDataClass), nameof(RealAndroidDataClass.SupportedTestCases))]
     public void AppiumAndroidOptionTest(SaucePlatform saucePlatform)
     {
         var validPlatform = _fixture.PlatformConfigurator.Filter(saucePlatform);

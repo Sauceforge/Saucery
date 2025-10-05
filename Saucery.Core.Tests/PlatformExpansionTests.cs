@@ -3,15 +3,20 @@ using Saucery.Core.OnDemand.Base;
 using Saucery.Core.Tests.Fixtures;
 using Saucery.Core.Util;
 using Shouldly;
-using Xunit;
 
 namespace Saucery.Core.Tests;
 
-public class PlatformExpansionTests(PlatformConfiguratorAllFixture fixture) : IClassFixture<PlatformConfiguratorAllFixture> 
+public class PlatformExpansionTests() 
 {
-    private readonly PlatformConfiguratorAllFixture _fixture = fixture;
+    private static PlatformConfiguratorAllFixture _fixture = null!;
 
-    [Fact]
+    [Before(Class)]
+    public static void SetupFixture(ClassHookContext context) 
+    {
+        _fixture = new PlatformConfiguratorAllFixture();
+    }
+
+    [Test]
     public void NumericNonNumericRangeTest()
     {
         List<SaucePlatform> platforms =
@@ -31,7 +36,7 @@ public class PlatformExpansionTests(PlatformConfiguratorAllFixture fixture) : IC
         expandedSet.Count.ShouldBeGreaterThanOrEqualTo(31);
     }
 
-    [Fact]
+    [Test]
     public void NoExpansionTest()
     {
         List<SaucePlatform> platforms =
@@ -54,7 +59,7 @@ public class PlatformExpansionTests(PlatformConfiguratorAllFixture fixture) : IC
         expandedSet.Count.ShouldBe(platforms.Count);
     }
 
-    [Fact]
+    [Test]
     public void NumericOnlyRangeTest()
     {
         List<SaucePlatform> platforms =
@@ -76,7 +81,7 @@ public class PlatformExpansionTests(PlatformConfiguratorAllFixture fixture) : IC
         expandedSet.Count.ShouldBe(103);
     }
 
-    [Fact]
+    [Test]
     public void NonNumericOnlyRangeTest()
     {
         List<SaucePlatform> platforms =
@@ -98,7 +103,7 @@ public class PlatformExpansionTests(PlatformConfiguratorAllFixture fixture) : IC
         expandedSet.Count.ShouldBe(20);
     }
 
-    [Fact]
+    [Test]
     public void BadRangeTest()
     {
         List<SaucePlatform> platforms =
@@ -116,7 +121,7 @@ public class PlatformExpansionTests(PlatformConfiguratorAllFixture fixture) : IC
         expandedSet.Count.ShouldBe(0);
     }
 
-    [Fact]
+    [Test]
     public void MobileExpansionTest()
     {
         List<SaucePlatform> platforms =
