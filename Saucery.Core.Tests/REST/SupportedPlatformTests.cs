@@ -1,11 +1,10 @@
 ﻿using Saucery.Core.Dojo;
 using Shouldly;
-using Xunit;
 
 namespace Saucery.Core.Tests.REST;
 
 public class SupportedPlatformTests {
-    [Fact]
+    [Test]
     public void SupportedRealDevicePlatformTest() {
         PlatformConfigurator configurator = new(PlatformFilter.RealDevice);
         var availablePlatforms = configurator.AvailablePlatforms;
@@ -15,7 +14,7 @@ public class SupportedPlatformTests {
         realDevices.ShouldNotBeNull();
     }
 
-    [Fact]
+    [Test]
     public void SupportedEmulatedPlatformTest() {
         PlatformConfigurator configurator = new(PlatformFilter.Emulated);
 

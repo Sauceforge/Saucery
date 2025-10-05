@@ -4,42 +4,37 @@ using Saucery.Core.Options;
 using Saucery.Core.Tests.Fixtures;
 using Saucery.Core.Util;
 using Shouldly;
-using Xunit;
 
 namespace Saucery.Core.Tests;
 
-public class AndroidFactoryVersionTests(PlatformConfiguratorAllFixture fixture) : IClassFixture<PlatformConfiguratorAllFixture> 
-{
-    private readonly PlatformConfiguratorAllFixture _fixture = fixture;
+public class AndroidFactoryVersionTests {
+    private static PlatformConfiguratorAllFixture _fixture = null!;
 
-    public static IEnumerable<object[]> NotSupportedTestCases()
-    {
-        foreach (var testCase in AndroidDataClass.NotSupportedTestCases)
-        {
-            yield return new object[] { testCase };
-        }
+    [Before(Class)]
+    public static void SetupFixture(ClassHookContext context) {
+        _fixture = new PlatformConfiguratorAllFixture();
     }
 
-    public static IEnumerable<object[]> SupportedTestCases()
-    {
-        foreach (var testCase in AndroidDataClass.SupportedTestCases)
-        {
-            yield return new object[] { testCase };
-        }
+    public static IEnumerable<SaucePlatform> NotSupportedTestCases() {
+        foreach(var testCase in AndroidDataClass.NotSupportedTestCases)
+            yield return testCase;
     }
 
-    [Theory]
-    [MemberData(nameof(NotSupportedTestCases))]
-    public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform)
-    {
+    public static IEnumerable<SaucePlatform> SupportedTestCases() {
+        foreach(var testCase in AndroidDataClass.SupportedTestCases)
+            yield return testCase;
+    }
+
+    [Test]
+    [MethodDataSource(nameof(NotSupportedTestCases))]
+    public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform) {
         var validPlatform = _fixture.PlatformConfigurator.Filter(saucePlatform);
         validPlatform.ShouldBeNull();
     }
 
-    [Theory]
-    [MemberData(nameof(SupportedTestCases))]
-    public void AppiumAndroidOptionTest(SaucePlatform saucePlatform)
-    {
+    [Test]
+    [MethodDataSource(nameof(SupportedTestCases))]
+    public void AppiumAndroidOptionTest(SaucePlatform saucePlatform) {
         var validPlatform = _fixture.PlatformConfigurator.Filter(saucePlatform);
         validPlatform.ShouldNotBeNull();
 
@@ -51,8 +46,7 @@ public class AndroidFactoryVersionTests(PlatformConfiguratorAllFixture fixture) 
     }
 }
 
-public static class AndroidDataClass
-{
+public static class AndroidDataClass {
     public static IEnumerable<SaucePlatform> SupportedTestCases
     {
         get

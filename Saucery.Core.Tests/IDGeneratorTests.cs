@@ -1,12 +1,11 @@
 ﻿using Saucery.Core.Util;
 using Shouldly;
-using Xunit;
 
 namespace Saucery.Core.Tests;
 
 public class IdGeneratorTests
 {
-    [Fact]
+    [Test]
     public void SingleRunTest()
     {
         var generator = IdGenerator.Instance;
@@ -14,7 +13,7 @@ public class IdGeneratorTests
         IdGenerator.Id.ShouldNotBeNull();
     }
 
-    [Fact]
+    [Test]
     public void MultipleRunTest()
     {
         var generator = IdGenerator.Instance;

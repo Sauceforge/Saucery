@@ -4,16 +4,22 @@ using Saucery.Core.OnDemand.Base;
 using Saucery.Core.Tests.DataProviders;
 using Saucery.Core.Tests.Fixtures;
 using Shouldly;
-using Xunit;
 
 namespace Saucery.Core.Tests;
 
-public class MerlinPlatformTests(PlatformConfiguratorAllFixture fixture) : IClassFixture<PlatformConfiguratorAllFixture> 
+public class MerlinPlatformTests()
 {
-    private readonly PlatformConfiguratorAllFixture _fixture = fixture;
+    private static PlatformConfiguratorAllFixture _fixture = null!;
     private int _validCount = 0;
 
-    [Fact]
+    [Before(Class)]
+    public static void SetupFixture(ClassHookContext context)
+    {
+        // This will ensure the fixture is created
+        _fixture = new PlatformConfiguratorAllFixture();
+    }
+
+    [Test]
     public void ValidDesktopPlatformTest()
     {
         PlatformExpander expander = new(_fixture.PlatformConfigurator, PlatformDataClass.DesktopPlatforms);
@@ -22,28 +28,28 @@ public class MerlinPlatformTests(PlatformConfiguratorAllFixture fixture) : IClas
         ProcessBrowserVersions(bvs);
     }
 
-    [Fact]
+    [Test]
     public void ValidEmulatedAndroidDevicesTest()
     {
         var bvs = _fixture.PlatformConfigurator.FilterAll(PlatformDataClass.EmulatedAndroidPlatforms);
         ProcessBrowserVersions(bvs);
     }
 
-    [Fact]
+    [Test]
     public void ValidEmulatedIOSDevicesTest()
     {
         var bvs = _fixture.PlatformConfigurator.FilterAll(PlatformDataClass.EmulatedIOSPlatforms);
         ProcessBrowserVersions(bvs);
     }
 
-    [Fact]
+    [Test]
     public void ValidRealAndroidDevicesTest()
     {
         var bvs = _fixture.PlatformConfigurator .FilterAll(PlatformDataClass.RealAndroidDevices);
         ProcessBrowserVersions(bvs);
     }
 
-    [Fact]
+    [Test]
     public void ValidRealIOSDevicesTest()
     {
         var bvs = _fixture.PlatformConfigurator.FilterAll(PlatformDataClass.RealIOSDevices);
@@ -64,8 +70,8 @@ public class MerlinPlatformTests(PlatformConfiguratorAllFixture fixture) : IClas
             yield return new object[] { platform };
     }
 
-    [Theory]
-    [MemberData(nameof(AllPlatforms))]
+    [Test]
+    [MethodDataSource(nameof(AllPlatforms))]
     public void TestNameTest(SaucePlatform platform)
     {
         var bvs = _fixture.PlatformConfigurator.FilterAll([platform]);

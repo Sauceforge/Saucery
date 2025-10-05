@@ -2,14 +2,19 @@
 using Saucery.Core.Tests.DataProviders;
 using Saucery.Core.Tests.Fixtures;
 using Shouldly;
-using Xunit;
 
 namespace Saucery.Core.Tests;
 
-public class SauceryTestDataEmulatedTests(PlatformConfiguratorEmulatedFixture fixture) : SauceryTestData, IClassFixture<PlatformConfiguratorEmulatedFixture> {
-    private readonly PlatformConfiguratorEmulatedFixture _fixture = fixture;
+public class SauceryTestDataEmulatedTests() : SauceryTestData {
+    private static PlatformConfiguratorEmulatedFixture _fixture = null!;
 
-    [Fact]
+    [Before(Class)]
+    public static void SetupFixture(ClassHookContext context) {
+        // This will ensure the fixture is created
+        _fixture = new PlatformConfiguratorEmulatedFixture();
+    }
+
+    [Test]
     public void DesktopPlatformsTest() {
         SetPlatforms(PlatformDataClass.DesktopPlatforms, _fixture.PlatformConfigurator);
 
@@ -18,7 +23,7 @@ public class SauceryTestDataEmulatedTests(PlatformConfiguratorEmulatedFixture fi
         GetAllPlatforms().Count().ShouldBe(34);
     }
 
-    [Fact]
+    [Test]
     public void EmulatedAndroidDeviceTest() {
         SetPlatforms(PlatformDataClass.EmulatedAndroidPlatforms, _fixture.PlatformConfigurator);
 
@@ -27,7 +32,7 @@ public class SauceryTestDataEmulatedTests(PlatformConfiguratorEmulatedFixture fi
         GetAllPlatforms().Count().ShouldBe(PlatformDataClass.EmulatedAndroidPlatforms.Count);
     }
 
-    [Fact]
+    [Test]
     public void EmulatedAppleDeviceTest() {
         SetPlatforms(PlatformDataClass.EmulatedIOSPlatforms, _fixture.PlatformConfigurator);
 
