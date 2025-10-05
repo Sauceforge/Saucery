@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
+    <OutputType>Exe</OutputType>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
@@ -14,15 +15,6 @@
     <PackageReference Include="TUnit" Version="0.63.3" />
     <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" Version="*" />
     <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" Version="*" />
-
-    <PackageReference Include="coverlet.collector" Version="6.0.4">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="coverlet.msbuild" Version="6.0.4">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     
     <PackageReference Include="DotNetSeleniumExtras.PageObjects.Core" Version="4.14.1" />
     <PackageReference Include="Microsoft.Web.Xdt" Version="3.2.0" />
