@@ -13,8 +13,8 @@ env:
   SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
   CONFIG: Release
   APP_PACKAGE_PATH: 'published'                                                                 # set this to the path to your web app project, defaults to the repository root
-  COVERAGE_FORMAT: opencover
-  UNIT_COVERAGE_FILENAME: 'opencover.unit.xml'
+  COVERAGE_FORMAT: cobertura
+  UNIT_COVERAGE_FILENAME: 'cobertura.unit.xml'
   COVERAGE_THRESHOLD: 80
 
 jobs:
@@ -57,6 +57,7 @@ jobs:
        --report-trx-filename "unit.trx" \
        --coverage \
        --coverage-output "${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}" \
+       --coverage-output-format "${{ env.COVERAGE_FORMAT }}"
        --results-directory "TestResults"
 
     - name: Run Template Tests
