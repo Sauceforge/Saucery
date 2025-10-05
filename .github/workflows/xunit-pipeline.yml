@@ -126,7 +126,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: xunit-integration-test-results
-        path: ${{ env.XUNIT_INT_TEST_RESULTS_DIR }}/${{env.XUNIT_INTEGRATION_COVERAGE_FILENAME}}
+        path: ${{ env.COVERLET_DIR }}//${{env.XUNIT_INTEGRATION_COVERAGE_FILENAME}}
 
   xunit-real-integration-tests:
     runs-on: ubuntu-latest
