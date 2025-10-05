@@ -57,7 +57,7 @@ jobs:
        --report-trx-filename "unit.trx" \
        --coverage \
        --coverage-output "${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}" \
-       --coverage-output-format "${{ env.COVERAGE_FORMAT }}"
+       --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
        --results-directory "TestResults"
 
     - name: Run Template Tests
