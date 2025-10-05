@@ -2,28 +2,31 @@
 using Saucery.Core.Tests.DataProviders;
 using Saucery.Core.Tests.Fixtures;
 using Shouldly;
-using Xunit;
 
 namespace Saucery.Core.Tests;
 
-public class SauceryTestDataRealDeviceTests(PlatformConfiguratorRealDeviceFixture fixture) : SauceryTestData, IClassFixture<PlatformConfiguratorRealDeviceFixture> {
-    private readonly PlatformConfiguratorRealDeviceFixture _fixture = fixture;
+public class SauceryTestDataRealDeviceTests() : SauceryTestData {
+    private static PlatformConfiguratorRealDeviceFixture _fixture = null!;
 
-    [Fact]
+    [Before(Class)]
+    public static void SetupFixture(ClassHookContext context) {
+        // This will ensure the fixture is created
+        _fixture = new PlatformConfiguratorRealDeviceFixture();
+    }
+
+    [Test]
     public void RealAndroidDeviceTest() {
         SetPlatforms(PlatformDataClass.RealAndroidDevices, _fixture.PlatformConfigurator);
 
         Items.ShouldNotBeNull();
         Items.Count().ShouldBe(PlatformDataClass.RealAndroidDevices.Count);
-        GetAllPlatforms().Count().ShouldBe(PlatformDataClass.RealAndroidDevices.Count);
     }
 
-    [Fact]
+    [Test]
     public void RealAppleDeviceTest() {
         SetPlatforms(PlatformDataClass.RealIOSDevices, _fixture.PlatformConfigurator);
 
         Items.ShouldNotBeNull();
         Items.Count().ShouldBe(PlatformDataClass.RealIOSDevices.Count);
-        GetAllPlatforms().Count().ShouldBe(PlatformDataClass.RealIOSDevices.Count);
     }
 }

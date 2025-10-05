@@ -31,7 +31,7 @@ public class SauceryTestData : IEnumerable
 
     protected static IEnumerable<object[]> GetAllPlatforms() {
         List<object[]> allPlatforms = [];
-        allPlatforms.AddRange(Items.Select(platform => (object[]) [platform]));
+        allPlatforms.AddRange(Items.Select(platform => (object[])[platform]));
 
         return allPlatforms.AsEnumerable();
     }

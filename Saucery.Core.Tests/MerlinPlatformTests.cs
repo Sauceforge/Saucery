@@ -4,16 +4,22 @@ using Saucery.Core.OnDemand.Base;
 using Saucery.Core.Tests.DataProviders;
 using Saucery.Core.Tests.Fixtures;
 using Shouldly;
-using Xunit;
 
 namespace Saucery.Core.Tests;
 
-public class MerlinPlatformTests(PlatformConfiguratorAllFixture fixture) : IClassFixture<PlatformConfiguratorAllFixture> 
+public class MerlinPlatformTests()
 {
-    private readonly PlatformConfiguratorAllFixture _fixture = fixture;
+    private static PlatformConfiguratorAllFixture _fixture = null!;
     private int _validCount = 0;
 
-    [Fact]
+    [Before(Class)]
+    public static void SetupFixture(ClassHookContext context)
+    {
+        // This will ensure the fixture is created
+        _fixture = new PlatformConfiguratorAllFixture();
+    }
+
+    [Test]
     public void ValidDesktopPlatformTest()
     {
         PlatformExpander expander = new(_fixture.PlatformConfigurator, PlatformDataClass.DesktopPlatforms);
@@ -22,53 +28,53 @@ public class MerlinPlatformTests(PlatformConfiguratorAllFixture fixture) : IClas
         ProcessBrowserVersions(bvs);
     }
 
-    [Fact]
+    [Test]
     public void ValidEmulatedAndroidDevicesTest()
     {
         var bvs = _fixture.PlatformConfigurator.FilterAll(PlatformDataClass.EmulatedAndroidPlatforms);
         ProcessBrowserVersions(bvs);
     }
 
-    [Fact]
+    [Test]
     public void ValidEmulatedIOSDevicesTest()
     {
         var bvs = _fixture.PlatformConfigurator.FilterAll(PlatformDataClass.EmulatedIOSPlatforms);
         ProcessBrowserVersions(bvs);
     }
 
-    [Fact]
+    [Test]
     public void ValidRealAndroidDevicesTest()
     {
         var bvs = _fixture.PlatformConfigurator .FilterAll(PlatformDataClass.RealAndroidDevices);
         ProcessBrowserVersions(bvs);
     }
 
-    [Fact]
+    [Test]
     public void ValidRealIOSDevicesTest()
     {
         var bvs = _fixture.PlatformConfigurator.FilterAll(PlatformDataClass.RealIOSDevices);
         ProcessBrowserVersions(bvs);
     }
 
-    public static IEnumerable<object[]> AllPlatforms()
-    {
-        foreach (var platform in PlatformDataClass.DesktopPlatforms)
-            yield return new object[] { platform };
-        foreach (var platform in PlatformDataClass.EmulatedAndroidPlatforms)
-            yield return new object[] { platform };
-        foreach (var platform in PlatformDataClass.EmulatedIOSPlatforms)
-            yield return new object[] { platform };
-        foreach (var platform in PlatformDataClass.RealAndroidDevices)
-            yield return new object[] { platform };
-        foreach (var platform in PlatformDataClass.RealIOSDevices)
-            yield return new object[] { platform };
-    }
+    public static IEnumerable<SaucePlatform> AllPlatforms()
+        => new IEnumerable<SaucePlatform>[]
+        {
+            PlatformDataClass.DesktopPlatforms,
+            PlatformDataClass.EmulatedAndroidPlatforms,
+            PlatformDataClass.EmulatedIOSPlatforms,
+            PlatformDataClass.RealAndroidDevices,
+            PlatformDataClass.RealIOSDevices
+        }
+        .SelectMany(x => x);
 
-    [Theory]
-    [MemberData(nameof(AllPlatforms))]
+    [Test]
+    [MethodDataSource(nameof(AllPlatforms))]
     public void TestNameTest(SaucePlatform platform)
     {
-        var bvs = _fixture.PlatformConfigurator.FilterAll([platform]);
+        PlatformExpander expander = new(_fixture.PlatformConfigurator, [platform]);
+        var expandedPlatforms = expander.Expand();
+
+        var bvs = _fixture.PlatformConfigurator.FilterAll(expandedPlatforms);
 
         foreach (var bv in bvs)
         {

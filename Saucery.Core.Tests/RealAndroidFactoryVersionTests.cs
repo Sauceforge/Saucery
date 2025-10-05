@@ -3,24 +3,29 @@ using Saucery.Core.OnDemand.Base;
 using Saucery.Core.Options;
 using Saucery.Core.Tests.Fixtures;
 using Shouldly;
-using Xunit;
 
 namespace Saucery.Core.Tests;
 
-public class RealAndroidFactoryVersionTests(PlatformConfiguratorAllFixture fixture) : IClassFixture<PlatformConfiguratorAllFixture>
+public class RealAndroidFactoryVersionTests()
 {
-    private readonly PlatformConfiguratorAllFixture _fixture = fixture;
+    private static PlatformConfiguratorAllFixture _fixture = null!;
 
-    [Theory]
-    [MemberData(nameof(RealAndroidDataClass.NotSupportedTestCases), MemberType = typeof(RealAndroidDataClass))]
+    [Before(Class)]
+    public static void SetupFixture(ClassHookContext context)
+    {
+        _fixture = new PlatformConfiguratorAllFixture();
+    }
+
+    [Test]
+    [MethodDataSource(typeof(RealAndroidDataClass), nameof(RealAndroidDataClass.NotSupportedTestCases))]
     public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform)
     {
         var validPlatform = _fixture.PlatformConfigurator.Filter(saucePlatform);
         validPlatform.ShouldBeNull();
     }
 
-    [Theory]
-    [MemberData(nameof(RealAndroidDataClass.SupportedTestCases), MemberType = typeof(RealAndroidDataClass))]
+    [Test]
+    [MethodDataSource(typeof(RealAndroidDataClass), nameof(RealAndroidDataClass.SupportedTestCases))]
     public void AppiumAndroidOptionTest(SaucePlatform saucePlatform)
     {
         var validPlatform = _fixture.PlatformConfigurator.Filter(saucePlatform);
@@ -36,26 +41,22 @@ public class RealAndroidFactoryVersionTests(PlatformConfiguratorAllFixture fixtu
 
 public static class RealAndroidDataClass
 {
-    public static IEnumerable<object[]> SupportedTestCases
-    {
-        get
-        {
-            yield return new object[] { new AndroidRealDevice("Google Pixel 9", "16") };
-            yield return new object[] { new AndroidRealDevice("Google Pixel 9", "15") };
-            yield return new object[] { new AndroidRealDevice("Google Pixel 8 Pro", "14") };
-            yield return new object[] { new AndroidRealDevice("Google Pixel 7 Pro", "13") };
-            yield return new object[] { new AndroidRealDevice("Google Pixel 6a", "12") };
-            yield return new object[] { new AndroidRealDevice("Google Pixel 4a", "11") };
-            yield return new object[] { new AndroidRealDevice("Google Pixel 4 XL", "10") };
-            yield return new object[] { new AndroidRealDevice("Samsung Galaxy Tab S3", "9") };
-        }
-    }
+    public static IEnumerable<SaucePlatform> SupportedTestCases
+    =>
+        [
+            new AndroidRealDevice("Google Pixel 9", "16"),
+            new AndroidRealDevice("Google Pixel 9", "15"),
+            new AndroidRealDevice("Google Pixel 8 Pro", "14"),
+            new AndroidRealDevice("Google Pixel 7 Pro", "13"),
+            new AndroidRealDevice("Google Pixel 6a", "12"),
+            new AndroidRealDevice("Google Pixel 4a", "11"),
+            new AndroidRealDevice("Google Pixel 4 XL", "10"),
+            new AndroidRealDevice("Samsung Galaxy Tab S3", "9")
+        ];
 
-    public static IEnumerable<object[]> NotSupportedTestCases
-    {
-        get
-        {
-            yield return new object[] { new AndroidRealDevice("NonExistent", "1") };
-        }
-    }
+    public static IEnumerable<SaucePlatform> NotSupportedTestCases
+    =>
+        [
+            new AndroidRealDevice("NonExistent", "1")
+        ];
 }
