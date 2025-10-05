@@ -53,12 +53,20 @@ jobs:
     - name: Run TUnit tests (with coverage + TRX)
       run: |
        dotnet run -c ${{ env.CONFIG }} --project ${{ env.UT_PROJECT }} -- \
-       --coverage \
        --report-trx \
+       --report-trx-filename "unit.trx" \
+       --coverage \
+       --coverage-output "${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}" \
        --results-directory "TestResults"
 
     - name: Run Template Tests
       run: dotnet test -c ${{ env.CONFIG }} ${{ env.TT_PROJECT }}
+
+    - name: Upload TRX
+      uses: actions/upload-artifact@v4
+      with:
+        name: unit-test-trx
+        path: ${{ env.COVERLET_DIR }}/unit.trx
 
     - name: Publish Artifacts
       uses: actions/upload-artifact@v4
