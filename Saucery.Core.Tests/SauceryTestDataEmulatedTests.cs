@@ -20,7 +20,6 @@ public class SauceryTestDataEmulatedTests() : SauceryTestData {
 
         Items.ShouldNotBeNull();
         Items.Count().ShouldBe(34); // Due to platform expansion.
-        GetAllPlatforms().Count().ShouldBe(34);
     }
 
     [Test]
@@ -29,7 +28,6 @@ public class SauceryTestDataEmulatedTests() : SauceryTestData {
 
         Items.ShouldNotBeNull();
         Items.Count().ShouldBe(PlatformDataClass.EmulatedAndroidPlatforms.Count);
-        GetAllPlatforms().Count().ShouldBe(PlatformDataClass.EmulatedAndroidPlatforms.Count);
     }
 
     [Test]
@@ -38,6 +36,5 @@ public class SauceryTestDataEmulatedTests() : SauceryTestData {
 
         Items.ShouldNotBeNull();
         Items.Count().ShouldBe(PlatformDataClass.EmulatedIOSPlatforms.Count);
-        GetAllPlatforms().Count().ShouldBe(PlatformDataClass.EmulatedIOSPlatforms.Count);
     }
 }

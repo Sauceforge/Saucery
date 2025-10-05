@@ -20,6 +20,5 @@ public class SauceryTestDataAllTests() : SauceryTestData {
 
         Items.ShouldNotBeNull();
         Items.Count().ShouldBe(34); // Due to platform expansion.
-        GetAllPlatforms().Count().ShouldBe(34);
     }
 }

@@ -56,25 +56,25 @@ public class MerlinPlatformTests()
         ProcessBrowserVersions(bvs);
     }
 
-    public static IEnumerable<object[]> AllPlatforms()
-    {
-        foreach (var platform in PlatformDataClass.DesktopPlatforms)
-            yield return new object[] { platform };
-        foreach (var platform in PlatformDataClass.EmulatedAndroidPlatforms)
-            yield return new object[] { platform };
-        foreach (var platform in PlatformDataClass.EmulatedIOSPlatforms)
-            yield return new object[] { platform };
-        foreach (var platform in PlatformDataClass.RealAndroidDevices)
-            yield return new object[] { platform };
-        foreach (var platform in PlatformDataClass.RealIOSDevices)
-            yield return new object[] { platform };
-    }
+    public static IEnumerable<SaucePlatform> AllPlatforms()
+        => new IEnumerable<SaucePlatform>[]
+        {
+            PlatformDataClass.DesktopPlatforms,
+            PlatformDataClass.EmulatedAndroidPlatforms,
+            PlatformDataClass.EmulatedIOSPlatforms,
+            PlatformDataClass.RealAndroidDevices,
+            PlatformDataClass.RealIOSDevices
+        }
+        .SelectMany(x => x);
 
     [Test]
     [MethodDataSource(nameof(AllPlatforms))]
     public void TestNameTest(SaucePlatform platform)
     {
-        var bvs = _fixture.PlatformConfigurator.FilterAll([platform]);
+        PlatformExpander expander = new(_fixture.PlatformConfigurator, [platform]);
+        var expandedPlatforms = expander.Expand();
+
+        var bvs = _fixture.PlatformConfigurator.FilterAll(expandedPlatforms);
 
         foreach (var bv in bvs)
         {

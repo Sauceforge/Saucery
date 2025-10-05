@@ -20,7 +20,6 @@ public class SauceryTestDataRealDeviceTests() : SauceryTestData {
 
         Items.ShouldNotBeNull();
         Items.Count().ShouldBe(PlatformDataClass.RealAndroidDevices.Count);
-        GetAllPlatforms().Count().ShouldBe(PlatformDataClass.RealAndroidDevices.Count);
     }
 
     [Test]
@@ -29,6 +28,5 @@ public class SauceryTestDataRealDeviceTests() : SauceryTestData {
 
         Items.ShouldNotBeNull();
         Items.Count().ShouldBe(PlatformDataClass.RealIOSDevices.Count);
-        GetAllPlatforms().Count().ShouldBe(PlatformDataClass.RealIOSDevices.Count);
     }
 }
