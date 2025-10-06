@@ -15,7 +15,6 @@ namespace Saucery.Playwright.NUnit;
 
 public class SauceryBase : PageTest
 {
-    private readonly Lock _testNotifyLock = new();
     private string? _testName;
     private WebDriver? _driver;
     private readonly BrowserVersion? _browserVersion;
@@ -43,13 +42,10 @@ public class SauceryBase : PageTest
     [SetUp]
     public void Setup()
     {
-        lock(_browserVersion!) {
-            _browserVersion!.SetTestName(TestContext.CurrentContext.Test.Name);
-            _testName = _browserVersion.TestName!;
-        }
+        _testName = BrowserVersion.GenerateTestName(_browserVersion!, TestContext.CurrentContext.Test.Name);
 
         // set up the desired options
-        var factory = new OptionFactory(_browserVersion);
+        var factory = new OptionFactory(_browserVersion!);
         var tuple = factory.CreateOptions(_testName);
 
         var driverInitialised = InitialiseDriver(tuple!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
@@ -72,19 +68,16 @@ public class SauceryBase : PageTest
             {
                 var passed = Equals(TestContext.CurrentContext.Result.Outcome, ResultState.Success);
                 // log the result to SauceLabs
-                    if(_browserVersion!.IsARealDevice()) {
-                        lock (_testNotifyLock)
-                        {
-                            var realDeviceJobs = SauceLabsRealDeviceAcquirer.AcquireRealDeviceJobs();
-                            var jobs = realDeviceJobs?.entities.FindAll(x => x.name.Equals(_browserVersion!.TestName));
-                            foreach (var job in jobs!)
-                            {
-                                SauceLabsRealDeviceStatusNotifier.NotifyRealDeviceStatus(job.id, passed);
-                            }
-                        }
-                    } else {
-                        SauceLabsEmulatedStatusNotifier.NotifyEmulatedStatus(_driver.SessionId.ToString(), passed);
+                if(_browserVersion!.IsARealDevice()) {
+                    var realDeviceJobs = SauceLabsRealDeviceAcquirer.AcquireRealDeviceJobs();
+                    var jobs = realDeviceJobs?.entities.FindAll(x => x.name.Equals(_testName));
+                    foreach (var job in jobs!)
+                    {
+                        SauceLabsRealDeviceStatusNotifier.NotifyRealDeviceStatus(job.id, passed);
                     }
+                } else {
+                    SauceLabsEmulatedStatusNotifier.NotifyEmulatedStatus(_driver.SessionId.ToString(), passed);
+                }
 
                 _driver.Quit();
             }

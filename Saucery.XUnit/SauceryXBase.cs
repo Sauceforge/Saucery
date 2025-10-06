@@ -10,7 +10,6 @@ namespace Saucery.XUnit;
 
 public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>
 {
-    private readonly Lock _testStatusLock = new();
     protected readonly BaseFixture BaseFixture;
     private string? _testName;
     private readonly ITestOutputHelper _outputHelper;
@@ -23,16 +22,12 @@ public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>
 
     protected void InitialiseDriver(BrowserVersion browserVersion)
     {
-        lock (browserVersion)
-        {
-            _browserVersion = browserVersion;
-            browserVersion.SetTestName(GetTestName());
-            _testName = browserVersion.TestName;
-        }
+        _browserVersion = browserVersion;
+        _testName = BrowserVersion.GenerateTestName(browserVersion, GetTestName());
 
         // set up the desired options
         BaseFixture.OptionFactory = new OptionFactory(browserVersion);
-        var tuple = BaseFixture.OptionFactory.CreateOptions(_testName!);
+        var tuple = BaseFixture.OptionFactory.CreateOptions(_testName);
 
         var driverInitialised = BaseFixture.InitialiseDriver(tuple!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
 
@@ -53,22 +48,17 @@ public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>
             {
                 var passed = Context.TestException == null;
                 // log the result to SauceLabs
-                
-                
-                    if(_browserVersion!.IsARealDevice()) {
-                        lock (_testStatusLock)
-                        {
-                            var realDeviceJobs = BaseFixture.SauceLabsRealDeviceAcquirer.AcquireRealDeviceJobs();
-                            var jobs = realDeviceJobs?.entities.FindAll(x => x.name.Equals(_browserVersion!.TestName));
-                            foreach (var job in jobs!)
-                            {
-                                BaseFixture.SauceLabsRealDeviceStatusNotifier.NotifyRealDeviceStatus(job.id, passed);
-                            }
-                        }
-                    } else {
-                        BaseFixture.SauceLabsEmulatedStatusNotifier.NotifyEmulatedStatus(BaseFixture.Driver.SessionId.ToString(), passed);
+
+                if(_browserVersion!.IsARealDevice()) {
+                    var realDeviceJobs = BaseFixture.SauceLabsRealDeviceAcquirer.AcquireRealDeviceJobs();
+                    var jobs = realDeviceJobs?.entities.FindAll(x => x.name.Equals(_testName));
+                    foreach (var job in jobs!)
+                    {
+                        BaseFixture.SauceLabsRealDeviceStatusNotifier.NotifyRealDeviceStatus(job.id, passed);
                     }
-                
+                } else {
+                    BaseFixture.SauceLabsEmulatedStatusNotifier.NotifyEmulatedStatus(BaseFixture.Driver.SessionId.ToString(), passed);
+                }
 
                 BaseFixture.Driver.Quit();
                 GC.SuppressFinalize(this);
