@@ -30,8 +30,6 @@ permissions:
 jobs:
   xunit3-external-tests:
     runs-on: ubuntu-latest
-    needs: [xunit3-real-integration-tests, 
-            xunit3-integration-tests]
     steps:
     - name: Checkout Code
       uses: actions/checkout@v5
@@ -50,8 +48,6 @@ jobs:
 
   xunit3-real-external-tests:
     runs-on: ubuntu-latest
-    needs: [xunit3-real-integration-tests, 
-            xunit3-integration-tests]
     steps:
     - name: Checkout Code
       uses: actions/checkout@v5
