@@ -131,6 +131,10 @@ public class BrowserVersion {
             {
                 builder.Append($"{SauceryConstants.UNDERSCORE}{value}");
             }
+                {
+                    TestNameBuilder.Append($"{SauceryConstants.UNDERSCORE}{fieldToAdd}");
+                }
+            }
         }
     }
 }
