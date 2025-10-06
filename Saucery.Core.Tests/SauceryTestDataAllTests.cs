@@ -9,10 +9,7 @@ public class SauceryTestDataAllTests() : SauceryTestData {
     private static PlatformConfiguratorAllFixture _fixture = null!;
 
     [Before(Class)]
-    public static void SetupFixture(ClassHookContext context) {
-        // This will ensure the fixture is created
-        _fixture = new PlatformConfiguratorAllFixture();
-    }
+    public static void SetupFixture(ClassHookContext context) => _fixture = new PlatformConfiguratorAllFixture();
 
     [Test]
     public void AllPlatformsTest() {

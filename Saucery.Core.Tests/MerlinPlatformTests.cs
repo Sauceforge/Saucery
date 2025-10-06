@@ -13,11 +13,7 @@ public class MerlinPlatformTests()
     private int _validCount = 0;
 
     [Before(Class)]
-    public static void SetupFixture(ClassHookContext context)
-    {
-        // This will ensure the fixture is created
-        _fixture = new PlatformConfiguratorAllFixture();
-    }
+    public static void SetupFixture(ClassHookContext context) => _fixture = new PlatformConfiguratorAllFixture();
 
     [Test]
     public void ValidDesktopPlatformTest()

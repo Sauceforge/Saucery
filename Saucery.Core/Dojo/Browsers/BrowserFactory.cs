@@ -11,14 +11,14 @@ namespace Saucery.Core.Dojo.Browsers;
 public static class BrowserFactory
 {
     public static BrowserBase? CreateBrowser(SupportedPlatform sp, List<string> screenResolutions) => sp.IsAndroidPlatform()
-            ? new AndroidBrowserCreator(sp).Create("Android", null!)
+            ? new AndroidBrowserCreator(sp).Create(SauceryConstants.ANDROID, null!)
             : sp.IsIOSPlatform()
-            ? new IOSBrowserCreator(sp).Create("iOS", null!)
+            ? new IOSBrowserCreator(sp).Create(SauceryConstants.PLATFORM_IOS, null!)
             : sp.Os switch
             {
-                SauceryConstants.PLATFORM_LINUX => new LinuxBrowserCreator(sp).Create("Linux", screenResolutions),
-                SauceryConstants.PLATFORM_WINDOWS_11 => new Windows11BrowserCreator(sp).Create("Windows 11", screenResolutions),
-                SauceryConstants.PLATFORM_WINDOWS_10 => new Windows10BrowserCreator(sp).Create("Windows 10", screenResolutions),
+                SauceryConstants.PLATFORM_LINUX => new LinuxBrowserCreator(sp).Create(SauceryConstants.PLATFORM_LINUX, screenResolutions),
+                SauceryConstants.PLATFORM_WINDOWS_11 => new Windows11BrowserCreator(sp).Create(SauceryConstants.PLATFORM_WINDOWS_11, screenResolutions),
+                SauceryConstants.PLATFORM_WINDOWS_10 => new Windows10BrowserCreator(sp).Create(SauceryConstants.PLATFORM_WINDOWS_10, screenResolutions),
                 SauceryConstants.PLATFORM_WINDOWS_81 => new Windows81BrowserCreator(sp).Create("Windows 8.1", screenResolutions),
                 SauceryConstants.PLATFORM_WINDOWS_8 => new Windows8BrowserCreator(sp).Create("Windows 8", screenResolutions),
                 SauceryConstants.PLATFORM_MAC_15 => new Mac15BrowserCreator(sp).Create("macOS 15", screenResolutions),

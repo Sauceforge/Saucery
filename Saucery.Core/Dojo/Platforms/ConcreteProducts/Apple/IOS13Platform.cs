@@ -4,13 +4,6 @@ using Saucery.Core.Util;
 
 namespace Saucery.Core.Dojo.Platforms.ConcreteProducts.Apple;
 
-public sealed class IOS13Platform : PlatformBase
+public sealed class IOS13Platform(SupportedPlatform sp) : PlatformBase(sp, SauceryConstants.PLATFORM_IOS, [])
 {
-    public override string PlatformNameForOption { get; set; }
-
-    public IOS13Platform(SupportedPlatform sp) : base(sp)
-    {
-        Selenium4BrowserNames = [];
-        PlatformNameForOption = SauceryConstants.PLATFORM_IOS;
-    }
 }

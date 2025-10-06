@@ -6,7 +6,7 @@ namespace Saucery.Core.Dojo.Platforms.Base;
 public abstract class PlatformBase
 {
     public string Name { get; set; }
-    public abstract string PlatformNameForOption {get;set;}
+    public string PlatformNameForOption {get; set; }
     public string AutomationBackend { get; set; }
     public string RecommendedAppiumVersion { get; set; }
     public List<string> SupportedBackendVersions { get; set; }
@@ -18,7 +18,12 @@ public abstract class PlatformBase
 
     public List<BrowserBase> Browsers { get; set; }
 
-    protected PlatformBase(SupportedPlatform sp)
+    protected PlatformBase(
+        SupportedPlatform sp, 
+        string platformNameForOption, 
+        List<string> selenium4BrowserNames,
+        List<string> browsersWithLatestVersion = null!,
+        List<string> screenResolutions = null!)
     {
         Name = sp.Os!;
         AutomationBackend = sp.automation_backend!;
@@ -36,5 +41,9 @@ public abstract class PlatformBase
         }
         
         Browsers = [];
+        PlatformNameForOption = platformNameForOption;
+        Selenium4BrowserNames = selenium4BrowserNames;
+        BrowsersWithLatestVersion = browsersWithLatestVersion;
+        ScreenResolutions = screenResolutions;
     }
 }

@@ -105,7 +105,7 @@ public class PlatformConfigurator
 
     private static List<SupportedPlatform> FindLinuxPlatforms(List<SupportedPlatform> platforms) =>
         platforms.FindAll(p =>
-            p.Os == "Linux" &&
+            p.Os == SauceryConstants.PLATFORM_LINUX &&
             p.automation_backend!.Equals("webdriver") &&
             p.device == null);
 

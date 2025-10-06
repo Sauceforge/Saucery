@@ -1,15 +1,9 @@
 ﻿using Saucery.Core.Dojo.Platforms.Base;
 using Saucery.Core.RestAPI;
+using Saucery.Core.Util;
 
 namespace Saucery.Core.Dojo.Platforms.ConcreteProducts.Google;
 
-public sealed class Android15Platform : PlatformBase
+public sealed class Android15Platform(SupportedPlatform sp) : PlatformBase(sp, SauceryConstants.ANDROID, [])
 {
-    public override string PlatformNameForOption { get; set; }
-
-    public Android15Platform(SupportedPlatform sp) : base(sp)
-    {
-        Selenium4BrowserNames = [];
-        PlatformNameForOption = "Android";
-    }
 }
