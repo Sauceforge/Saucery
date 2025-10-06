@@ -4,12 +4,23 @@ using Saucery.TUnit;
 
 namespace Merlin.TUnit;
 
-public class DataDrivenTests : SauceryTBase
-{
+public class GuineaPigTests : SauceryTBase {
+    [Test]
+    [MethodDataSource(typeof(RequestedPlatformData), nameof(RequestedPlatformData.AllPlatforms))]
+    public async Task ClickLinkTest(BrowserVersion requestedPlatform) {
+        InitialiseDriver(requestedPlatform);
+
+        var guineaPigPage = new GuineaPigPage(SauceryDriver(), "https://saucelabs.com/");
+
+        guineaPigPage.ClickLink(SauceryDriver());
+
+        // verify the browser was navigated to the correct page
+        await Assert.That(Driver!.Url).Contains("saucelabs.com/test-guinea-pig2.html");
+    }
+
     [Test]
     [MethodDataSource(nameof(AllCombinations), Arguments = [new int[] { 4, 5 }])]
-    public async Task DataDrivenTest(BrowserVersion requestedPlatform, int data)
-    {
+    public async Task DataDrivenTest(BrowserVersion requestedPlatform, int data) {
         InitialiseDriver(requestedPlatform);
 
         var guineaPigPage = new GuineaPigPage(SauceryDriver(), "https://saucelabs.com/");
@@ -31,9 +42,3 @@ public class DataDrivenTests : SauceryTBase
             (browserVersionFunc, datum) => new Func<(BrowserVersion, int)>(() => (browserVersionFunc(), datum))
         );
 }
-
-/*
-* Copyright Andrew Gray, SauceForge
-* Date: 7th December 2024
-* 
-*/
