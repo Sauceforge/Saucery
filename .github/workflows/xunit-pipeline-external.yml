@@ -1,0 +1,81 @@
+name: XUnit Only External
+
+on:
+  push:
+    paths:
+      - '.github/workflows/xunit-pipeline-external.yml'
+      - 'ExternalMerlin.XUnit/**'
+      - 'ExternalMerlin.XUnit.RealDevices/**'
+    branches:
+      - master
+      - 'dependabot/**'
+      - 'releases/**'
+      - 'feat/**'
+      - 'feature/**'
+      - 'fix/**'
+      - 'test/**'
+
+env:
+  PROJECT_NAME: Saucery
+  SOLN_FILE: Saucery.sln                                                                        # full path to your solution file
+  EM_XUNIT_PROJECT: ExternalMerlin.XUnit/ExternalMerlin.XUnit.csproj                            # full path to xunit external integration test project file
+  EM_RD_XUNIT_PROJECT: ExternalMerlin.XUnit.RealDevices/ExternalMerlin.XUnit.RealDevices.csproj # full path to xunit external integration test project file
+  SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+  SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
+  CONFIG: Release
+
+permissions:
+  contents: write
+
+jobs:
+  xunit-external-tests:
+    runs-on: ubuntu-latest
+    needs: [xunit-real-integration-tests, 
+            xunit-integration-tests]
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v5
+
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v5
+      with:
+        # Check for latest at link at .NET 9 download page (https://dotnet.microsoft.com/download/dotnet/9.0)
+        dotnet-version: 9.0.x
+
+    - name: Compile solution
+      run: dotnet build -c ${{ env.CONFIG }}
+
+    - name: Run External XUnit Integration Tests
+      run: dotnet test -c ${{ env.CONFIG }} ${{ env.EM_XUNIT_PROJECT }} --no-build
+
+  xunit-real-external-tests:
+    runs-on: ubuntu-latest
+    needs: [xunit-real-integration-tests, 
+            xunit-integration-tests]
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v5
+
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v5
+      with:
+        # Check for latest at link at .NET 9 download page (https://dotnet.microsoft.com/download/dotnet/9.0)
+        dotnet-version: 9.0.x
+
+    - name: Compile solution
+      run: dotnet build -c ${{ env.CONFIG }}
+
+    - name: Run External XUnit Real Integration Tests
+      run: dotnet test -c ${{ env.CONFIG }} ${{ env.EM_RD_XUNIT_PROJECT }} --no-build
+
+  tag:
+    runs-on: ubuntu-latest
+    needs: [xunit-external-tests,
+            xunit-real-external-tests]
+    steps:
+    - name: Bump version and push tag
+      if: ${{ (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master') && success() }}
+      id: tag_version
+      uses: mathieudutour/github-tag-action@v6.2
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
