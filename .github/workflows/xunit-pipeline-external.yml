@@ -29,7 +29,7 @@ permissions:
 
 jobs:
   xunit-external-tests:
-    runs-on: ubuntu-latests
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout Code
       uses: actions/checkout@v5
