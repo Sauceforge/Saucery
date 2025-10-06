@@ -124,13 +124,9 @@ public class BrowserVersion {
         if (!string.IsNullOrEmpty(value) && !builder.ToString().Contains(value))
         {
             if (builder.Length == 0)
-            {
                 builder.Append(value);
-            }
             else
-            {
                 builder.Append($"{SauceryConstants.UNDERSCORE}{value}");
-            }
         }
     }
 }
