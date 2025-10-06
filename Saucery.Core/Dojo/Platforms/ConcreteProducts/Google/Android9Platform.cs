@@ -3,13 +3,6 @@ using Saucery.Core.RestAPI;
 
 namespace Saucery.Core.Dojo.Platforms.ConcreteProducts.Google;
 
-public sealed class Android9Platform : PlatformBase
+public sealed class Android9Platform(SupportedPlatform sp) : PlatformBase(sp, "Android", [])
 {
-    public override string PlatformNameForOption { get; set; }
-
-    public Android9Platform(SupportedPlatform sp) : base(sp)
-    {
-        Selenium4BrowserNames = [];
-        PlatformNameForOption = "Android";
-    }
 }

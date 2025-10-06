@@ -9,10 +9,7 @@ public class SauceryTestDataEmulatedTests() : SauceryTestData {
     private static PlatformConfiguratorEmulatedFixture _fixture = null!;
 
     [Before(Class)]
-    public static void SetupFixture(ClassHookContext context) {
-        // This will ensure the fixture is created
-        _fixture = new PlatformConfiguratorEmulatedFixture();
-    }
+    public static void SetupFixture(ClassHookContext context) => _fixture = new PlatformConfiguratorEmulatedFixture();
 
     [Test]
     public void DesktopPlatformsTest() {

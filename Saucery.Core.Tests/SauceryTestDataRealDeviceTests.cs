@@ -9,10 +9,7 @@ public class SauceryTestDataRealDeviceTests() : SauceryTestData {
     private static PlatformConfiguratorRealDeviceFixture _fixture = null!;
 
     [Before(Class)]
-    public static void SetupFixture(ClassHookContext context) {
-        // This will ensure the fixture is created
-        _fixture = new PlatformConfiguratorRealDeviceFixture();
-    }
+    public static void SetupFixture(ClassHookContext context) => _fixture = new PlatformConfiguratorRealDeviceFixture();
 
     [Test]
     public void RealAndroidDeviceTest() {
