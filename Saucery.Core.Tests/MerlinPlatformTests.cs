@@ -52,8 +52,8 @@ public class MerlinPlatformTests()
         ProcessBrowserVersions(bvs);
     }
 
-    public static IEnumerable<SaucePlatform> AllPlatforms()
-        => new IEnumerable<SaucePlatform>[]
+    public static IEnumerable<Func<SaucePlatform>> AllPlatforms()
+        => new[]
         {
             PlatformDataClass.DesktopPlatforms,
             PlatformDataClass.EmulatedAndroidPlatforms,
@@ -61,7 +61,8 @@ public class MerlinPlatformTests()
             PlatformDataClass.RealAndroidDevices,
             PlatformDataClass.RealIOSDevices
         }
-        .SelectMany(x => x);
+        .SelectMany(x => x)
+        .Select(p => (Func<SaucePlatform>)(() => p));
 
     [Test]
     [MethodDataSource(nameof(AllPlatforms))]
