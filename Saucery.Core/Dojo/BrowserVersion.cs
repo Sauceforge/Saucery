@@ -34,7 +34,8 @@ public class BrowserVersion {
 
     public List<string> ScreenResolutions { get; set; }
 
-    public BrowserVersion(SupportedPlatform sp, BrowserBase b) {
+    public BrowserVersion(SupportedPlatform sp, BrowserBase b)
+    {
         Os = sp.Os!;
         PlatformNameForOption = b.PlatformNameForOption;
         ScreenResolutions = b.ScreenResolutions;
@@ -88,7 +89,8 @@ public class BrowserVersion {
     /// Generates a unique test name from this configuration and the test context.
     /// This does not mutate the BrowserVersion instance.
     /// </summary>
-    public static string GenerateTestName(BrowserVersion config, string baseTestName) {
+    public static string GenerateTestName(BrowserVersion config, string baseTestName)
+    {
         var builder = new StringBuilder();
 
         // Remove any existing bracketed suffix from test name
@@ -98,10 +100,13 @@ public class BrowserVersion {
 
         AppendIfNotEmpty(builder, cleanTestName);
 
-        if(config.IsAMobileDevice()) {
+        if (config.IsAMobileDevice())
+        {
             AppendIfNotEmpty(builder, config.DeviceName);
             AppendIfNotEmpty(builder, config.DeviceOrientation!);
-        } else {
+        }
+        else
+        {
             AppendIfNotEmpty(builder, config.Os);
             AppendIfNotEmpty(builder, config.BrowserName);
             AppendIfNotEmpty(builder, config.Name!);
@@ -114,13 +119,14 @@ public class BrowserVersion {
         return builder.ToString();
     }
 
-    private static void AppendIfNotEmpty(StringBuilder builder, string value) {
-        if(!string.IsNullOrEmpty(value) && !builder.ToString().Contains(value)) {
-            if(builder.Length == 0) {
+    private static void AppendIfNotEmpty(StringBuilder builder, string value)
+    {
+        if (!string.IsNullOrEmpty(value) && !builder.ToString().Contains(value))
+        {
+            if (builder.Length == 0)
                 builder.Append(value);
-            } else {
+            else
                 builder.Append($"{SauceryConstants.UNDERSCORE}{value}");
-            }
         }
     }
 }
