@@ -48,8 +48,6 @@ jobs:
 
   xunit-real-external-tests:
     runs-on: ubuntu-latest
-    needs: [xunit-real-integration-tests, 
-            xunit-integration-tests]
     steps:
     - name: Checkout Code
       uses: actions/checkout@v5
