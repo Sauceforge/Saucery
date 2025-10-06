@@ -5,8 +5,8 @@ using Saucery.Core.Util;
 namespace Saucery.Core.Dojo.Platforms.ConcreteProducts.Linux;
 
 public sealed class LinuxPlatform(SupportedPlatform sp) 
-    : PlatformBase(sp, 
-                   "Linux",
+    : PlatformBase(sp,
+                   SauceryConstants.PLATFORM_LINUX,
                    [SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_FIREFOX],
                    [SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_FIREFOX],
                    [SauceryConstants.SCREENRES_800_600,

@@ -6,6 +6,4 @@ namespace Saucery.Core.Dojo.Platforms.ConcreteProducts.Apple;
 
 public sealed class IOS13Platform(SupportedPlatform sp) : PlatformBase(sp, SauceryConstants.PLATFORM_IOS, [])
 {
-    //public override string PlatformNameForOption { get; set; }
-
 }

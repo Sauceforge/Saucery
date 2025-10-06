@@ -6,7 +6,7 @@ namespace Saucery.Core.Dojo.Platforms.ConcreteProducts.PC;
 
 public sealed class Windows10Platform(SupportedPlatform sp) 
     : PlatformBase(sp, 
-                   "Windows 10", 
+                   SauceryConstants.PLATFORM_WINDOWS_10, 
                    [SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_FIREFOX, SauceryConstants.BROWSER_EDGE, SauceryConstants.BROWSER_IE],
                    [SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_FIREFOX, SauceryConstants.BROWSER_EDGE],
                    [SauceryConstants.SCREENRES_800_600,

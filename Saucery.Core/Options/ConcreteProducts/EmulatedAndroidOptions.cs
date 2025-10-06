@@ -22,7 +22,7 @@ internal class EmulatedAndroidOptions : BaseOptions {
             PlatformVersion = browserVersion.Name
         };
 
-        options.AddAdditionalAppiumOption("platformName", "Android");
+        options.AddAdditionalAppiumOption("platformName", SauceryConstants.ANDROID);
         options.AddAdditionalAppiumOption("w3c", true);
         options.AddAdditionalAppiumOption("autoGrantPermissions", true);
 

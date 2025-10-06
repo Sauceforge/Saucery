@@ -5,8 +5,8 @@ using Saucery.Core.Util;
 namespace Saucery.Core.Dojo.Platforms.ConcreteProducts.PC;
 
 public sealed class Windows11Platform(SupportedPlatform sp) 
-    : PlatformBase(sp, 
-                   "Windows 11", 
+    : PlatformBase(sp,
+                   SauceryConstants.PLATFORM_WINDOWS_11, 
                    [SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_FIREFOX, SauceryConstants.BROWSER_EDGE],
                    [SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_FIREFOX, SauceryConstants.BROWSER_EDGE],
                    [SauceryConstants.SCREENRES_800_600,

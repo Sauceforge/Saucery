@@ -21,7 +21,7 @@ internal class RealDeviceAndroidOptions : BaseOptions {
             PlatformVersion = browserVersion.PlatformNameForOption
         };
 
-        options.AddAdditionalAppiumOption("platformName", "Android");
+        options.AddAdditionalAppiumOption("platformName", SauceryConstants.ANDROID);
         options.AddAdditionalAppiumOption("w3c", true);
         options.AddAdditionalAppiumOption("autoGrantPermissions", true);
 
