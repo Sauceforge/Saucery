@@ -12,7 +12,7 @@
   <PropertyGroup>
 	  <IsPackable>true</IsPackable>
 	  <PackageId>Saucery</PackageId>
-    <PackageVersion>4.5.45</PackageVersion>
+    <PackageVersion>4.5.46</PackageVersion>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Authors>Andrew Gray</Authors>
     <Company>SauceForge</Company>
@@ -32,7 +32,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
     <PackageReference Include="NUnit" Version="4.4.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="5.1.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="5.2.0" />
     <!--<PackageReference Include="Saucery.Core" Version="4.5.3" />-->
     <None Include="Images\Saucery.NUnit.128x128.png" Pack="true" PackagePath="\" />
   </ItemGroup>
