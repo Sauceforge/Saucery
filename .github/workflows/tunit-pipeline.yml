@@ -186,7 +186,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: tunit-real-integration-test-results
-        path: ${{ env.TUNIT_RD_INT_DIR }}/${{env.TUNIT_RD_INTEGRATION_COVERAGE_FILENAME}}
+        path: ${{ env.COVERLET_DIR }}/${{env.TUNIT_RD_INTEGRATION_COVERAGE_FILENAME}}
 
   generate-report:
     runs-on: ubuntu-latest
