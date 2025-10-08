@@ -79,6 +79,7 @@ jobs:
        --coverage-output "${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}" \
        --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
        --results-directory "TestResults"
+       --log-level Debug
 
     - name: Run Template Tests
       run: dotnet test -c ${{ env.CONFIG }} --filter "Group=TUnit" ${{ env.TT_PROJECT }}
