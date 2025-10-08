@@ -117,7 +117,17 @@ jobs:
       run: dotnet build -c ${{ env.CONFIG }}
     
     - name: Run TUnit Integration Tests
-      run: dotnet test -c ${{ env.CONFIG }} ${{ env.M_TUNIT_PROJECT }} --no-build /p:CoverletOutput=${{ env.TUNIT_INTEGRATION_COVERAGE_FILENAME }} /p:Exclude="[*]TUnit.*"
+      run: |
+       dotnet run -c ${{ env.CONFIG }} --project ${{ env.M_TUNIT_PROJECT }} -- \
+       --report-trx \
+       --report-trx-filename "unit.trx" \
+       --coverage \
+       --coverage-output "${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.TUNIT_INTEGRATION_COVERAGE_FILENAME }}" \
+       --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
+       --results-directory "TestResults" \
+       --log-level Debug \
+       --diagnostic
+
 
     - name: Display structure of downloaded files
       run: ls -R
