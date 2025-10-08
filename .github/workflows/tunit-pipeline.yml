@@ -16,6 +16,7 @@ on:
       - 'fix/**'
       - 'test/**'
       - 'bug/**'
+  workflow_dispatch:
 
 env:
   PROJECT_NAME: Saucery
