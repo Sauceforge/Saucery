@@ -87,7 +87,7 @@ jobs:
     - name: Display structure of downloaded files
       run: ls -R
 
-    - name: Upload TRX
+    - name: Upload Unit TRX
       uses: actions/upload-artifact@v4
       with:
         name: unit-test-trx
@@ -116,13 +116,29 @@ jobs:
     - name: Compile solution
       run: dotnet build -c ${{ env.CONFIG }}
     
-    - name: Run TUnit Integration Tests
-      run: |
-       dotnet run -c ${{ env.CONFIG }} --project ${{ env.M_TUNIT_PROJECT }} -- --log-level Debug --diagnostic
+    #- name: Run TUnit Integration Tests
+    #  run: |
+    #   dotnet run -c ${{ env.CONFIG }} --project ${{ env.M_TUNIT_PROJECT }} -- --log-level Debug --diagnostic
 
+    - name: Run TUnit Integration Tests (with coverage + TRX)
+      run: |
+       dotnet run -c ${{ env.CONFIG }} --project ${{ env.M_TUNIT_PROJECT }} -- \
+       --report-trx \
+       --report-trx-filename "merlin.tunit.trx" \
+       --coverage \
+       --coverage-output "${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.TUNIT_INTEGRATION_COVERAGE_FILENAME }}" \
+       --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
+       --results-directory "TestResults" \
+       --log-level Debug
 
     - name: Display structure of downloaded files
       run: ls -R
+
+    - name: Upload Merlin Integration TRX
+      uses: actions/upload-artifact@v4
+      with:
+        name: merlin-integration-test-trx
+        path: ${{ env.TUNIT_INT_DIR }}/merlin.tunit.trx
 
     - name: Publish Artifacts
       uses: actions/upload-artifact@v4
