@@ -149,13 +149,13 @@ cls
 
 #XUnit3
 .\Update-NuGetNext-All.ps1 -PackageId "Microsoft.NET.Test.Sdk" -Root "C:\gitrepos\Saucery\Merlin.XUnit3\"
-.\Update-NuGetNext-All.ps1 -PackageId "Microsoft.Testing.Extensions.CodeCoverage" -Root "C:\gitrepos\Saucery\Merlin.XUnit3\"
+#.\Update-NuGetNext-All.ps1 -PackageId "Microsoft.Testing.Extensions.CodeCoverage" -Root "C:\gitrepos\Saucery\Merlin.XUnit3\"
 .\Update-NuGetNext-All.ps1 -PackageId "xunit.v3" -Root "C:\gitrepos\Saucery\Merlin.XUnit3\"
 .\Update-NuGetNext-All.ps1 -PackageId "xunit.runner.visualstudio" -Root "C:\gitrepos\Saucery\Merlin.XUnit3\"
 
 #XUnit3.RealDevices
 .\Update-NuGetNext-All.ps1 -PackageId "Microsoft.NET.Test.Sdk" -Root "C:\gitrepos\Saucery\Merlin.XUnit3.RealDevices\"
-.\Update-NuGetNext-All.ps1 -PackageId "Microsoft.Testing.Extensions.CodeCoverage" -Root "C:\gitrepos\Saucery\Merlin.XUnit3.RealDevices\"
+#.\Update-NuGetNext-All.ps1 -PackageId "Microsoft.Testing.Extensions.CodeCoverage" -Root "C:\gitrepos\Saucery\Merlin.XUnit3.RealDevices\"
 .\Update-NuGetNext-All.ps1 -PackageId "xunit.v3" -Root "C:\gitrepos\Saucery\Merlin.XUnit3.RealDevices\"
 .\Update-NuGetNext-All.ps1 -PackageId "xunit.runner.visualstudio" -Root "C:\gitrepos\Saucery\Merlin.XUnit3.RealDevices\"
 
