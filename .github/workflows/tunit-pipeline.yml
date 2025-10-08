@@ -39,8 +39,11 @@ env:
   APP_PACKAGE_PATH: 'published'                                                                 # set this to the path to your web app project, defaults to the repository root
   COVERAGE_FORMAT: cobertura
   UNIT_COVERAGE_FILENAME: cobertura.unit.xml
+  UNIT_TRX_FILENAME: unit.trx
+  TUNIT_INTEGRATION_TRX_FILENAME: merlin.trx
+  TUNIT_RD_INTEGRATION_TRX_FILENAME: merlin.realdevice.trx
   TUNIT_INTEGRATION_COVERAGE_FILENAME: cobertura.tunit.integration.xml
-  TUNIT_RD_INTEGRATION_COVERAGE_FILENAME: cobertura.tunit.realdevice.integration.xml
+  TUNIT_RD_INTEGRATION_COVERAGE_FILENAME: cobertura.tunit.realdevice.integration.xml  
   COVERAGE_THRESHOLD: 80
 
 permissions:
@@ -74,7 +77,7 @@ jobs:
       run: |
        dotnet run -c ${{ env.CONFIG }} --project ${{ env.UT_PROJECT }} -- \
        --report-trx \
-       --report-trx-filename "unit.trx" \
+       --report-trx-filename ${{ UNIT_TRX_FILENAME }} \
        --coverage \
        --coverage-output "${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}" \
        --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
@@ -91,7 +94,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: unit-test-trx
-        path: ${{ env.COVERLET_DIR }}/unit.trx
+        path: ${{ env.COVERLET_DIR }}/${{ UNIT_TRX_FILENAME }}
 
     - name: Publish Artifacts
       uses: actions/upload-artifact@v4
@@ -116,15 +119,11 @@ jobs:
     - name: Compile solution
       run: dotnet build -c ${{ env.CONFIG }}
     
-    #- name: Run TUnit Integration Tests
-    #  run: |
-    #   dotnet run -c ${{ env.CONFIG }} --project ${{ env.M_TUNIT_PROJECT }} -- --log-level Debug --diagnostic
-
     - name: Run TUnit Integration Tests (with coverage + TRX)
       run: |
        dotnet run -c ${{ env.CONFIG }} --project ${{ env.M_TUNIT_PROJECT }} -- \
        --report-trx \
-       --report-trx-filename "merlin.tunit.trx" \
+       --report-trx-filename ${{ env.TUNIT_INTEGRATION_TRX_FILENAME }} \
        --coverage \
        --coverage-output "${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.TUNIT_INTEGRATION_COVERAGE_FILENAME }}" \
        --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
@@ -139,7 +138,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: merlin-integration-test-trx
-        path: ${{ env.COVERLET_DIR }}/merlin.tunit.trx
+        path: ${{ env.COVERLET_DIR }}/${{ env.TUNIT_INTEGRATION_TRX_FILENAME }}
 
     - name: Publish Artifacts
       uses: actions/upload-artifact@v4
@@ -163,9 +162,26 @@ jobs:
     - name: Compile solution
       run: dotnet build -c ${{ env.CONFIG }}
 
-    - name: Run TUnit Real Integration Tests
-      run: dotnet test -c ${{ env.CONFIG }} ${{ env.M_RD_TUNIT_PROJECT }} --no-build /p:CoverletOutput=${{ env.TUNIT_RD_INTEGRATION_COVERAGE_FILENAME }} /p:Exclude="[*]TUnit.*"
-    
+    # - name: Run TUnit Real Integration Tests
+    #   run: dotnet test -c ${{ env.CONFIG }} ${{ env.M_RD_TUNIT_PROJECT }} --no-build /p:CoverletOutput=${{ env.TUNIT_RD_INTEGRATION_COVERAGE_FILENAME }} /p:Exclude="[*]TUnit.*"
+    - name: Run TUnit Real Integration Tests (with coverage + TRX)
+      run: |
+       dotnet run -c ${{ env.CONFIG }} --project ${{ env.M_RD_TUNIT_PROJECT }} -- \
+       --report-trx \
+       --report-trx-filename ${{ env.TUNIT_RD_INTEGRATION_TRX_FILENAME }} \
+       --coverage \
+       --coverage-output "${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.TUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}" \
+       --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
+       --results-directory "TestResults" \
+       --log-level Debug \
+       --diagnostic
+
+    - name: Upload Merlin Real Integration TRX
+      uses: actions/upload-artifact@v4
+      with:
+        name: merlin-real-integration-test-trx
+        path: ${{ env.COVERLET_DIR }}/${{ env.TUNIT_RD_INTEGRATION_TRX_FILENAME }}
+        
     - name: Publish Artifacts
       uses: actions/upload-artifact@v4
       with:
