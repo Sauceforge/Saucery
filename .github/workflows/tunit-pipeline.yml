@@ -77,7 +77,7 @@ jobs:
       run: |
        dotnet run -c ${{ env.CONFIG }} --project ${{ env.UT_PROJECT }} -- \
        --report-trx \
-       --report-trx-filename ${{ UNIT_TRX_FILENAME }} \
+       --report-trx-filename ${{ env.UNIT_TRX_FILENAME }} \
        --coverage \
        --coverage-output "${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}" \
        --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
@@ -94,13 +94,13 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: unit-test-trx
-        path: ${{ env.COVERLET_DIR }}/${{ UNIT_TRX_FILENAME }}
+        path: ${{ env.COVERLET_DIR }}/${{ env.UNIT_TRX_FILENAME }}
 
     - name: Publish Artifacts
       uses: actions/upload-artifact@v4
       with:
         name: unit-test-results
-        path: ${{ env.COVERLET_DIR }}/${{env.UNIT_COVERAGE_FILENAME}}
+        path: ${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}
 
   tunit-integration-tests:
     runs-on: ubuntu-latest
@@ -144,7 +144,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: tunit-integration-test-results
-        path: ${{ env.COVERLET_DIR }}/${{env.TUNIT_INTEGRATION_COVERAGE_FILENAME}}
+        path: ${{ env.COVERLET_DIR }}/${{ env.TUNIT_INTEGRATION_COVERAGE_FILENAME }}
 
   tunit-real-integration-tests:
     runs-on: ubuntu-latest
