@@ -78,7 +78,7 @@ jobs:
        --coverage \
        --coverage-output "${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}" \
        --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
-       --results-directory "TestResults"
+       --results-directory "TestResults" \
        --log-level Debug
 
     - name: Run Template Tests
