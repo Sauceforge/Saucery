@@ -16,6 +16,7 @@ on:
       - 'fix/**'
       - 'test/**'
       - 'bug/**'
+  workflow_dispatch:
 
 env:
   PROJECT_NAME: Saucery
@@ -77,7 +78,8 @@ jobs:
        --coverage \
        --coverage-output "${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}" \
        --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
-       --results-directory "TestResults"
+       --results-directory "TestResults" \
+       --log-level Debug
 
     - name: Run Template Tests
       run: dotnet test -c ${{ env.CONFIG }} --filter "Group=TUnit" ${{ env.TT_PROJECT }}
@@ -115,7 +117,9 @@ jobs:
       run: dotnet build -c ${{ env.CONFIG }}
     
     - name: Run TUnit Integration Tests
-      run: dotnet test -c ${{ env.CONFIG }} ${{ env.M_TUNIT_PROJECT }} --no-build /p:CoverletOutput=${{ env.TUNIT_INTEGRATION_COVERAGE_FILENAME }} /p:Exclude="[*]TUnit.*"
+      run: |
+       dotnet run -c ${{ env.CONFIG }} --project ${{ env.M_TUNIT_PROJECT }} -- --log-level Debug --diagnostic
+
 
     - name: Display structure of downloaded files
       run: ls -R
