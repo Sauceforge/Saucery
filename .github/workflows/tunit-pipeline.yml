@@ -78,7 +78,7 @@ jobs:
        --coverage \
        --coverage-output "${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}" \
        --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
-       --results-directory "TestResults" \
+       --results-directory "${{ env.COVERLET_DIR }}" \
        --log-level Debug
 
     - name: Run Template Tests
@@ -118,8 +118,12 @@ jobs:
     
     - name: Run TUnit Integration Tests
       run: |
-       dotnet run -c ${{ env.CONFIG }} --project ${{ env.M_TUNIT_PROJECT }} -- --log-level Debug --diagnostic
-
+       dotnet run -c ${{ env.CONFIG }} --project ${{ env.M_TUNIT_PROJECT }} -- \
+       --coverage \
+       --coverage-output "${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.TUNIT_INTEGRATION_COVERAGE_FILENAME }}" \
+       --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
+       --results-directory "${{ env.COVERLET_DIR }}" \
+       --log-level Debug
 
     - name: Display structure of downloaded files
       run: ls -R
@@ -128,7 +132,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: tunit-integration-test-results
-        path: ${{ env.TUNIT_INT_DIR }}/${{env.TUNIT_INTEGRATION_COVERAGE_FILENAME}}
+        path: ${{ env.COVERLET_DIR }}/${{env.TUNIT_INTEGRATION_COVERAGE_FILENAME}}
 
   tunit-real-integration-tests:
     runs-on: ubuntu-latest
@@ -147,13 +151,19 @@ jobs:
       run: dotnet build -c ${{ env.CONFIG }}
 
     - name: Run TUnit Real Integration Tests
-      run: dotnet test -c ${{ env.CONFIG }} ${{ env.M_RD_TUNIT_PROJECT }} --no-build /p:CoverletOutput=${{ env.TUNIT_RD_INTEGRATION_COVERAGE_FILENAME }} /p:Exclude="[*]TUnit.*"
-    
+      run: |
+       dotnet run -c ${{ env.CONFIG }} --project ${{ env.M_RD_TUNIT_PROJECT }} -- \
+       --coverage \
+       --coverage-output "${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.TUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}" \
+       --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
+       --results-directory "${{ env.COVERLET_DIR }}" \
+       --log-level Debug
+      
     - name: Publish Artifacts
       uses: actions/upload-artifact@v4
       with:
         name: tunit-real-integration-test-results
-        path: ${{ env.TUNIT_RD_INT_DIR }}/${{env.TUNIT_RD_INTEGRATION_COVERAGE_FILENAME}}
+        path: ${{ env.COVERLET_DIR }}/${{env.TUNIT_RD_INTEGRATION_COVERAGE_FILENAME}}
 
   generate-report:
     runs-on: ubuntu-latest
