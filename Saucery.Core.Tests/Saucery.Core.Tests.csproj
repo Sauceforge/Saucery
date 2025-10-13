@@ -14,7 +14,7 @@
   <ItemGroup>
     <PackageReference Include="TUnit" Version="0.67.19" />
     <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.0.4" />
-    <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" Version="1.9.0" />
+    <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" Version="2.0.0" />
     
     <PackageReference Include="DotNetSeleniumExtras.PageObjects.Core" Version="4.14.1" />
     <PackageReference Include="Microsoft.Web.Xdt" Version="3.2.0" />
