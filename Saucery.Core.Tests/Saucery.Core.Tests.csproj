@@ -15,16 +15,10 @@
     <PackageReference Include="TUnit" Version="0.70.2" />
     <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.0.4" />
     <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" Version="1.9.0" />
-    
-    <PackageReference Include="DotNetSeleniumExtras.PageObjects.Core" Version="4.14.1" />
-    <PackageReference Include="Microsoft.Web.Xdt" Version="3.2.0" />
-    <PackageReference Include="RestSharp" Version="112.1.0" />
-    <PackageReference Include="Selenium.Support" Version="4.36.0" />
-    <PackageReference Include="Shouldly" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Saucery\Saucery.csproj" />
+    <ProjectReference Include="..\Saucery.Core\Saucery.Core.csproj" />
   </ItemGroup>
 
 </Project>

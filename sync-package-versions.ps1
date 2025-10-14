@@ -69,22 +69,9 @@ cls
 
 # Core Tests
 
-.\Update-NuGetNext-All.ps1 -PackageId "DotNetSeleniumExtras.PageObjects.Core" -Root "C:\gitrepos\Saucery\Saucery.Core.Tests\"
-.\Update-NuGetNext-All.ps1 -PackageId "Microsoft.NET.Test.Sdk" -Root "C:\gitrepos\Saucery\Saucery.Core.Tests\"
-.\Update-NuGetNext-All.ps1 -PackageId "Microsoft.Web.Xdt" -Root "C:\gitrepos\Saucery\Saucery.Core.Tests\"
 .\Update-NuGetNext-All.ps1 -PackageId "TUnit" -Root "C:\gitrepos\Saucery\Saucery.Core.Tests\"
-
 #.\Update-NuGetNext-All.ps1 -PackageId "Microsoft.Testing.Extensions.CodeCoverage" -Root "C:\gitrepos\Saucery\Saucery.Core.Tests\"
 #.\Update-NuGetNext-All.ps1 -PackageId "Microsoft.Testing.Extensions.TrxReport" -Root "C:\gitrepos\Saucery\Saucery.Core.Tests\"
-
-.\Update-NuGetNext-All.ps1 -PackageId "RestSharp" -Root "C:\gitrepos\Saucery\Saucery.Core.Tests\"
-.\Update-NuGetNext-All.ps1 -PackageId "Selenium.Support" -Root "C:\gitrepos\Saucery\Saucery.Core.Tests\"
-.\Update-NuGetNext-All.ps1 -PackageId "Shouldly" -Root "C:\gitrepos\Saucery\Saucery.Core.Tests\"
-    
-    
-
-
-
 
 # FrontEnd
 
