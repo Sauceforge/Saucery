@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Saucery\Saucery.csproj" />
+    <ProjectReference Include="..\Saucery.Core\Saucery.Core.csproj" />
   </ItemGroup>
 
 </Project>
