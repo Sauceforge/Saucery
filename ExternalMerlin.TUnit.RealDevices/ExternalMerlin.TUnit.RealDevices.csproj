@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Saucery.TUnit" Version="0.70.2" />
+    <PackageReference Include="Saucery.TUnit" Version="0.71.4" />
   </ItemGroup>
 
 </Project>
