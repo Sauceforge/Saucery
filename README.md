@@ -25,7 +25,7 @@ Saucery
 
 Saucery handles all the plumbing required to integrate with SauceLabs, making writing tests a breeze. so you only need to tell Saucery *what* you want. Saucery takes care of the *how*.
 
-Saucery comes in multiple flavors supporting popular test frameworks. Targetting all real and emulated [platforms](https://saucelabs.com/products/platform-configurator) for Appium and Selenium 4+.
+Saucery comes in multiple flavors supporting popular test frameworks. Targeting all real and emulated [platforms](https://saucelabs.com/products/platform-configurator) for Appium and Selenium 4+.
 
 The templates below include example tests.
 
