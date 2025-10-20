@@ -133,4 +133,4 @@ Yes, Saucery supports Real Devices!
 ## Contact
 
 Author: Andrew Gray  
-Twitter: [@agrayz](https://twitter.com/agrayz)
+[LinkedIn](https://www.linkedin.com/in/andrewpaulgray/)
