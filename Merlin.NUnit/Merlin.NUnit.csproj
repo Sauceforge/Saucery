@@ -14,11 +14,8 @@
     <PackageReference Include="DotNetSeleniumExtras.PageObjects.Core" Version="4.14.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
     <PackageReference Include="Microsoft.Web.Xdt" Version="3.2.0" />
-    <PackageReference Include="NUnit" Version="4.4.0" />
+    <!--<PackageReference Include="NUnit" Version="4.4.0" />-->
     <PackageReference Include="NUnit3TestAdapter" Version="5.2.0" />
-    <!--<PackageReference Include="RestSharp" Version="112.1.0" />-->
-    <!--<PackageReference Include="Selenium.Support" Version="4.33.0" />-->
-    <!--<PackageReference Include="Shouldly" Version="4.3.0" />-->
   </ItemGroup>
 
   <ItemGroup>
