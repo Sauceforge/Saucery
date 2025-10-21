@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="TUnit" Version="0.74.2" />
     <ProjectReference Include="..\Saucery.Core\Saucery.Core.csproj" />
     <ProjectReference Include="..\Saucery.Tests.Common\Saucery.Tests.Common.csproj" />
     <ProjectReference Include="..\Saucery.TUnit\Saucery.TUnit.csproj" />
