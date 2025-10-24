@@ -27,8 +27,6 @@ public class BrowserVersion
 
     private List<string> DeprecatedBackendVersions { get; set; }
 
-    public string? TestName { get; private set; }
-
     public string? DeviceOrientation { get; set; }
 
     public string? ScreenResolution { get; set; }
@@ -36,10 +34,6 @@ public class BrowserVersion
     public PlatformType PlatformType { get; set; }
 
     public List<string> ScreenResolutions { get; set; }
-
-    private readonly Lock _testNameLock = new();
-
-    private StringBuilder TestNameBuilder { get; set; }
 
     public BrowserVersion(SupportedPlatform sp, BrowserBase b)
     {
@@ -55,7 +49,6 @@ public class BrowserVersion
         RecommendedAppiumVersion = sp.recommended_backend_version!;
         SupportedBackendVersions = sp.supported_backend_versions!;
         DeprecatedBackendVersions = sp.deprecated_backend_versions!;
-        TestNameBuilder = new StringBuilder();
     }
 
     public BrowserVersion(BrowserBase b, 
@@ -76,7 +69,6 @@ public class BrowserVersion
         SupportedBackendVersions = supportedBackendVersions!;
         DeprecatedBackendVersions = deprecatedBackendVersions!;
         ScreenResolutions = b.ScreenResolutions;
-        TestNameBuilder = new StringBuilder();
     }
 
     public BrowserVersion(SaucePlatform platform) {
@@ -89,61 +81,57 @@ public class BrowserVersion
         RecommendedAppiumVersion = "latest";
         SupportedBackendVersions = [];
         DeprecatedBackendVersions = [];
-        TestName = string.Empty;
         DeviceOrientation = string.Empty;
         ScreenResolution = string.Empty;
         PlatformType = platform.IsAnAndroidDevice() ? PlatformType.Android : PlatformType.Apple;
         ScreenResolutions = [];
-        TestNameBuilder = new StringBuilder();
     }
 
-    public void SetTestName(string testName)
+    /// <summary>
+    /// Generates a unique test name from this configuration and the test context.
+    /// This does not mutate the BrowserVersion instance.
+    /// </summary>
+    public static string GenerateTestName(BrowserVersion config, string baseTestName)
     {
-        TestNameBuilder = new StringBuilder();
+        var builder = new StringBuilder();
 
-        AppendPlatformField(testName.Contains(SauceryConstants.LEFT_SQUARE_BRACKET)
-            ? testName[..testName.IndexOf(SauceryConstants.LEFT_SQUARE_BRACKET, StringComparison.Ordinal)]
-            : testName);
+        // Remove any existing bracketed suffix from test name
+        var cleanTestName = baseTestName.Contains(SauceryConstants.LEFT_SQUARE_BRACKET)
+            ? baseTestName[..baseTestName.IndexOf(SauceryConstants.LEFT_SQUARE_BRACKET, StringComparison.Ordinal)]
+            : baseTestName;
 
-        if (this.IsAMobileDevice())
+        AppendIfNotEmpty(builder, cleanTestName);
+
+        if (config.IsAMobileDevice())
         {
-            AppendPlatformField(DeviceName);
-            AppendPlatformField(DeviceOrientation!);
+            AppendIfNotEmpty(builder, config.DeviceName);
+            AppendIfNotEmpty(builder, config.DeviceOrientation!);
         }
         else
         {
-            AppendPlatformField(Os);
-            AppendPlatformField(BrowserName);
-            AppendPlatformField(Name!);
-            AppendPlatformField(ScreenResolution!);
+            AppendIfNotEmpty(builder, config.Os);
+            AppendIfNotEmpty(builder, config.BrowserName);
+            AppendIfNotEmpty(builder, config.Name!);
+            AppendIfNotEmpty(builder, config.ScreenResolution!);
         }
 
-        lock (_testNameLock)
-        {
-            AppendPlatformField(DateTime.Now.ToString("yyyyMMddHHmmssffff"));
-        }
+        // Add timestamp for uniqueness
+        AppendIfNotEmpty(builder, DateTime.Now.ToString("yyyyMMddHHmmssffff"));
 
-        if(TestNameBuilder.Length > 0) 
-        {
-            TestName = TestNameBuilder.ToString();
-        }
+        return builder.ToString();
     }
 
-    private void AppendPlatformField(string fieldToAdd)
+    private static void AppendIfNotEmpty(StringBuilder builder, string value)
     {
-        if (!string.IsNullOrEmpty(fieldToAdd) &&
-            !TestNameBuilder.ToString().Contains(fieldToAdd))
+        if (!string.IsNullOrEmpty(value) && !builder.ToString().Contains(value))
         {
-            lock (TestNameBuilder)
+            if (builder.Length == 0)
             {
-                if (TestNameBuilder.Length == 0)
-                {
-                    TestNameBuilder.Append($"{fieldToAdd}");
-                }
-                else
-                {
-                    TestNameBuilder.Append($"{SauceryConstants.UNDERSCORE}{fieldToAdd}");
-                }
+                builder.Append(value);
+            }
+            else
+            {
+                builder.Append($"{SauceryConstants.UNDERSCORE}{value}");
             }
         }
     }

@@ -75,22 +75,22 @@ public class MerlinPlatformTests()
 
         foreach (var bv in bvs)
         {
-            bv.SetTestName(nameof(TestNameTest));
-            bv.TestName.ShouldNotBeNullOrEmpty();
+            var testName = BrowserVersion.GenerateTestName(bv, nameof(TestNameTest));
+            testName.ShouldNotBeNullOrEmpty();
 
             if (bv.IsAMobileDevice())
             {
-                bv.TestName.ShouldContain(bv.DeviceName);
-                bv.TestName.ShouldContain(bv.DeviceOrientation!);
+                testName.ShouldContain(bv.DeviceName);
+                testName.ShouldContain(bv.DeviceOrientation!);
             }
             else
             {
-                bv.TestName.ShouldContain(bv.Os);
-                bv.TestName.ShouldContain(bv.BrowserName);
-                bv.TestName.ShouldContain(bv.Name!);
+                testName.ShouldContain(bv.Os);
+                testName.ShouldContain(bv.BrowserName);
+                testName.ShouldContain(bv.Name!);
                 if (!string.IsNullOrEmpty(bv.ScreenResolution))
                 {
-                    bv.TestName.ShouldContain(bv.ScreenResolution);
+                    testName.ShouldContain(bv.ScreenResolution);
                 }
             }
         }
