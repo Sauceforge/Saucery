@@ -1,4 +1,4 @@
-name: TUnit Only Diagonostic
+name: TUnit Only Diagnostic
 
 on:   
   workflow_dispatch:
