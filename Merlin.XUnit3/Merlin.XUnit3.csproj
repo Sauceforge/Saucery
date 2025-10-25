@@ -28,6 +28,4 @@
     <ProjectReference Include="..\Saucery.XUnit3\Saucery.XUnit3.csproj" />
   </ItemGroup>
 
-  <ProjectExtensions><VisualStudio><UserProperties xunit_1runner_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
-
 </Project>
