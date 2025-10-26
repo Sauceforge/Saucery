@@ -256,4 +256,4 @@ foreach($spec in $SnapshotSpecs){
   Set-TemplatePackages -TemplatePath $spec.SnapshotPath -PackageVersions $versions | Out-Null
 }
 
-Write-Host 'All done.'
+Write-Host 'All done!'
