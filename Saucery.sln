@@ -99,8 +99,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Merlin.XUnit3.RealDevices",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NUnit", "NUnit", "{784563EB-4394-4C8F-9C58-871307483D53}"
 	ProjectSection(SolutionItems) = preProject
-		Templates\NUnit\ExternalMerlin.NUnit.csproj = Templates\NUnit\ExternalMerlin.NUnit.csproj
 		Templates\NUnit\NuGetIntegrationTests.cs = Templates\NUnit\NuGetIntegrationTests.cs
+		Templates\NUnit\MyTestProject.csproj = Templates\NUnit\MyTestProject.csproj
 		Templates\NUnit\RequestedPlatformData.cs = Templates\NUnit\RequestedPlatformData.cs
 		Templates\NUnit\.template.config\template.json = Templates\NUnit\.template.config\template.json
 	EndProjectSection
@@ -120,8 +120,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XUnit", "XUnit", "{9AFD0EE5
 	ProjectSection(SolutionItems) = preProject
 		Templates\XUnit\ClickLinkTests.cs = Templates\XUnit\ClickLinkTests.cs
 		Templates\XUnit\DataDrivenTests.cs = Templates\XUnit\DataDrivenTests.cs
-		Templates\XUnit\ExternalMerlin.XUnit.csproj = Templates\XUnit\ExternalMerlin.XUnit.csproj
 		Templates\XUnit\RequestedPlatformData.cs = Templates\XUnit\RequestedPlatformData.cs
+		Templates\XUnit\MyTestProject.csproj = Templates\XUnit\MyTestProject.csproj
 		Templates\XUnit\.template.config\template.json = Templates\XUnit\.template.config\template.json
 		Templates\XUnit\Usings.cs = Templates\XUnit\Usings.cs
 	EndProjectSection
