@@ -37,22 +37,22 @@ public static class PlatformDataClass {
     public static List<SaucePlatform> RealAndroidDevices =>
     [
         new AndroidRealDevice("Google.*", "15"),
-        new AndroidRealDevice("Google Pixel 8 | Android 15 Beta", "15"),
+        new AndroidRealDevice("Google Pixel 8 Pro", "15"),
         new AndroidRealDevice("Google Pixel 8 Pro", "14"),
         new AndroidRealDevice("Google Pixel 7 Pro", "13"),
         new AndroidRealDevice("Google Pixel 6a", "12"),
         new AndroidRealDevice("Google Pixel 4a", "11"),
         new AndroidRealDevice("Google Pixel 4 XL", "10"),
-        new AndroidRealDevice("Samsung Galaxy Tab S4 10.5", "9")
+        new AndroidRealDevice("Samsung.*", "9")
     ];
 
     public static List<SaucePlatform> RealIOSDevices =>
     [
-        new IOSRealDevice("iPhone 15 Plus", "18"),
+        new IOSRealDevice("iPhone 15 Pro Max", "18"),
         new IOSRealDevice("iPhone 15 Pro Max", "17"),
         new IOSRealDevice("iPhone 14 Pro Max", "16"),
         new IOSRealDevice("iPhone 13 Pro Max", "15"),
         new IOSRealDevice("iPhone 12 Pro Max", "14"),
-        new IOSRealDevice("iPhone 8 Plus", "13"),
+        new IOSRealDevice("iPhone.*", "13"),
     ];
 }

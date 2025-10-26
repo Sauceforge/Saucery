@@ -3,6 +3,8 @@ using Saucery.Core.Tests.DataProviders;
 using Saucery.Core.Tests.Fixtures;
 using Shouldly;
 
+[assembly: NotInParallel]
+
 namespace Saucery.Core.Tests;
 
 public class SauceryTestDataRealDeviceTests() : SauceryTestData {
