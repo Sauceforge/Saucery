@@ -17,7 +17,6 @@ namespace Saucery;
 
 public class SauceryBase
 {
-    private readonly Lock _testNotifyLock = new();
     private string? _testName;
     protected WebDriver? Driver;
     private readonly BrowserVersion? _browserVersion;
@@ -34,15 +33,11 @@ public class SauceryBase
     [SetUp]
     public void Setup()
     {
-        lock (_browserVersion!)
-        {
-            _browserVersion?.SetTestName(TestContext.CurrentContext.Test.Name);
-            _testName = _browserVersion?.TestName;
-        }
+        _testName = BrowserVersion.GenerateTestName(_browserVersion!, TestContext.CurrentContext.Test.Name);
 
         // set up the desired options
         _optionFactory = new OptionFactory(_browserVersion!);
-        var tuple = _optionFactory.CreateOptions(_testName!);
+        var tuple = _optionFactory.CreateOptions(_testName);
 
         var driverInitialised = InitialiseDriver(tuple!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
 
@@ -67,14 +62,11 @@ public class SauceryBase
                 // log the result to SauceLabs
                 if (_browserVersion!.IsARealDevice())
                 {
-                    lock (_testNotifyLock)
+                    var realDeviceJobs = _sauceLabsRealDeviceAcquirer.AcquireRealDeviceJobs();
+                    var jobs = realDeviceJobs?.entities.FindAll(x => x.name.Equals(_testName));
+                    foreach (var job in jobs!)
                     {
-                        var realDeviceJobs = _sauceLabsRealDeviceAcquirer.AcquireRealDeviceJobs();
-                        var jobs = realDeviceJobs?.entities.FindAll(x => x.name.Equals(_browserVersion!.TestName));
-                        foreach (var job in jobs!)
-                        {
-                            _sauceLabsRealDeviceStatusNotifier.NotifyRealDeviceStatus(job.id, isPassed);
-                        }
+                        _sauceLabsRealDeviceStatusNotifier.NotifyRealDeviceStatus(job.id, isPassed);
                     }
                 }
                 else
