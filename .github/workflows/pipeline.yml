@@ -79,13 +79,6 @@ jobs:
     - name: Compile solution
       run: dotnet build -c ${{ env.CONFIG }}
 
-    ## Run code analysis for all projects/solutions, such that code analysis violations break the build.
-    #- name: Run .NET Code Analysis
-    #  uses: dotnet/code-analysis@v1
-    #  id: code-analysis
-    #  with:
-    #    build-breaking: true
-
     - name: Run TUnit Unit tests (with coverage + TRX)
       run: |
        dotnet run -c ${{ env.CONFIG }} --project ${{ env.UT_PROJECT }} -- \
