@@ -40,7 +40,7 @@ jobs:
       run: ls -R
 
     - name: Publish Artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: tunit-integration-log-diag
         path: ${{ env.COVERLET_DIR }}/**/*.diag
@@ -64,7 +64,7 @@ jobs:
       run: dotnet run -c ${{ env.CONFIG }} --project ${{ env.M_RD_TUNIT_PROJECT }} -- --results-directory "TestResults" --log-level Debug --diagnostic
     
     - name: Publish Artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: tunit-real-integration-log-diag
         path: ${{ env.COVERLET_DIR }}/**/*.diag
