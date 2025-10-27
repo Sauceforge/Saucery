@@ -76,13 +76,13 @@ jobs:
       run: ls -R
 
     - name: Upload TRX
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: unit-test-trx
         path: ${{ env.COVERLET_DIR }}/unit.trx
 
     - name: Publish Artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: unit-test-results
         path: ${{ env.COVERLET_DIR }}/${{env.UNIT_COVERAGE_FILENAME}}
@@ -117,7 +117,7 @@ jobs:
       run: ls -R
 
     - name: Publish Artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: nunit-integration-test-results
         path: ${{ env.COVERLET_DIR }}/${{env.NUNIT_INTEGRATION_COVERAGE_FILENAME}}
@@ -152,7 +152,7 @@ jobs:
       run: ls -R
 
     - name: Publish Artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: nunit-real-integration-test-results
         path: ${{ env.COVERLET_DIR }}/${{env.NUNIT_RD_INTEGRATION_COVERAGE_FILENAME}}
@@ -195,7 +195,7 @@ jobs:
         reporttypes: 'HtmlInline;Cobertura' # The output formats and scope (separated by semicolon) Values: Badges, Clover, Cobertura, CsvSummary, Html, HtmlChart, HtmlInline, HtmlInline_AzurePipelines, HtmlInline_AzurePipelines_Dark, HtmlSummary, JsonSummary, Latex, LatexSummary, lcov, MarkdownSummary, MHtml, PngChart, SonarQube, TeamCitySummary, TextSummary, Xml, XmlSummary
 
     - name: Upload coverage report artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: CoverageReport # Artifact name        
         path: coveragereport # Directory containing files to upload
