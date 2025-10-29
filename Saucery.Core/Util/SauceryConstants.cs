@@ -155,6 +155,7 @@ public static class SauceryConstants {
     internal const string IOS_ON_WEBDRIVER = "IOS on WebDriver";
     internal const string DESKTOP_ON_WEBDRIVER = "Desktop on WebDriver";
     internal const string NUM_VALID_PLATFORMS = "{0} of {1} platforms requested are valid";
+    internal const string INVALID_PLATFORMS = "Invalid Platforms are: {0}";
 
     //TEST VISIBILITY
     internal const string VISIBILITY_KEY = "public";

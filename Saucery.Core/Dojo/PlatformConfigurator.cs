@@ -13,6 +13,7 @@ public class PlatformConfigurator
     private SauceLabsRealDeviceAcquirer RealDeviceAcquirer { get; } = new();
     public List<PlatformBase> AvailablePlatforms { get; } = [];
     public List<PlatformBase> AvailableRealDevices { get; } = [];
+    public List<SaucePlatform> InvalidPlatforms { get; } = [];
 
     public PlatformConfigurator(PlatformFilter filter)
     {
@@ -146,6 +147,10 @@ public class PlatformConfigurator
             .ToList();
 
         Console.WriteLine(SauceryConstants.NUM_VALID_PLATFORMS, browserVersions.Count, platforms.Count);
+        if(InvalidPlatforms.Count > 0) 
+        {
+            Console.WriteLine(SauceryConstants.INVALID_PLATFORMS, InvalidPlatforms.ToCSV());
+        }
 
         return browserVersions!;
     }
@@ -154,9 +159,15 @@ public class PlatformConfigurator
     {
         if (platform.IsARealDevice())
         {
-            return ValidateReal(platform) != null
-                ? new BrowserVersion(platform)
-                : null;
+            var validRealPlatform = ValidateReal(platform);
+
+            if (validRealPlatform == null)
+            {
+                InvalidPlatforms.Add(platform);
+                return null;
+            }
+
+            return new BrowserVersion(platform);
         }
 
         var browserVersion = Validate(platform);
@@ -164,6 +175,10 @@ public class PlatformConfigurator
         {
             browserVersion.ScreenResolution = platform.ScreenResolution;
             browserVersion.DeviceOrientation = platform.DeviceOrientation;
+        }
+        else
+        {
+            InvalidPlatforms.Add(platform);
         }
 
         return browserVersion;
