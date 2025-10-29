@@ -38,20 +38,20 @@ public static class AndroidDataClass {
     public static IEnumerable<SaucePlatform> SupportedTestCases 
         => 
         [
-            new AndroidPlatform("Google Pixel 8 Pro GoogleAPI Emulator", "16.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
-            new AndroidPlatform("Google Pixel 8 Pro GoogleAPI Emulator", "15.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
-            new AndroidPlatform("Google Pixel 8 Pro GoogleAPI Emulator", "14.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
-            new AndroidPlatform("Google Pixel 7a GoogleAPI Emulator", "13.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
-            new AndroidPlatform("Google Pixel 5 GoogleAPI Emulator", "12.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
-            new AndroidPlatform("Google Pixel 4a GoogleAPI Emulator", "11.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
-            new AndroidPlatform("Google Pixel 3a GoogleAPI Emulator", "10.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
-            new AndroidPlatform("Google Pixel 3 GoogleAPI Emulator", "9.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
-            new AndroidPlatform("Google Pixel C GoogleAPI Emulator", "8.1", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
-            new AndroidPlatform("Google Pixel C GoogleAPI Emulator", "8.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
-            new AndroidPlatform("Google Pixel C GoogleAPI Emulator", "7.1", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
-            new AndroidPlatform("Google Pixel C GoogleAPI Emulator", "7.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
-            new AndroidPlatform("Android GoogleAPI Emulator", "6.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
-            new AndroidPlatform("Android GoogleAPI Emulator", "5.1", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE)
+            new AndroidPlatform("Google Pixel 9 Pro Emulator", "16.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
+            new AndroidPlatform("Google Pixel 9 Pro Emulator", "15.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
+            new AndroidPlatform("Google Pixel 8 Pro Emulator", "14.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
+            new AndroidPlatform("Google Pixel 7 Pro Emulator", "13.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
+            new AndroidPlatform("Google Pixel 5 Emulator", "12.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
+            new AndroidPlatform("Google Pixel 4a Emulator", "11.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
+            new AndroidPlatform("Google Pixel 3a Emulator", "10.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
+            new AndroidPlatform("Google Pixel 3 Emulator", "9.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
+            new AndroidPlatform("Google Pixel Emulator", "8.1", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
+            new AndroidPlatform("Google Pixel Emulator", "8.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
+            new AndroidPlatform("Google Nexus 9 Tablet Emulator", "7.1", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
+            new AndroidPlatform("Google Nexus 9 Tablet Emulator", "7.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
+            new AndroidPlatform("Google Nexus 9 Tablet Emulator", "6.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE),
+            new AndroidPlatform("Google Nexus 10 Tablet Emulator", "5.1", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE)
         ];
 
     public static IEnumerable<SaucePlatform> NotSupportedTestCases

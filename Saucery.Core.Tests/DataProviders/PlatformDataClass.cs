@@ -26,7 +26,7 @@ public static class PlatformDataClass {
 
     public static List<SaucePlatform> EmulatedAndroidPlatforms =>
     [
-        new AndroidPlatform("Google Pixel 8 Pro GoogleAPI Emulator", "15.0", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT),
+        new AndroidPlatform("Google Pixel Tablet Emulator", "15.0", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT),
     ];
 
     public static List<SaucePlatform> EmulatedIOSPlatforms =>
