@@ -88,7 +88,7 @@ function Get-PackageVersionFromRoot {
   $proj = Get-ChildItem -Path $ProjectRoot -Recurse -Filter '*.csproj' -File -ErrorAction SilentlyContinue
   foreach($p in $proj){
     try {
-      [xml]$x = Get-Content -Raw -LiteralPath $p.FullName
+      [xml]$x = Get-Content -Raw -LiteralPath $p.FulLName
       $n = Select-SingleNodeNs $x "//msbuild:PackageReference[@Include='$PackageId' and @Version]" "//*[local-name()='PackageReference' and @Include='$PackageId' and @Version]"
       if ($n) { return $n.GetAttribute('Version') }
     } catch { }
@@ -180,7 +180,83 @@ cls
 .\Update-NuGetNext-All.ps1 -PackageId 'xunit.v3'                              -Root (Join-Path $Repo 'Saucery.XUnit3')
 .\Update-NuGetNext-All.ps1 -PackageId 'xunit.runner.visualstudio'             -Root (Join-Path $Repo 'Saucery.XUnit3')
 
-# (Merlin / ExternalMerlin blocks can remain here if you use them)
+# ===================== ADDED to match previous script =====================
+
+# MERLINS
+# Merlin.NUnit
+.\Update-NuGetNext-All.ps1 -PackageId 'DotNetSeleniumExtras.PageObjects.Core' -Root (Join-Path $Repo 'Merlin.NUnit')
+.\Update-NuGetNext-All.ps1 -PackageId 'Microsoft.NET.Test.Sdk'                -Root (Join-Path $Repo 'Merlin.NUnit')
+.\Update-NuGetNext-All.ps1 -PackageId 'Microsoft.Web.Xdt'                     -Root (Join-Path $Repo 'Merlin.NUnit')
+.\Update-NuGetNext-All.ps1 -PackageId 'NUnit3TestAdapter'                     -Root (Join-Path $Repo 'Merlin.NUnit')
+
+# Merlin.NUnit.RealDevices
+.\Update-NuGetNext-All.ps1 -PackageId 'coverlet.msbuild'                      -Root (Join-Path $Repo 'Merlin.NUnit.RealDevices')
+.\Update-NuGetNext-All.ps1 -PackageId 'DotNetSeleniumExtras.PageObjects.Core' -Root (Join-Path $Repo 'Merlin.NUnit.RealDevices')
+.\Update-NuGetNext-All.ps1 -PackageId 'Microsoft.NET.Test.Sdk'                -Root (Join-Path $Repo 'Merlin.NUnit.RealDevices')
+.\Update-NuGetNext-All.ps1 -PackageId 'Microsoft.Web.Xdt'                     -Root (Join-Path $Repo 'Merlin.NUnit.RealDevices')
+.\Update-NuGetNext-All.ps1 -PackageId 'NUnit3TestAdapter'                     -Root (Join-Path $Repo 'Merlin.NUnit.RealDevices')
+
+# Merlin.Playwright.NUnit
+.\Update-NuGetNext-All.ps1 -PackageId 'Microsoft.NET.Test.Sdk' -Root (Join-Path $Repo 'Merlin.Playwright.NUnit')
+.\Update-NuGetNext-All.ps1 -PackageId 'NUnit'                  -Root (Join-Path $Repo 'Merlin.Playwright.NUnit')
+.\Update-NuGetNext-All.ps1 -PackageId 'NUnit3TestAdapter'      -Root (Join-Path $Repo 'Merlin.Playwright.NUnit')
+.\Update-NuGetNext-All.ps1 -PackageId 'NUnit.Analyzers'        -Root (Join-Path $Repo 'Merlin.Playwright.NUnit')
+.\Update-NuGetNext-All.ps1 -PackageId 'coverlet.collector'     -Root (Join-Path $Repo 'Merlin.Playwright.NUnit')
+
+# Merlin.XUnit
+.\Update-NuGetNext-All.ps1 -PackageId 'Meziantou.Xunit.ParallelTestFramework' -Root (Join-Path $Repo 'Merlin.XUnit')
+.\Update-NuGetNext-All.ps1 -PackageId 'Microsoft.NET.Test.Sdk'                -Root (Join-Path $Repo 'Merlin.XUnit')
+.\Update-NuGetNext-All.ps1 -PackageId 'coverlet.collector'                    -Root (Join-Path $Repo 'Merlin.XUnit')
+.\Update-NuGetNext-All.ps1 -PackageId 'coverlet.msbuild'                      -Root (Join-Path $Repo 'Merlin.XUnit')
+
+# Merlin.XUnit.RealDevices
+.\Update-NuGetNext-All.ps1 -PackageId 'Meziantou.Xunit.ParallelTestFramework' -Root (Join-Path $Repo 'Merlin.XUnit.RealDevices')
+.\Update-NuGetNext-All.ps1 -PackageId 'Microsoft.NET.Test.Sdk'                -Root (Join-Path $Repo 'Merlin.XUnit.RealDevices')
+.\Update-NuGetNext-All.ps1 -PackageId 'coverlet.collector'                    -Root (Join-Path $Repo 'Merlin.XUnit.RealDevices')
+.\Update-NuGetNext-All.ps1 -PackageId 'coverlet.msbuild'                      -Root (Join-Path $Repo 'Merlin.XUnit.RealDevices')
+
+# Merlin.TUnit
+.\Update-NuGetNext-All.ps1 -PackageId 'coverlet.collector'                    -Root (Join-Path $Repo 'Merlin.TUnit')
+.\Update-NuGetNext-All.ps1 -PackageId 'coverlet.msbuild'                      -Root (Join-Path $Repo 'Merlin.TUnit')
+
+# Merlin.TUnit.RealDevices
+.\Update-NuGetNext-All.ps1 -PackageId 'coverlet.collector'                    -Root (Join-Path $Repo 'Merlin.TUnit.RealDevices')
+.\Update-NuGetNext-All.ps1 -PackageId 'coverlet.msbuild'                      -Root (Join-Path $Repo 'Merlin.TUnit.RealDevices')
+
+# Merlin.XUnit3
+.\Update-NuGetNext-All.ps1 -PackageId 'Microsoft.NET.Test.Sdk'                -Root (Join-Path $Repo 'Merlin.XUnit3')
+
+# Merlin.XUnit3.RealDevices
+.\Update-NuGetNext-All.ps1 -PackageId 'Microsoft.NET.Test.Sdk'                -Root (Join-Path $Repo 'Merlin.XUnit3.RealDevices')
+
+# EXTERNALMERLINS
+# ExternalMerlin.NUnit
+.\Update-NuGetNext-All.ps1 -PackageId 'NUnit3TestAdapter'                     -Root (Join-Path $Repo 'ExternalMerlin.NUnit')
+.\Update-NuGetNext-All.ps1 -PackageId 'Saucery'                               -Root (Join-Path $Repo 'ExternalMerlin.NUnit')
+
+# ExternalMerlin.NUnit.RealDevices
+.\Update-NuGetNext-All.ps1 -PackageId 'NUnit3TestAdapter'                     -Root (Join-Path $Repo 'ExternalMerlin.NUnit.RealDevices')
+.\Update-NuGetNext-All.ps1 -PackageId 'Saucery'                               -Root (Join-Path $Repo 'ExternalMerlin.NUnit.RealDevices')
+
+# ExternalMerlin.XUnit
+.\Update-NuGetNext-All.ps1 -PackageId 'Saucery.XUnit'                         -Root (Join-Path $Repo 'ExternalMerlin.XUnit')
+
+# ExternalMerlin.XUnit.RealDevices
+.\Update-NuGetNext-All.ps1 -PackageId 'Saucery.XUnit'                         -Root (Join-Path $Repo 'ExternalMerlin.XUnit.RealDevices')
+
+# ExternalMerlin.TUnit
+.\Update-NuGetNext-All.ps1 -PackageId 'Saucery.TUnit'                         -Root (Join-Path $Repo 'ExternalMerlin.TUnit')
+
+# ExternalMerlin.TUnit.RealDevices
+.\Update-NuGetNext-All.ps1 -PackageId 'Saucery.TUnit'                         -Root (Join-Path $Repo 'ExternalMerlin.TUnit.RealDevices')
+
+# ExternalMerlin.XUnit3
+.\Update-NuGetNext-All.ps1 -PackageId 'xunit.runner.visualstudio'             -Root (Join-Path $Repo 'ExternalMerlin.XUnit3')
+.\Update-NuGetNext-All.ps1 -PackageId 'Saucery.XUnit.v3'                      -Root (Join-Path $Repo 'ExternalMerlin.XUnit3')
+
+# ExternalMerlin.XUnit3.RealDevices
+.\Update-NuGetNext-All.ps1 -PackageId 'xunit.runner.visualstudio'             -Root (Join-Path $Repo 'ExternalMerlin.XUnit3.RealDevices')
+.\Update-NuGetNext-All.ps1 -PackageId 'Saucery.XUnit.v3'                      -Root (Join-Path $Repo 'ExternalMerlin.XUnit3.RealDevices')
 
 # ===================== Run child project syncs =====================
 Write-Host ("Running syncs from {0} ..." -f $Root)
