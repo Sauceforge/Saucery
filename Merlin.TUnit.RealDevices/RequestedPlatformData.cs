@@ -13,7 +13,7 @@ public class RequestedPlatformData : SauceryTestData
         {
             //Real Devices
             new AndroidRealDevice("Google Pixel 9 Pro XL", "15"),
-            new IOSRealDevice("iPhone 14 Pro Max", "16"),
+            new IOSRealDevice("iPhone 16 Pro Max", "18"),
         };
 
         SetPlatforms(platforms, PlatformFilter.RealDevice);
