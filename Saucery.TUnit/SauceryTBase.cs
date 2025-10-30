@@ -41,7 +41,7 @@ public class SauceryTBase : BaseFixture
             _testName = null;
             if (Driver != null)
             {
-                var passed = TestContext.Current?.Result?.State == TestState.Passed;
+                var passed = TestContext.Current?.Execution.Result?.State == TestState.Passed;
                 // log the result to SauceLabs
                 if(_browserVersion!.IsARealDevice()) {
                     var realDeviceJobs = SauceLabsRealDeviceAcquirer.AcquireRealDeviceJobs();
@@ -66,7 +66,7 @@ public class SauceryTBase : BaseFixture
         }
     }
 
-    private static string GetTestName() => TestContext.Current?.TestDetails.TestName ?? "";
+    private static string GetTestName() => TestContext.Current?.Metadata.TestDetails.TestName ?? "";
 }
 
 /*

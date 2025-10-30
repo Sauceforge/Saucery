@@ -3,7 +3,7 @@ using Saucery.Core.Tests.DataProviders;
 using Saucery.Core.Tests.Fixtures;
 using Shouldly;
 
-//[assembly: NotInParallel]
+[assembly: NotInParallel]
 
 namespace Saucery.Core.Tests;
 
