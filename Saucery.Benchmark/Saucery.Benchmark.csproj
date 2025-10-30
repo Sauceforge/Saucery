@@ -15,6 +15,6 @@
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.15.4" />
     <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.15.4" />
-    <PackageReference Include="Saucery.Core" Version="4.5.49" />
+    <PackageReference Include="Saucery.Core" Version="4.5.50" />
   </ItemGroup>
 </Project>
