@@ -8,7 +8,6 @@ on:
       - 'ExternalMerlin.NUnit.RealDevices/**'
     branches:
       - master
-      - 'dependabot/**'
       - 'releases/**'
       - 'feat/**'
       - 'feature/**'

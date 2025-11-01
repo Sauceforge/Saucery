@@ -9,7 +9,6 @@ on:
       - 'Merlin.XUnit.RealDevices/**'
     branches:
       - master
-      - 'dependabot/**'
       - 'releases/**'
       - 'feat/**'
       - 'feature/**'
