@@ -146,13 +146,18 @@ public class PlatformConfigurator
             .Where(bv => bv != null)
             .ToList();
 
-        Console.WriteLine(SauceryConstants.NUM_VALID_PLATFORMS, browserVersions.Count, platforms.Count);
-        if(InvalidPlatforms.Count > 0) 
-        {
-            Console.WriteLine(SauceryConstants.INVALID_PLATFORMS, InvalidPlatforms.ToCSV());
-        }
+        PrintPlatformsMessage(platforms, browserVersions);
 
         return browserVersions!;
+    }
+
+    private void PrintPlatformsMessage(List<SaucePlatform> platforms, List<BrowserVersion?> browserVersions) {
+        Console.WriteLine(SauceryConstants.NUM_VALID_PLATFORMS, browserVersions.Count, platforms.Count);
+        if(InvalidPlatforms.Count > 0) {
+            Console.WriteLine(SauceryConstants.INVALID_PLATFORMS, InvalidPlatforms.ToCSV());
+        } else {
+            Console.WriteLine(SauceryConstants.NO_INVALID_PLATFORMS);
+        }
     }
 
     public BrowserVersion? Filter(SaucePlatform platform)
