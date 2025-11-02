@@ -13,7 +13,7 @@ on:
       - 'fix/**'
       - 'test/**'
       - 'bug/**'
-    workflow_dispatch:
+  workflow_dispatch:
 
 run-name: ${{ github.event.head_commit.message || github.event.inputs.message || 'Manual Run' }}
 
