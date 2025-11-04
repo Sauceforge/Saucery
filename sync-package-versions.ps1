@@ -200,7 +200,7 @@ cls
 .\Update-NuGetNext-All.ps1 -PackageId 'NUnit3TestAdapter'                     -Root (Join-Path $Repo 'Merlin.NUnit')
 
 # Merlin.NUnit.RealDevices
-#.\Update-NuGetNext-All.ps1 -PackageId 'coverlet.msbuild'                      -Root (Join-Path $Repo 'Merlin.NUnit.RealDevices')
+.\Update-NuGetNext-All.ps1 -PackageId 'coverlet.msbuild'                      -Root (Join-Path $Repo 'Merlin.NUnit.RealDevices')
 .\Update-NuGetNext-All.ps1 -PackageId 'DotNetSeleniumExtras.PageObjects.Core' -Root (Join-Path $Repo 'Merlin.NUnit.RealDevices')
 .\Update-NuGetNext-All.ps1 -PackageId 'Microsoft.NET.Test.Sdk'                -Root (Join-Path $Repo 'Merlin.NUnit.RealDevices')
 .\Update-NuGetNext-All.ps1 -PackageId 'Microsoft.Web.Xdt'                     -Root (Join-Path $Repo 'Merlin.NUnit.RealDevices')
