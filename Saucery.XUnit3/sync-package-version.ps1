@@ -75,7 +75,7 @@ foreach ($ig in $xml.Project.ItemGroup) {
     if ($ig -and $ig.PackageReference) { $pkgRefs += $ig.PackageReference }
 }
 
-$xunit3 = $pkgRefs | Where-Object { $_.Include -eq 'xunit.v3' } | Select-Object -First 1
+$xunit3 = $pkgRefs | Where-Object { $_.Include -eq 'xunit.v3.mtp-v2' } | Select-Object -First 1
 if (-not $xunit3) { Write-Error "XUnit3 PackageReference not found."; exit 1 }
 
 # Prefer Version attribute, then <Version> child
