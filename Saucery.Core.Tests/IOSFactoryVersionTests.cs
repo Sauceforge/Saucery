@@ -34,6 +34,8 @@ public class IOSFactoryVersionTests()
 
         var tuple = factory.CreateOptions("AppiumIOSOptionTest");
         tuple.opts.ShouldNotBeNull();
+        tuple.browserVersion.ShouldNotBeNull();
+        tuple.browserVersion.ShouldBeEquivalentTo(validPlatform);
     }
 }
 
