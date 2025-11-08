@@ -85,6 +85,26 @@ public class BrowserVersion {
     }
 
     /// <summary>
+    /// Copy constructor - creates a new independent instance with the same values.
+    /// This ensures test isolation by preventing shared mutable state.
+    /// </summary>
+    public BrowserVersion(BrowserVersion other) {
+        Os = other.Os;
+        PlatformNameForOption = other.PlatformNameForOption;
+        BrowserName = other.BrowserName;
+        Name = other.Name;
+        AutomationBackend = other.AutomationBackend;
+        DeviceName = other.DeviceName;
+        RecommendedAppiumVersion = other.RecommendedAppiumVersion;
+        SupportedBackendVersions = [..other.SupportedBackendVersions];
+        DeprecatedBackendVersions = [..other.DeprecatedBackendVersions];
+        DeviceOrientation = other.DeviceOrientation;
+        ScreenResolution = other.ScreenResolution;
+        PlatformType = other.PlatformType;
+        ScreenResolutions = [..other.ScreenResolutions];
+    }
+
+    /// <summary>
     /// Generates a unique test name from this configuration and the test context.
     /// This does not mutate the BrowserVersion instance.
     /// </summary>

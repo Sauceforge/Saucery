@@ -24,11 +24,18 @@ public class SauceryTestData : IEnumerable
         BrowserVersions = platformConfigurator.FilterAll(expandedPlatforms);
     }
 
-    public static IEnumerable<BrowserVersion> Items => 
+    /// <summary>
+    /// Returns fresh instances to ensure test isolation.
+    /// Each access creates new BrowserVersion instances to prevent state leakage across tests.
+    /// </summary>
+    public static IEnumerable<BrowserVersion> Items =>
         BrowserVersions!
-            .Select(x => x)
+            .Select(x => new BrowserVersion(x))
             .AsEnumerable();
 
+    /// <summary>
+    /// Returns platforms wrapped in object arrays, with fresh instances for test isolation.
+    /// </summary>
     protected static IEnumerable<object[]> GetAllPlatforms() {
         List<object[]> allPlatforms = [];
         allPlatforms.AddRange(Items.Select(platform => (object[])[platform]));
@@ -36,8 +43,12 @@ public class SauceryTestData : IEnumerable
         return allPlatforms.AsEnumerable();
     }
 
+    /// <summary>
+    /// Returns factory functions that create fresh BrowserVersion instances when invoked.
+    /// This ensures each test gets its own independent instance, preventing state leakage.
+    /// </summary>
     protected static List<Func<BrowserVersion>> GetAllPlatformsAsFunc() =>
-        [.. Items.Select(platform => (Func<BrowserVersion>)(() => platform))];
+        [.. BrowserVersions!.Select(template => (Func<BrowserVersion>)(() => new BrowserVersion(template)))];
 }
 /*
 * Copyright Andrew Gray, SauceForge

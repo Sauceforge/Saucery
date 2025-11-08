@@ -122,7 +122,7 @@ public static class DojoExtensions
             b.Os.Equals(sp.Os, StringComparison.Ordinal) &&
             b.Name.Equals(sp.Browser, StringComparison.OrdinalIgnoreCase));
 
-        return sp.ScreenResolution == string.Empty
+        var template = sp.ScreenResolution == string.Empty
             ? browser?.BrowserVersions.FirstOrDefault(v =>
                 v.Os.Equals(sp.Os, StringComparison.Ordinal) &&
                 v.BrowserName.Equals(sp.Browser, StringComparison.OrdinalIgnoreCase) &&
@@ -132,6 +132,9 @@ public static class DojoExtensions
                 v.BrowserName.Equals(sp.Browser, StringComparison.OrdinalIgnoreCase) &&
                 v.Name!.Equals(sp.BrowserVersion, StringComparison.OrdinalIgnoreCase) &&
                 v.ScreenResolutions.Contains(sp.ScreenResolution));
+
+        // Return a new instance instead of a reference to prevent state leakage across tests
+        return template != null ? new BrowserVersion(template) : null;
     }
 
     public static BrowserVersion? FindAndroidBrowser(this List<PlatformBase> platforms, SaucePlatform sp)
@@ -160,12 +163,15 @@ public static class DojoExtensions
             b.Os.Equals(sp.Os, StringComparison.Ordinal) &&
             b.DeviceName.Equals(sp.LongName, StringComparison.Ordinal));
 
-        return browser?.BrowserVersions.Count == 1
+        var template = browser?.BrowserVersions.Count == 1
             ? browser.BrowserVersions[0]
             : browser?.BrowserVersions.FirstOrDefault(v =>
                 v.Os.Equals(sp.Os, StringComparison.Ordinal) &&
                 v.DeviceName.Equals(sp.LongName, StringComparison.Ordinal) &&
                 v.Name!.Equals(sp.BrowserVersion, StringComparison.Ordinal));
+
+        // Return a new instance instead of a reference to prevent state leakage across tests
+        return template != null ? new BrowserVersion(template) : null;
     }
 
     public static PlatformBase? FindAndroidPlatform(this List<PlatformBase> platforms, SaucePlatform sp)
@@ -212,12 +218,15 @@ public static class DojoExtensions
             b.PlatformNameForOption.Equals(sp.Os, StringComparison.Ordinal) &&
             b.DeviceName.Equals(sp.LongName, StringComparison.Ordinal));
 
-        return browser?.BrowserVersions.Count == 1
+        var template = browser?.BrowserVersions.Count == 1
             ? browser.BrowserVersions[0]
             : browser?.BrowserVersions.FirstOrDefault(v =>
                 v.PlatformNameForOption.Equals(sp.Os, StringComparison.Ordinal) &&
                 v.DeviceName.Equals(sp.LongName, StringComparison.Ordinal) &&
                 v.Name!.Equals(sp.BrowserVersion, StringComparison.Ordinal));
+
+        // Return a new instance instead of a reference to prevent state leakage across tests
+        return template != null ? new BrowserVersion(template) : null;
     }
 
     public static PlatformBase? FindIOSPlatform(this List<PlatformBase> platforms, SaucePlatform sp)
