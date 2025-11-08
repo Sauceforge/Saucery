@@ -1,6 +1,9 @@
 name: Saucery.Core Pipeline
 
 on:
+  pull_request:
+     branches:
+      - '**'
   push:
     paths:
       - '.github/workflows/core-pipeline.yml'
