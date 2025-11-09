@@ -1,9 +1,48 @@
-﻿param(
-    [string]$Root = (Split-Path -Parent $MyInvocation.MyCommand.Path),
-    [string]$ScriptName = 'sync-package-version.ps1'
-)
+﻿# sync-all-package-versions.ps1
+# Cross-platform (Windows + GitHub Actions) package sync script
+# - Auto-detects both the script directory ($Root) and the repository root ($Repo)
+# - No parameters are required or expected
 
-$Repo = 'C:\gitrepos\Saucery'
+# ===================== Discover script dir ($Root) =====================
+# Prefer $PSScriptRoot; fall back to MyInvocation; finally Get-Location
+if ($PSVersionTable.PSVersion.Major -ge 3 -and $PSScriptRoot) {
+    $Root = $PSScriptRoot
+} elseif ($MyInvocation.MyCommand.Path) {
+    $Root = Split-Path -Parent $MyInvocation.MyCommand.Path
+} else {
+    $Root = (Get-Location).Path
+}
+
+# Child script each project runs (plural aligns with CI usage)
+$ScriptName = 'sync-package-versions.ps1'
+
+# ===================== Repo root detection (cross-platform) =====================
+function Resolve-RepoRoot([string]$start) {
+    # 1) Use Git if available
+    $git = Get-Command git -ErrorAction SilentlyContinue
+    if ($git) {
+        try {
+            $top = & $git.Path -C $start rev-parse --show-toplevel 2>$null
+            if ($LASTEXITCODE -eq 0 -and $top) { return (Resolve-Path -LiteralPath $top).Path }
+        } catch { }
+    }
+
+    # 2) Walk upward to find .git directory
+    $current = Resolve-Path -LiteralPath $start
+    while ($current) {
+        if (Test-Path -LiteralPath (Join-Path $current '.git')) { return $current }
+        $parent = Split-Path -Parent $current
+        if (-not $parent -or $parent -eq $current) { break }
+        $current = $parent
+    }
+
+    # 3) Fallback
+    return (Resolve-Path -LiteralPath $start).Path
+}
+
+$Repo = Resolve-RepoRoot -start $Root
+Write-Host "Using repository root: $Repo"
+Write-Host "Using script root    : $Root"
 
 # ===================== Helpers =====================
 
@@ -84,7 +123,7 @@ function Get-PackageVersionFromRoot {
     } catch { }
   }
 
-  # 2) Explicit PackageReference in a csproj
+  # 2) Explicit PackageReference in a csproj (with @Version)
   $proj = Get-ChildItem -Path $ProjectRoot -Recurse -Filter '*.csproj' -File -ErrorAction SilentlyContinue
   foreach($p in $proj){
     try {
@@ -150,7 +189,7 @@ function Invoke-Sync([string]$Project,[string]$Root,[string]$ScriptName) {
 
 $Projects = @('Saucery','Saucery.Playwright.NUnit','Saucery.XUnit','Saucery.XUnit3','Saucery.TUnit')
 
-cls
+try { Clear-Host } catch {}
 
 # ===================== Pre-update bumps (same as before) =====================
 .\Update-NuGetNext-All.ps1 -PackageId 'BenchmarkDotNet'                     -Root (Join-Path $Repo 'Saucery.Benchmark')
@@ -243,34 +282,34 @@ cls
 
 # EXTERNALMERLINS
 # ExternalMerlin.NUnit
-.\Update-NuGetNext-All.ps1 -PackageId 'NUnit3TestAdapter'                     -Root (Join-Path $Repo 'ExternalMerlin.NUnit')
-.\Update-NuGetNext-All.ps1 -PackageId 'Saucery'                               -Root (Join-Path $Repo 'ExternalMerlin.NUnit')
+.\Update-NuGetNext-All.ps1 -PackageId 'NUnit3TestAdapter' -Root (Join-Path $Repo 'ExternalMerlin.NUnit')
+.\Update-NuGetNext-All.ps1 -PackageId 'Saucery'           -Root (Join-Path $Repo 'ExternalMerlin.NUnit')
 
 # ExternalMerlin.NUnit.RealDevices
-.\Update-NuGetNext-All.ps1 -PackageId 'NUnit3TestAdapter'                     -Root (Join-Path $Repo 'ExternalMerlin.NUnit.RealDevices')
-.\Update-NuGetNext-All.ps1 -PackageId 'Saucery'                               -Root (Join-Path $Repo 'ExternalMerlin.NUnit.RealDevices')
+.\Update-NuGetNext-All.ps1 -PackageId 'NUnit3TestAdapter' -Root (Join-Path $Repo 'ExternalMerlin.NUnit.RealDevices')
+.\Update-NuGetNext-All.ps1 -PackageId 'Saucery'           -Root (Join-Path $Repo 'ExternalMerlin.NUnit.RealDevices')
 
 # ExternalMerlin.TUnit
-.\Update-NuGetNext-All.ps1 -PackageId 'Saucery.TUnit'                         -Root (Join-Path $Repo 'ExternalMerlin.TUnit')
+.\Update-NuGetNext-All.ps1 -PackageId 'Saucery.TUnit' -Root (Join-Path $Repo 'ExternalMerlin.TUnit')
 
 # ExternalMerlin.TUnit.RealDevices
-.\Update-NuGetNext-All.ps1 -PackageId 'Saucery.TUnit'                         -Root (Join-Path $Repo 'ExternalMerlin.TUnit.RealDevices')
+.\Update-NuGetNext-All.ps1 -PackageId 'Saucery.TUnit' -Root (Join-Path $Repo 'ExternalMerlin.TUnit.RealDevices')
 
 # ExternalMerlin.XUnit
-.\Update-NuGetNext-All.ps1 -PackageId 'xunit.runner.visualstudio'             -Root (Join-Path $Repo 'ExternalMerlin.XUnit')
-.\Update-NuGetNext-All.ps1 -PackageId 'Saucery.XUnit'                         -Root (Join-Path $Repo 'ExternalMerlin.XUnit')
+.\Update-NuGetNext-All.ps1 -PackageId 'xunit.runner.visualstudio' -Root (Join-Path $Repo 'ExternalMerlin.XUnit')
+.\Update-NuGetNext-All.ps1 -PackageId 'Saucery.XUnit'             -Root (Join-Path $Repo 'ExternalMerlin.XUnit')
 
 # ExternalMerlin.XUnit.RealDevices
-.\Update-NuGetNext-All.ps1 -PackageId 'xunit.runner.visualstudio'             -Root (Join-Path $Repo 'ExternalMerlin.XUnit.RealDevices')
-.\Update-NuGetNext-All.ps1 -PackageId 'Saucery.XUnit'                         -Root (Join-Path $Repo 'ExternalMerlin.XUnit.RealDevices')
+.\Update-NuGetNext-All.ps1 -PackageId 'xunit.runner.visualstudio' -Root (Join-Path $Repo 'ExternalMerlin.XUnit.RealDevices')
+.\Update-NuGetNext-All.ps1 -PackageId 'Saucery.XUnit'             -Root (Join-Path $Repo 'ExternalMerlin.XUnit.RealDevices')
 
 # ExternalMerlin.XUnit3
-.\Update-NuGetNext-All.ps1 -PackageId 'xunit.runner.visualstudio'             -Root (Join-Path $Repo 'ExternalMerlin.XUnit3')
-.\Update-NuGetNext-All.ps1 -PackageId 'Saucery.XUnit.v3'                      -Root (Join-Path $Repo 'ExternalMerlin.XUnit3')
+.\Update-NuGetNext-All.ps1 -PackageId 'xunit.runner.visualstudio' -Root (Join-Path $Repo 'ExternalMerlin.XUnit3')
+.\Update-NuGetNext-All.ps1 -PackageId 'Saucery.XUnit.v3'          -Root (Join-Path $Repo 'ExternalMerlin.XUnit3')
 
 # ExternalMerlin.XUnit3.RealDevices
-.\Update-NuGetNext-All.ps1 -PackageId 'xunit.runner.visualstudio'             -Root (Join-Path $Repo 'ExternalMerlin.XUnit3.RealDevices')
-.\Update-NuGetNext-All.ps1 -PackageId 'Saucery.XUnit.v3'                      -Root (Join-Path $Repo 'ExternalMerlin.XUnit3.RealDevices')
+.\Update-NuGetNext-All.ps1 -PackageId 'xunit.runner.visualstudio' -Root (Join-Path $Repo 'ExternalMerlin.XUnit3.RealDevices')
+.\Update-NuGetNext-All.ps1 -PackageId 'Saucery.XUnit.v3'          -Root (Join-Path $Repo 'ExternalMerlin.XUnit3.RealDevices')
 
 # ===================== Run child project syncs =====================
 Write-Host ("Running syncs from {0} ..." -f $Root)
@@ -280,19 +319,19 @@ foreach ($p in $Projects) { Invoke-Sync -Project $p -Root $Root -ScriptName $Scr
 
 $TemplateSpecs = @(
   @{ Kind='NUnit';  ProjectRoot=(Join-Path $Repo 'Saucery');
-     TemplatePath=(Join-Path $Root 'Templates\NUnit\MyTestProject.csproj');
+     TemplatePath=(Join-Path $Root -ChildPath (Join-Path 'Templates' (Join-Path 'NUnit' 'MyTestProject.csproj')));
      Packages=@('Saucery','NUnit','Microsoft.NET.Test.Sdk','NUnit3TestAdapter') },
 
   @{ Kind='TUnit';  ProjectRoot=(Join-Path $Repo 'Saucery.TUnit');
-     TemplatePath=(Join-Path $Root 'Templates\TUnit\MyTestProject.csproj');
+     TemplatePath=(Join-Path $Root -ChildPath (Join-Path 'Templates' (Join-Path 'TUnit' 'MyTestProject.csproj')));
      Packages=@('Saucery.TUnit','Microsoft.NET.Test.Sdk') },
 
   @{ Kind='XUnit';  ProjectRoot=(Join-Path $Repo 'Saucery.XUnit');
-     TemplatePath=(Join-Path $Root 'Templates\XUnit\MyTestProject.csproj');
+     TemplatePath=(Join-Path $Root -ChildPath (Join-Path 'Templates' (Join-Path 'XUnit' 'MyTestProject.csproj')));
      Packages=@('Saucery.XUnit','xunit','xunit.runner.visualstudio','Microsoft.NET.Test.Sdk','Meziantou.Xunit.ParallelTestFramework') },
 
   @{ Kind='XUnit3'; ProjectRoot=(Join-Path $Repo 'Saucery.XUnit3');
-     TemplatePath=(Join-Path $Root 'Templates\XUnit3\MyTestProject.csproj');
+     TemplatePath=(Join-Path $Root -ChildPath (Join-Path 'Templates' (Join-Path 'XUnit3' 'MyTestProject.csproj')));
      Packages=@('Saucery.XUnit.v3','xunit.v3.mtp-v2','xunit.runner.visualstudio','Microsoft.NET.Test.Sdk') }
 )
 
@@ -315,19 +354,19 @@ foreach($spec in $TemplateSpecs){
 
 $SnapshotSpecs = @(
   @{ Kind='NUnit';  ProjectRoot=(Join-Path $Repo 'Saucery');
-     SnapshotPath=(Join-Path $Root 'Template.Tests\Snapshots\GeneratesExpectedNUnitProject.saucery-nunit.--name#MyTestProject.verified\saucery-nunit\MyTestProject.csproj');
+     SnapshotPath=(Join-Path $Root -ChildPath (Join-Path 'Template.Tests' (Join-Path 'Snapshots' (Join-Path 'GeneratesExpectedNUnitProject.saucery-nunit.--name#MyTestProject.verified' (Join-Path 'saucery-nunit' 'MyTestProject.csproj')))));
      Packages=@('Saucery','NUnit','Microsoft.NET.Test.Sdk','NUnit3TestAdapter') },
 
   @{ Kind='XUnit';  ProjectRoot=(Join-Path $Repo 'Saucery.XUnit');
-     SnapshotPath=(Join-Path $Root 'Template.Tests\Snapshots\GeneratesExpectedXUnitProject.saucery-xunit.--name#MyTestProject.verified\saucery-xunit\MyTestProject.csproj');
+     SnapshotPath=(Join-Path $Root -ChildPath (Join-Path 'Template.Tests' (Join-Path 'Snapshots' (Join-Path 'GeneratesExpectedXUnitProject.saucery-xunit.--name#MyTestProject.verified' (Join-Path 'saucery-xunit' 'MyTestProject.csproj')))));
      Packages=@('Saucery.XUnit','xunit','xunit.runner.visualstudio','Microsoft.NET.Test.Sdk','Meziantou.Xunit.ParallelTestFramework') },
 
   @{ Kind='TUnit';  ProjectRoot=(Join-Path $Repo 'Saucery.TUnit');
-     SnapshotPath=(Join-Path $Root 'Template.Tests\Snapshots\GeneratesExpectedTUnitProject.saucery-tunit.--name#MyTestProject.verified\saucery-tunit\MyTestProject.csproj');
+     SnapshotPath=(Join-Path $Root -ChildPath (Join-Path 'Template.Tests' (Join-Path 'Snapshots' (Join-Path 'GeneratesExpectedTUnitProject.saucery-tunit.--name#MyTestProject.verified' (Join-Path 'saucery-tunit' 'MyTestProject.csproj')))));
      Packages=@('Saucery.TUnit','Microsoft.NET.Test.Sdk') },
 
   @{ Kind='XUnit3'; ProjectRoot=(Join-Path $Repo 'Saucery.XUnit3');
-     SnapshotPath=(Join-Path $Root 'Template.Tests\Snapshots\GeneratesExpectedXUnit3Project.saucery-xunit3.--name#MyTestProject.verified\saucery-xunit3\MyTestProject.csproj');
+     SnapshotPath=(Join-Path $Root -ChildPath (Join-Path 'Template.Tests' (Join-Path 'Snapshots' (Join-Path 'GeneratesExpectedXUnit3Project.saucery-xunit3.--name#MyTestProject.verified' (Join-Path 'saucery-xunit3' 'MyTestProject.csproj')))));
      Packages=@('Saucery.XUnit.v3','xunit.v3.mtp-v2','xunit.runner.visualstudio','Microsoft.NET.Test.Sdk') }
 )
 
