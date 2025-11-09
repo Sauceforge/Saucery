@@ -1,9 +1,13 @@
-﻿namespace Saucery.Core.RestAPI.FlowControl;
+﻿using System.Text.Json.Serialization;
+
+namespace Saucery.Core.RestAPI.FlowControl;
 
 #pragma warning disable IDE1006 // Naming Styles
 public class FlowControl
 {
     public double timestamp { get; set; }
+
+    [JsonRequired]
     public required Concurrency concurrency { get; set; }
 }
 
