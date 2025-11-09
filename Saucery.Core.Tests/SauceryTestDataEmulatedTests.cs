@@ -5,6 +5,7 @@ using Shouldly;
 
 namespace Saucery.Core.Tests;
 
+[NotInParallel]
 public class SauceryTestDataEmulatedTests() : SauceryTestData {
     private static PlatformConfiguratorEmulatedFixture _fixture = null!;
 
