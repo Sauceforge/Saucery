@@ -1,0 +1,66 @@
+name: Sync & Publish Saucery.TUnit (only if newer)
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    # Runs at 00:00, 06:00, 12:00, 18:00 UTC daily (4× per day)
+    - cron: "0 0,6,12,18 * * *"
+
+permissions:
+  contents: write  # required for pushing to master
+
+concurrency:
+  group: sync-and-publish-saucery-tunit
+  cancel-in-progress: false
+
+env:
+  PROJECT_PATH: ./Saucery.TUnit/Saucery.TUnit.csproj
+  PACKAGE_ID: Saucery.TUnit
+  BUILD_CONFIGURATION: Release
+  ARTIFACT_DIR: artifacts
+
+jobs:
+  run-sync-and-maybe-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            9.0.x
+
+      - name: Run sync-package-versions.ps1
+        shell: pwsh
+        run: |
+          if (-not (Test-Path "./sync-package-versions.ps1")) {
+            Write-Error "sync-package-versions.ps1 not found in repo root."
+            exit 1
+          }
+          ./sync-package-versions.ps1
+
+      - name: Commit and push if there are changes
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name  "${GITHUB_ACTOR}"
+          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "✅ No changes detected after running sync-package-versions.ps1"
+            exit 0
+          fi
+
+          git commit -m "Automated version sync [skip ci]"
+          git pull --rebase origin master
+          git push origin HEAD:master
+          echo "🚀 Changes committed and pushed to master."
