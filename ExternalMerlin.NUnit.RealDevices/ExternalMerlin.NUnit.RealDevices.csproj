@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="NUnit3TestAdapter" Version="5.2.0" />
-    <PackageReference Include="Saucery" Version="4.5.51" />
+    <PackageReference Include="Saucery" Version="4.5.52" />
   </ItemGroup>
 
 </Project>

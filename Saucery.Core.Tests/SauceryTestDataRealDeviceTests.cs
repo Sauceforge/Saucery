@@ -3,10 +3,9 @@ using Saucery.Core.Tests.DataProviders;
 using Saucery.Core.Tests.Fixtures;
 using Shouldly;
 
-[assembly: NotInParallel]
-
 namespace Saucery.Core.Tests;
 
+[NotInParallel]
 public class SauceryTestDataRealDeviceTests() : SauceryTestData {
     private static PlatformConfiguratorRealDeviceFixture _fixture = null!;
 

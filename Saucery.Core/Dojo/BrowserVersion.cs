@@ -96,12 +96,12 @@ public class BrowserVersion {
         AutomationBackend = other.AutomationBackend;
         DeviceName = other.DeviceName;
         RecommendedAppiumVersion = other.RecommendedAppiumVersion;
-        SupportedBackendVersions = [..other.SupportedBackendVersions];
-        DeprecatedBackendVersions = [..other.DeprecatedBackendVersions];
+        SupportedBackendVersions = other.SupportedBackendVersions != null ? [.. other.SupportedBackendVersions] : [];
+        DeprecatedBackendVersions = other.DeprecatedBackendVersions != null ? [..other.DeprecatedBackendVersions] : [];
         DeviceOrientation = other.DeviceOrientation;
         ScreenResolution = other.ScreenResolution;
         PlatformType = other.PlatformType;
-        ScreenResolutions = [..other.ScreenResolutions];
+        ScreenResolutions = other.ScreenResolutions != null ? [..other.ScreenResolutions] : [];
     }
 
     /// <summary>
