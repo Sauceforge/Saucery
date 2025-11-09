@@ -171,5 +171,5 @@ if($changes.Count -eq 0){
 
 $changes | Sort-Object File, Kind | Format-Table -AutoSize
 $changes | ForEach-Object {
-  Write-Output "WOULD UPDATE `"$($_.PackageId)`" in `"$($_.File)`": $($_.FromVersion) -> $($_.ToVersion) [$($_.Kind)]"
+  Write-Output "UPDATED `"$($_.PackageId)`" in `"$($_.File)`": $($_.FromVersion) -> $($_.ToVersion) [$($_.Kind)]"
 }
