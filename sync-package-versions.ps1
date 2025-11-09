@@ -2,9 +2,9 @@
 # Cross-platform (Windows + GitHub Actions) package sync script
 # - Auto-detects both the script directory ($Root) and the repository root ($Repo)
 # - No parameters are required or expected
+# - Executes per-project child scripts named: sync-package-version.ps1
 
 # ===================== Discover script dir ($Root) =====================
-# Prefer $PSScriptRoot; fall back to MyInvocation; finally Get-Location
 if ($PSVersionTable.PSVersion.Major -ge 3 -and $PSScriptRoot) {
     $Root = $PSScriptRoot
 } elseif ($MyInvocation.MyCommand.Path) {
@@ -13,12 +13,11 @@ if ($PSVersionTable.PSVersion.Major -ge 3 -and $PSScriptRoot) {
     $Root = (Get-Location).Path
 }
 
-# Child script each project runs (plural aligns with CI usage)
-$ScriptName = 'sync-package-versions.ps1'
+# Child script name INSIDE EACH PROJECT (singular, as you clarified)
+$ScriptName = 'sync-package-version.ps1'
 
 # ===================== Repo root detection (cross-platform) =====================
 function Resolve-RepoRoot([string]$start) {
-    # 1) Use Git if available
     $git = Get-Command git -ErrorAction SilentlyContinue
     if ($git) {
         try {
@@ -26,8 +25,6 @@ function Resolve-RepoRoot([string]$start) {
             if ($LASTEXITCODE -eq 0 -and $top) { return (Resolve-Path -LiteralPath $top).Path }
         } catch { }
     }
-
-    # 2) Walk upward to find .git directory
     $current = Resolve-Path -LiteralPath $start
     while ($current) {
         if (Test-Path -LiteralPath (Join-Path $current '.git')) { return $current }
@@ -35,8 +32,6 @@ function Resolve-RepoRoot([string]$start) {
         if (-not $parent -or $parent -eq $current) { break }
         $current = $parent
     }
-
-    # 3) Fallback
     return (Resolve-Path -LiteralPath $start).Path
 }
 
@@ -171,18 +166,23 @@ function Get-PowerShellExe {
     if ($pwsh) { return $pwsh.Path }
     (Get-Command powershell).Path
 }
-function Invoke-Sync([string]$Project,[string]$Root,[string]$ScriptName) {
-    $projectDir = Join-Path $Root $Project
+
+function Invoke-Sync([string]$Project,[string]$Repo,[string]$ScriptName) {
+    $projectDir = Join-Path $Repo $Project
     $scriptPath = Join-Path $projectDir $ScriptName
     if (-not (Test-Path -LiteralPath $projectDir)) { Write-Error "Project dir not found: $projectDir"; return }
     if (-not (Test-Path -LiteralPath $scriptPath)) { Write-Error "Script not found: $scriptPath";   return }
+
     Write-Host ("-> {0}" -f $Project)
-    Write-Host ("   Script : {0}" -f $scriptPath)
+    Write-Host ("   Using script: {0}" -f $scriptPath)
+
     $exe  = Get-PowerShellExe
     $args = @('-NoProfile','-ExecutionPolicy','Bypass','-File', $scriptPath)
+
     try { Push-Location $projectDir; & $exe @args; $code = $LASTEXITCODE }
     catch { Write-Error ("X Failed {0}: {1}" -f $Project, $_.Exception.Message); return }
     finally { Pop-Location }
+
     if ($code -ne 0) { Write-Error ("X Failed {0}: child exited with code {1}" -f $Project, $code); return }
     Write-Host ("OK Synced {0}" -f $Project)
 }
@@ -312,8 +312,8 @@ try { Clear-Host } catch {}
 .\Update-NuGetNext-All.ps1 -PackageId 'Saucery.XUnit.v3'          -Root (Join-Path $Repo 'ExternalMerlin.XUnit3.RealDevices')
 
 # ===================== Run child project syncs =====================
-Write-Host ("Running syncs from {0} ..." -f $Root)
-foreach ($p in $Projects) { Invoke-Sync -Project $p -Root $Root -ScriptName $ScriptName }
+Write-Host ("Running syncs from {0} ..." -f $Repo)
+foreach ($p in $Projects) { Invoke-Sync -Project $p -Repo $Repo -ScriptName $ScriptName }
 
 # ===================== Template sync (after projects) =====================
 

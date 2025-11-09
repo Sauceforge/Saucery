@@ -10,12 +10,10 @@ permissions:
   contents: write  # required for pushing to master
 
 concurrency:
-  group: sync-and-publish-saucery-tunit
+  group: sync-and-commit
   cancel-in-progress: false
 
 env:
-  PROJECT_PATH: ./Saucery.TUnit/Saucery.TUnit.csproj
-  PACKAGE_ID: Saucery.TUnit
   BUILD_CONFIGURATION: Release
   ARTIFACT_DIR: artifacts
 
