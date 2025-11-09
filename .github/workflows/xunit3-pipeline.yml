@@ -18,21 +18,21 @@ on:
 
 env:
   PROJECT_NAME: Saucery
-  SOLN_FILE: Saucery.sln                                                                        # full path to your solution file
+  SOLN_FILE: Saucery.sln
   XUNIT3_INT_DIR: Merlin.XUnit3
   XUNIT3_RD_INT_DIR: Merlin.XUnit3.RealDevices         
   XUNIT3_INT_TEST_RESULTS_DIR: Merlin.XUnit3/bin/Release/net9.0/TestResults
   XUNIT3_RD_INT_TEST_RESULTS_DIR: Merlin.XUnit3.RealDevices/bin/Release/net9.0/TestResults
   COVERLET_DIR: ./TestResults
-  UT_PROJECT: Saucery.Core.Tests/Saucery.Core.Tests.csproj                                      # full path to your unit test project file
+  UT_PROJECT: Saucery.Core.Tests/Saucery.Core.Tests.csproj
   TT_PROJECT: Template.Tests/Template.Tests.csproj
-  M_XUNIT3_PROJECT: Merlin.XUnit3/Merlin.XUnit3.csproj                                          # full path to xunit internal integration test project file
-  M_RD_XUNIT3_PROJECT: Merlin.XUnit3.RealDevices/Merlin.XUnit3.RealDevices.csproj               # full path to xunit internal integration test project file
+  M_XUNIT3_PROJECT: Merlin.XUnit3/Merlin.XUnit3.csproj
+  M_RD_XUNIT3_PROJECT: Merlin.XUnit3.RealDevices/Merlin.XUnit3.RealDevices.csproj
   SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
   SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
   CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
   CONFIG: Release
-  APP_PACKAGE_PATH: 'published'                                                                 # set this to the path to your web app project, defaults to the repository root
+  APP_PACKAGE_PATH: 'published'
   COVERAGE_FORMAT: cobertura
   UNIT_COVERAGE_FILENAME: cobertura.unit.xml
   XUNIT3_INTEGRATION_COVERAGE_FILENAME: cobertura.xunit3.integration.xml
@@ -153,7 +153,7 @@ jobs:
     # Restrict to master to avoid accidental publishes; remove this "if" to allow other branches
     if: github.ref == 'refs/heads/master'
     env:
-      PROJECT_PATH: Saucery.XUnit3/Saucery.XUnit.v3.csproj     # adjust if your csproj name/path differs
+      PROJECT_PATH: Saucery.XUnit3/Saucery.XUnit3.csproj     # adjust if your csproj name/path differs
       PACKAGE_ID: Saucery.XUnit.v3
       BUILD_CONFIGURATION: Release
       ARTIFACT_DIR: artifacts
@@ -282,15 +282,15 @@ jobs:
       with:
         # REQUIRED # The coverage reports that should be parsed (separated by semicolon). Globbing is supported.
         reports: ${{ env.UNIT_COVERAGE_FILENAME }};${{ env.XUNIT3_INTEGRATION_COVERAGE_FILENAME }};${{ env.XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME }}
-        targetdir: 'coveragereport' # REQUIRED # The directory where the generated report should be saved.
-        reporttypes: 'HtmlInline;Cobertura' # The output formats and scope (separated by semicolon)
+        targetdir: 'coveragereport'
+        reporttypes: 'HtmlInline;Cobertura'
 
     - name: Upload coverage report artifact
       uses: actions/upload-artifact@v5
       with:
-        name: CoverageReport # Artifact name        
-        path: coveragereport # Directory containing files to upload
-      # Use always() to always run this step to publish test results when there are test failures
+        name: CoverageReport
+        path: coveragereport
+
       if: ${{ always() }}
 
     - name: Bump version and push tag
