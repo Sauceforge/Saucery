@@ -1,4 +1,4 @@
-name: Sync & Publish Saucery.TUnit (only if newer)
+name: Sync & Commit
 
 on:
   workflow_dispatch: {}
@@ -18,7 +18,7 @@ env:
   ARTIFACT_DIR: artifacts
 
 jobs:
-  run-sync-and-maybe-publish:
+  run-sync-and-commit:
     runs-on: ubuntu-latest
 
     steps:
