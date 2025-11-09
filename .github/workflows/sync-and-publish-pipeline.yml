@@ -51,7 +51,7 @@ jobs:
           git config user.name  "${GITHUB_ACTOR}"
           git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 
-          git add -A
+          git add -a
 
           if git diff --cached --quiet; then
             echo "✅ No changes detected after running sync-package-versions.ps1"
