@@ -43,13 +43,18 @@ jobs:
           }
           ./sync-package-versions.ps1
 
+
+
+
       - name: Commit and push if there are changes
         shell: bash
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
         run: |
           set -euo pipefail
 
-          git config user.name  "${GITHUB_ACTOR}"
-          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
           git add -A
 
@@ -58,7 +63,31 @@ jobs:
             exit 0
           fi
 
-          git commit -m "Automated version sync [skip ci]"
+          git commit -m "Automated version sync"
           git pull --rebase origin master
-          git push origin HEAD:master
-          echo "🚀 Changes committed and pushed to master."
+
+          echo "🔐 Using PAT to push changes..."
+          git push "https://x-access-token:${GH_PAT}@github.com/${{ github.repository }}" HEAD:master
+
+          echo "🚀 Changes committed and pushed to master via PAT."
+
+
+      # - name: Commit and push if there are changes
+      #   shell: bash
+      #   run: |
+      #     set -euo pipefail
+
+      #     git config user.name  "${GITHUB_ACTOR}"
+      #     git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+
+      #     git add -A
+
+      #     if git diff --cached --quiet; then
+      #       echo "✅ No changes detected after running sync-package-versions.ps1"
+      #       exit 0
+      #     fi
+
+      #     git commit -m "Automated version sync [skip ci]"
+      #     git pull --rebase origin master
+      #     git push origin HEAD:master
+      #     echo "🚀 Changes committed and pushed to master."
