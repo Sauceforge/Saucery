@@ -2,7 +2,7 @@ name: NUnit Only External
 
 on:
   schedule:
-    # Runs at 02:00, 08:00, 14:00, 20:00 UTC daily (4× per day)
+    # Runs at 02:00, 08:00, 14:00, 20:00 UTC daily (4× per day) 
     - cron: "0 2,8,14,20 * * *"
   push:
     paths:
@@ -33,47 +33,50 @@ permissions:
 
 jobs:
   detect-changes:
+    name: Detect if branch HEAD changed since last completed run
     runs-on: ubuntu-latest
+    # read permissions are enough for the Actions API
+    permissions:
+      actions: read
+      contents: read
     outputs:
-      changed: ${{ steps.check.outputs.changed }}
+      changed: ${{ steps.decide.outputs.changed }}
+      previous_sha: ${{ steps.decide.outputs.previous_sha }}
     steps:
-      # Restore previously-saved HEAD for this branch (if any)
-      - name: Restore last head cache
-        id: cache
-        uses: actions/cache@v4
+      - name: Resolve last completed run head_sha for this workflow+branch
+        id: decide
+        uses: actions/github-script@v7
         with:
-          path: .ci/last_sha.txt
-          key: last-sha-${{ github.ref_name }}-${{ github.sha }}
-          restore-keys: |
-            last-sha-${{ github.ref_name }}-
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { owner, repo } = context.repo;
+            const branch = context.ref.replace('refs/heads/','');  // e.g. "master"
+            // IMPORTANT: set this to the actual workflow file name in your repo
+            const workflow_id = ".github/workflows/nunit-pipeline-external.yml";
 
-      - name: Checkout (fetch latest commit)
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 1
+            const runs = await github.rest.actions.listWorkflowRuns({
+              owner, repo,
+              workflow_id,
+              branch,
+              status: "completed",
+              per_page: 1
+            });
 
-      - name: Decide if HEAD changed since prior run
-        id: check
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p .ci
-          CUR="${GITHUB_SHA}"
-          PREV=""
-          [[ -f .ci/last_sha.txt ]] && PREV="$(cat .ci/last_sha.txt || true)"
-          echo "Current SHA: $CUR"
-          echo "Previous SHA: ${PREV:-<none>}"
+            const prevSha = runs.data.workflow_runs[0]?.head_sha || "";
+            const curSha = context.sha;
 
-          if [[ "$CUR" == "$PREV" ]]; then
-            echo "No new commits since the last run on branch ${{ github.ref_name }}."
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "New commit detected."
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-          fi
+            core.info(`Current SHA:  ${curSha}`);
+            core.info(`Previous SHA: ${prevSha || "<none>"}`);
 
-          # Write current SHA so this job's cache step saves it as the new baseline
-          echo "$CUR" > .ci/last_sha.txt
+            const changed = prevSha && prevSha === curSha ? "false" : "true";
+            if (changed === "false") {
+              core.info("No new commits since the last completed run on this branch. Downstream jobs will be skipped.");
+            } else {
+              core.info("New commit (or first run) detected. Downstream jobs will execute.");
+            }
+
+            core.setOutput("changed", changed);
+            core.setOutput("previous_sha", prevSha);
 
   nunit-external-tests:
     needs: detect-changes
@@ -82,6 +85,8 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
 
       - name: Setup dotnet
         uses: actions/setup-dotnet@v5
@@ -101,6 +106,8 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
 
       - name: Setup dotnet
         uses: actions/setup-dotnet@v5
