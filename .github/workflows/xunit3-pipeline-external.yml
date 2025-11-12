@@ -51,7 +51,7 @@ jobs:
             const { owner, repo } = context.repo;
             const branch = context.ref.replace('refs/heads/','');  // e.g. "master"
             // IMPORTANT: set this to the actual workflow file name in your repo
-            const workflow_id = ".github/workflows/xunit-pipeline-external.yml";
+            const workflow_id = ".github/workflows/xunit3-pipeline-external.yml";
 
             const runs = await github.rest.actions.listWorkflowRuns({
               owner, repo,
