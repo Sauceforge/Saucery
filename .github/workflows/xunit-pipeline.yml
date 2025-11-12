@@ -1,6 +1,9 @@
 name: XUnit Only
 
 on:
+  schedule:
+    # Runs at 01:00, 07:00, 13:00, 19:00 UTC daily (4× per day)
+    - cron: "0 1,7,13,19 * * *"
   push:
     paths:
       - '.github/workflows/xunit-pipeline.yml'
@@ -43,8 +46,57 @@ permissions:
   contents: write
 
 jobs:
+  detect-changes:
+    name: Detect if branch HEAD changed since last completed run
+    runs-on: ubuntu-latest
+    # read permissions are enough for the Actions API
+    permissions:
+      actions: read
+      contents: read
+    outputs:
+      changed: ${{ steps.decide.outputs.changed }}
+      previous_sha: ${{ steps.decide.outputs.previous_sha }}
+    steps:
+      - name: Resolve last completed run head_sha for this workflow+branch
+        id: decide
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { owner, repo } = context.repo;
+            const branch = context.ref.replace('refs/heads/','');  // e.g. "master"
+            // IMPORTANT: set this to the actual workflow file name in your repo
+            const workflow_id = ".github/workflows/xunit-pipeline.yml";
+
+            const runs = await github.rest.actions.listWorkflowRuns({
+              owner, repo,
+              workflow_id,
+              branch,
+              status: "completed",
+              per_page: 1
+            });
+
+            const prevSha = runs.data.workflow_runs[0]?.head_sha || "";
+            const curSha = context.sha;
+
+            core.info(`Current SHA:  ${curSha}`);
+            core.info(`Previous SHA: ${prevSha || "<none>"}`);
+
+            const changed = prevSha && prevSha === curSha ? "false" : "true";
+            if (changed === "false") {
+              core.info("No new commits since the last completed run on this branch. Downstream jobs will be skipped.");
+            } else {
+              core.info("New commit (or first run) detected. Downstream jobs will execute.");
+            }
+
+            core.setOutput("changed", changed);
+            core.setOutput("previous_sha", prevSha);
+
   build:
     runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.changed == 'true'
+
     steps:
     - name: Checkout Code
       uses: actions/checkout@v5
