@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
@@ -9,7 +9,7 @@
 	<PropertyGroup>
 		<IsPackable>true</IsPackable>
 		<PackageId>Saucery.Core</PackageId>
-	  <PackageVersion>4.5.53</PackageVersion>
+	  <PackageVersion>4.10.0</PackageVersion>
 	  <Authors>Andrew Gray</Authors>
 	  <Company>SauceForge</Company>
 	  <Copyright>Copyright Andrew Gray 2014</Copyright>
