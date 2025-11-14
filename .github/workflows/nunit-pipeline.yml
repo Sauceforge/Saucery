@@ -103,7 +103,7 @@ jobs:
     - name: Setup dotnet
       uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: 9.0.x
+        dotnet-version: 10.0.x
 
     - name: Compile solution
       run: dotnet build -c ${{ env.CONFIG }}
@@ -147,7 +147,7 @@ jobs:
     - name: Setup dotnet
       uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: 9.0.x
+        dotnet-version: 10.0.x
     
     - name: Compile solution
       run: dotnet build -c ${{ env.CONFIG }}
@@ -181,7 +181,7 @@ jobs:
     - name: Setup dotnet
       uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: 9.0.x
+        dotnet-version: 10.0.x
     
     - name: Compile solution
       run: dotnet build -c ${{ env.CONFIG }}
@@ -221,7 +221,7 @@ jobs:
     - name: Setup dotnet
       uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: 9.0.x
+        dotnet-version: 10.0.x
 
     - name: Ensure jq is available
       run: |

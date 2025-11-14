@@ -99,7 +99,7 @@ jobs:
     - name: Setup dotnet
       uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: 9.0.x
+        dotnet-version: 10.0.x
     - name: Compile solution
       run: dotnet build -c ${{ env.CONFIG }}
     - name: Run TUnit Unit tests (with coverage + TRX)
@@ -136,7 +136,7 @@ jobs:
     - name: Setup dotnet
       uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: 9.0.x
+        dotnet-version: 10.0.x
     - name: Compile solution
       run: dotnet build -c ${{ env.CONFIG }}
     - name: Run TUnit Integration Tests
@@ -164,7 +164,7 @@ jobs:
     - name: Setup dotnet
       uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: 9.0.x
+        dotnet-version: 10.0.x
     - name: Compile solution
       run: dotnet build -c ${{ env.CONFIG }}
     - name: Run TUnit Real Integration Tests
@@ -198,7 +198,7 @@ jobs:
     - name: Setup dotnet
       uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: 9.0.x
+        dotnet-version: 10.0.x
 
     - name: Build package
       run: |
