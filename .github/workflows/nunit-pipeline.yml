@@ -1,4 +1,4 @@
-﻿name: NUnit Only
+name: NUnit Only
 
 on:
   schedule:
@@ -106,10 +106,10 @@ jobs:
                 if (ch === "*") {
                   const nextIsStar = i + 1 < pattern.length && pattern[i + 1] === "*";
                   if (nextIsStar) {
-                    out += ".*";  // '**' → any depth
+                    out += ".*";  // '**' => any depth
                     i++;          // skip second '*'
                   } else {
-                    out += "[^/]*"; // '*' → any chars except '/'
+                    out += "[^/]*"; // '*' => any chars except '/'
                   }
                 } else if (ch === "/") {
                   out += "\\/"; // literal slash
