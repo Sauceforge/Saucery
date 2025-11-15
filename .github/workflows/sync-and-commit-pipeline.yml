@@ -43,9 +43,6 @@ jobs:
           }
           ./sync-package-versions.ps1
 
-
-
-
       - name: Commit and push if there are changes
         shell: bash
         env:

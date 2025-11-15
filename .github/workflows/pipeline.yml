@@ -12,12 +12,12 @@ env:
   NUNIT_INT_DIR: Merlin.NUnit
   XUNIT_INT_DIR: Merlin.XUnit
   XUNIT3_INT_DIR: Merlin.XUnit3
-  XUNIT3_INT_TEST_RESULTS_DIR: Merlin.XUnit3/bin/Release/net9.0/TestResults
+  XUNIT3_INT_TEST_RESULTS_DIR: Merlin.XUnit3/bin/Release/net10.0/TestResults
   TUNIT_INT_DIR: Merlin.TUnit
   NUNIT_RD_INT_DIR: Merlin.NUnit.RealDevices
   XUNIT_RD_INT_DIR: Merlin.XUnit.RealDevices
   XUNIT3_RD_INT_DIR: Merlin.XUnit3.RealDevices
-  XUNIT3_RD_INT_TEST_RESULTS_DIR: Merlin.XUnit3.RealDevices/bin/Release/net9.0/TestResults
+  XUNIT3_RD_INT_TEST_RESULTS_DIR: Merlin.XUnit3.RealDevices/bin/Release/net10.0/TestResults
   TUNIT_RD_INT_DIR: Merlin.TUnit.RealDevices
 
   UT_PROJECT: Saucery.Core.Tests/Saucery.Core.Tests.csproj                                      # full path to your unit test project file
@@ -73,7 +73,7 @@ jobs:
     - name: Setup dotnet
       uses: actions/setup-dotnet@v5
       with:
-        # Check for latest at link at .NET 9 download page (https://dotnet.microsoft.com/download/dotnet/9.0)
+        # Check for latest at link at .NET 10 download page (https://dotnet.microsoft.com/download/dotnet/10.0)
         dotnet-version: 10.0.x
 
     - name: Compile solution
