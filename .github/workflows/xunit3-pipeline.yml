@@ -24,8 +24,8 @@ env:
   SOLN_FILE: Saucery.sln
   XUNIT3_INT_DIR: Merlin.XUnit3
   XUNIT3_RD_INT_DIR: Merlin.XUnit3.RealDevices         
-  XUNIT3_INT_TEST_RESULTS_DIR: Merlin.XUnit3/bin/Release/net9.0/TestResults
-  XUNIT3_RD_INT_TEST_RESULTS_DIR: Merlin.XUnit3.RealDevices/bin/Release/net9.0/TestResults
+  XUNIT3_INT_TEST_RESULTS_DIR: Merlin.XUnit3/bin/Release/net10.0/TestResults
+  XUNIT3_RD_INT_TEST_RESULTS_DIR: Merlin.XUnit3.RealDevices/bin/Release/net10.0/TestResults
   COVERLET_DIR: ./TestResults
   UT_PROJECT: Saucery.Core.Tests/Saucery.Core.Tests.csproj
   TT_PROJECT: Template.Tests/Template.Tests.csproj
@@ -170,7 +170,7 @@ jobs:
       uses: actions/upload-artifact@v5
       with:
         name: xunit3-integration-test-results
-        path: ${{ env.COVERLET_DIR }}/${{env.XUNIT3_INTEGRATION_COVERAGE_FILENAME}}
+        path: ${{ env.XUNIT3_INT_TEST_RESULTS_DIR }}/${{env.XUNIT3_INTEGRATION_COVERAGE_FILENAME}}
 
   xunit3-real-integration-tests:
     runs-on: ubuntu-latest
@@ -198,7 +198,7 @@ jobs:
       uses: actions/upload-artifact@v5
       with:
         name: xunit3-real-integration-test-results
-        path: ${{ env.COVERLET_DIR }}/${{env.XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME}}
+        path: ${{ env.XUNIT3_RD_INT_TEST_RESULTS_DIR }}/${{env.XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME}}
 
   # NEW STAGE: Publish Saucery.XUnit.v3 to NuGet if local version is newer than nuget.org
   publish-saucery-xunit3:
