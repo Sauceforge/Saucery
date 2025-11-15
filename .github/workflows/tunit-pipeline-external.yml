@@ -96,7 +96,7 @@ jobs:
       run: dotnet build -c ${{ env.CONFIG }}
 
     - name: Run External TUnit Integration Tests
-      run: dotnet test -c ${{ env.CONFIG }} ${{ env.EM_TUNIT_PROJECT }} --no-build
+      run: dotnet run -c ${{ env.CONFIG }} --project ${{ env.EM_TUNIT_PROJECT }} --no-build
 
   tunit-real-external-tests:
     needs: detect-changes
@@ -116,7 +116,7 @@ jobs:
       run: dotnet build -c ${{ env.CONFIG }}
 
     - name: Run External TUnit Real Integration Tests
-      run: dotnet test -c ${{ env.CONFIG }} ${{ env.EM_RD_TUNIT_PROJECT }} --no-build
+      run: dotnet run -c ${{ env.CONFIG }} --project ${{ env.EM_RD_TUNIT_PROJECT }} --no-build
 
   tag:
     needs: [detect-changes, tunit-external-tests, tunit-real-external-tests]
