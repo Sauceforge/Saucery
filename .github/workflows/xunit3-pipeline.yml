@@ -107,6 +107,9 @@ jobs:
         # Check for latest at link at .NET 9 download page (https://dotnet.microsoft.com/download/dotnet/9.0)
         dotnet-version: 10.0.x
 
+    - name: Present working directory
+      run: pwd
+
     - name: Compile solution
       run: dotnet build -c ${{ env.CONFIG }}
 
@@ -321,9 +324,6 @@ jobs:
       uses: actions/download-artifact@v6
       with:
         name: xunit3-real-integration-test-results
-
-    # - name: Present working directory
-    #   run: pwd
 
     # - name: Display structure of downloaded files
     #   run: ls -R
