@@ -1,343 +1,415 @@
+---
 name: NUnit Only
-
 on:
   schedule:
-    # Runs at 01:00, 07:00, 13:00, 19:00 UTC daily (4× per day)
-    - cron: "0 1,7,13,19 * * *"
+    - cron: 0 1,7,13,19 * * *
   push:
     paths:
-      - '.github/workflows/nunit-pipeline.yml'
-      - 'Saucery/**'
-      - 'Merlin.NUnit/**'
-      - 'Merlin.NUnit.RealDevices/**'
+      - .github/workflows/nunit-pipeline.yml
+      - Saucery/**
+      - Merlin.NUnit/**
+      - Merlin.NUnit.RealDevices/**
     branches:
       - master
-      - 'releases/**'
-      - 'feat/**'
-      - 'feature/**'
-      - 'fix/**'
-      - 'test/**'
-      - 'bug/**'
-  workflow_dispatch:
-
+      - releases/**
+      - feat/**
+      - feature/**
+      - fix/**
+      - test/**
+      - bug/**
+  workflow_dispatch: null
 env:
   PROJECT_NAME: Saucery
   SOLN_FILE: Saucery.sln
   COVERLET_DIR: ./TestResults
   NUNIT_INT_DIR: Merlin.NUnit
   NUNIT_RD_INT_DIR: Merlin.NUnit.RealDevices
-
   UT_PROJECT: Saucery.Core.Tests/Saucery.Core.Tests.csproj
   TT_PROJECT: Template.Tests/Template.Tests.csproj
-  
   M_NUNIT_PROJECT: Merlin.NUnit/Merlin.NUnit.csproj
   M_RD_NUNIT_PROJECT: Merlin.NUnit.RealDevices/Merlin.NUnit.RealDevices.csproj
-  
   SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
   SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
   CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
   CONFIG: Release
-  APP_PACKAGE_PATH: 'published'
+  APP_PACKAGE_PATH: published
   COVERAGE_FORMAT: cobertura
   UNIT_COVERAGE_FILENAME: opencover.unit.xml
   NUNIT_INTEGRATION_COVERAGE_FILENAME: opencover.nunit.integration.xml
   NUNIT_RD_INTEGRATION_COVERAGE_FILENAME: opencover.nunit.realdevice.integration.xml
   COVERAGE_THRESHOLD: 80
-
+  WATCHED_GLOBS: >
+    .github/workflows/nunit-pipeline.yml, Saucery/**,
+    Merlin.NUnit/**, Merlin.NUnit.RealDevices/**
 jobs:
   detect-changes:
     name: Detect if branch HEAD changed since last completed run
     runs-on: ubuntu-latest
-    # read permissions are enough for the Actions API
     permissions:
       actions: read
       contents: read
     outputs:
       changed: ${{ steps.decide.outputs.changed }}
       previous_sha: ${{ steps.decide.outputs.previous_sha }}
+      paths_changed: ${{ steps.decide.outputs.paths_changed }}
     steps:
-      - name: Resolve last completed run head_sha for this workflow+branch
+      - name: Resolve last completed run head_sha for this workflow+branch AND check
+          paths
         id: decide
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
+          script: >
             const { owner, repo } = context.repo;
-            const branch = context.ref.replace('refs/heads/','');  // e.g. "master"
-            // IMPORTANT: set this to the actual workflow file name in your repo
+
+            const branch = context.ref.replace('refs/heads/', '');  // e.g. "master"
+
             const workflow_id = ".github/workflows/nunit-pipeline.yml";
 
+
             const runs = await github.rest.actions.listWorkflowRuns({
-              owner, repo,
+              owner,
+              repo,
               workflow_id,
               branch,
               status: "completed",
               per_page: 1
             });
 
+
             const prevSha = runs.data.workflow_runs[0]?.head_sha || "";
+
             const curSha = context.sha;
 
+
             core.info(`Current SHA:  ${curSha}`);
+
             core.info(`Previous SHA: ${prevSha || "<none>"}`);
 
-            const changed = prevSha && prevSha === curSha ? "false" : "true";
-            if (changed === "false") {
-              core.info("No new commits since the last completed run on this branch. Downstream jobs will be skipped.");
+
+            let changed = "true";
+
+            let pathsChanged = "true";
+
+
+            // Helper: get watched globs from env
+
+            const raw = process.env.WATCHED_GLOBS || "";
+
+            const watchedGlobs = raw
+               .split(",")
+               .map(x => x.trim())
+               .filter(x => x.length > 0);
+
+            core.info(`WATCHED_GLOBS (parsed): [${watchedGlobs.join(", ")}]`);
+
+
+            if (!prevSha) {
+              // First time this workflow has completed on this branch
+              core.info("No previous completed run for this workflow+branch. Treating as changed.");
+              if (watchedGlobs.length === 0) {
+                 core.info("No watched globs defined; treating paths_changed as true.");
+                 pathsChanged = "true";
+              } else {
+                 // You *could* do a more complex initial comparison here if you really want,
+                 // but for most cases it's fine to run everything on first run.
+                 core.info("First run: skipping path-based filtering and treating paths_changed as true.");
+                 pathsChanged = "true";
+              }
+            } else if (prevSha === curSha) {
+               core.info("No new commits since the last completed run on this branch.");
+               changed = "false";
+               pathsChanged = "false";
             } else {
-              core.info("New commit (or first run) detected. Downstream jobs will execute.");
+               // There are new commits; now see if watched paths changed.
+               const comparison = await github.rest.repos.compareCommits({
+                 owner,
+                 repo,
+                 base: prevSha,
+                 head: curSha
+             });
+
+             const files = comparison.data.files || [];
+             const changedPaths = files.map(f => f.filename);
+
+             core.info("Changed files since last run:");
+             if (changedPaths.length === 0) {
+               core.info(" (none reported by compareCommits)");
+             } else {
+               for (const p of changedPaths) core.info(` - ${p}`);
+             }
+
+             if (watchedGlobs.length === 0) {
+               core.info("No watched globs defined; treating paths_changed as true.");
+               pathsChanged = "true";
+             } else {
+               const minimatch = require("minimatch");
+               const matches = changedPaths.some(path =>
+                   watchedGlobs.some(pattern => minimatch(path, pattern))
+               );
+
+               pathsChanged = matches ? "true" : "false";
+
+               if (pathsChanged === "true") {
+                 core.info("Detected changes in watched paths. Downstream jobs are eligible to run.");
+               } else {
+                 core.info("No changes in watched paths. Downstream jobs will be skipped.");
+               }
+             }
             }
 
+
             core.setOutput("changed", changed);
+
+            core.setOutput("paths_changed", pathsChanged);
+
             core.setOutput("previous_sha", prevSha);
   
   build:
     runs-on: ubuntu-latest
     needs: detect-changes
-    if: needs.detect-changes.outputs.changed == 'true'
-
+    if: needs.detect-changes.outputs.changed == 'true' &&
+        needs.detect-changes.outputs.paths_changed == 'true'
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v5
+      - name: Checkout Code
+        uses: actions/checkout@v5
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+      - name: Compile solution
+        run: dotnet build -c ${{ env.CONFIG }}
+      - name: Run TUnit Unit tests (with coverage + TRX)
+        run: >
+          dotnet run -c ${{ env.CONFIG }} --project ${{ env.UT_PROJECT }} -- \
 
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: 10.0.x
+          --report-trx \
 
-    - name: Compile solution
-      run: dotnet build -c ${{ env.CONFIG }}
+          --report-trx-filename "unit.trx" \
 
-    - name: Run TUnit Unit tests (with coverage + TRX)
-      run: |
-        dotnet run -c ${{ env.CONFIG }} --project ${{ env.UT_PROJECT }} -- \
-        --report-trx \
-        --report-trx-filename "unit.trx" \
-        --coverage \
-        --coverage-output "${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}" \
-        --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
-        --results-directory "TestResults"
+          --coverage \
 
-    - name: Run Template Tests
-      run: dotnet test -c ${{ env.CONFIG }} ${{ env.TT_PROJECT }}
+          --coverage-output "${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}" \
 
-    - name: Display structure of downloaded files
-      run: ls -R
+          --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
 
-    - name: Upload TRX
-      uses: actions/upload-artifact@v5
-      with:
-        name: unit-test-trx
-        path: ${{ env.COVERLET_DIR }}/unit.trx
-
-    - name: Publish Artifacts
-      uses: actions/upload-artifact@v5
-      with:
-        name: unit-test-results
-        path: ${{ env.COVERLET_DIR }}/${{env.UNIT_COVERAGE_FILENAME}}
+          --results-directory "TestResults"
+      - name: Run Template Tests
+        run: dotnet test -c ${{ env.CONFIG }} ${{ env.TT_PROJECT }}
+      - name: Display structure of downloaded files
+        run: ls -R
+      - name: Upload TRX
+        uses: actions/upload-artifact@v5
+        with:
+          name: unit-test-trx
+          path: ${{ env.COVERLET_DIR }}/unit.trx
+      - name: Publish Artifacts
+        uses: actions/upload-artifact@v5
+        with:
+          name: unit-test-results
+          path: ${{ env.COVERLET_DIR }}/${{env.UNIT_COVERAGE_FILENAME}}
 
   nunit-integration-tests:
+    name: NUnit Integration Tests
     runs-on: ubuntu-latest
     needs: build
-
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v5
-
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: 10.0.x
-    
-    - name: Compile solution
-      run: dotnet build -c ${{ env.CONFIG }}
-
-    - name: Run NUnit Integration Tests
-      uses: b3b00/coverlet-action@1.3.5-alpha2
-      with:
-        testProject: ${{ env.M_NUNIT_PROJECT }}
-        output: ${{ env.NUNIT_INTEGRATION_COVERAGE_FILENAME }}
-        outputFormat: ${{ env.COVERAGE_FORMAT }}
-        #threshold: ${{ env.COVERAGE_THRESHOLD }}
-        excludes: '[Merlin.NUnit]Tests.*'
-
-    - name: Display structure of downloaded files
-      run: ls -R
-
-    - name: Publish Artifacts
-      uses: actions/upload-artifact@v5
-      with:
-        name: nunit-integration-test-results
-        path: ${{ env.COVERLET_DIR }}/${{env.NUNIT_INTEGRATION_COVERAGE_FILENAME}}
+      - name: Checkout Code
+        uses: actions/checkout@v5
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+      - name: Compile solution
+        run: dotnet build -c ${{ env.CONFIG }}
+      - name: Run NUnit Integration Tests
+        uses: b3b00/coverlet-action@1.3.5-alpha2
+        with:
+          testProject: ${{ env.M_NUNIT_PROJECT }}
+          output: ${{ env.NUNIT_INTEGRATION_COVERAGE_FILENAME }}
+          outputFormat: ${{ env.COVERAGE_FORMAT }}
+          excludes: "[Merlin.NUnit]Tests.*"
+      - name: Display structure of downloaded files
+        run: ls -R
+      - name: Publish Artifacts
+        uses: actions/upload-artifact@v5
+        with:
+          name: nunit-integration-test-results
+          path: ${{ env.COVERLET_DIR }}/${{env.NUNIT_INTEGRATION_COVERAGE_FILENAME}}
 
   nunit-real-integration-tests:
     runs-on: ubuntu-latest
     needs: build
-
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v5
+      - name: Checkout Code
+        uses: actions/checkout@v5
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+      - name: Compile solution
+        run: dotnet build -c ${{ env.CONFIG }}
+      - name: Run NUnit Real Integration Tests
+        uses: b3b00/coverlet-action@1.3.5-alpha2
+        with:
+          testProject: ${{ env.M_RD_NUNIT_PROJECT }}
+          output: ${{ env.NUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}
+          outputFormat: ${{ env.COVERAGE_FORMAT }}
+          excludes: "[Merlin.NUnit.RealDevices]Tests.*"
+      - name: Display structure of downloaded files
+        run: ls -R
+      - name: Publish Artifacts
+        uses: actions/upload-artifact@v5
+        with:
+          name: nunit-real-integration-test-results
+          path: ${{ env.COVERLET_DIR }}/${{env.NUNIT_RD_INTEGRATION_COVERAGE_FILENAME}}
 
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: 10.0.x
-    
-    - name: Compile solution
-      run: dotnet build -c ${{ env.CONFIG }}
-
-    - name: Run NUnit Real Integration Tests
-      uses: b3b00/coverlet-action@1.3.5-alpha2
-      with:
-        testProject: ${{ env.M_RD_NUNIT_PROJECT }}
-        output: ${{ env.NUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}
-        outputFormat: ${{ env.COVERAGE_FORMAT }}
-        #threshold: ${{ env.COVERAGE_THRESHOLD }}
-        excludes: '[Merlin.NUnit.RealDevices]Tests.*'
-
-    - name: Display structure of downloaded files
-      run: ls -R
-
-    - name: Publish Artifacts
-      uses: actions/upload-artifact@v5
-      with:
-        name: nunit-real-integration-test-results
-        path: ${{ env.COVERLET_DIR }}/${{env.NUNIT_RD_INTEGRATION_COVERAGE_FILENAME}}
-
-  # NEW STAGE: Publish Saucery to NuGet if local version is newer than nuget.org
   publish-saucery:
     runs-on: ubuntu-latest
-    needs: [nunit-integration-tests, nunit-real-integration-tests]
-    if: github.ref == 'refs/heads/master'   # Only publish from master; remove to allow other branches
+    needs:
+      - nunit-integration-tests
+      - nunit-real-integration-tests
+    if: github.ref == 'refs/heads/master'
     env:
       PROJECT_PATH: Saucery/Saucery.csproj
       PACKAGE_ID: Saucery
       BUILD_CONFIGURATION: Release
       ARTIFACT_DIR: artifacts
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v5
+      - name: Checkout Code
+        uses: actions/checkout@v5
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+      - name: Ensure jq is available
+        run: |
+          if ! command -v jq >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y jq
+          fi
+      - name: Build & Pack Saucery
+        run: >
+          dotnet restore "$PROJECT_PATH"
 
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: 10.0.x
+          dotnet build "$PROJECT_PATH" -c "$BUILD_CONFIGURATION" --no-restore
 
-    - name: Ensure jq is available
-      run: |
-        if ! command -v jq >/dev/null 2>&1; then
-          sudo apt-get update
-          sudo apt-get install -y jq
-        fi
+          mkdir -p "$ARTIFACT_DIR"
 
-    - name: Build & Pack Saucery
-      run: |
-        dotnet restore "$PROJECT_PATH"
-        dotnet build "$PROJECT_PATH" -c "$BUILD_CONFIGURATION" --no-restore
-        mkdir -p "$ARTIFACT_DIR"
-        dotnet pack "$PROJECT_PATH" -c "$BUILD_CONFIGURATION" -o "$ARTIFACT_DIR" --no-build
+          dotnet pack "$PROJECT_PATH" -c "$BUILD_CONFIGURATION" -o "$ARTIFACT_DIR" --no-build
+      - name: Determine local packed version
+        id: localver
+        shell: bash
+        run: >
+          set -euo pipefail
 
-    - name: Determine local packed version
-      id: localver
-      shell: bash
-      run: |
-        set -euo pipefail
-        NUPKG="$(ls "$ARTIFACT_DIR"/${PACKAGE_ID}.*.nupkg | grep -v '\.symbols\.nupkg' | head -n1)"
-        if [[ -z "${NUPKG:-}" ]]; then
-          echo "No nupkg found for ${PACKAGE_ID} in ${ARTIFACT_DIR}" >&2
-          exit 1
-        fi
-        BASENAME="$(basename "$NUPKG")"
-        LOCAL_VERSION="${BASENAME#${PACKAGE_ID}.}"
-        LOCAL_VERSION="${LOCAL_VERSION%.nupkg}"
-        echo "nupkg=$NUPKG"           >> "$GITHUB_OUTPUT"
-        echo "version=$LOCAL_VERSION"  >> "$GITHUB_OUTPUT"
-        echo "Local version: $LOCAL_VERSION"
+          NUPKG="$(ls "$ARTIFACT_DIR"/${PACKAGE_ID}.*.nupkg | grep -v '\.symbols\.nupkg' | head -n1)"
 
-    - name: Query NuGet for latest published version
-      id: remotever
-      shell: bash
-      run: |
-        set -euo pipefail
-        LOWER_ID="$(echo "$PACKAGE_ID" | tr '[:upper:]' '[:lower:]')"
-        INDEX_URL="https://api.nuget.org/v3-flatcontainer/${LOWER_ID}/index.json"
-        if ! curl -fsSL "$INDEX_URL" -o /tmp/nuget_index.json; then
-          echo "version=" >> "$GITHUB_OUTPUT"
-          echo "Package not found on NuGet (first publish)."
-          exit 0
-        fi
-        REMOTE_VERSION="$(jq -r '.versions | last // empty' /tmp/nuget_index.json)"
-        echo "version=$REMOTE_VERSION" >> "$GITHUB_OUTPUT"
-        echo "Remote version: ${REMOTE_VERSION:-<none>}"
+          if [[ -z "${NUPKG:-}" ]]; then
+            echo "No nupkg found for ${PACKAGE_ID} in ${ARTIFACT_DIR}" >&2
+            exit 1
+          fi
 
-    - name: Decide if publish is needed
-      id: decide
-      shell: bash
-      run: |
-        set -euo pipefail
-        LOCAL="${{ steps.localver.outputs.version }}"
-        REMOTE="${{ steps.remotever.outputs.version }}"
-        if [[ -z "$REMOTE" ]]; then
-          echo "publish=true" >> "$GITHUB_OUTPUT"
-          echo "No remote version; will publish."
-          exit 0
-        fi
-        HIGHEST="$(printf '%s\n' "$REMOTE" "$LOCAL" | sort -V | tail -n1)"
-        if [[ "$HIGHEST" == "$LOCAL" && "$LOCAL" != "$REMOTE" ]]; then
-          echo "publish=true" >> "$GITHUB_OUTPUT"
-          echo "Local ($LOCAL) > Remote ($REMOTE); will publish."
-        else
-          echo "publish=false" >> "$GITHUB_OUTPUT"
-          echo "Local ($LOCAL) is NOT greater than Remote ($REMOTE); skipping publish."
-        fi
+          BASENAME="$(basename "$NUPKG")"
 
-    - name: Publish to NuGet (only if newer)
-      if: steps.decide.outputs.publish == 'true'
-      env:
-        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-      run: |
-        set -euo pipefail
-        if [[ -z "${NUGET_API_KEY:-}" ]]; then
-          echo "NUGET_API_KEY secret is missing." >&2
-          exit 1
-        fi
-        dotnet nuget push "${{ steps.localver.outputs.nupkg }}" \
-          --api-key "$NUGET_API_KEY" \
-          --source https://api.nuget.org/v3/index.json \
-          --skip-duplicate
+          LOCAL_VERSION="${BASENAME#${PACKAGE_ID}.}"
+
+          LOCAL_VERSION="${LOCAL_VERSION%.nupkg}"
+
+          echo "nupkg=$NUPKG"           >> "$GITHUB_OUTPUT"
+
+          echo "version=$LOCAL_VERSION"  >> "$GITHUB_OUTPUT"
+
+          echo "Local version: $LOCAL_VERSION"
+      - name: Query NuGet for latest published version
+        id: remotever
+        shell: bash
+        run: >
+          set -euo pipefail
+
+          LOWER_ID="$(echo "$PACKAGE_ID" | tr '[:upper:]' '[:lower:]')"
+
+          INDEX_URL="https://api.nuget.org/v3-flatcontainer/${LOWER_ID}/index.json"
+
+          if ! curl -fsSL "$INDEX_URL" -o /tmp/nuget_index.json; then
+            echo "version=" >> "$GITHUB_OUTPUT"
+            echo "Package not found on NuGet (first publish)."
+            exit 0
+          fi
+
+          REMOTE_VERSION="$(jq -r '.versions | last // empty' /tmp/nuget_index.json)"
+
+          echo "version=$REMOTE_VERSION" >> "$GITHUB_OUTPUT"
+
+          echo "Remote version: ${REMOTE_VERSION:-<none>}"
+      - name: Decide if publish is needed
+        id: decide
+        shell: bash
+        run: >
+          set -euo pipefail
+
+          LOCAL="${{ steps.localver.outputs.version }}"
+
+          REMOTE="${{ steps.remotever.outputs.version }}"
+
+          if [[ -z "$REMOTE" ]]; then
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+            echo "No remote version; will publish."
+            exit 0
+          fi
+
+          HIGHEST="$(printf '%s\n' "$REMOTE" "$LOCAL" | sort -V | tail -n1)"
+
+          if [[ "$HIGHEST" == "$LOCAL" && "$LOCAL" != "$REMOTE" ]]; then
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+            echo "Local ($LOCAL) > Remote ($REMOTE); will publish."
+          else
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            echo "Local ($LOCAL) is NOT greater than Remote ($REMOTE); skipping publish."
+          fi
+      - name: Publish to NuGet (only if newer)
+        if: steps.decide.outputs.publish == 'true'
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${NUGET_API_KEY:-}" ]]; then
+            echo "NUGET_API_KEY secret is missing." >&2
+            exit 1
+          fi
+          dotnet nuget push "${{ steps.localver.outputs.nupkg }}" \
+            --api-key "$NUGET_API_KEY" \
+            --source https://api.nuget.org/v3/index.json \
+            --skip-duplicate
 
   generate-report:
     runs-on: ubuntu-latest
-    needs: [publish-saucery]
+    needs:
+      - publish-saucery
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v5
-
-    - name: Download unit-test results
-      uses: actions/download-artifact@v6
-      with:
-        name: unit-test-results
-
-    - name: Download nunit-integration-test results
-      uses: actions/download-artifact@v6
-      with:
-        name: nunit-integration-test-results
-
-    - name: Download nunit-real-integration-test results
-      uses: actions/download-artifact@v6
-      with:
-        name: nunit-real-integration-test-results
-    
-    - name: ReportGenerator
-      uses: danielpalme/ReportGenerator-GitHub-Action@5.5.0
-      with:
-        reports: ${{env.UNIT_COVERAGE_FILENAME}};${{env.NUNIT_INTEGRATION_COVERAGE_FILENAME}};${{env.NUNIT_RD_INTEGRATION_COVERAGE_FILENAME}}
-        targetdir: 'coveragereport'
-        reporttypes: 'HtmlInline;Cobertura'
-
-    - name: Upload coverage report artifact
-      uses: actions/upload-artifact@v5
-      with:
-        name: CoverageReport
-        path: coveragereport
-      if: ${{ always() }}
+      - name: Checkout Code
+        uses: actions/checkout@v5
+      - name: Download unit-test results
+        uses: actions/download-artifact@v6
+        with:
+          name: unit-test-results
+      - name: Download nunit-integration-test results
+        uses: actions/download-artifact@v6
+        with:
+          name: nunit-integration-test-results
+      - name: Download nunit-real-integration-test results
+        uses: actions/download-artifact@v6
+        with:
+          name: nunit-real-integration-test-results
+      - name: ReportGenerator
+        uses: danielpalme/ReportGenerator-GitHub-Action@5.5.0
+        with:
+          reports: ${{env.UNIT_COVERAGE_FILENAME}};${{env.NUNIT_INTEGRATION_COVERAGE_FILENAME}};${{env.NUNIT_RD_INTEGRATION_COVERAGE_FILENAME}}
+          targetdir: coveragereport
+          reporttypes: HtmlInline;Cobertura
+      - name: Upload coverage report artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: CoverageReport
+          path: coveragereport
+        if: ${{ always() }}
