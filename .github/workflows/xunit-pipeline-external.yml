@@ -27,6 +27,11 @@ env:
   SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
   CONFIG: Release
 
+  WATCHED_GLOBS: >
+    .github/workflows/xunit-pipeline-external.yml,
+    ExternalMerlin.XUnit/**
+    ExternalMerlin.XUnit.RealDevices/**
+
 permissions:
   contents: write
 
@@ -34,27 +39,27 @@ jobs:
   detect-changes:
     name: Detect if branch HEAD changed since last completed run
     runs-on: ubuntu-latest
-    # read permissions are enough for the Actions API
     permissions:
       actions: read
       contents: read
     outputs:
       changed: ${{ steps.decide.outputs.changed }}
       previous_sha: ${{ steps.decide.outputs.previous_sha }}
+      paths_changed: ${{ steps.decide.outputs.paths_changed }}
     steps:
-      - name: Resolve last completed run head_sha for this workflow+branch
+      - name: Resolve last completed run head_sha for this workflow+branch AND check paths
         id: decide
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { owner, repo } = context.repo;
-            const branch = context.ref.replace('refs/heads/','');  // e.g. "master"
-            // IMPORTANT: set this to the actual workflow file name in your repo
-            const workflow_id = ".github/workflows/xunit-pipeline-external.yml";
+            const branch = context.ref.replace('refs/heads/', '');  // e.g. "master"
+            const workflow_id = ".github/workflows/nunit-pipeline.yml";
 
             const runs = await github.rest.actions.listWorkflowRuns({
-              owner, repo,
+              owner,
+              repo,
               workflow_id,
               branch,
               status: "completed",
@@ -67,14 +72,101 @@ jobs:
             core.info(`Current SHA:  ${curSha}`);
             core.info(`Previous SHA: ${prevSha || "<none>"}`);
 
-            const changed = prevSha && prevSha === curSha ? "false" : "true";
-            if (changed === "false") {
-              core.info("No new commits since the last completed run on this branch. Downstream jobs will be skipped.");
+            let changed = "true";
+            let pathsChanged = "true";
+
+            // Get watched globs from env (comma-separated)
+            const raw = process.env.WATCHED_GLOBS || "";
+            const watchedGlobs = raw
+              .split(",")
+              .map(x => x.trim())
+              .filter(x => x.length > 0);
+
+            core.info(`WATCHED_GLOBS (parsed): [${watchedGlobs.join(", ")}]`);
+
+            // Very small glob matcher supporting '*' and '**'
+            function globToRegexSource(pattern) {
+              let out = "";
+              for (let i = 0; i < pattern.length; i++) {
+                const ch = pattern[i];
+                if (ch === "*") {
+                  const nextIsStar = i + 1 < pattern.length && pattern[i + 1] === "*";
+                  if (nextIsStar) {
+                    out += ".*";  // '**' => any depth
+                    i++;          // skip second '*'
+                  } else {
+                    out += "[^/]*"; // '*' => any chars except '/'
+                  }
+                } else if (ch === "/") {
+                  out += "\\/"; // literal slash
+                } else if ("\\.[]{}()+-?^$|".includes(ch)) {
+                  out += "\\" + ch; // escape regex special
+                } else {
+                  out += ch;
+                }
+              }
+              return out;
+            }
+
+            function matchesGlob(path, pattern) {
+              const source = globToRegexSource(pattern);
+              const regex = new RegExp("^" + source + "$");
+              return regex.test(path);
+            }
+
+            if (!prevSha) {
+              // First time this workflow has completed on this branch
+              core.info("No previous completed run for this workflow+branch. Treating as changed.");
+              if (watchedGlobs.length === 0) {
+                core.info("No watched globs defined; treating paths_changed as true.");
+                pathsChanged = "true";
+              } else {
+                core.info("First run: skipping path-based filtering and treating paths_changed as true.");
+                pathsChanged = "true";
+              }
+            } else if (prevSha === curSha) {
+              core.info("No new commits since the last completed run on this branch.");
+              changed = "false";
+              pathsChanged = "false";
             } else {
-              core.info("New commit (or first run) detected. Downstream jobs will execute.");
+              // There are new commits; now see if watched paths changed.
+              const comparison = await github.rest.repos.compareCommits({
+                owner,
+                repo,
+                base: prevSha,
+                head: curSha
+              });
+
+              const files = comparison.data.files || [];
+              const changedPaths = files.map(f => f.filename);
+
+              core.info("Changed files since last run:");
+              if (changedPaths.length === 0) {
+                core.info(" (none reported by compareCommits)");
+              } else {
+                for (const p of changedPaths) core.info(` - ${p}`);
+              }
+
+              if (watchedGlobs.length === 0) {
+                core.info("No watched globs defined; treating paths_changed as true.");
+                pathsChanged = "true";
+              } else {
+                const matches = changedPaths.some(path =>
+                  watchedGlobs.some(pattern => matchesGlob(path, pattern))
+                );
+
+                pathsChanged = matches ? "true" : "false";
+
+                if (pathsChanged === "true") {
+                  core.info("Detected changes in watched paths. Downstream jobs are eligible to run.");
+                } else {
+                  core.info("No changes in watched paths. Downstream jobs will be skipped.");
+                }
+              }
             }
 
             core.setOutput("changed", changed);
+            core.setOutput("paths_changed", pathsChanged);
             core.setOutput("previous_sha", prevSha);
 
   xunit-external-tests:
