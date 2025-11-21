@@ -9,7 +9,7 @@ jobs:
   update-years:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Calculate full years since June 1, 2014 (UTC)
         id: calc
