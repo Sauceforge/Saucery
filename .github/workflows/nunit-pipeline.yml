@@ -190,7 +190,7 @@ jobs:
         needs.detect-changes.outputs.paths_changed == 'true'
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup dotnet
         uses: actions/setup-dotnet@v5
@@ -234,7 +234,7 @@ jobs:
     needs: build
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup dotnet
         uses: actions/setup-dotnet@v5
@@ -266,7 +266,7 @@ jobs:
     needs: build
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup dotnet
         uses: actions/setup-dotnet@v5
@@ -306,7 +306,7 @@ jobs:
       ARTIFACT_DIR: artifacts
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup dotnet
         uses: actions/setup-dotnet@v5
@@ -402,7 +402,7 @@ jobs:
       - publish-saucery
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Download unit-test results
         uses: actions/download-artifact@v6
