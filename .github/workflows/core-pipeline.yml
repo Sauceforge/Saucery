@@ -73,7 +73,7 @@ jobs:
 
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
 
     - name: Setup dotnet
       uses: actions/setup-dotnet@v5
@@ -118,7 +118,7 @@ jobs:
 
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
 
     - name: Setup dotnet
       uses: actions/setup-dotnet@v5
@@ -153,7 +153,7 @@ jobs:
 
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
 
     - name: Setup dotnet
       uses: actions/setup-dotnet@v5
@@ -188,7 +188,7 @@ jobs:
 
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
 
     - name: Setup dotnet
       uses: actions/setup-dotnet@v5
@@ -223,7 +223,7 @@ jobs:
 
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
 
     - name: Setup dotnet
       uses: actions/setup-dotnet@v5
@@ -258,7 +258,7 @@ jobs:
             xunit-integration-tests]
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
 
     - name: Setup dotnet
       uses: actions/setup-dotnet@v5
@@ -293,7 +293,7 @@ jobs:
             xunit-integration-tests]
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
 
     - name: Setup dotnet
       uses: actions/setup-dotnet@v5
@@ -325,7 +325,7 @@ jobs:
             tunit-real-integration-tests]
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
 
     - name: Setup dotnet
       uses: actions/setup-dotnet@v5
@@ -354,7 +354,7 @@ jobs:
             tunit-real-integration-tests]
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
 
     - name: Setup dotnet
       uses: actions/setup-dotnet@v5
@@ -383,7 +383,7 @@ jobs:
             xunit3-real-integration-tests]
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
 
     - name: Download unit-test results
       uses: actions/download-artifact@v6
