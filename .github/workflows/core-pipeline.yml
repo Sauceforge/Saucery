@@ -377,10 +377,101 @@ jobs:
         name: xunit3-real-integration-test-results
         path: ${{ env.XUNIT3_RD_INT_TEST_RESULTS_DIR }}/${{env.XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME}}
 
+
+# NEW: publish Saucery.Core to NuGet if newer
+  publish-saucery-core:
+    runs-on: ubuntu-latest
+    needs: [xunit3-integration-tests, xunit3-real-integration-tests]
+    if: github.ref == 'refs/heads/master'   # publish only from master
+    env:
+      PROJECT_PATH: Saucery.Core/Saucery.Core.csproj
+      PACKAGE_ID: Saucery.Core
+      BUILD_CONFIGURATION: Release
+      ARTIFACT_DIR: artifacts
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v5
+
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: 10.0.x
+
+    - name: Build package
+      run: |
+        dotnet restore "$PROJECT_PATH"
+        dotnet build "$PROJECT_PATH" -c "$BUILD_CONFIGURATION" --no-restore
+        mkdir -p "$ARTIFACT_DIR"
+        dotnet pack "$PROJECT_PATH" -c "$BUILD_CONFIGURATION" -o "$ARTIFACT_DIR" --no-build
+
+    - name: Determine local packed version
+      id: localver
+      shell: bash
+      run: |
+        set -euo pipefail
+        NUPKG="$(ls "$ARTIFACT_DIR"/${PACKAGE_ID}.*.nupkg | grep -v '\.symbols\.nupkg' | head -n1)"
+        BASENAME="$(basename "$NUPKG")"
+        LOCAL_VERSION="${BASENAME#${PACKAGE_ID}.}"
+        LOCAL_VERSION="${LOCAL_VERSION%.nupkg}"
+        echo "nupkg=$NUPKG"           >> "$GITHUB_OUTPUT"
+        echo "version=$LOCAL_VERSION"  >> "$GITHUB_OUTPUT"
+        echo "Local version: $LOCAL_VERSION"
+
+    - name: Query NuGet for latest published version
+      id: remotever
+      shell: bash
+      run: |
+        set -euo pipefail
+        LOWER_ID="$(echo "$PACKAGE_ID" | tr '[:upper:]' '[:lower:]')"
+        INDEX_URL="https://api.nuget.org/v3-flatcontainer/${LOWER_ID}/index.json"
+        if ! curl -fsSL "$INDEX_URL" -o /tmp/nuget_index.json; then
+          echo "version=" >> "$GITHUB_OUTPUT"
+          echo "Package not found on NuGet (first publish)."
+          exit 0
+        fi
+        REMOTE_VERSION="$(jq -r '.versions | last // empty' /tmp/nuget_index.json)"
+        echo "version=$REMOTE_VERSION" >> "$GITHUB_OUTPUT"
+        echo "Remote version: ${REMOTE_VERSION:-<none>}"
+
+    - name: Decide if publish is needed
+      id: decide
+      shell: bash
+      run: |
+        set -euo pipefail
+        LOCAL="${{ steps.localver.outputs.version }}"
+        REMOTE="${{ steps.remotever.outputs.version }}"
+        if [[ -z "$REMOTE" ]]; then
+          echo "publish=true" >> "$GITHUB_OUTPUT"
+          echo "No remote version; will publish."
+          exit 0
+        fi
+        HIGHEST="$(printf '%s\n' "$REMOTE" "$LOCAL" | sort -V | tail -n1)"
+        if [[ "$HIGHEST" == "$LOCAL" && "$LOCAL" != "$REMOTE" ]]; then
+          echo "publish=true" >> "$GITHUB_OUTPUT"
+          echo "Local ($LOCAL) > Remote ($REMOTE); will publish."
+        else
+          echo "publish=false" >> "$GITHUB_OUTPUT"
+          echo "Local ($LOCAL) is NOT greater than Remote ($REMOTE); skipping publish."
+        fi
+
+    - name: Publish to NuGet (only if newer)
+      if: steps.decide.outputs.publish == 'true'
+      env:
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+      run: |
+        set -euo pipefail
+        if [[ -z "${NUGET_API_KEY:-}" ]]; then
+          echo "NUGET_API_KEY secret is missing." >&2
+          exit 1
+        fi
+        dotnet nuget push "${{ steps.localver.outputs.nupkg }}" \
+          --api-key "$NUGET_API_KEY" \
+          --source https://api.nuget.org/v3/index.json \
+          --skip-duplicate
+
   generate-report:
     runs-on: ubuntu-latest
-    needs: [xunit3-integration-tests,
-            xunit3-real-integration-tests]
+    needs: [publish-saucery-core]
     steps:
     - name: Checkout Code
       uses: actions/checkout@v6

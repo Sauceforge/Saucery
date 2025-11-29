@@ -367,7 +367,7 @@ jobs:
 
   generate-report:
     runs-on: ubuntu-latest
-    needs: [publish-saucery-tunit]   # now runs AFTER publish job
+    needs: [publish-saucery-tunit]
     steps:
     - name: Checkout Code
       uses: actions/checkout@v5
