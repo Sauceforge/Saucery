@@ -522,7 +522,7 @@ jobs:
         name: xunit3-real-integration-test-results
 
     - name: Setup Java JDK for Codacy Code Coverage
-      uses: actions/setup-java@v5.0.0
+      uses: actions/setup-java@v5.1.0
       with:
         distribution: 'oracle'
         java-version: '21'
