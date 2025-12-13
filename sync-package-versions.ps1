@@ -217,7 +217,7 @@ try { Clear-Host } catch {}
 .\Update-NuGetNext-All.ps1 -PackageId 'xunit.runner.visualstudio'             -Root (Join-Path $Repo 'Saucery.XUnit')
 
 .\Update-NuGetNext-All.ps1 -PackageId 'Microsoft.NET.Test.Sdk'                -Root (Join-Path $Repo 'Saucery.XUnit3')
-#.\Update-NuGetNext-All.ps1 -PackageId 'xunit.v3.mtp-v2'                       -Root (Join-Path $Repo 'Saucery.XUnit3')
+.\Update-NuGetNext-All.ps1 -PackageId 'xunit.v3.mtp-v2'                       -Root (Join-Path $Repo 'Saucery.XUnit3')
 .\Update-NuGetNext-All.ps1 -PackageId 'xunit.runner.visualstudio'             -Root (Join-Path $Repo 'Saucery.XUnit3')
 
 .\Update-NuGetNext-All.ps1 -PackageId 'TUnit'                                     -Root (Join-Path $Repo 'Saucery.Core.Tests')
