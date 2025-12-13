@@ -23,6 +23,7 @@ public class PlatformTypes {
             typeof(IOS18Platform),
             typeof(IOS175Platform),
             typeof(IOS17Platform),
+            typeof(IOS164Platform),
             typeof(IOS162Platform),
             typeof(IOS161Platform),
             typeof(IOS16Platform),

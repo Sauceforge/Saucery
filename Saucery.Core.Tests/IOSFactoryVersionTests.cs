@@ -51,8 +51,8 @@ internal static class IOSDataClass
     internal static readonly string[] IOSPlatformVersions =
     [
         "14.0","14.3","14.4","14.5",
-        "15.0","15.2","15.4",
-        "16.0","16.1","16.2",
+        "15.0","15.2","15.4","15.5",
+        "16.0","16.1","16.2","16.4",
         "17.0","17.5",
         "18.0","18.6",
     ];
