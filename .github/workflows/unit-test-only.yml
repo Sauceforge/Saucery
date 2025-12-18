@@ -48,13 +48,13 @@ jobs:
       run: dotnet test -c ${{ env.CONFIG }} ${{ env.TT_PROJECT }}
 
     - name: Upload TRX
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: unit-test-trx
         path: ${{ env.COVERLET_DIR }}/unit.trx
 
     - name: Publish Artifacts
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: unit-test-results
         path: ${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}
@@ -86,7 +86,7 @@ jobs:
         reporttypes: 'HtmlInline;Cobertura' # The output formats and scope (separated by semicolon) Values: Badges, Clover, Cobertura, CsvSummary, Html, HtmlChart, HtmlInline, HtmlInline_AzurePipelines, HtmlInline_AzurePipelines_Dark, HtmlSummary, JsonSummary, Latex, LatexSummary, lcov, MarkdownSummary, MHtml, PngChart, SonarQube, TeamCitySummary, TextSummary, Xml, XmlSummary
 
     - name: Upload coverage report artifact
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: CoverageReport # Artifact name        
         path: coveragereport # Directory containing files to upload
