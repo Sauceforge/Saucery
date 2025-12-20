@@ -46,12 +46,15 @@ jobs:
       - name: Commit and push if there are changes
         shell: bash
         env:
-          GH_PAT: ${{ secrets.GH_PAT }}
+          GH_PAT: ${{ secrets.ACTIONS_PUSH_PAT }}
         run: |
           set -euo pipefail
-
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "agray"
+          git config user.email "agray@users.noreply.github.com"
+          export GIT_AUTHOR_NAME="agray"
+          export GIT_AUTHOR_EMAIL="agray@users.noreply.github.com"
+          export GIT_COMMITTER_NAME="agray"
+          export GIT_COMMITTER_EMAIL="agray@users.noreply.github.com"
 
           git add -A
 
@@ -67,24 +70,3 @@ jobs:
           git push "https://x-access-token:${GH_PAT}@github.com/${{ github.repository }}" HEAD:master
 
           echo "🚀 Changes committed and pushed to master via PAT."
-
-
-      # - name: Commit and push if there are changes
-      #   shell: bash
-      #   run: |
-      #     set -euo pipefail
-
-      #     git config user.name  "${GITHUB_ACTOR}"
-      #     git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-
-      #     git add -A
-
-      #     if git diff --cached --quiet; then
-      #       echo "✅ No changes detected after running sync-package-versions.ps1"
-      #       exit 0
-      #     fi
-
-      #     git commit -m "Automated version sync [skip ci]"
-      #     git pull --rebase origin master
-      #     git push origin HEAD:master
-      #     echo "🚀 Changes committed and pushed to master."
