@@ -6,47 +6,63 @@
     <Nullable>enable</Nullable>
     <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
     <GenerateRuntimeConfigDevFile>true</GenerateRuntimeConfigDevFile>
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
   </PropertyGroup>
 
-	<PropertyGroup>
-		<IsPackable>true</IsPackable>
-		<PackageId>Saucery.XUnit.v3</PackageId>
-		<PackageVersion>3.2.1</PackageVersion>
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+
+    <PackageId>Saucery.XUnit.v3</PackageId>
+    <PackageVersion>3.2.1</PackageVersion>
+
+    <Title>Sorcery for SauceLabs and XUnit.v3</Title>
+    <Description>Sorcery for SauceLabs - Unlocking SauceLabs capability</Description>
+
     <PackageReadmeFile>README.md</PackageReadmeFile>
-		<Authors>Andrew Gray</Authors>
-		<Company>SauceForge</Company>
-		<Copyright>Copyright (c) Andrew Gray 2014</Copyright>
-		<Description>Sorcery for SauceLabs - Unlocking SauceLabs capability</Description>
-		<PackageReleaseNotes>
-			ChangeLog:
-			v4.0.0
-			- Initial Release with dependency on Saucery.Core
-		</PackageReleaseNotes>
-		<PackageProjectUrl>https://github.com/Sauceforge/Saucery</PackageProjectUrl>
-		<PackageIcon>Saucery.XUnit.128x128.png</PackageIcon>
-		<PackageTags>xunit.v3 saucelabs test testing tdd framework assert</PackageTags>
-		<Title>Sorcery for SauceLabs and XUnit.v3</Title>
-	</PropertyGroup>
+    <PackageProjectUrl>https://github.com/Sauceforge/Saucery</PackageProjectUrl>
 
-	<ItemGroup>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
-		<PackageReference Include="xunit.v3.mtp-v2" Version="3.2.1" />
-		<PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-			<PrivateAssets>all</PrivateAssets>
-		</PackageReference>
-		<None Include="Images\Saucery.XUnit.128x128.png" Pack="true" PackagePath="\" />
-	</ItemGroup>
+    <Authors>Andrew Gray</Authors>
+    <Company>SauceForge</Company>
+    <Copyright>Copyright (c) Andrew Gray 2014</Copyright>
 
-	<ItemGroup>
-		<ProjectReference Include="..\Saucery.Core\Saucery.Core.csproj" />
-	</ItemGroup>
+    <PackageIcon>Saucery.XUnit.128x128.png</PackageIcon>
+    <PackageTags>xunit.v3 saucelabs test testing tdd framework assert</PackageTags>
 
-	<ItemGroup>
-	  <None Update="testhost.runtimeconfig.json">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
+    <RepositoryUrl>https://github.com/Sauceforge/Saucery</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+
+    <PackageReleaseNotes>
+      ChangeLog:
+      v4.0.0
+      - Initial Release with dependency on Saucery.Core
+    </PackageReleaseNotes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" PrivateAssets="All" />
+    <PackageReference Include="xunit.v3.mtp-v2" Version="3.2.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Saucery.Core\Saucery.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Images\Saucery.XUnit.128x128.png" Pack="true" PackagePath="\" />
     <None Include="README.md" Pack="true" PackagePath="\" />
-	</ItemGroup>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="testhost.runtimeconfig.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 
 </Project>
