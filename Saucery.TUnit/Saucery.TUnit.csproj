@@ -4,38 +4,55 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-	  <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
-	  <GenerateRuntimeConfigDevFile>true</GenerateRuntimeConfigDevFile>
+
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+    <GenerateRuntimeConfigDevFile>true</GenerateRuntimeConfigDevFile>
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
   </PropertyGroup>
 
   <PropertyGroup>
-	  <IsPackable>true</IsPackable>
-	  <PackageId>Saucery.TUnit</PackageId>
-	  <PackageVersion>1.5.80</PackageVersion>
-	  <PackageReadmeFile>README.md</PackageReadmeFile>
-	  <Authors>Andrew Gray</Authors>
-	  <Company>SauceForge</Company>
-	  <Copyright>Copyright (c) Andrew Gray 2014</Copyright>
-	  <Description>Sorcery for SauceLabs - Unlocking SauceLabs capability</Description>
-	  <PackageReleaseNotes>
-		  ChangeLog:
-		  v4.0.0
-		  - Initial Release with dependency on Saucery.Core
-	  </PackageReleaseNotes>
-	  <PackageProjectUrl>https://github.com/Sauceforge/Saucery</PackageProjectUrl>
-	  <PackageIcon>Saucery.TUnit.128x128.png</PackageIcon>
-	  <PackageTags>tunit saucelabs test testing tdd framework assert</PackageTags>
-	  <Title>Sorcery for SauceLabs and TUnit</Title>
+    <IsPackable>true</IsPackable>
+
+    <PackageId>Saucery.TUnit</PackageId>
+    <PackageVersion>1.5.80</PackageVersion>
+
+    <Title>Sorcery for SauceLabs and TUnit</Title>
+    <Description>Sorcery for SauceLabs - Unlocking SauceLabs capability</Description>
+
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/Sauceforge/Saucery</PackageProjectUrl>
+
+    <Authors>Andrew Gray</Authors>
+    <Company>SauceForge</Company>
+    <Copyright>Copyright (c) Andrew Gray 2014</Copyright>
+
+    <PackageIcon>Saucery.TUnit.128x128.png</PackageIcon>
+    <PackageTags>tunit saucelabs test testing tdd framework assert</PackageTags>
+
+    <RepositoryUrl>https://github.com/Sauceforge/Saucery</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+
+    <PackageReleaseNotes>
+      ChangeLog:
+      v4.0.0
+      - Initial Release with dependency on Saucery.Core
+    </PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="TUnit" Version="1.5.80" />
-    <None Include="Images\Saucery.TUnit.128x128.png" Pack="true" PackagePath="\" />
-    <None Include="README.md" Pack="true" PackagePath="\" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Saucery.Core\Saucery.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Images\Saucery.TUnit.128x128.png" Pack="true" PackagePath="\" />
+    <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>
