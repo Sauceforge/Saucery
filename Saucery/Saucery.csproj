@@ -14,7 +14,7 @@
   <PropertyGroup>
     <IsPackable>true</IsPackable>
     <PackageId>Saucery</PackageId>
-    <PackageVersion>4.10.2</PackageVersion>
+    <PackageVersion>4.10.3</PackageVersion>
     <Title>Sorcery for SauceLabs and NUnit</Title>
     <Description>Sorcery for SauceLabs - Unlocking SauceLabs capability</Description>
     <Authors>Andrew Gray</Authors>
