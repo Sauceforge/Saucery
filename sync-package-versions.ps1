@@ -282,8 +282,9 @@ try { Clear-Host } catch {}
 
 # EXTERNALMERLINS
 # ExternalMerlin.NUnit
-.\Update-NuGetNext-All.ps1 -PackageId 'NUnit3TestAdapter' -Root (Join-Path $Repo 'ExternalMerlin.NUnit')
-.\Update-NuGetNext-All.ps1 -PackageId 'Saucery'           -Root (Join-Path $Repo 'ExternalMerlin.NUnit')
+.\Update-NuGetNext-All.ps1 -PackageId 'NUnit3TestAdapter'      -Root (Join-Path $Repo 'ExternalMerlin.NUnit')
+.\Update-NuGetNext-All.ps1 -PackageId 'Saucery'                -Root (Join-Path $Repo 'ExternalMerlin.NUnit')
+.\Update-NuGetNext-All.ps1 -PackageId 'Microsoft.NET.Test.Sdk' -Root (Join-Path $Repo 'ExternalMerlin.NUnit')
 
 # ExternalMerlin.NUnit.RealDevices
 .\Update-NuGetNext-All.ps1 -PackageId 'NUnit3TestAdapter' -Root (Join-Path $Repo 'ExternalMerlin.NUnit.RealDevices')
