@@ -300,18 +300,22 @@ try { Clear-Host } catch {}
 # ExternalMerlin.XUnit
 .\Update-NuGetNext-All.ps1 -PackageId 'xunit.runner.visualstudio' -Root (Join-Path $Repo 'ExternalMerlin.XUnit')
 .\Update-NuGetNext-All.ps1 -PackageId 'Saucery.XUnit'             -Root (Join-Path $Repo 'ExternalMerlin.XUnit')
+.\Update-NuGetNext-All.ps1 -PackageId 'Microsoft.NET.Test.Sdk'    -Root (Join-Path $Repo 'ExternalMerlin.XUnit')
 
 # ExternalMerlin.XUnit.RealDevices
 .\Update-NuGetNext-All.ps1 -PackageId 'xunit.runner.visualstudio' -Root (Join-Path $Repo 'ExternalMerlin.XUnit.RealDevices')
 .\Update-NuGetNext-All.ps1 -PackageId 'Saucery.XUnit'             -Root (Join-Path $Repo 'ExternalMerlin.XUnit.RealDevices')
+.\Update-NuGetNext-All.ps1 -PackageId 'Microsoft.NET.Test.Sdk'    -Root (Join-Path $Repo 'ExternalMerlin.XUnit.RealDevices')
 
 # ExternalMerlin.XUnit3
 .\Update-NuGetNext-All.ps1 -PackageId 'xunit.runner.visualstudio' -Root (Join-Path $Repo 'ExternalMerlin.XUnit3')
 .\Update-NuGetNext-All.ps1 -PackageId 'Saucery.XUnit.v3'          -Root (Join-Path $Repo 'ExternalMerlin.XUnit3')
+.\Update-NuGetNext-All.ps1 -PackageId 'Microsoft.NET.Test.Sdk'    -Root (Join-Path $Repo 'ExternalMerlin.XUnit3')
 
 # ExternalMerlin.XUnit3.RealDevices
 .\Update-NuGetNext-All.ps1 -PackageId 'xunit.runner.visualstudio' -Root (Join-Path $Repo 'ExternalMerlin.XUnit3.RealDevices')
 .\Update-NuGetNext-All.ps1 -PackageId 'Saucery.XUnit.v3'          -Root (Join-Path $Repo 'ExternalMerlin.XUnit3.RealDevices')
+.\Update-NuGetNext-All.ps1 -PackageId 'Microsoft.NET.Test.Sdk'    -Root (Join-Path $Repo 'ExternalMerlin.XUnit3.RealDevices')
 
 # ===================== Run child project syncs =====================
 Write-Host ("Running syncs from {0} ..." -f $Repo)
