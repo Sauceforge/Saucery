@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  update:
+  update-total-downloads-badge:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -41,7 +41,7 @@ jobs:
              exit 0
           fi
 
-          git commit -m "Automated version sync"
+          git commit -m "Update Totals Badge"
           git pull --rebase origin master
 
           echo "🔐 Using PAT to push changes..."
