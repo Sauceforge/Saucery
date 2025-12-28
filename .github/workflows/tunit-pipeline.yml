@@ -189,12 +189,15 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@v5
+
     - name: Setup dotnet
       uses: actions/setup-dotnet@v5
       with:
         dotnet-version: 10.0.x
+
     - name: Compile solution
       run: dotnet build -c ${{ env.CONFIG }}
+
     - name: Run TUnit Unit tests (with coverage + TRX)
       run: |
         dotnet run -c ${{ env.CONFIG }} --project ${{ env.UT_PROJECT }} -- \
@@ -205,10 +208,13 @@ jobs:
         --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
         --results-directory "${{ env.COVERLET_DIR }}" \
         --log-level Debug
+
     - name: Run Template Tests
-      run: dotnet test -c ${{ env.CONFIG }} --filter "Group=TUnit" ${{ env.TT_PROJECT }}
+      run: dotnet run --project ${{ env.TT_PROJECT }} -- --treenode-filter '/*/*/*/*[Category=TUnit]'
+    
     - name: Display structure of downloaded files
       run: ls -R
+    
     - name: Upload TRX
       uses: actions/upload-artifact@v5
       with:
