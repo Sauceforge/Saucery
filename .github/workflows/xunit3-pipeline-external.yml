@@ -187,7 +187,7 @@ jobs:
       run: dotnet build -c ${{ env.CONFIG }}
 
     - name: Run External XUnit3 Integration Tests
-      run: dotnet test -c ${{ env.CONFIG }} --project ${{ env.EM_XUNIT3_PROJECT }} --no-build
+      run: dotnet test -c ${{ env.CONFIG }} ${{ env.EM_XUNIT3_PROJECT }} --no-build
 
   xunit3-real-external-tests:
     needs: detect-changes
@@ -207,7 +207,7 @@ jobs:
       run: dotnet build -c ${{ env.CONFIG }}
 
     - name: Run External XUnit3 Real Integration Tests
-      run: dotnet test -c ${{ env.CONFIG }} --project ${{ env.EM_RD_XUNIT3_PROJECT }} --no-build
+      run: dotnet test -c ${{ env.CONFIG } ${{ env.EM_RD_XUNIT3_PROJECT }} --no-build
 
   tag:
     needs: [detect-changes, xunit3-external-tests, xunit3-real-external-tests]
