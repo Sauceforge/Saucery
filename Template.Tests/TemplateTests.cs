@@ -4,116 +4,118 @@ using Shouldly;
 
 namespace Template.Tests;
 
-public class TemplateTests : IAsyncLifetime {
-    private VerificationEngine? _engine;
-    private string? _outputDir;
-
-    private string? _nunitTemplateName;
-    private string? _xunitTemplateName;
-    private string? _tunitTemplateName;
-    private string? _xunit3TemplateName;
+public class TemplateTests {
     private static readonly string _nunitTemplateFolder = GetFolderPath("NUnit");
     private static readonly string _xunitTemplateFolder = GetFolderPath("XUnit");
     private static readonly string _tunitTemplateFolder = GetFolderPath("TUnit");
     private static readonly string _xunit3TemplateFolder = GetFolderPath("XUnit3");
 
-    public Task InitializeAsync() {
-        _outputDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-        _nunitTemplateName = "saucery-nunit";
-        _xunitTemplateName = "saucery-xunit";
-        _tunitTemplateName = "saucery-tunit";
-        _xunit3TemplateName = "saucery-xunit3";
-
-        var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
-        _engine = new VerificationEngine(loggerFactory);
-
-        return Task.CompletedTask;
-    }
-
-    [Fact]
-    [Trait("Group", "NUnit")]
+    [Test]
+    [Category("NUnit")]
     public async Task GeneratesExpectedNUnitProject() {
-        var options = GetVerifierOptions(_nunitTemplateName!, _nunitTemplateFolder);
+        var outputDir = CreateTempOutputDir();
+        try {
+            using var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
+            var engine = new VerificationEngine(loggerFactory);
 
-        await _engine!.Execute(options);
+            var options = GetVerifierOptions("saucery-nunit", _nunitTemplateFolder, outputDir);
 
-        AssertFiles([
-            [options.OutputDirectory!, _nunitTemplateName!, "MyTestProject.csproj"],
-            [options.OutputDirectory!, _nunitTemplateName!, "NuGetIntegrationTests.cs"],
-            [options.OutputDirectory!, _nunitTemplateName!, "RequestedPlatformData.cs"],
-            [options.OutputDirectory!, _nunitTemplateName!, "PageObjects", "GuineaPigPage.cs"]
-        ]);
-    }
+            await engine.Execute(options);
 
-    [Fact]
-    [Trait("Group", "XUnit")]
-    public async Task GeneratesExpectedXUnitProject() {
-        var options = GetVerifierOptions(_xunitTemplateName!, _xunitTemplateFolder);
-
-        await _engine!.Execute(options);
-
-        AssertFiles([
-            [options.OutputDirectory!, _xunitTemplateName!, "MyTestProject.csproj"],
-            [options.OutputDirectory!, _xunitTemplateName!, "ClickLinkTests.cs"],
-            [options.OutputDirectory!, _xunitTemplateName!, "DataDrivenTests.cs"],
-            [options.OutputDirectory!, _xunitTemplateName!, "RequestedPlatformData.cs"],
-            [options.OutputDirectory!, _xunitTemplateName!, "Usings.cs"],
-            [options.OutputDirectory!, _xunitTemplateName!, "PageObjects", "GuineaPigPage.cs"]
-        ]);
-    }
-
-    [Fact]
-    [Trait("Group", "TUnit")]
-    public async Task GeneratesExpectedTUnitProject() {
-        var options = GetVerifierOptions(_tunitTemplateName!, _tunitTemplateFolder);
-
-        await _engine!.Execute(options);
-
-        AssertFiles([
-            [options.OutputDirectory!, _tunitTemplateName!, "PageObjects", "GuineaPigPage.cs"],
-            [options.OutputDirectory!, _tunitTemplateName!, "ClickLinkTests.cs"],
-            [options.OutputDirectory!, _tunitTemplateName!, "DataDrivenTests.cs"],
-            [options.OutputDirectory!, _tunitTemplateName!, "MyParallelLimit.cs"],
-            [options.OutputDirectory!, _tunitTemplateName!, "MyTestProject.csproj"],
-            [options.OutputDirectory!, _tunitTemplateName!, "RequestedPlatformData.cs"]
-        ]);
-    }
-
-    [Fact]
-    [Trait("Group", "XUnit3")]
-    public async Task GeneratesExpectedXUnit3Project() {
-        var options = GetVerifierOptions(_xunit3TemplateName!, _xunit3TemplateFolder);
-
-        await _engine!.Execute(options);
-
-        AssertFiles([
-            [options.OutputDirectory!, _xunit3TemplateName!, "PageObjects", "GuineaPigPage.cs"],
-            [options.OutputDirectory!, _xunit3TemplateName!, "ClickLinkTests.cs"],
-            [options.OutputDirectory!, _xunit3TemplateName!, "DataDrivenTests.cs"],
-            [options.OutputDirectory!, _xunit3TemplateName!, "MyTestProject.csproj"],
-            [options.OutputDirectory!, _xunit3TemplateName!, "RequestedPlatformData.cs"],
-            [options.OutputDirectory!, _xunit3TemplateName!, "Usings.cs"],
-            [options.OutputDirectory!, _xunit3TemplateName!, "xunit.runner.json"]
-        ]);
-    }
-
-    public Task DisposeAsync() {
-        if(Directory.Exists(_outputDir)) {
-            Directory.Delete(_outputDir, recursive: true);
+            AssertFiles([
+                [options.OutputDirectory!, "saucery-nunit", "MyTestProject.csproj"],
+                [options.OutputDirectory!, "saucery-nunit", "NuGetIntegrationTests.cs"],
+                [options.OutputDirectory!, "saucery-nunit", "RequestedPlatformData.cs"],
+                [options.OutputDirectory!, "saucery-nunit", "PageObjects", "GuineaPigPage.cs"]
+            ]);
+        } finally {
+            CleanupOutputDir(outputDir);
         }
+    }
 
-        _engine = null!;
+    [Test]
+    [Category("XUnit")]
+    public async Task GeneratesExpectedXUnitProject() {
+        var outputDir = CreateTempOutputDir();
+        try {
+            using var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
+            var engine = new VerificationEngine(loggerFactory);
 
-        return Task.CompletedTask;
+            var options = GetVerifierOptions("saucery-xunit", _xunitTemplateFolder, outputDir);
+
+            await engine.Execute(options);
+
+            AssertFiles([
+                [options.OutputDirectory!, "saucery-xunit", "MyTestProject.csproj"],
+                [options.OutputDirectory!, "saucery-xunit", "ClickLinkTests.cs"],
+                [options.OutputDirectory!, "saucery-xunit", "DataDrivenTests.cs"],
+                [options.OutputDirectory!, "saucery-xunit", "RequestedPlatformData.cs"],
+                [options.OutputDirectory!, "saucery-xunit", "Usings.cs"],
+                [options.OutputDirectory!, "saucery-xunit", "PageObjects", "GuineaPigPage.cs"]
+            ]);
+        } finally {
+            CleanupOutputDir(outputDir);
+        }
+    }
+
+    [Test]
+    [Category("TUnit")]
+    public async Task GeneratesExpectedTUnitProject() {
+        var outputDir = CreateTempOutputDir();
+        try {
+            using var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
+            var engine = new VerificationEngine(loggerFactory);
+
+            var options = GetVerifierOptions("saucery-tunit", _tunitTemplateFolder, outputDir);
+
+            await engine.Execute(options);
+
+            AssertFiles([
+                [options.OutputDirectory!, "saucery-tunit", "PageObjects", "GuineaPigPage.cs"],
+                [options.OutputDirectory!, "saucery-tunit", "ClickLinkTests.cs"],
+                [options.OutputDirectory!, "saucery-tunit", "DataDrivenTests.cs"],
+                [options.OutputDirectory!, "saucery-tunit", "MyParallelLimit.cs"],
+                [options.OutputDirectory!, "saucery-tunit", "MyTestProject.csproj"],
+                [options.OutputDirectory!, "saucery-tunit", "RequestedPlatformData.cs"]
+            ]);
+        } finally {
+            CleanupOutputDir(outputDir);
+        }
+    }
+
+    [Test]
+    [Category("XUnit3")]
+    public async Task GeneratesExpectedXUnit3Project() {
+        var outputDir = CreateTempOutputDir();
+        try {
+            using var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
+            var engine = new VerificationEngine(loggerFactory);
+
+            var options = GetVerifierOptions("saucery-xunit3", _xunit3TemplateFolder, outputDir);
+
+            await engine.Execute(options);
+
+            AssertFiles([
+                [options.OutputDirectory!, "saucery-xunit3", "PageObjects", "GuineaPigPage.cs"],
+                [options.OutputDirectory!, "saucery-xunit3", "ClickLinkTests.cs"],
+                [options.OutputDirectory!, "saucery-xunit3", "DataDrivenTests.cs"],
+                [options.OutputDirectory!, "saucery-xunit3", "MyTestProject.csproj"],
+                [options.OutputDirectory!, "saucery-xunit3", "RequestedPlatformData.cs"],
+                [options.OutputDirectory!, "saucery-xunit3", "Usings.cs"],
+                [options.OutputDirectory!, "saucery-xunit3", "xunit.runner.json"]
+            ]);
+        } finally {
+            CleanupOutputDir(outputDir);
+        }
     }
 
     private static string GetFolderPath(string templateName)
         => Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "Templates", templateName));
 
-    private TemplateVerifierOptions GetVerifierOptions(string templateName, string templateFolder)
+    private static TemplateVerifierOptions GetVerifierOptions(string templateName, string templateFolder, string outputDir)
         => new(templateName) {
             TemplatePath = templateFolder,
-            OutputDirectory = _outputDir,
+            OutputDirectory = outputDir,
             TemplateSpecificArgs = ["--name", "MyTestProject"],
             DisableDiffTool = true
         };
@@ -122,6 +124,25 @@ public class TemplateTests : IAsyncLifetime {
         foreach(var file in fileSet) {
             var filePath = Path.Combine(file);
             File.Exists(filePath).ShouldBeTrue($"Expected file to exist: {filePath}");
+        }
+    }
+
+    private static string CreateTempOutputDir() {
+        var dir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        Directory.CreateDirectory(dir);
+        return dir;
+    }
+
+    private static void CleanupOutputDir(string? dir) {
+        if (string.IsNullOrEmpty(dir))
+            return;
+
+        try {
+            if (Directory.Exists(dir)) {
+                Directory.Delete(dir, recursive: true);
+            }
+        } catch {
+            // best-effort cleanup; tests should not fail on cleanup error
         }
     }
 }
