@@ -68,9 +68,9 @@ Directory.CreateDirectory("badges");
 
 var badgeJson = new {
     schemaVersion = 1,
-    label = "NuGet downloads",
+    label = "total downloads",
     message = total.ToString("N0"),
-    color = "blue",
+    color = "green",
 };
 
 await File.WriteAllTextAsync(
