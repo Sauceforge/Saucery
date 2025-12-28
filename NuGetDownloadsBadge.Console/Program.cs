@@ -3,6 +3,8 @@ using System.Text.Json;
 
 var packages = new[]
 {
+    "Saucery2",
+    "Saucery3",
     "Saucery.Core",
     "Saucery",
     "Saucery.XUnit",
@@ -76,4 +78,4 @@ await File.WriteAllTextAsync(
     JsonSerializer.Serialize(badgeJson)
 );
 
-Console.WriteLine($"Wrote badges/nuget-total-downloads.json (total={total:N0})");
+           Console.WriteLine($"Wrote badges/nuget-total-downloads.json (total={total:N0})");
