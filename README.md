@@ -38,7 +38,7 @@ The templates below include example tests.
 | Saucery.XUnit | [![nuget](https://img.shields.io/nuget/v/Saucery.XUnit.svg)](https://www.nuget.org/packages/Saucery.XUnit/)  [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery.XUnit)](https://www.nuget.org/packages/Saucery.XUnit/) |
 | Saucery.TUnit | [![nuget](https://img.shields.io/nuget/v/Saucery.TUnit.svg)](https://www.nuget.org/packages/Saucery.TUnit/)  [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery.TUnit)](https://www.nuget.org/packages/Saucery.TUnit/) |
 | Saucery.XUnit.v3 | [![nuget](https://img.shields.io/nuget/v/Saucery.XUnit.v3.svg)](https://www.nuget.org/packages/Saucery.XUnit.v3/)  [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery.XUnit.v3)](https://www.nuget.org/packages/Saucery.XUnit.v3/) |
-| Total Downloads | [![NuGet downloads](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Sauceforge/Saucery/master/badges/nuget-total-downloads.json&cacheSeconds=21600)](https://www.nuget.org/packages/Saucery/)
+| Total Downloads | [![nuget](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Sauceforge/Saucery/master/badges/nuget-total-downloads.json&cacheSeconds=21600)](https://www.nuget.org/packages/Saucery/)
 
 
 ### Sponsoring
