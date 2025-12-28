@@ -19,7 +19,7 @@ jobs:
           dotnet-version: "10.0.x"
 
       - name: Generate badge JSON
-        run: dotnet run --project tools/NuGetDownloadsBadge/NuGetDownloadsBadge.csproj
+        run: dotnet run --project NuGetDownloadsBadge.Console/NuGetDownloadsBadge.Console.csproj
 
       - name: Commit and push if there are changes
         shell: bash
