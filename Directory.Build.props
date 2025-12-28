@@ -1,0 +1,6 @@
+<Project>
+  <PropertyGroup>
+    <!-- Ensure test projects use the Microsoft Testing Platform to match global.json -->
+    <TestRunner>Microsoft.Testing.Platform</TestRunner>
+  </PropertyGroup>
+</Project>
