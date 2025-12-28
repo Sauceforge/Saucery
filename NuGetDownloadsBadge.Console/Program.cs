@@ -70,7 +70,7 @@ var badgeJson = new {
     schemaVersion = 1,
     label = "Total All Time Saucery downloads",
     message = total.ToString("N0"),
-    color = "darkgreen",
+    color = "brightgreen",
 };
 
 await File.WriteAllTextAsync(
@@ -78,4 +78,4 @@ await File.WriteAllTextAsync(
     JsonSerializer.Serialize(badgeJson)
 );
 
-           Console.WriteLine($"Wrote badges/nuget-total-downloads.json (total={total:N0})");
+Console.WriteLine($"Wrote badges/nuget-total-downloads.json (total={total:N0})");
