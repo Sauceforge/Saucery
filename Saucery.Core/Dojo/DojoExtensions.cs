@@ -196,6 +196,7 @@ public static class DojoExtensions
         string platformToSearchFor = $"{sp.Os} {sp.LongVersion}";
         PlatformBase? platform = platformToSearchFor switch
         {
+            "iOS 26.1" => platforms.GetPlatform<IOS261Platform>().FirstOrDefault(),
             "iOS 26.0" => platforms.GetPlatform<IOS26Platform>().FirstOrDefault(),
             "iOS 18.6" => platforms.GetPlatform<IOS186Platform>().FirstOrDefault(),
             "iOS 18.0" => platforms.GetPlatform<IOS18Platform>().FirstOrDefault(),
