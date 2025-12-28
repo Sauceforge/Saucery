@@ -68,9 +68,9 @@ Directory.CreateDirectory("badges");
 
 var badgeJson = new {
     schemaVersion = 1,
-    label = "total downloads",
+    label = "Total All Time Saucery downloads",
     message = total.ToString("N0"),
-    color = "green",
+    color = "darkgreen",
 };
 
 await File.WriteAllTextAsync(
