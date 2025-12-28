@@ -213,7 +213,7 @@ jobs:
         --results-directory "TestResults"
 
     - name: Run Template Tests
-      run: dotnet test -c ${{ env.CONFIG }} --filter "Group=XUnit" ${{ env.TT_PROJECT }}
+      run: dotnet run --project ${{ env.TT_PROJECT }} -- --treenode-filter '/*/*/*/*[Category=XUnit]'
 
     - name: Display structure of downloaded files
       run: ls -R
