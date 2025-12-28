@@ -213,10 +213,18 @@ jobs:
     needs: [detect-changes, xunit-external-tests, xunit-real-external-tests]
     if: ${{ needs.detect-changes.outputs.changed == 'true' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master') && success() }}
     runs-on: ubuntu-latest
+
+    # Prevent concurrent simultaneous tag attempts for the same branch/ref.
+    concurrency:
+      group: tag-${{ github.ref }}
+      cancel-in-progress: false
+
     steps:
     - name: Bump version and push tag
       if: ${{ (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master') && success() }}
       id: tag_version
       uses: mathieudutour/github-tag-action@v6.2
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+        # Use a PAT stored in secrets to avoid integration-token race conditions.
+        # Create a repo-scoped Personal Access Token and add it as repository secret `GH_PAT`.
+        github_token: ${{ secrets.ACTIONS_PUSH_PAT }}
