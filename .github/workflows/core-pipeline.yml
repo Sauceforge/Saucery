@@ -95,7 +95,7 @@ jobs:
        --results-directory "TestResults"
 
     - name: Run Template Tests
-      run: dotnet test -c ${{ env.CONFIG }} ${{ env.TT_PROJECT }}
+      run: dotnet run --project ${{ env.TT_PROJECT }}
 
     - name: Display structure of downloaded files
       run: ls -R
