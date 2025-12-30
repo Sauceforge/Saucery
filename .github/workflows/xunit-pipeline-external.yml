@@ -163,6 +163,13 @@ jobs:
                   core.info("No changes in watched paths. Downstream jobs will be skipped.");
                 }
               }
+
+              // If we have a previous run and no watched paths changed, treat overall changed as false
+              // This guarantees downstream jobs won't run for commits that only touch other projects
+              if (pathsChanged === "false") {
+                core.info("No watched-path changes detected since previous run; marking overall changed as false to skip downstream jobs.");
+                changed = "false";
+              }
             }
 
             core.setOutput("changed", changed);
