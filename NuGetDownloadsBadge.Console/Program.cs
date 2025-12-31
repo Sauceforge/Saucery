@@ -78,4 +78,18 @@ await File.WriteAllTextAsync(
     JsonSerializer.Serialize(badgeJson)
 );
 
+// Badge that reports the number of Saucery packages
+var packageCountBadgeJson = new {
+    schemaVersion = 1,
+    label = "Saucery packages",
+    message = packages.Length.ToString(),
+    color = "blue",
+};
+
+await File.WriteAllTextAsync(
+    "badges/nuget-package-count.json",
+    JsonSerializer.Serialize(packageCountBadgeJson)
+);
+
 Console.WriteLine($"Wrote badges/nuget-total-downloads.json (total={total:N0})");
+Console.WriteLine($"Wrote badges/nuget-package-count.json (count={packages.Length})");
