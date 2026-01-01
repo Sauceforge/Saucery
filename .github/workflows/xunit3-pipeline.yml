@@ -71,7 +71,7 @@ jobs:
           script: |
             const { owner, repo } = context.repo;
             const branch = context.ref.replace('refs/heads/', '');  // e.g. "master"
-            const workflow_id = ".github/workflows/nunit-pipeline.yml";
+            const workflow_id = ".github/workflows/xunit3-pipeline.yml";
 
             const runs = await github.rest.actions.listWorkflowRuns({
               owner,
