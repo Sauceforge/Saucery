@@ -2,21 +2,20 @@ name: NUnit Only External
 
 on:
   schedule:
-    # Runs at 02:00, 08:00, 14:00, 20:00 UTC daily (4 x per day) 
     - cron: "0 2,8,14,20 * * *"
   push:
     paths:
-      - '.github/workflows/nunit-pipeline-external.yml'
-      - 'ExternalMerlin.NUnit/**'
-      - 'ExternalMerlin.NUnit.RealDevices/**'
+      - ".github/workflows/nunit-pipeline-external.yml"
+      - "ExternalMerlin.NUnit/**"
+      - "ExternalMerlin.NUnit.RealDevices/**"
     branches:
       - master
-      - 'releases/**'
-      - 'feat/**'
-      - 'feature/**'
-      - 'fix/**'
-      - 'test/**'
-      - 'bug/**'
+      - "releases/**"
+      - "feat/**"
+      - "feature/**"
+      - "fix/**"
+      - "test/**"
+      - "bug/**"
   workflow_dispatch:
 
 env:
@@ -28,9 +27,10 @@ env:
   SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
   CONFIG: Release
 
-  WATCHED_GLOBS: >
-    .github/workflows/nunit-pipeline-external.yml, 
-    ExternalMerlin.NUnit/**, 
+  # Safer: one glob per line.
+  WATCHED_GLOBS: |
+    .github/workflows/nunit-pipeline-external.yml
+    ExternalMerlin.NUnit/**
     ExternalMerlin.NUnit.RealDevices/**
 
 permissions:
@@ -38,7 +38,7 @@ permissions:
 
 jobs:
   detect-changes:
-    name: Detect if branch HEAD changed since last completed run
+    name: Detect if watched paths changed since last completed run
     runs-on: ubuntu-latest
     permissions:
       actions: read
@@ -55,7 +55,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { owner, repo } = context.repo;
-            const branch = context.ref.replace('refs/heads/', '');  // e.g. "master"
+            const branch = context.ref.replace('refs/heads/', '');
             const workflow_id = ".github/workflows/nunit-pipeline-external.yml";
 
             const runs = await github.rest.actions.listWorkflowRuns({
@@ -76,61 +76,47 @@ jobs:
             let changed = "true";
             let pathsChanged = "true";
 
-            // Get watched globs from env (comma-separated)
+            // Robust parse: supports newline-separated (recommended) and commas.
             const raw = process.env.WATCHED_GLOBS || "";
             const watchedGlobs = raw
-              .split(",")
-              .map(x => x.trim())
-              .filter(x => x.length > 0);
+              .split(/[\n,]+/g)
+              .map(s => s.trim())
+              .filter(Boolean)
+              .flatMap(s => s.split(/\s+/g)) // tolerates folded whitespace
+              .map(s => s.trim())
+              .filter(Boolean);
 
             core.info(`WATCHED_GLOBS (parsed): [${watchedGlobs.join(", ")}]`);
 
-            // Very small glob matcher supporting '*' and '**'
             function globToRegexSource(pattern) {
               let out = "";
               for (let i = 0; i < pattern.length; i++) {
                 const ch = pattern[i];
                 if (ch === "*") {
                   const nextIsStar = i + 1 < pattern.length && pattern[i + 1] === "*";
-                  if (nextIsStar) {
-                    out += ".*";  // '**' => any depth
-                    i++;          // skip second '*'
-                  } else {
-                    out += "[^/]*"; // '*' => any chars except '/'
-                  }
-                } else if (ch === "/") {
-                  out += "\\/"; // literal slash
-                } else if ("\\.[]{}()+-?^$|".includes(ch)) {
-                  out += "\\" + ch; // escape regex special
-                } else {
-                  out += ch;
-                }
+                  if (nextIsStar) { out += ".*"; i++; }
+                  else { out += "[^/]*"; }
+                } else if (ch === "/") out += "\\/";
+                else if ("\\.[]{}()+-?^$|".includes(ch)) out += "\\" + ch;
+                else out += ch;
               }
               return out;
             }
 
             function matchesGlob(path, pattern) {
-              const source = globToRegexSource(pattern);
-              const regex = new RegExp("^" + source + "$");
-              return regex.test(path);
+              return new RegExp("^" + globToRegexSource(pattern) + "$").test(path);
             }
 
             if (!prevSha) {
-              // First time this workflow has completed on this branch
               core.info("No previous completed run for this workflow+branch. Treating as changed.");
-              if (watchedGlobs.length === 0) {
-                core.info("No watched globs defined; treating paths_changed as true.");
-                pathsChanged = "true";
-              } else {
-                core.info("First run: skipping path-based filtering and treating paths_changed as true.");
-                pathsChanged = "true";
-              }
+              // First time: run downstream (especially for schedule).
+              pathsChanged = "true";
+              changed = "true";
             } else if (prevSha === curSha) {
               core.info("No new commits since the last completed run on this branch.");
               changed = "false";
               pathsChanged = "false";
             } else {
-              // There are new commits; now see if watched paths changed.
               const comparison = await github.rest.repos.compareCommits({
                 owner,
                 repo,
@@ -138,15 +124,11 @@ jobs:
                 head: curSha
               });
 
-              const files = comparison.data.files || [];
-              const changedPaths = files.map(f => f.filename);
+              const changedPaths = (comparison.data.files || []).map(f => f.filename);
 
               core.info("Changed files since last run:");
-              if (changedPaths.length === 0) {
-                core.info(" (none reported by compareCommits)");
-              } else {
-                for (const p of changedPaths) core.info(` - ${p}`);
-              }
+              if (changedPaths.length === 0) core.info(" (none reported by compareCommits)");
+              else for (const p of changedPaths) core.info(` - ${p}`);
 
               if (watchedGlobs.length === 0) {
                 core.info("No watched globs defined; treating paths_changed as true.");
@@ -155,14 +137,19 @@ jobs:
                 const matches = changedPaths.some(path =>
                   watchedGlobs.some(pattern => matchesGlob(path, pattern))
                 );
-
                 pathsChanged = matches ? "true" : "false";
+              }
 
-                if (pathsChanged === "true") {
-                  core.info("Detected changes in watched paths. Downstream jobs are eligible to run.");
-                } else {
-                  core.info("No changes in watched paths. Downstream jobs will be skipped.");
-                }
+              if (pathsChanged === "true") {
+                core.info("Detected changes in watched paths. Downstream jobs are eligible to run.");
+              } else {
+                core.info("No changes in watched paths. Downstream jobs will be skipped.");
+              }
+
+              // CRITICAL FIX: prevent running when only non-watched files changed.
+              if (pathsChanged === "false") {
+                core.info("No watched-path changes detected; marking overall changed as false.");
+                changed = "false";
               }
             }
 
@@ -172,11 +159,11 @@ jobs:
 
   nunit-external-tests:
     needs: detect-changes
-    if: ${{ needs.detect-changes.outputs.changed == 'true' }}
+    if: ${{ needs.detect-changes.outputs.paths_changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1
 
@@ -193,11 +180,11 @@ jobs:
 
   nunit-real-external-tests:
     needs: detect-changes
-    if: ${{ needs.detect-changes.outputs.changed == 'true' }}
+    if: ${{ needs.detect-changes.outputs.paths_changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1
 
@@ -214,13 +201,11 @@ jobs:
 
   tag:
     needs: [detect-changes, nunit-external-tests, nunit-real-external-tests]
-    if: ${{ needs.detect-changes.outputs.changed == 'true' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master') && success() }}
+    if: ${{ needs.detect-changes.outputs.paths_changed == 'true' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master') && success() }}
     runs-on: ubuntu-latest
-
     concurrency:
       group: tag-${{ github.ref }}
       cancel-in-progress: false
-
     steps:
       - name: Bump version and push tag
         id: tag_version
