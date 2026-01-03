@@ -2,33 +2,33 @@ name: XUnit3 Only External
 
 on:
   schedule:
-    # Runs at 02:00, 08:00, 14:00, 20:00 UTC daily (4× per day)
     - cron: "0 2,8,14,20 * * *"
   push:
     paths:
-      - '.github/workflows/xunit3-pipeline-external.yml'
-      - 'ExternalMerlin.XUnit3/**'
-      - 'ExternalMerlin.XUnit3.RealDevices/**'
+      - ".github/workflows/xunit3-pipeline-external.yml"
+      - "ExternalMerlin.XUnit3/**"
+      - "ExternalMerlin.XUnit3.RealDevices/**"
     branches:
       - master
-      - 'releases/**'
-      - 'feat/**'
-      - 'feature/**'
-      - 'fix/**'
-      - 'test/**'
+      - "releases/**"
+      - "feat/**"
+      - "feature/**"
+      - "fix/**"
+      - "test/**"
   workflow_dispatch:
 
 env:
   PROJECT_NAME: Saucery
-  SOLN_FILE: Saucery.sln                                                                           # full path to your solution file
-  EM_XUNIT3_PROJECT: ExternalMerlin.XUnit3/ExternalMerlin.XUnit3.csproj                            # full path to xunit3 external integration test project file
-  EM_RD_XUNIT3_PROJECT: ExternalMerlin.XUnit3.RealDevices/ExternalMerlin.XUnit3.RealDevices.csproj # full path to xunit3 external integration test project file
+  SOLN_FILE: Saucery.sln
+  EM_XUNIT3_PROJECT: ExternalMerlin.XUnit3/ExternalMerlin.XUnit3.csproj
+  EM_RD_XUNIT3_PROJECT: ExternalMerlin.XUnit3.RealDevices/ExternalMerlin.XUnit3.RealDevices.csproj
   SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
   SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
   CONFIG: Release
 
-  WATCHED_GLOBS: >
-    .github/workflows/xunit3-pipeline-external.yml,
+  # IMPORTANT: use literal block so each glob is its own token
+  WATCHED_GLOBS: |
+    .github/workflows/xunit3-pipeline-external.yml
     ExternalMerlin.XUnit3/**
     ExternalMerlin.XUnit3.RealDevices/**
 
@@ -54,7 +54,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { owner, repo } = context.repo;
-            const branch = context.ref.replace('refs/heads/', '');  // e.g. "master"
+            const branch = context.ref.replace('refs/heads/', '');
             const workflow_id = ".github/workflows/xunit3-pipeline-external.yml";
 
             const runs = await github.rest.actions.listWorkflowRuns({
@@ -75,16 +75,19 @@ jobs:
             let changed = "true";
             let pathsChanged = "true";
 
-            // Get watched globs from env (comma-separated)
+            // Robust parse: supports newline-separated (recommended) and/or commas
+            // and tolerates folded whitespace accidents.
             const raw = process.env.WATCHED_GLOBS || "";
             const watchedGlobs = raw
-              .split(",")
-              .map(x => x.trim())
-              .filter(x => x.length > 0);
+              .split(/[\n,]+/g)
+              .map(s => s.trim())
+              .filter(Boolean)
+              .flatMap(s => s.split(/\s+/g))
+              .map(s => s.trim())
+              .filter(Boolean);
 
             core.info(`WATCHED_GLOBS (parsed): [${watchedGlobs.join(", ")}]`);
 
-            // Very small glob matcher supporting '*' and '**'
             function globToRegexSource(pattern) {
               let out = "";
               for (let i = 0; i < pattern.length; i++) {
@@ -92,15 +95,15 @@ jobs:
                 if (ch === "*") {
                   const nextIsStar = i + 1 < pattern.length && pattern[i + 1] === "*";
                   if (nextIsStar) {
-                    out += ".*";  // '**' => any depth
-                    i++;          // skip second '*'
+                    out += ".*";
+                    i++;
                   } else {
-                    out += "[^/]*"; // '*' => any chars except '/'
+                    out += "[^/]*";
                   }
                 } else if (ch === "/") {
-                  out += "\\/"; // literal slash
+                  out += "\\/";
                 } else if ("\\.[]{}()+-?^$|".includes(ch)) {
-                  out += "\\" + ch; // escape regex special
+                  out += "\\" + ch;
                 } else {
                   out += ch;
                 }
@@ -109,27 +112,20 @@ jobs:
             }
 
             function matchesGlob(path, pattern) {
-              const source = globToRegexSource(pattern);
-              const regex = new RegExp("^" + source + "$");
+              const regex = new RegExp("^" + globToRegexSource(pattern) + "$");
               return regex.test(path);
             }
 
             if (!prevSha) {
-              // First time this workflow has completed on this branch
               core.info("No previous completed run for this workflow+branch. Treating as changed.");
-              if (watchedGlobs.length === 0) {
-                core.info("No watched globs defined; treating paths_changed as true.");
-                pathsChanged = "true";
-              } else {
-                core.info("First run: skipping path-based filtering and treating paths_changed as true.");
-                pathsChanged = "true";
-              }
+              // First ever completed run: always run downstream.
+              pathsChanged = "true";
+              changed = "true";
             } else if (prevSha === curSha) {
               core.info("No new commits since the last completed run on this branch.");
               changed = "false";
               pathsChanged = "false";
             } else {
-              // There are new commits; now see if watched paths changed.
               const comparison = await github.rest.repos.compareCommits({
                 owner,
                 repo,
@@ -163,6 +159,12 @@ jobs:
                   core.info("No changes in watched paths. Downstream jobs will be skipped.");
                 }
               }
+
+              // CRITICAL FIX: if watched paths didn't change, force overall skip
+              if (pathsChanged === "false") {
+                core.info("No watched-path changes detected since previous run; marking overall changed as false.");
+                changed = "false";
+              }
             }
 
             core.setOutput("changed", changed);
@@ -171,57 +173,52 @@ jobs:
 
   xunit3-external-tests:
     needs: detect-changes
-    if: ${{ needs.detect-changes.outputs.changed == 'true' }}
+    if: ${{ needs.detect-changes.outputs.paths_changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v5
+      - name: Checkout Code
+        uses: actions/checkout@v5
 
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v5
-      with:
-        # Check for latest at link at .NET 10 download page (https://dotnet.microsoft.com/download/dotnet/10.0)
-        dotnet-version: 10.0.x
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
 
-    - name: Compile solution
-      run: dotnet build -c ${{ env.CONFIG }}
+      - name: Compile solution
+        run: dotnet build -c ${{ env.CONFIG }}
 
-    - name: Run External XUnit3 Integration Tests
-      run: dotnet run -c ${{ env.CONFIG }} --project ${{ env.EM_XUNIT3_PROJECT }} --no-build
+      - name: Run External XUnit3 Integration Tests
+        run: dotnet run -c ${{ env.CONFIG }} --project ${{ env.EM_XUNIT3_PROJECT }} --no-build
 
   xunit3-real-external-tests:
     needs: detect-changes
-    if: ${{ needs.detect-changes.outputs.changed == 'true' }}
+    if: ${{ needs.detect-changes.outputs.paths_changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v5
+      - name: Checkout Code
+        uses: actions/checkout@v5
 
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v5
-      with:
-        # Check for latest at link at .NET 10 download page (https://dotnet.microsoft.com/download/dotnet/10.0)
-        dotnet-version: 10.0.x
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
 
-    - name: Compile solution
-      run: dotnet build -c ${{ env.CONFIG }}
+      - name: Compile solution
+        run: dotnet build -c ${{ env.CONFIG }}
 
-    - name: Run External XUnit3 Real Integration Tests
-      run: dotnet run -c ${{ env.CONFIG }} --project ${{ env.EM_RD_XUNIT3_PROJECT }} --no-build
+      - name: Run External XUnit3 Real Integration Tests
+        run: dotnet run -c ${{ env.CONFIG }} --project ${{ env.EM_RD_XUNIT3_PROJECT }} --no-build
 
   tag:
     needs: [detect-changes, xunit3-external-tests, xunit3-real-external-tests]
-    if: ${{ needs.detect-changes.outputs.changed == 'true' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master') && success() }}
+    if: ${{ needs.detect-changes.outputs.paths_changed == 'true' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master') && success() }}
     runs-on: ubuntu-latest
-
     concurrency:
       group: tag-${{ github.ref }}
       cancel-in-progress: false
-
     steps:
-    - name: Bump version and push tag
-      if: ${{ (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master') && success() }}
-      id: tag_version
-      uses: mathieudutour/github-tag-action@v6.2
-      with:
-        github_token: ${{ secrets.ACTIONS_PUSH_PAT }}
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.2
+        with:
+          github_token: ${{ secrets.ACTIONS_PUSH_PAT }}
