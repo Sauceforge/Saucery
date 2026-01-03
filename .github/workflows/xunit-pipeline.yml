@@ -42,8 +42,8 @@ env:
   XUNIT_RD_INTEGRATION_COVERAGE_FILENAME: cobertura.xunit.realdevice.integration.xml
   COVERAGE_THRESHOLD: 80
 
-  WATCHED_GLOBS: >
-    .github/workflows/xunit-pipeline.yml,
+  WATCHED_GLOBS: |
+    .github/workflows/xunit-pipeline.yml
     Saucery.XUnit/**
     Merlin.XUnit/**
     Merlin.XUnit.RealDevices/**
@@ -53,7 +53,7 @@ permissions:
 
 jobs:
   detect-changes:
-    name: Detect if branch HEAD changed since last completed run
+    name: Detect watched path changes since last completed run
     runs-on: ubuntu-latest
     permissions:
       actions: read
@@ -70,7 +70,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { owner, repo } = context.repo;
-            const branch = context.ref.replace('refs/heads/', '');  // e.g. "master"
+            const branch = context.ref.replace('refs/heads/', '');
             const workflow_id = ".github/workflows/xunit-pipeline.yml";
 
             const runs = await github.rest.actions.listWorkflowRuns({
@@ -85,18 +85,20 @@ jobs:
             const prevSha = runs.data.workflow_runs[0]?.head_sha || "";
             const curSha = context.sha;
 
-            core.info(`Current SHA:  ${curSha}`);
-            core.info(`Previous SHA: ${prevSha || "<none>"}`);
+            core.info(`Event:       ${context.eventName}`);
+            core.info(`Branch:      ${branch}`);
+            core.info(`Current SHA: ${curSha}`);
+            core.info(`Prev SHA:    ${prevSha || "<none>"}`);
 
             let changed = "true";
             let pathsChanged = "true";
 
-            // Get watched globs from env (comma-separated)
+            // Robust parse: split on newline OR comma, trim, drop empties
             const raw = process.env.WATCHED_GLOBS || "";
             const watchedGlobs = raw
-              .split(",")
+              .split(/[\n,]+/g)
               .map(x => x.trim())
-              .filter(x => x.length > 0);
+              .filter(Boolean);
 
             core.info(`WATCHED_GLOBS (parsed): [${watchedGlobs.join(", ")}]`);
 
@@ -131,21 +133,16 @@ jobs:
             }
 
             if (!prevSha) {
-              // First time this workflow has completed on this branch
-              core.info("No previous completed run for this workflow+branch. Treating as changed.");
-              if (watchedGlobs.length === 0) {
-                core.info("No watched globs defined; treating paths_changed as true.");
-                pathsChanged = "true";
-              } else {
-                core.info("First run: skipping path-based filtering and treating paths_changed as true.");
-                pathsChanged = "true";
-              }
+              // First completed-run baseline doesn't exist yet for this workflow+branch.
+              // We MUST run, because we can't compare safely.
+              core.info("No previous completed run for this workflow+branch. Treating as changed (paths_changed=true).");
+              changed = "true";
+              pathsChanged = "true";
             } else if (prevSha === curSha) {
               core.info("No new commits since the last completed run on this branch.");
               changed = "false";
               pathsChanged = "false";
             } else {
-              // There are new commits; now see if watched paths changed.
               const comparison = await github.rest.repos.compareCommits({
                 owner,
                 repo,
@@ -173,11 +170,11 @@ jobs:
 
                 pathsChanged = matches ? "true" : "false";
 
-                if (pathsChanged === "true") {
-                  core.info("Detected changes in watched paths. Downstream jobs are eligible to run.");
-                } else {
-                  core.info("No changes in watched paths. Downstream jobs will be skipped.");
-                }
+                core.info(
+                  pathsChanged === "true"
+                    ? "Detected changes in watched paths. Downstream jobs are eligible to run."
+                    : "No changes in watched paths. Downstream jobs will be skipped."
+                );
               }
             }
 
@@ -188,265 +185,259 @@ jobs:
   build:
     runs-on: ubuntu-latest
     needs: detect-changes
-    if: needs.detect-changes.outputs.changed == 'true'
-
+    if: needs.detect-changes.outputs.paths_changed == 'true'
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v5
+      - name: Checkout Code
+        uses: actions/checkout@v5
 
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: 10.0.x
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
 
-    - name: Compile solution
-      run: dotnet build -c ${{ env.CONFIG }}
+      - name: Compile solution
+        run: dotnet build -c ${{ env.CONFIG }}
 
-    - name: Run TUnit Unit tests (with coverage + TRX)
-      run: |
-        dotnet run -c ${{ env.CONFIG }} --project ${{ env.UT_PROJECT }} -- \
-        --report-trx \
-        --report-trx-filename "unit.trx" \
-        --coverage \
-        --coverage-output "${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}" \
-        --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
-        --results-directory "TestResults"
+      - name: Run TUnit Unit tests (with coverage + TRX)
+        run: |
+          dotnet run -c ${{ env.CONFIG }} --project ${{ env.UT_PROJECT }} -- \
+          --report-trx \
+          --report-trx-filename "unit.trx" \
+          --coverage \
+          --coverage-output "${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}" \
+          --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
+          --results-directory "TestResults"
 
-    - name: Run Template Tests
-      run: dotnet run --project ${{ env.TT_PROJECT }} -- --treenode-filter '/*/*/*/*[Category=XUnit]'
+      - name: Run Template Tests
+        run: dotnet run --project ${{ env.TT_PROJECT }} -- --treenode-filter '/*/*/*/*[Category=XUnit]'
 
-    - name: Display structure of downloaded files
-      run: ls -R
+      - name: Display structure of downloaded files
+        run: ls -R
 
-    - name: Upload TRX
-      uses: actions/upload-artifact@v5
-      with:
-        name: unit-test-trx
-        path: ${{ env.COVERLET_DIR }}/unit.trx
+      - name: Upload TRX
+        uses: actions/upload-artifact@v5
+        with:
+          name: unit-test-trx
+          path: ${{ env.COVERLET_DIR }}/unit.trx
 
-    - name: Publish Artifacts
-      uses: actions/upload-artifact@v5
-      with:
-        name: unit-test-results
-        path: ${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}
+      - name: Publish Artifacts
+        uses: actions/upload-artifact@v5
+        with:
+          name: unit-test-results
+          path: ${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}
 
   xunit-integration-tests:
     runs-on: ubuntu-latest
     needs: [build]
+    if: needs.build.result == 'success'
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v5
+      - name: Checkout Code
+        uses: actions/checkout@v5
 
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: 10.0.x
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
 
-    - name: Restore dependencies
-      run: dotnet restore --force
+      - name: Restore dependencies
+        run: dotnet restore --force
 
-    - name: Build project
-      run: dotnet build -c ${{ env.CONFIG }}
+      - name: Build project
+        run: dotnet build -c ${{ env.CONFIG }}
 
-    - name: Ensure TestResults dir exists
-      run: mkdir -p "${{ github.workspace }}/${{ env.COVERLET_DIR }}"
+      - name: Ensure TestResults dir exists
+        run: mkdir -p "${{ github.workspace }}/${{ env.COVERLET_DIR }}"
 
-    - name: Run XUnit Integration Tests
-      uses: b3b00/coverlet-action@1.3.5-alpha2
-      with:
-        testProject: '${{ env.M_XUNIT_PROJECT }}'
-        output: ${{ env.XUNIT_INTEGRATION_COVERAGE_FILENAME }}
-        outputFormat: ${{ env.COVERAGE_FORMAT }}
-        #threshold: ${{ env.COVERAGE_THRESHOLD }}
-        excludes: '[Merlin.XUnit]Tests.*'
+      - name: Run XUnit Integration Tests
+        uses: b3b00/coverlet-action@1.3.5-alpha2
+        with:
+          testProject: '${{ env.M_XUNIT_PROJECT }}'
+          output: ${{ env.XUNIT_INTEGRATION_COVERAGE_FILENAME }}
+          outputFormat: ${{ env.COVERAGE_FORMAT }}
+          #threshold: ${{ env.COVERAGE_THRESHOLD }}
+          excludes: '[Merlin.XUnit]Tests.*'
 
-    - name: Display structure of downloaded files
-      run: ls -R
+      - name: Display structure of downloaded files
+        run: ls -R
 
-    - name: Publish Artifacts
-      uses: actions/upload-artifact@v5
-      with:
-        name: xunit-integration-test-results
-        path: ${{ env.COVERLET_DIR }}/${{ env.XUNIT_INTEGRATION_COVERAGE_FILENAME }}
+      - name: Publish Artifacts
+        uses: actions/upload-artifact@v5
+        with:
+          name: xunit-integration-test-results
+          path: ${{ env.COVERLET_DIR }}/${{ env.XUNIT_INTEGRATION_COVERAGE_FILENAME }}
 
   xunit-real-integration-tests:
     runs-on: ubuntu-latest
     needs: [build]
+    if: needs.build.result == 'success'
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v5
+      - name: Checkout Code
+        uses: actions/checkout@v5
 
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: 10.0.x
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
 
-    - name: Restore dependencies
-      run: dotnet restore --force
+      - name: Restore dependencies
+        run: dotnet restore --force
 
-    - name: Build project
-      run: dotnet build -c ${{ env.CONFIG }}
+      - name: Build project
+        run: dotnet build -c ${{ env.CONFIG }}
 
-    - name: Ensure TestResults dir exists
-      run: mkdir -p "${{ github.workspace }}/${{ env.COVERLET_DIR }}"
+      - name: Ensure TestResults dir exists
+        run: mkdir -p "${{ github.workspace }}/${{ env.COVERLET_DIR }}"
 
-    - name: Run XUnit Real Integration Tests
-      uses: b3b00/coverlet-action@1.3.5-alpha2
-      with:
-        testProject: '${{ env.M_RD_XUNIT_PROJECT }}'
-        output: ${{ env.XUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}
-        outputFormat: ${{ env.COVERAGE_FORMAT }}
-        #threshold: ${{ env.COVERAGE_THRESHOLD }}
-        excludes: '[Merlin.XUnit.RealDevices]Tests.*'
+      - name: Run XUnit Real Integration Tests
+        uses: b3b00/coverlet-action@1.3.5-alpha2
+        with:
+          testProject: '${{ env.M_RD_XUNIT_PROJECT }}'
+          output: ${{ env.XUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}
+          outputFormat: ${{ env.COVERAGE_FORMAT }}
+          #threshold: ${{ env.COVERAGE_THRESHOLD }}
+          excludes: '[Merlin.XUnit.RealDevices]Tests.*'
 
-    - name: Publish Artifacts
-      uses: actions/upload-artifact@v5
-      with:
-        name: xunit-real-integration-test-results
-        path: ${{ env.COVERLET_DIR }}/${{ env.XUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}
+      - name: Publish Artifacts
+        uses: actions/upload-artifact@v5
+        with:
+          name: xunit-real-integration-test-results
+          path: ${{ env.COVERLET_DIR }}/${{ env.XUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}
 
-  # NEW STAGE: Publish Saucery.XUnit to NuGet if local version is newer than nuget.org
   publish-saucery-xunit:
     runs-on: ubuntu-latest
     needs: [xunit-integration-tests, xunit-real-integration-tests]
-    # Restrict to master to avoid accidental publishes; remove this "if" to allow other branches
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/master' && needs.xunit-integration-tests.result == 'success' && needs.xunit-real-integration-tests.result == 'success'
     env:
       PROJECT_PATH: Saucery.XUnit/Saucery.XUnit.csproj
       PACKAGE_ID: Saucery.XUnit
       BUILD_CONFIGURATION: Release
       ARTIFACT_DIR: artifacts
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v5
+      - name: Checkout Code
+        uses: actions/checkout@v5
 
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: 10.0.x
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
 
-    - name: Ensure jq is available
-      run: |
-        if ! command -v jq >/dev/null 2>&1; then
-          sudo apt-get update
-          sudo apt-get install -y jq
-        fi
+      - name: Ensure jq is available
+        run: |
+          if ! command -v jq >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y jq
+          fi
 
-    - name: Build & Pack Saucery.XUnit
-      run: |
-        dotnet restore "$PROJECT_PATH"
-        dotnet build "$PROJECT_PATH" -c "$BUILD_CONFIGURATION" --no-restore
-        mkdir -p "$ARTIFACT_DIR"
-        dotnet pack "$PROJECT_PATH" -c "$BUILD_CONFIGURATION" -o "$ARTIFACT_DIR" --no-build
+      - name: Build & Pack Saucery.XUnit
+        run: |
+          dotnet restore "$PROJECT_PATH"
+          dotnet build "$PROJECT_PATH" -c "$BUILD_CONFIGURATION" --no-restore
+          mkdir -p "$ARTIFACT_DIR"
+          dotnet pack "$PROJECT_PATH" -c "$BUILD_CONFIGURATION" -o "$ARTIFACT_DIR" --no-build
 
-    - name: Determine local packed version
-      id: localver
-      shell: bash
-      run: |
-        set -euo pipefail
-        NUPKG="$(ls "$ARTIFACT_DIR"/${PACKAGE_ID}.*.nupkg | grep -v '\.symbols\.nupkg' | head -n1)"
-        if [[ -z "${NUPKG:-}" ]]; then
-          echo "No nupkg found for ${PACKAGE_ID} in ${ARTIFACT_DIR}" >&2
-          exit 1
-        fi
-        BASENAME="$(basename "$NUPKG")"
-        LOCAL_VERSION="${BASENAME#${PACKAGE_ID}.}"
-        LOCAL_VERSION="${LOCAL_VERSION%.nupkg}"
-        echo "nupkg=$NUPKG"           >> "$GITHUB_OUTPUT"
-        echo "version=$LOCAL_VERSION"  >> "$GITHUB_OUTPUT"
-        echo "Local version: $LOCAL_VERSION"
+      - name: Determine local packed version
+        id: localver
+        shell: bash
+        run: |
+          set -euo pipefail
+          NUPKG="$(ls "$ARTIFACT_DIR"/${PACKAGE_ID}.*.nupkg | grep -v '\.symbols\.nupkg' | head -n1)"
+          if [[ -z "${NUPKG:-}" ]]; then
+            echo "No nupkg found for ${PACKAGE_ID} in ${ARTIFACT_DIR}" >&2
+            exit 1
+          fi
+          BASENAME="$(basename "$NUPKG")"
+          LOCAL_VERSION="${BASENAME#${PACKAGE_ID}.}"
+          LOCAL_VERSION="${LOCAL_VERSION%.nupkg}"
+          echo "nupkg=$NUPKG"            >> "$GITHUB_OUTPUT"
+          echo "version=$LOCAL_VERSION" >> "$GITHUB_OUTPUT"
+          echo "Local version: $LOCAL_VERSION"
 
-    - name: Query NuGet for latest published version
-      id: remotever
-      shell: bash
-      run: |
-        set -euo pipefail
-        LOWER_ID="$(echo "$PACKAGE_ID" | tr '[:upper:]' '[:lower:]')"
-        INDEX_URL="https://api.nuget.org/v3-flatcontainer/${LOWER_ID}/index.json"
-        if ! curl -fsSL "$INDEX_URL" -o /tmp/nuget_index.json; then
-          echo "version=" >> "$GITHUB_OUTPUT"
-          echo "Package not found on NuGet (first publish)."
-          exit 0
-        fi
-        REMOTE_VERSION="$(jq -r '.versions | last // empty' /tmp/nuget_index.json)"
-        echo "version=$REMOTE_VERSION" >> "$GITHUB_OUTPUT"
-        echo "Remote version: ${REMOTE_VERSION:-<none>}"
+      - name: Query NuGet for latest published version
+        id: remotever
+        shell: bash
+        run: |
+          set -euo pipefail
+          LOWER_ID="$(echo "$PACKAGE_ID" | tr '[:upper:]' '[:lower:]')"
+          INDEX_URL="https://api.nuget.org/v3-flatcontainer/${LOWER_ID}/index.json"
+          if ! curl -fsSL "$INDEX_URL" -o /tmp/nuget_index.json; then
+            echo "version=" >> "$GITHUB_OUTPUT"
+            echo "Package not found on NuGet (first publish)."
+            exit 0
+          fi
+          REMOTE_VERSION="$(jq -r '.versions | last // empty' /tmp/nuget_index.json)"
+          echo "version=$REMOTE_VERSION" >> "$GITHUB_OUTPUT"
+          echo "Remote version: ${REMOTE_VERSION:-<none>}"
 
-    - name: Decide if publish is needed
-      id: decide
-      shell: bash
-      run: |
-        set -euo pipefail
-        LOCAL="${{ steps.localver.outputs.version }}"
-        REMOTE="${{ steps.remotever.outputs.version }}"
-        if [[ -z "$REMOTE" ]]; then
-          echo "publish=true" >> "$GITHUB_OUTPUT"
-          echo "No remote version; will publish."
-          exit 0
-        fi
-        HIGHEST="$(printf '%s\n' "$REMOTE" "$LOCAL" | sort -V | tail -n1)"
-        if [[ "$HIGHEST" == "$LOCAL" && "$LOCAL" != "$REMOTE" ]]; then
-          echo "publish=true" >> "$GITHUB_OUTPUT"
-          echo "Local ($LOCAL) > Remote ($REMOTE); will publish."
-        else
-          echo "publish=false" >> "$GITHUB_OUTPUT"
-          echo "Local ($LOCAL) is NOT greater than Remote ($REMOTE); skipping publish."
-        fi
+      - name: Decide if publish is needed
+        id: decide
+        shell: bash
+        run: |
+          set -euo pipefail
+          LOCAL="${{ steps.localver.outputs.version }}"
+          REMOTE="${{ steps.remotever.outputs.version }}"
+          if [[ -z "$REMOTE" ]]; then
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+            echo "No remote version; will publish."
+            exit 0
+          fi
+          HIGHEST="$(printf '%s\n' "$REMOTE" "$LOCAL" | sort -V | tail -n1)"
+          if [[ "$HIGHEST" == "$LOCAL" && "$LOCAL" != "$REMOTE" ]]; then
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+            echo "Local ($LOCAL) > Remote ($REMOTE); will publish."
+          else
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            echo "Local ($LOCAL) is NOT greater than Remote ($REMOTE); skipping publish."
+          fi
 
-    - name: Publish to NuGet (only if newer)
-      if: steps.decide.outputs.publish == 'true'
-      env:
-        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-      run: |
-        set -euo pipefail
-        if [[ -z "${NUGET_API_KEY:-}" ]]; then
-          echo "NUGET_API_KEY secret is missing." >&2
-          exit 1
-        fi
-        dotnet nuget push "${{ steps.localver.outputs.nupkg }}" \
-          --api-key "$NUGET_API_KEY" \
-          --source https://api.nuget.org/v3/index.json \
-          --skip-duplicate
+      - name: Publish to NuGet (only if newer)
+        if: steps.decide.outputs.publish == 'true'
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${NUGET_API_KEY:-}" ]]; then
+            echo "NUGET_API_KEY secret is missing." >&2
+            exit 1
+          fi
+          dotnet nuget push "${{ steps.localver.outputs.nupkg }}" \
+            --api-key "$NUGET_API_KEY" \
+            --source https://api.nuget.org/v3/index.json \
+            --skip-duplicate
 
   generate-report:
     runs-on: ubuntu-latest
     needs: [publish-saucery-xunit]
+    if: needs.publish-saucery-xunit.result == 'success'
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v5
+      - name: Checkout Code
+        uses: actions/checkout@v5
 
-    - name: Download unit-test results
-      uses: actions/download-artifact@v6
-      with:
-        name: unit-test-results
+      - name: Download unit-test results
+        uses: actions/download-artifact@v6
+        with:
+          name: unit-test-results
 
-    - name: Download xunit-integration-test results
-      uses: actions/download-artifact@v6
-      with:
-        name: xunit-integration-test-results
+      - name: Download xunit-integration-test results
+        uses: actions/download-artifact@v6
+        with:
+          name: xunit-integration-test-results
 
-    - name: Download xunit-real-integration-test results
-      uses: actions/download-artifact@v6
-      with:
-        name: xunit-real-integration-test-results
+      - name: Download xunit-real-integration-test results
+        uses: actions/download-artifact@v6
+        with:
+          name: xunit-real-integration-test-results
 
-    - name: ReportGenerator
-      uses: danielpalme/ReportGenerator-GitHub-Action@5.5.0
-      with:
-        reports: ${{ env.UNIT_COVERAGE_FILENAME }};${{ env.XUNIT_INTEGRATION_COVERAGE_FILENAME }};${{ env.XUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}
-        targetdir: 'coveragereport'
-        reporttypes: 'HtmlInline;Cobertura'
+      - name: ReportGenerator
+        uses: danielpalme/ReportGenerator-GitHub-Action@5.5.0
+        with:
+          reports: ${{ env.UNIT_COVERAGE_FILENAME }};${{ env.XUNIT_INTEGRATION_COVERAGE_FILENAME }};${{ env.XUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}
+          targetdir: 'coveragereport'
+          reporttypes: 'HtmlInline;Cobertura'
 
-    - name: Upload coverage report artifact
-      uses: actions/upload-artifact@v5
-      with:
-        name: CoverageReport
-        path: coveragereport
-      if: ${{ always() }}
+      - name: Upload coverage report artifact
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v5
+        with:
+          name: CoverageReport
+          path: coveragereport
 
-    - name: Bump version and push tag
-      if: ${{ (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master') && success() }}
-      id: tag_version
-      uses: mathieudutour/github-tag-action@v6.2
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
