@@ -426,9 +426,3 @@ jobs:
           name: CoverageReport
           path: coveragereport
 
-      - name: Bump version and push tag
-        if: ${{ (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master') && success() }}
-        id: tag_version
-        uses: mathieudutour/github-tag-action@v6.2
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
