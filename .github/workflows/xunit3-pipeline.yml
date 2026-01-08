@@ -1,4 +1,4 @@
-﻿name: XUnit3 Only
+name: XUnit3 Only
 
 on:
   schedule:
@@ -398,17 +398,17 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Download unit-test results
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: unit-test-results
 
       - name: Download xunit3-integration-test results
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: xunit3-integration-test-results
 
       - name: Download xunit3-real-integration-test results
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: xunit3-real-integration-test-results
 
