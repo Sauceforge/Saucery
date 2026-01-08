@@ -1,4 +1,4 @@
-﻿name: XUnit3 Only
+name: XUnit3 Only
 
 on:
   schedule:
@@ -188,7 +188,7 @@ jobs:
     if: needs.detect-changes.outputs.paths_changed == 'true'
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup dotnet
         uses: actions/setup-dotnet@v5
@@ -235,7 +235,7 @@ jobs:
     if: needs.build.result == 'success'
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup dotnet
         uses: actions/setup-dotnet@v5
@@ -266,7 +266,7 @@ jobs:
     if: needs.build.result == 'success'
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup dotnet
         uses: actions/setup-dotnet@v5
@@ -299,7 +299,7 @@ jobs:
       ARTIFACT_DIR: artifacts
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup dotnet
         uses: actions/setup-dotnet@v5
@@ -395,7 +395,7 @@ jobs:
     if: needs.publish-saucery-xunit3.result == 'success'
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Download unit-test results
         uses: actions/download-artifact@v6
