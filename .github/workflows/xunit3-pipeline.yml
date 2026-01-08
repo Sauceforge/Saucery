@@ -1,4 +1,4 @@
-﻿name: XUnit3 Only
+name: XUnit3 Only
 
 on:
   schedule:
@@ -413,7 +413,7 @@ jobs:
           name: xunit3-real-integration-test-results
 
       - name: ReportGenerator
-        uses: danielpalme/ReportGenerator-GitHub-Action@5.5.0
+        uses: danielpalme/ReportGenerator-GitHub-Action@5.5.1
         with:
           reports: ${{ env.UNIT_COVERAGE_FILENAME }};${{ env.XUNIT3_INTEGRATION_COVERAGE_FILENAME }};${{ env.XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME }}
           targetdir: 'coveragereport'
