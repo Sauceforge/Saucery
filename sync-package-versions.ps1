@@ -224,10 +224,11 @@ try { Clear-Host } catch {}
 .\Update-NuGetNext-All.ps1 -PackageId 'Microsoft.Testing.Extensions.CodeCoverage' -Root (Join-Path $Repo 'Saucery.Core.Tests')
 .\Update-NuGetNext-All.ps1 -PackageId 'Microsoft.Testing.Extensions.TrxReport'    -Root (Join-Path $Repo 'Saucery.Core.Tests')
 
-.\Update-NuGetNext-All.ps1 -PackageId 'Microsoft.NET.Test.Sdk'                              -Root (Join-Path $Repo 'Template.Tests')
+.\Update-NuGetNext-All.ps1 -PackageId 'TUnit'                                               -Root (Join-Path $Repo 'Template.Tests')
+.\Update-NuGetNext-All.ps1 -PackageId 'Microsoft.Testing.Extensions.CodeCoverage'           -Root (Join-Path $Repo 'Template.Tests')
+.\Update-NuGetNext-All.ps1 -PackageId 'Microsoft.Testing.Extensions.TrxReport'              -Root (Join-Path $Repo 'Template.Tests')
 .\Update-NuGetNext-All.ps1 -PackageId 'Microsoft.TemplateEngine.Authoring.TemplateVerifier' -Root (Join-Path $Repo 'Template.Tests')
-.\Update-NuGetNext-All.ps1 -PackageId 'xunit'                                               -Root (Join-Path $Repo 'Template.Tests')
-.\Update-NuGetNext-All.ps1 -PackageId 'xunit.runner.visualstudio'                           -Root (Join-Path $Repo 'Template.Tests')
+.\Update-NuGetNext-All.ps1 -PackageId 'Shouldly'                                            -Root (Join-Path $Repo 'Template.Tests')
 
 # ===================== ADDED to match previous script =====================
 
