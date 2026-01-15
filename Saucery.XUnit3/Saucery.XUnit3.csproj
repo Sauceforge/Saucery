@@ -14,7 +14,7 @@
     <IsPackable>true</IsPackable>
 
     <PackageId>Saucery.XUnit.v3</PackageId>
-    <PackageVersion>3.2.1</PackageVersion>
+    <PackageVersion>3.2.2</PackageVersion>
 
     <Title>Sorcery for SauceLabs and XUnit.v3</Title>
     <Description>Sorcery for SauceLabs - Unlocking SauceLabs capability</Description>
@@ -42,7 +42,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" PrivateAssets="All" />
-    <PackageReference Include="xunit.v3.mtp-v2" Version="3.2.1" />
+    <PackageReference Include="xunit.v3.mtp-v2" Version="3.2.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
