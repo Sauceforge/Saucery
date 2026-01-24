@@ -29,9 +29,9 @@ public class BaseFixture
 
     private readonly AppiumClientConfig _appiumClientConfig = new() { DirectConnect = true };
 
-    protected bool InitialiseDriver((DriverOptions opts, BrowserVersion browserVersion) tuple, int waitSecs)
+    protected async Task<bool> InitialiseDriver((DriverOptions opts, BrowserVersion browserVersion) tuple, int waitSecs)
     {
-        _sauceLabsFlowController.ControlFlow(tuple.browserVersion.IsARealDevice());
+        await _sauceLabsFlowController.ControlFlowAsync(tuple.browserVersion.IsARealDevice());
         try
         {
             Driver = OptionFactory!.IsApple()

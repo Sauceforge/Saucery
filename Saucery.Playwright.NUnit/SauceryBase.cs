@@ -40,7 +40,7 @@ public class SauceryBase : PageTest
         _browserVersion = browserVersion;
 
     [SetUp]
-    public void Setup()
+    public async void Setup()
     {
         _testName = BrowserVersion.GenerateTestName(_browserVersion!, TestContext.CurrentContext.Test.Name);
 
@@ -48,18 +48,18 @@ public class SauceryBase : PageTest
         var factory = new OptionFactory(_browserVersion!);
         var tuple = factory.CreateOptions(_testName);
 
-        var driverInitialised = InitialiseDriver(tuple!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
+        var driverInitialised = await InitialiseDriver(tuple!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
 
         while (!driverInitialised)
         {
             Console.WriteLine($"Driver failed to initialise: {TestContext.CurrentContext.Test.Name}.");
-            driverInitialised = InitialiseDriver(tuple!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
+            driverInitialised = await InitialiseDriver(tuple!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
         }
         Console.WriteLine($"Driver successfully initialised: {TestContext.CurrentContext.Test.Name}.");
     }
 
     [TearDown]
-    public void Cleanup()
+    public async void Cleanup()
     {
         try
         {
@@ -69,7 +69,7 @@ public class SauceryBase : PageTest
                 var passed = Equals(TestContext.CurrentContext.Result.Outcome, ResultState.Success);
                 // log the result to SauceLabs
                 if(_browserVersion!.IsARealDevice()) {
-                    var realDeviceJobs = SauceLabsRealDeviceAcquirer.AcquireRealDeviceJobs();
+                    var realDeviceJobs = await SauceLabsRealDeviceAcquirer.AcquireRealDeviceJobs();
                     var jobs = realDeviceJobs?.entities.FindAll(x => x.name.Equals(_testName));
                     foreach (var job in jobs!)
                     {
@@ -89,9 +89,9 @@ public class SauceryBase : PageTest
         }
     }
 
-    private bool InitialiseDriver((DriverOptions opts, BrowserVersion browserVersion) tuple, int waitSecs)
+    private async Task<bool> InitialiseDriver((DriverOptions opts, BrowserVersion browserVersion) tuple, int waitSecs)
     {
-        SauceLabsFlowController.ControlFlow(tuple.browserVersion.IsARealDevice());
+        await SauceLabsFlowController.ControlFlowAsync(tuple.browserVersion.IsARealDevice());
         try
         {
             _driver = new SauceryRemoteWebDriver(new Uri(SauceryConstants.SAUCELABS_HUB), tuple.opts, waitSecs);

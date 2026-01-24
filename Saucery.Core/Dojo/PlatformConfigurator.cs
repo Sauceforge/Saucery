@@ -47,9 +47,9 @@ public class PlatformConfigurator
         ConstructEmulatedPlatforms();
     }
 
-    private void ConstructEmulatedPlatforms()
+    private async void ConstructEmulatedPlatforms()
     {
-        var supportedPlatforms = PlatformAcquirer.AcquirePlatforms();
+        var supportedPlatforms = await PlatformAcquirer.AcquirePlatforms();
         var filteredSupportedPlatforms = FilterSupportedPlatforms(supportedPlatforms!);
 
         foreach (var sp in filteredSupportedPlatforms)
@@ -61,9 +61,9 @@ public class PlatformConfigurator
         AddLatestBrowserVersion(SauceryConstants.BROWSER_VERSION_LATEST_MINUS1);
     }
 
-    private void ConstructRealDevices()
+    private async void ConstructRealDevices()
     {
-        var supportedRealDevices = RealDeviceAcquirer.AcquireRealDevicePlatforms();
+        var supportedRealDevices = await RealDeviceAcquirer.AcquireRealDevicePlatforms();
 
         foreach (var sp in supportedRealDevices!)
         {

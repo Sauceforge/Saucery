@@ -21,7 +21,7 @@ public class SauceryXBase : IClassFixture<BaseFixture>, IDisposable {
 
     }
 
-    protected void InitialiseDriver(BrowserVersion browserVersion, ITest test) {
+    protected async void InitialiseDriver(BrowserVersion browserVersion, ITest test) {
         _browserVersion = browserVersion;
         _testName = BrowserVersion.GenerateTestName(browserVersion, test.TestCase.TestMethod?.MethodName!);
 
@@ -29,16 +29,16 @@ public class SauceryXBase : IClassFixture<BaseFixture>, IDisposable {
         _baseFixture.OptionFactory = new OptionFactory(browserVersion);
         var tuple = _baseFixture.OptionFactory.CreateOptions(_testName);
 
-        var driverInitialised = _baseFixture.InitialiseDriver(tuple!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
+        var driverInitialised = await _baseFixture.InitialiseDriver(tuple!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
 
         while(!driverInitialised) {
             Console.WriteLine($"Driver failed to initialise: {_testName}.");
-            driverInitialised = _baseFixture.InitialiseDriver(tuple!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
+            driverInitialised = await _baseFixture.InitialiseDriver(tuple!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
         }
         Console.WriteLine($"Driver successfully initialised: {_testName}.");
     }
 
-    public void Dispose() {
+    public async void Dispose() {
         try {
             _testName = null;
             if(_baseFixture.Driver != null) {
@@ -46,7 +46,7 @@ public class SauceryXBase : IClassFixture<BaseFixture>, IDisposable {
                 // log the result to SauceLabs
 
                 if(_browserVersion!.IsARealDevice()) {
-                    var realDeviceJobs = _baseFixture.SauceLabsRealDeviceAcquirer.AcquireRealDeviceJobs();
+                    var realDeviceJobs = await _baseFixture.SauceLabsRealDeviceAcquirer.AcquireRealDeviceJobs();
                     var jobs = realDeviceJobs?.entities.FindAll(x => x.name.Equals(_testName));
                     foreach(var job in jobs!) {
                         _baseFixture.SauceLabsRealDeviceStatusNotifier.NotifyRealDeviceStatus(job.id, passed);

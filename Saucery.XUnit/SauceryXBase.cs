@@ -20,7 +20,7 @@ public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>
         _outputHelper = outputHelper;
     }
 
-    protected void InitialiseDriver(BrowserVersion browserVersion)
+    protected async void InitialiseDriver(BrowserVersion browserVersion)
     {
         _browserVersion = browserVersion;
         _testName = BrowserVersion.GenerateTestName(browserVersion, GetTestName());
@@ -29,17 +29,17 @@ public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>
         BaseFixture.OptionFactory = new OptionFactory(browserVersion);
         var tuple = BaseFixture.OptionFactory.CreateOptions(_testName);
 
-        var driverInitialised = BaseFixture.InitialiseDriver(tuple!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
+        var driverInitialised = await BaseFixture.InitialiseDriver(tuple!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
 
         while (!driverInitialised)
         {
             Console.WriteLine($"Driver failed to initialise: {_testName}.");
-            driverInitialised = BaseFixture.InitialiseDriver(tuple!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
+            driverInitialised = await BaseFixture.InitialiseDriver(tuple!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
         }
         Console.WriteLine($"Driver successfully initialised: {_testName}.");
     }
 
-    public override void Dispose()
+    public override async void Dispose()
     {
         try
         {
@@ -50,7 +50,7 @@ public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>
                 // log the result to SauceLabs
 
                 if(_browserVersion!.IsARealDevice()) {
-                    var realDeviceJobs = BaseFixture.SauceLabsRealDeviceAcquirer.AcquireRealDeviceJobs();
+                    var realDeviceJobs = await BaseFixture.SauceLabsRealDeviceAcquirer.AcquireRealDeviceJobs();
                     var jobs = realDeviceJobs?.entities.FindAll(x => x.name.Equals(_testName));
                     foreach (var job in jobs!)
                     {
