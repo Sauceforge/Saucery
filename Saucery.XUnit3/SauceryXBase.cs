@@ -21,7 +21,7 @@ public class SauceryXBase : IClassFixture<BaseFixture>, IDisposable {
 
     }
 
-    protected async void InitialiseDriver(BrowserVersion browserVersion, ITest test) {
+    protected async Task InitialiseDriver(BrowserVersion browserVersion, ITest test) {
         _browserVersion = browserVersion;
         _testName = BrowserVersion.GenerateTestName(browserVersion, test.TestCase.TestMethod?.MethodName!);
 
