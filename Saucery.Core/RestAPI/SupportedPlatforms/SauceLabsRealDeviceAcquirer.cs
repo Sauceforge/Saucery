@@ -17,16 +17,16 @@ public class SauceLabsRealDeviceAcquirer : RestBase {
         Client = new RestClient(clientOptions);
     }
 
-    public virtual List<SupportedPlatform>? AcquireRealDevicePlatforms() {
-        var json = GetJsonResponse(SauceryConstants.SUPPORTED_REALDEVICE_PLATFORMS_REQUEST);
+    public virtual async Task<List<SupportedPlatform>?> AcquireRealDevicePlatforms(CancellationToken ct = default) {
+        var json = await GetJsonResponseAsync(SauceryConstants.SUPPORTED_REALDEVICE_PLATFORMS_REQUEST, ct).ConfigureAwait(false);
         var supportedPlatforms = JsonSerializer.Deserialize<List<SupportedPlatform>>(json!, JsonOptions);
         
         return supportedPlatforms;
     }
 
-    public virtual RealDeviceJobs? AcquireRealDeviceJobs()
+    public virtual async Task<RealDeviceJobs?> AcquireRealDeviceJobs(CancellationToken ct = default)
     {
-        var json = GetJsonResponse(SauceryConstants.RD_JOBS_REQUEST);
+        var json = await GetJsonResponseAsync(SauceryConstants.RD_JOBS_REQUEST, ct).ConfigureAwait(false);
         var realDeviceJobs = JsonSerializer.Deserialize<RealDeviceJobs>(json!, JsonOptions);
 
         return realDeviceJobs;

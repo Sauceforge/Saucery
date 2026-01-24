@@ -3,10 +3,6 @@ using System.Text.Json;
 using RestSharp;
 using Saucery.Core.Util;
 
-//Hello from January 2020 :)
-//Donald Trump is the President of the United States.
-//I sure hope I meet my wife and have a family before I die.
-
 namespace Saucery.Core.RestAPI;
 
 public abstract class RestBase {
@@ -14,48 +10,48 @@ public abstract class RestBase {
     internal static readonly string AccessKey = Enviro.SauceApiKey!;
     internal RestClient? Client;
     private readonly RestAPILimitsChecker? _limitChecker = new();
-
     internal static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true
     };
 
-    protected string? GetJsonResponse(string requestProforma)
+    // Async replacement for JSON retrieval
+    protected async Task<string?> GetJsonResponseAsync(string requestProforma, CancellationToken ct = default)
     {
         var request = BuildRequest(requestProforma, Method.Get);
-        var response = GetResponse(request);
-        
-        return response.Content;
+        var response = await GetResponseAsync(request, ct).ConfigureAwait(false);
+        return response?.Content;
     }
 
     protected static RestRequest BuildRequest(string request, Method method)
     {
         request = string.Format(request, UserName);
-        
+
         RestRequest restRequest = new(request, method);
         restRequest.AddHeader("Content-Type", SauceryConstants.JSON_CONTENT_TYPE);
         restRequest.RequestFormat = DataFormat.Json;
-        
+
         return restRequest;
     }
-    
-    protected void EnsureExecution(RestRequest request)
+
+    protected async Task EnsureExecutionAsync(RestRequest request, CancellationToken ct = default)
     {
-        var response = Client!.Execute<RestRequest>(request);
+        var response = await Client!.ExecuteAsync(request, ct).ConfigureAwait(false);
         _limitChecker?.Update(response);
 
         while (_limitChecker!.IsLimitExceeded())
         {
-            Thread.Sleep(_limitChecker.GetReset());
-            response = Client!.Execute<RestRequest>(request);
+            var delay = _limitChecker.GetReset();
+            await Task.Delay(delay, ct).ConfigureAwait(false);
+            response = await Client!.ExecuteAsync(request, ct).ConfigureAwait(false);
             _limitChecker.Update(response);
         }
     }
 
-    private RestResponse<RestRequest> GetResponse(RestRequest request)
+    private async Task<RestResponse> GetResponseAsync(RestRequest request, CancellationToken ct = default)
     {
-        var response = Client!.Execute<RestRequest>(request);
-        if (response.StatusCode.Equals(HttpStatusCode.OK))
+        var response = await Client!.ExecuteAsync(request, ct).ConfigureAwait(false);
+        if (response.StatusCode == HttpStatusCode.OK)
         {
             return response;
         }
@@ -65,8 +61,9 @@ public abstract class RestBase {
         while (_limitChecker.IsLimitExceeded())
         {
             Console.WriteLine(SauceryConstants.RESTAPI_LIMIT_EXCEEDED_MSG);
-            Thread.Sleep(_limitChecker.GetReset());
-            response = Client!.Execute<RestRequest>(request);
+            var delay = _limitChecker.GetReset();
+            await Task.Delay(delay, ct).ConfigureAwait(false);
+            response = await Client!.ExecuteAsync(request, ct).ConfigureAwait(false);
             _limitChecker.Update(response);
         }
 

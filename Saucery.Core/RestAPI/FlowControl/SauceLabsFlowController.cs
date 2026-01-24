@@ -6,8 +6,6 @@ using Saucery.Core.Util;
 namespace Saucery.Core.RestAPI.FlowControl;
 
 public class SauceLabsFlowController : RestBase {
-    private readonly Lock _lock = new();
-
     public SauceLabsFlowController()
     {
         RestClientOptions clientOptions = new(SauceryConstants.SAUCE_REST_BASE)
@@ -18,15 +16,14 @@ public class SauceLabsFlowController : RestBase {
         Client = new RestClient(clientOptions);
     }
 
-    public void ControlFlow(bool realDevices) {
-        while(TooManyTests(realDevices)) {
-            Thread.Sleep(SauceryConstants.SAUCELABS_FLOW_WAIT);
+    public async Task ControlFlowAsync(bool realDevices, CancellationToken ct = default) {
+        while (await TooManyTestsAsync(realDevices, ct).ConfigureAwait(false)) {
+            await Task.Delay(SauceryConstants.SAUCELABS_FLOW_WAIT, ct).ConfigureAwait(false);
         }
     }
 
-    private bool TooManyTests(bool realDevices) {
-        //int maxParallelMacSessionsAllowed;  //Possible future use.
-        var json = GetJsonResponse(SauceryConstants.ACCOUNT_CONCURRENCY_REQUEST);
+    private async Task<bool> TooManyTestsAsync(bool realDevices, CancellationToken ct = default) {
+        var json = await GetJsonResponseAsync(SauceryConstants.ACCOUNT_CONCURRENCY_REQUEST, ct).ConfigureAwait(false);
 
         if (json == null)
         {
@@ -39,13 +36,11 @@ public class SauceLabsFlowController : RestBase {
         var current = org?.current;
         var allowed = org?.allowed;
 
-        lock (_lock)
-        {
-            var orgAllowed = realDevices ? allowed?.rds : allowed?.vms;
-            var orgCurrent = realDevices ? current?.rds : current?.vms;
+        // No shared mutable state; lock is unnecessary here. Keep computation fast and lock-free.
+        var orgAllowed = realDevices ? allowed?.rds : allowed?.vms;
+        var orgCurrent = realDevices ? current?.rds : current?.vms;
 
-            return orgAllowed - orgCurrent <= 0;
-        }
+        return orgAllowed - orgCurrent <= 0;
     }
 }
 /*
