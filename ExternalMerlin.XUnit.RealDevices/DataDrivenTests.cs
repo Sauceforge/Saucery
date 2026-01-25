@@ -8,8 +8,8 @@ namespace ExternalMerlin.XUnit.RealDevices;
 public class DataDrivenTests(ITestOutputHelper output, BaseFixture baseFixture) : SauceryXBase(output, baseFixture) {
     [Theory]
     [MemberData(nameof(AllCombinations))]
-    public void DataDrivenTest(BrowserVersion requestedPlatform, int data) {
-        InitialiseDriver(requestedPlatform);
+    public async Task DataDrivenTest(BrowserVersion requestedPlatform, int data) {
+        await InitialiseDriver(requestedPlatform);
 
         var guineaPigPage = new GuineaPigPage(BaseFixture.SauceryDriver(), "https://saucelabs.com/");
 
