@@ -13,13 +13,13 @@ public class SauceLabsStatusNotifier : RestBase {
         Client = new RestClient(clientOptions);
     }
 
-    protected void NotifyStatus(string fullRequestUrl, bool isPassed) {
+    protected async Task NotifyStatus(string fullRequestUrl, bool isPassed, CancellationToken ct = default) {
         var request = BuildRequest(fullRequestUrl, Method.Put);
 
         var jobStatusObject = new { passed = isPassed };
         request.AddJsonBody(jobStatusObject);
 
-        EnsureExecution(request);
+        await EnsureExecutionAsync(request, ct).ConfigureAwait(false);
     }
 
 }

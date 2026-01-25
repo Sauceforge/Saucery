@@ -47,9 +47,11 @@ public class PlatformConfigurator
         ConstructEmulatedPlatforms();
     }
 
+    // Synchronously block on the async acquirer so the constructor finishes
+    // with fully populated AvailablePlatforms as the test suite expects.
     private void ConstructEmulatedPlatforms()
     {
-        var supportedPlatforms = PlatformAcquirer.AcquirePlatforms();
+        var supportedPlatforms = PlatformAcquirer.AcquirePlatforms().GetAwaiter().GetResult();
         var filteredSupportedPlatforms = FilterSupportedPlatforms(supportedPlatforms!);
 
         foreach (var sp in filteredSupportedPlatforms)
@@ -61,9 +63,10 @@ public class PlatformConfigurator
         AddLatestBrowserVersion(SauceryConstants.BROWSER_VERSION_LATEST_MINUS1);
     }
 
+    // Synchronously block on the async acquirer so AvailableRealDevices is populated.
     private void ConstructRealDevices()
     {
-        var supportedRealDevices = RealDeviceAcquirer.AcquireRealDevicePlatforms();
+        var supportedRealDevices = RealDeviceAcquirer.AcquireRealDevicePlatforms().GetAwaiter().GetResult();
 
         foreach (var sp in supportedRealDevices!)
         {

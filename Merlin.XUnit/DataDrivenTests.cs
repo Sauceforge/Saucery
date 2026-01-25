@@ -9,9 +9,9 @@ public class DataDrivenTests(ITestOutputHelper output, BaseFixture baseFixture) 
 {
     [Theory]
     [MemberData(nameof(AllCombinations))]
-    public void DataDrivenTest(BrowserVersion requestedPlatform, int data)
+    public async Task DataDrivenTest(BrowserVersion requestedPlatform, int data)
     {
-        InitialiseDriver(requestedPlatform);
+        await InitialiseDriver(requestedPlatform);
 
         var guineaPigPage = new GuineaPigPage(BaseFixture.SauceryDriver(), "https://saucelabs.com/");
 

@@ -11,8 +11,8 @@ public class ClickLinkTests(ITestOutputHelper output, BaseFixture baseFixture) :
 {
     [Theory]
     [MemberData(nameof(RequestedPlatformData.AllPlatforms), MemberType = typeof(RequestedPlatformData))]
-    public void ClickLinkTest(BrowserVersion requestedPlatform) {
-        InitialiseDriver(requestedPlatform);
+    public async Task ClickLinkTest(BrowserVersion requestedPlatform) {
+        await InitialiseDriver(requestedPlatform);
 
         var guineaPigPage = new GuineaPigPage(BaseFixture.SauceryDriver(), "https://saucelabs.com/");
 

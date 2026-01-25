@@ -20,7 +20,8 @@ public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>
         _outputHelper = outputHelper;
     }
 
-    protected void InitialiseDriver(BrowserVersion browserVersion)
+    // Return Task so callers can await driver initialization.
+    protected async Task InitialiseDriver(BrowserVersion browserVersion)
     {
         _browserVersion = browserVersion;
         _testName = BrowserVersion.GenerateTestName(browserVersion, GetTestName());
@@ -29,16 +30,17 @@ public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>
         BaseFixture.OptionFactory = new OptionFactory(browserVersion);
         var tuple = BaseFixture.OptionFactory.CreateOptions(_testName);
 
-        var driverInitialised = BaseFixture.InitialiseDriver(tuple!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
+        var driverInitialised = await BaseFixture.InitialiseDriver(tuple!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
 
         while (!driverInitialised)
         {
             Console.WriteLine($"Driver failed to initialise: {_testName}.");
-            driverInitialised = BaseFixture.InitialiseDriver(tuple!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
+            driverInitialised = await BaseFixture.InitialiseDriver(tuple!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
         }
         Console.WriteLine($"Driver successfully initialised: {_testName}.");
     }
 
+    // Dispose must be synchronous for IDisposable; block on async work instead of async void.
     public override void Dispose()
     {
         try
@@ -50,7 +52,7 @@ public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>
                 // log the result to SauceLabs
 
                 if(_browserVersion!.IsARealDevice()) {
-                    var realDeviceJobs = BaseFixture.SauceLabsRealDeviceAcquirer.AcquireRealDeviceJobs();
+                    var realDeviceJobs = BaseFixture.SauceLabsRealDeviceAcquirer.AcquireRealDeviceJobs().GetAwaiter().GetResult();
                     var jobs = realDeviceJobs?.entities.FindAll(x => x.name.Equals(_testName));
                     foreach (var job in jobs!)
                     {
@@ -68,6 +70,10 @@ public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>
         {
             Console.WriteLine("Caught WebDriverException, quitting driver.");
             BaseFixture.Driver?.Quit();
+        }
+        finally
+        {
+            base.Dispose();
         }
     }
 

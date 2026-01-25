@@ -15,7 +15,7 @@
   <PropertyGroup>
     <IsPackable>true</IsPackable>
     <PackageId>Saucery.Playwright.NUnit</PackageId>
-    <PackageVersion>4.10.4</PackageVersion>
+    <PackageVersion>4.10.5</PackageVersion>
 
     <Title>Sorcery for SauceLabs and Playwright.NUnit</Title>
     <Description>Sorcery for SauceLabs - Unlocking SauceLabs capability</Description>

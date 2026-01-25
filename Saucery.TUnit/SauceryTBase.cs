@@ -3,7 +3,6 @@ using Saucery.Core.Dojo;
 using Saucery.Core.OnDemand;
 using Saucery.Core.Options;
 using Saucery.Core.Util;
-using TUnit.Core.Enums;
 
 namespace Saucery.TUnit;
 
@@ -12,7 +11,7 @@ public class SauceryTBase : BaseFixture
     private string? _testName;
     private BrowserVersion? _browserVersion;
 
-    protected bool InitialiseDriver(BrowserVersion browserVersion)
+    protected async Task<bool> InitialiseDriver(BrowserVersion browserVersion)
     {
         _browserVersion = browserVersion;
         _testName = BrowserVersion.GenerateTestName(browserVersion, GetTestName());
@@ -21,12 +20,12 @@ public class SauceryTBase : BaseFixture
         OptionFactory = new OptionFactory(browserVersion);
         var tuple = OptionFactory.CreateOptions(_testName);
 
-        var driverInitialised = InitialiseDriver(tuple!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
+        var driverInitialised = await InitialiseDriver(tuple!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
 
         while (!driverInitialised)
         {
             Console.WriteLine($"Driver failed to initialise: {_testName}.");
-            driverInitialised = InitialiseDriver(tuple!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
+            driverInitialised = await InitialiseDriver(tuple!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
         }
         Console.WriteLine($"Driver successfully initialised: {_testName}.");
 
@@ -34,7 +33,7 @@ public class SauceryTBase : BaseFixture
     }
 
     [After(Test)]
-    public void TearDown()
+    public async Task TearDown()
     {
         try
         {
@@ -44,7 +43,7 @@ public class SauceryTBase : BaseFixture
                 var passed = TestContext.Current?.Execution.Result?.State == TestState.Passed;
                 // log the result to SauceLabs
                 if(_browserVersion!.IsARealDevice()) {
-                    var realDeviceJobs = SauceLabsRealDeviceAcquirer.AcquireRealDeviceJobs();
+                    var realDeviceJobs = await SauceLabsRealDeviceAcquirer.AcquireRealDeviceJobs();
                     var jobs = realDeviceJobs?.entities.FindAll(x => x.name.Equals(_testName));
                     foreach (var job in jobs!) {
                         SauceLabsRealDeviceStatusNotifier.NotifyRealDeviceStatus(job.id, passed);

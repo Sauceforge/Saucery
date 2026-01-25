@@ -19,9 +19,9 @@ public class RestTests()
     [Test]
     [Arguments(true)]
     [Arguments(false)]
-    public void FlowControlTest(bool isRealDevice) {
+    public async Task FlowControlTest(bool isRealDevice) {
         var flowController = new SauceLabsFlowController();
-        flowController.ControlFlow(isRealDevice);
+        await flowController.ControlFlowAsync(isRealDevice);
     }
 
     [Test]

@@ -16,8 +16,8 @@ public class SauceLabsPlatformAcquirer : RestBase {
         Client = new RestClient(clientOptions);
     }
 
-    public virtual List<SupportedPlatform>? AcquirePlatforms() {
-        var json = GetJsonResponse(SauceryConstants.SUPPORTED_PLATFORMS_REQUEST);
+    public virtual async Task<List<SupportedPlatform>?> AcquirePlatforms(CancellationToken ct = default) {
+        var json = await GetJsonResponseAsync(SauceryConstants.SUPPORTED_PLATFORMS_REQUEST, ct).ConfigureAwait(false);
         var supportedPlatforms = JsonSerializer.Deserialize<List<SupportedPlatform>>(json!, JsonOptions);
 
         return supportedPlatforms;

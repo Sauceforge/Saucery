@@ -31,7 +31,7 @@ public class SauceryBase
         _browserVersion = browserVersion;
 
     [SetUp]
-    public void Setup()
+    public async Task Setup()
     {
         _testName = BrowserVersion.GenerateTestName(_browserVersion!, TestContext.CurrentContext.Test.Name);
 
@@ -39,18 +39,18 @@ public class SauceryBase
         _optionFactory = new OptionFactory(_browserVersion!);
         var tuple = _optionFactory.CreateOptions(_testName);
 
-        var driverInitialised = InitialiseDriver(tuple!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
+        var driverInitialised = await InitialiseDriver(tuple!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
 
         while (!driverInitialised)
         {
             Console.WriteLine($"Driver failed to initialise: {TestContext.CurrentContext.Test.Name}.");
-            driverInitialised = InitialiseDriver(tuple!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
+            driverInitialised = await InitialiseDriver(tuple!, SauceryConstants.SELENIUM_COMMAND_TIMEOUT);
         }
         Console.WriteLine($"Driver successfully initialised: {TestContext.CurrentContext.Test.Name}.");
     }
 
     [TearDown]
-    public void Cleanup()
+    public async Task Cleanup()
     {
         try
         {
@@ -62,7 +62,7 @@ public class SauceryBase
                 // log the result to SauceLabs
                 if (_browserVersion!.IsARealDevice())
                 {
-                    var realDeviceJobs = _sauceLabsRealDeviceAcquirer.AcquireRealDeviceJobs();
+                    var realDeviceJobs = await _sauceLabsRealDeviceAcquirer.AcquireRealDeviceJobs();
                     var jobs = realDeviceJobs?.entities.FindAll(x => x.name.Equals(_testName));
                     foreach (var job in jobs!)
                     {
@@ -90,9 +90,9 @@ public class SauceryBase
         }
     }
 
-    private bool InitialiseDriver((DriverOptions opts, BrowserVersion browserVersion) tuple, int waitSecs)
+    private async Task<bool> InitialiseDriver((DriverOptions opts, BrowserVersion browserVersion) tuple, int waitSecs)
     {
-        _sauceLabsFlowController.ControlFlow(tuple.browserVersion.IsARealDevice());
+        await _sauceLabsFlowController.ControlFlowAsync(tuple.browserVersion.IsARealDevice());
 
         try
         {

@@ -13,7 +13,7 @@ public class ClickLinkTests : SauceryTBase
     [MethodDataSource(typeof(RequestedPlatformData), nameof(RequestedPlatformData.AllPlatforms))]
     public async Task ClickLinkTest(BrowserVersion requestedPlatform)
     {
-        InitialiseDriver(requestedPlatform);
+        await InitialiseDriver(requestedPlatform);
 
         var guineaPigPage = new GuineaPigPage(SauceryDriver(), "https://saucelabs.com/");
 
