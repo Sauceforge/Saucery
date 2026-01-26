@@ -8,7 +8,7 @@ public class DataDrivenTests : SauceryTBase {
     [Test]
     [MethodDataSource(nameof(AllCombinations), Arguments = [new int[] { 4, 5 }])]
     public async Task DataDrivenTest(BrowserVersion requestedPlatform, int data) {
-        InitialiseDriver(requestedPlatform);
+        await InitialiseDriver(requestedPlatform);
 
         var guineaPigPage = new GuineaPigPage(SauceryDriver(), "https://saucelabs.com/");
 
