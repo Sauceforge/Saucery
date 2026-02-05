@@ -15,7 +15,7 @@
     <IsPackable>true</IsPackable>
 
     <PackageId>Saucery.TUnit</PackageId>
-    <PackageVersion>1.12.125</PackageVersion>
+    <PackageVersion>1.12.139</PackageVersion>
 
     <Title>Sorcery for SauceLabs and TUnit</Title>
     <Description>Sorcery for SauceLabs - Unlocking SauceLabs capability</Description>
@@ -42,7 +42,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="TUnit" Version="1.12.125" />
+    <PackageReference Include="TUnit" Version="1.12.139" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.102" PrivateAssets="All" />
   </ItemGroup>
 
