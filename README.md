@@ -1,67 +1,52 @@
 ﻿<h1 align="center">
-
-<img src="/Saucery.Core/Images/Saucery.Core.png" alt="Saucery" width="200"/>
-<br/>
-Saucery
+<img src="/Saucery.Core/Images/Saucery.Core.png" alt="Saucery" width="200"/><br/>Saucery
 </h1>
 
 <div align="center">
-    
-<b>Automated testing made more awesome</b>
+<b>Automated testing made more awesome</b><br/>
 
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/0ba3cb69efe14366af8c84e485e80077)](https://app.codacy.com/gh/Sauceforge/Saucery/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
-![Codacy coverage](https://img.shields.io/codacy/coverage/0ba3cb69efe14366af8c84e485e80077)
-![Created](https://img.shields.io/github/created-at/sauceforge/saucery)
-
-![GitHub Repo stars](https://img.shields.io/github/stars/Sauceforge/Saucery) 
-[![GitHub Sponsors](https://img.shields.io/github/sponsors/Sauceforge)](https://github.com/sponsors/Sauceforge)
-![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/Sauceforge/Saucery/pipeline.yml) 
+[![Created](https://img.shields.io/github/created-at/sauceforge/saucery)](https://github.com/Sauceforge/Saucery)
+![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/Sauceforge/Saucery/pipeline.yml)
 ![Commits](https://img.shields.io/github/commit-activity/t/sauceforge/saucery)
+
+![GitHub Repo stars](https://img.shields.io/github/stars/Sauceforge/Saucery)
+[![GitHub Sponsors](https://img.shields.io/github/sponsors/Sauceforge)](https://github.com/sponsors/Sauceforge)
 ![GitHub last commit (master)](https://img.shields.io/github/last-commit/Sauceforge/Saucery/master)
 ![Website](https://img.shields.io/website?url=https%3A%2F%2Fsauceforge.github.io)
-![License](https://img.shields.io/github/license/Sauceforge/Saucery) 
-
+![License](https://img.shields.io/github/license/Sauceforge/Saucery)
 </div>
 
-Saucery handles all the plumbing required to integrate with SauceLabs, making writing tests a breeze. so you only need to tell Saucery *what* you want. Saucery takes care of the *how*.
+Saucery handles all the plumbing required to integrate with SauceLabs, making writing tests a breeze, so you only need to tell Saucery *what* you want. Saucery takes care of the *how*.
 
-Saucery comes in multiple flavors supporting popular test frameworks. Targeting all real and emulated [platforms](https://saucelabs.com/products/platform-configurator) for Appium and Selenium 4+.
-
-The templates below include example tests.
+Saucery comes in multiple flavors supporting popular test frameworks. Targeting all real and emulated [platforms](https://saucelabs.com/products/platform-configurator) for Appium and Selenium 4+. The templates below include example tests.
 
 ### Packages
 
 | Package | Badges |
 | --- | --- |
-| Saucery.Core | [![nuget](https://img.shields.io/nuget/v/Saucery.Core.svg)](https://www.nuget.org/packages/Saucery.Core/)  [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery.Core)](https://www.nuget.org/packages/Saucery.Core/) |
-| Saucery | [![nuget](https://img.shields.io/nuget/v/Saucery.svg)](https://www.nuget.org/packages/Saucery/)  [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery)](https://www.nuget.org/packages/Saucery/) |
-| Saucery.XUnit | [![nuget](https://img.shields.io/nuget/v/Saucery.XUnit.svg)](https://www.nuget.org/packages/Saucery.XUnit/)  [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery.XUnit)](https://www.nuget.org/packages/Saucery.XUnit/) |
-| Saucery.TUnit | [![nuget](https://img.shields.io/nuget/v/Saucery.TUnit.svg)](https://www.nuget.org/packages/Saucery.TUnit/)  [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery.TUnit)](https://www.nuget.org/packages/Saucery.TUnit/) |
-| Saucery.XUnit.v3 | [![nuget](https://img.shields.io/nuget/v/Saucery.XUnit.v3.svg)](https://www.nuget.org/packages/Saucery.XUnit.v3/)  [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery.XUnit.v3)](https://www.nuget.org/packages/Saucery.XUnit.v3/) |
+| Saucery.Core | [![nuget](https://img.shields.io/nuget/v/Saucery.Core.svg)](https://www.nuget.org/packages/Saucery.Core/) [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery.Core)](https://www.nuget.org/packages/Saucery.Core/) |
+| Saucery | [![nuget](https://img.shields.io/nuget/v/Saucery.svg)](https://www.nuget.org/packages/Saucery/) [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery)](https://www.nuget.org/packages/Saucery/) |
+| Saucery.XUnit | [![nuget](https://img.shields.io/nuget/v/Saucery.XUnit.svg)](https://www.nuget.org/packages/Saucery.XUnit/) [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery.XUnit)](https://www.nuget.org/packages/Saucery.XUnit/) |
+| Saucery.TUnit | [![nuget](https://img.shields.io/nuget/v/Saucery.TUnit.svg)](https://www.nuget.org/packages/Saucery.TUnit/) [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery.TUnit)](https://www.nuget.org/packages/Saucery.TUnit/) |
+| Saucery.XUnit.v3 | [![nuget](https://img.shields.io/nuget/v/Saucery.XUnit.v3.svg)](https://www.nuget.org/packages/Saucery.XUnit.v3/) [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery.XUnit.v3)](https://www.nuget.org/packages/Saucery.XUnit.v3/) |
 | Number of Saucery Packages | [![nuget](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Sauceforge/Saucery/master/badges/nuget-package-count.json&cacheSeconds=60)](https://www.nuget.org/profiles/fullcircle) |
 | Total | [![nuget](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Sauceforge/Saucery/master/badges/nuget-total-downloads.json&cacheSeconds=60)](https://www.nuget.org/profiles/fullcircle) |
 
-
 ### Sponsoring
-Saucery has been developed as an open-source project for over <!--YEARS-->11<!--ENDYEARS--> years. If you find it valuable for your projects and team work, please consider supporting me and becoming a  [![](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/Sauceforge)
+Saucery has been developed as an open-source project for over <!--YEARS-->11<!--ENDYEARS--> years. If you find it valuable for your projects and team work, please consider supporting me and becoming a [![](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/Sauceforge)
 
 ### Buy me a coffee
-Alternatively, you can buy me a coffee to say thanks!  [![](https://img.shields.io/static/v1?label=Buy%20me%20a&message=coffee&logo=buy%20me%20a%20coffee&color=%23FFDD00)](https://buymeacoffee.com/andrewgray)
-
+Alternatively, you can buy me a coffee to say thanks! [![](https://img.shields.io/static/v1?label=Buy%20me%20a&message=coffee&logo=buy%20me%20a%20coffee&color=%23FFDD00)](https://buymeacoffee.com/andrewgray)
 
 ### Dog food Status
-
-We test Saucery itself on SauceLabs!
-
-[![Build Status](https://app.saucelabs.com/buildstatus/saucefauge?saucy)](https://app.saucelabs.com/buildstatus/saucefauge?saucy)
+We test Saucery itself on SauceLabs! [![Build Status](https://app.saucelabs.com/buildstatus/saucefauge?saucy)](https://app.saucelabs.com/buildstatus/saucefauge?saucy)
 
 ### Initial Setup
-
 These steps apply to all flavors:
-
 1. You'll need a SauceLabs account. You can get a free trial account [here](https://saucelabs.com/sign-up).
-1. If you want to run your tests locally you need to set 2 environment variables, SAUCE_USER_NAME and SAUCE_API_KEY
-1. To run your test suite from your GitHub Actions pipeline you need to set two secrets SAUCE_USER_NAME and SAUCE_API_KEY. Instructions on how to set Github Secrets are [here](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository).
+2. If you want to run your tests locally you need to set 2 environment variables, SAUCE_USER_NAME and SAUCE_API_KEY.
+3. To run your test suite from your GitHub Actions pipeline you need to set two secrets SAUCE_USER_NAME and SAUCE_API_KEY. Instructions on how to set Github Secrets are [here](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository).
 
 ### NUnit
 
