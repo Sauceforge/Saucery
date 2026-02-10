@@ -10,12 +10,12 @@
 
   <ItemGroup>
     <!-- Run under TUnit (console test host) -->
-    <PackageReference Include="TUnit" Version="1.13.11" />
+    <PackageReference Include="TUnit" Version="1.13.24" />
     <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.4.1" />
     <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" Version="2.1.0" />
 
     <!-- Template verifier + assertions -->
-    <PackageReference Include="Microsoft.TemplateEngine.Authoring.TemplateVerifier" Version="10.0.102" />
+    <PackageReference Include="Microsoft.TemplateEngine.Authoring.TemplateVerifier" Version="10.0.103" />
     <PackageReference Include="Shouldly" Version="4.3.0" />
   </ItemGroup>
 
