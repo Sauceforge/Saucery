@@ -17,11 +17,6 @@ on:
       - 'test/**'
       - 'bug/**'
   workflow_dispatch:
-    inputs:
-      run_tunit_only:
-        description: 'If true runs only TUnit tests and downstream jobs using downloaded build artifacts'
-        required: false
-        default: 'false'
   schedule:
     # Runs first day of the month at midnight UTC
     - cron: "0 0 1 * *"
@@ -129,7 +124,6 @@ jobs:
         path: ${{ env.COVERLET_DIR }}/${{env.UNIT_COVERAGE_FILENAME}}
 
   xunit-integration-tests:
-    if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.run_tunit_only != 'true' }}
     runs-on: ubuntu-latest
     needs: build
     steps:
@@ -164,7 +158,6 @@ jobs:
         path: ${{ env.COVERLET_DIR }}/${{env.XUNIT_INTEGRATION_COVERAGE_FILENAME}}
 
   nunit-integration-tests:
-    if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.run_tunit_only != 'true' }}
     runs-on: ubuntu-latest
     needs: build
     steps:
@@ -199,7 +192,6 @@ jobs:
         path: ${{ env.COVERLET_DIR }}/${{env.NUNIT_INTEGRATION_COVERAGE_FILENAME}}
 
   nunit-real-integration-tests:
-    if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.run_tunit_only != 'true' }}
     runs-on: ubuntu-latest
     needs: build
     steps:
@@ -234,7 +226,6 @@ jobs:
         path: ${{ env.COVERLET_DIR }}/${{env.NUNIT_RD_INTEGRATION_COVERAGE_FILENAME}}
 
   xunit-real-integration-tests:
-    if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.run_tunit_only != 'true' }}
     runs-on: ubuntu-latest
     needs: build
     steps:
@@ -268,11 +259,7 @@ jobs:
         name: xunit-real-integration-test-results
         path: ${{ env.COVERLET_DIR }}/${{env.XUNIT_RD_INTEGRATION_COVERAGE_FILENAME}}
 
-  # -------------------------
-  # TUNIT - NORMAL PATH
-  # -------------------------
   tunit-integration-tests:
-    if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.run_tunit_only != 'true' }}
     runs-on: ubuntu-latest
     needs: [nunit-integration-tests, xunit-integration-tests]
     steps:
@@ -331,7 +318,6 @@ jobs:
         path: ${{ env.COVERLET_DIR }}/${{env.TUNIT_INTEGRATION_COVERAGE_FILENAME}}
 
   tunit-real-integration-tests:
-    if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.run_tunit_only != 'true' }}
     runs-on: ubuntu-latest
     needs: [nunit-integration-tests, xunit-integration-tests]
     steps:
@@ -389,176 +375,9 @@ jobs:
         name: tunit-real-integration-test-results
         path: ${{ env.COVERLET_DIR }}/${{env.TUNIT_RD_INTEGRATION_COVERAGE_FILENAME}}
 
-  # -------------------------
-  # TUNIT - FAST PATH
-  # -------------------------
-  tunit-integration-tests-fast:
-    if: >-
-      ${{
-        always() &&
-        github.event_name == 'workflow_dispatch' &&
-        (
-          (github.event.inputs.run_tunit_only || inputs.run_tunit_only) == 'true'
-        )
-      }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v6
-
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: 10.0.x
-
-    - name: Download build artifacts
-      uses: actions/download-artifact@v7
-      with:
-        name: ${{ env.BUILD_ARTIFACTS }}
-        path: ${{ env.BUILD_ARTIFACTS }}
-
-    - name: Find and run TUnit Integration Tests
-      shell: bash
-      run: |
-        set -euo pipefail
-        ART_DIR="${{ github.workspace }}/${{ env.BUILD_ARTIFACTS }}"
-        echo "Searching for runnable Merlin.TUnit.dll under $ART_DIR..."
-
-        DLL=""
-        while IFS= read -r CANDIDATE; do
-          DIR="$(dirname "$CANDIDATE")"
-          if [[ -f "$DIR/Merlin.TUnit.runtimeconfig.json" ]]; then
-            DLL="$CANDIDATE"
-            break
-          fi
-        done < <(find "$ART_DIR" -type f -name "Merlin.TUnit.dll" \
-                  ! -path "*/obj/*" ! -path "*/ref/*" -print)
-
-        if [[ -z "$DLL" ]]; then
-          echo "ERROR: runnable Merlin.TUnit.dll not found (no adjacent runtimeconfig)."
-          echo "All dll candidates:"
-          find "$ART_DIR" -type f -name "Merlin.TUnit.dll" -print || true
-          echo "All runtimeconfigs:"
-          find "$ART_DIR" -type f -name "Merlin.TUnit.runtimeconfig.json" -print || true
-          exit 1
-        fi
-
-        echo "Running $DLL"
-        dotnet "$DLL" \
-          --coverage \
-          --coverage-output "${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.TUNIT_INTEGRATION_COVERAGE_FILENAME }}" \
-          --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
-          --results-directory "${{ env.COVERLET_DIR }}" \
-          --log-level Debug
-
-    - name: Publish Artifacts
-      uses: actions/upload-artifact@v6
-      with:
-        name: tunit-integration-test-results
-        path: ${{ env.COVERLET_DIR }}/${{env.TUNIT_INTEGRATION_COVERAGE_FILENAME}}
-
-  tunit-real-integration-tests-fast:
-    if: >-
-      ${{
-        always() &&
-        github.event_name == 'workflow_dispatch' &&
-        (
-          (github.event.inputs.run_tunit_only || inputs.run_tunit_only) == 'true'
-        )
-      }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v6
-
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: 10.0.x
-
-    - name: Download build artifacts
-      uses: actions/download-artifact@v7
-      with:
-        name: ${{ env.BUILD_ARTIFACTS }}
-        path: ${{ env.BUILD_ARTIFACTS }}
-
-    - name: Find and run TUnit Real Integration Tests
-      shell: bash
-      run: |
-        set -euo pipefail
-        ART_DIR="${{ github.workspace }}/${{ env.BUILD_ARTIFACTS }}"
-        echo "Searching for runnable Merlin.TUnit.RealDevices.dll under $ART_DIR..."
-
-        DLL=""
-        while IFS= read -r CANDIDATE; do
-          DIR="$(dirname "$CANDIDATE")"
-          if [[ -f "$DIR/Merlin.TUnit.RealDevices.runtimeconfig.json" ]]; then
-            DLL="$CANDIDATE"
-            break
-          fi
-        done < <(find "$ART_DIR" -type f -name "Merlin.TUnit.RealDevices.dll" \
-                  ! -path "*/obj/*" ! -path "*/ref/*" -print)
-
-        if [[ -z "$DLL" ]]; then
-          echo "ERROR: runnable Merlin.TUnit.RealDevices.dll not found (no adjacent runtimeconfig)."
-          echo "All dll candidates:"
-          find "$ART_DIR" -type f -name "Merlin.TUnit.RealDevices.dll" -print || true
-          echo "All runtimeconfigs:"
-          find "$ART_DIR" -type f -name "Merlin.TUnit.RealDevices.runtimeconfig.json" -print || true
-          exit 1
-        fi
-
-        echo "Running $DLL"
-        dotnet "$DLL" \
-          --coverage \
-          --coverage-output "${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.TUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}" \
-          --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
-          --results-directory "${{ env.COVERLET_DIR }}" \
-          --log-level Debug
-
-    - name: Publish Artifacts
-      uses: actions/upload-artifact@v6
-      with:
-        name: tunit-real-integration-test-results
-        path: ${{ env.COVERLET_DIR }}/${{env.TUNIT_RD_INTEGRATION_COVERAGE_FILENAME}}
-
-  # Gate that unblocks XUnit3 for BOTH paths
-  tunit-gate:
-    runs-on: ubuntu-latest
-    needs:
-      - tunit-integration-tests
-      - tunit-real-integration-tests
-      - tunit-integration-tests-fast
-      - tunit-real-integration-tests-fast
-    if: >-
-      ${{
-        always() && (
-          (
-            (github.event_name != 'workflow_dispatch' || github.event.inputs.run_tunit_only != 'true') &&
-            needs.tunit-integration-tests.result == 'success' &&
-            needs.tunit-real-integration-tests.result == 'success'
-          ) || (
-            github.event_name == 'workflow_dispatch' &&
-            (
-              (github.event.inputs.run_tunit_only || inputs.run_tunit_only) == 'true'
-            ) &&
-            needs.tunit-integration-tests-fast.result == 'success' &&
-            needs.tunit-real-integration-tests-fast.result == 'success'
-          )
-        )
-      }}
-    steps:
-      - run: echo "TUnit gate passed."
-
-  # -------------------------
-  # XUNIT3 - NORMAL PATH
-  # -------------------------
   xunit3-integration-tests:
-    if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.run_tunit_only != 'true' }}
     runs-on: ubuntu-latest
-    needs: [tunit-gate]
+    needs: [tunit-integration-tests, tunit-real-integration-tests]
     steps:
     - name: Checkout Code
       uses: actions/checkout@v6
@@ -572,73 +391,7 @@ jobs:
       uses: actions/download-artifact@v7
       with:
         name: ${{ env.BUILD_ARTIFACTS }}
-        path: ${{ env.BUILD_ARTIFACTS }}
-
-    - name: Run XUnit3 Integration Tests
-      run: dotnet run -c ${{ env.CONFIG }} --project ${{ env.M_XUNIT3_PROJECT }} --no-build -- --coverage --coverage-output-format cobertura --coverage-output ${{ env.XUNIT3_INTEGRATION_COVERAGE_FILENAME }}
-
-    - name: Publish Artifacts
-      uses: actions/upload-artifact@v6
-      with:
-        name: xunit3-integration-test-results
-        path: ${{ env.XUNIT3_INT_TEST_RESULTS_DIR }}/${{env.XUNIT3_INTEGRATION_COVERAGE_FILENAME}}
-
-  xunit3-real-integration-tests:
-    if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.run_tunit_only != 'true' }}
-    runs-on: ubuntu-latest
-    needs: [tunit-gate]
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v6
-
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: 10.0.x
-
-    - name: Download build artifacts
-      uses: actions/download-artifact@v7
-      with:
-        name: ${{ env.BUILD_ARTIFACTS }}
-        path: ${{ env.BUILD_ARTIFACTS }}
-
-    - name: Run XUnit3 Real Integration Tests
-      run: dotnet run -c ${{ env.CONFIG }} --project ${{ env.M_RD_XUNIT3_PROJECT }} --no-build -- --coverage --coverage-output-format cobertura --coverage-output ${{ env.XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME }}
-
-    - name: Publish Artifacts
-      uses: actions/upload-artifact@v6
-      with:
-        name: xunit3-real-integration-test-results
-        path: ${{ env.XUNIT3_RD_INT_TEST_RESULTS_DIR }}/${{env.XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME}}
-
-  # -------------------------
-  # XUNIT3 - FAST PATH (FIXED: run DLL via dotnet to avoid apphost exec-bit issues)
-  # -------------------------
-  xunit3-integration-tests-fast:
-    if: >-
-      ${{
-        always() &&
-        github.event_name == 'workflow_dispatch' &&
-        (
-          (github.event.inputs.run_tunit_only || inputs.run_tunit_only) == 'true'
-        )
-      }}
-    runs-on: ubuntu-latest
-    needs: [tunit-gate]
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v6
-
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: 10.0.x
-
-    - name: Download build artifacts
-      uses: actions/download-artifact@v7
-      with:
-        name: ${{ env.BUILD_ARTIFACTS }}
-        path: .   # IMPORTANT: restore bin/obj into expected project paths
+        path: .   # restore bin/obj into expected project paths
 
     - name: Run XUnit3 Integration Tests
       shell: bash
@@ -676,17 +429,9 @@ jobs:
         name: xunit3-integration-test-results
         path: ${{ env.XUNIT3_INT_TEST_RESULTS_DIR }}/${{env.XUNIT3_INTEGRATION_COVERAGE_FILENAME}}
 
-  xunit3-real-integration-tests-fast:
-    if: >-
-      ${{
-        always() &&
-        github.event_name == 'workflow_dispatch' &&
-        (
-          (github.event.inputs.run_tunit_only || inputs.run_tunit_only) == 'true'
-        )
-      }}
+  xunit3-real-integration-tests:
     runs-on: ubuntu-latest
-    needs: [tunit-gate]
+    needs: [tunit-integration-tests, tunit-real-integration-tests]
     steps:
     - name: Checkout Code
       uses: actions/checkout@v6
@@ -700,7 +445,7 @@ jobs:
       uses: actions/download-artifact@v7
       with:
         name: ${{ env.BUILD_ARTIFACTS }}
-        path: .   # IMPORTANT: restore bin/obj into expected project paths
+        path: .   # restore bin/obj into expected project paths
 
     - name: Run XUnit3 Real Integration Tests
       shell: bash
@@ -741,7 +486,7 @@ jobs:
   publish-saucery-core:
     if: ${{ github.ref == 'refs/heads/master' }}   # publish only from master
     runs-on: ubuntu-latest
-    needs: [xunit3-integration-tests, xunit3-real-integration-tests, xunit3-integration-tests-fast, xunit3-real-integration-tests-fast]
+    needs: [xunit3-integration-tests, xunit3-real-integration-tests]
     env:
       PROJECT_PATH: Saucery.Core/Saucery.Core.csproj
       PACKAGE_ID: Saucery.Core
@@ -832,9 +577,8 @@ jobs:
           --skip-duplicate
 
   generate-report:
-    if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.run_tunit_only != 'true' }}
     runs-on: ubuntu-latest
-    needs: [publish-saucery-core]
+    needs: [xunit3-integration-tests, xunit3-real-integration-tests]
     steps:
     - name: Checkout Code
       uses: actions/checkout@v6
@@ -915,13 +659,12 @@ jobs:
       with:
         name: CoverageReport # Artifact name
         path: coveragereport # Directory containing files to upload
-      # Use always() to always run this step to publish test results when there are test failures
       if: ${{ always() }}
 
   cleanup-artifacts:
-    if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.run_tunit_only != 'true' }}
     runs-on: ubuntu-latest
-    needs: [generate-report]
+    needs: [xunit3-integration-tests, xunit3-real-integration-tests]
+    if: ${{ always() }}
     steps:
     - name: Ensure jq is installed
       run: sudo apt-get update && sudo apt-get install -y jq
