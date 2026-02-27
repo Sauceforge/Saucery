@@ -217,13 +217,13 @@ jobs:
         run: ls -R
 
       - name: Upload TRX
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: unit-test-trx
           path: ${{ env.COVERLET_DIR }}/unit.trx
 
       - name: Publish Artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: unit-test-results
           path: ${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}
@@ -256,7 +256,7 @@ jobs:
         run: ls -R
 
       - name: Publish Artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: nunit-integration-test-results
           path: ${{ env.COVERLET_DIR }}/${{ env.NUNIT_INTEGRATION_COVERAGE_FILENAME }}
@@ -288,7 +288,7 @@ jobs:
         run: ls -R
 
       - name: Publish Artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: nunit-real-integration-test-results
           path: ${{ env.COVERLET_DIR }}/${{ env.NUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}
@@ -427,7 +427,7 @@ jobs:
           reporttypes: HtmlInline;Cobertura
 
       - name: Upload coverage report artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: CoverageReport
           path: coveragereport

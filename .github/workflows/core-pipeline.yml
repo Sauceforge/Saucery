@@ -108,7 +108,7 @@ jobs:
       run: dotnet run -c ${{ env.CONFIG }} --project ${{ env.TT_PROJECT }} --no-build
 
     - name: Upload compiled artifacts
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: ${{ env.BUILD_ARTIFACTS }}
         path: |
@@ -116,13 +116,13 @@ jobs:
           **/obj/
 
     - name: Upload TRX
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: unit-test-trx
         path: ${{ env.COVERLET_DIR }}/unit.trx
 
     - name: Publish Unit Test Results
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: unit-test-results
         path: ${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}
@@ -184,7 +184,7 @@ jobs:
 
     - name: Publish XUnit3 Integration Artifacts
       if: ${{ always() }}
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: xunit3-integration-test-results
         path: ${{ env.COVERLET_DIR }}/${{ env.XUNIT3_INTEGRATION_COVERAGE_FILENAME }}
@@ -246,7 +246,7 @@ jobs:
 
     - name: Publish XUnit3 Real Integration Artifacts
       if: ${{ always() }}
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: xunit3-real-integration-test-results
         path: ${{ env.COVERLET_DIR }}/${{ env.XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME }}
@@ -279,7 +279,7 @@ jobs:
         debug: "--no-build -c ${{ env.CONFIG }}"
 
     - name: Publish Artifacts
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: xunit-integration-test-results
         path: ${{ env.COVERLET_DIR }}/${{ env.XUNIT_INTEGRATION_COVERAGE_FILENAME }}
@@ -312,7 +312,7 @@ jobs:
         debug: "--no-build -c ${{ env.CONFIG }}"
 
     - name: Publish Artifacts
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: nunit-integration-test-results
         path: ${{ env.COVERLET_DIR }}/${{ env.NUNIT_INTEGRATION_COVERAGE_FILENAME }}
@@ -345,7 +345,7 @@ jobs:
         debug: "--no-build -c ${{ env.CONFIG }}"
 
     - name: Publish Artifacts
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: nunit-real-integration-test-results
         path: ${{ env.COVERLET_DIR }}/${{ env.NUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}
@@ -378,7 +378,7 @@ jobs:
         debug: "--no-build -c ${{ env.CONFIG }}"
 
     - name: Publish Artifacts
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: xunit-real-integration-test-results
         path: ${{ env.COVERLET_DIR }}/${{ env.XUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}
@@ -436,7 +436,7 @@ jobs:
           --log-level Debug
 
     - name: Publish Artifacts
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: tunit-integration-test-results
         path: ${{ env.COVERLET_DIR }}/${{ env.TUNIT_INTEGRATION_COVERAGE_FILENAME }}
@@ -494,7 +494,7 @@ jobs:
           --log-level Debug
 
     - name: Publish Artifacts
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: tunit-real-integration-test-results
         path: ${{ env.COVERLET_DIR }}/${{ env.TUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}
@@ -686,7 +686,7 @@ jobs:
         reporttypes: 'HtmlInline;Cobertura'
 
     - name: Upload coverage report artifact
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: CoverageReport
         path: coveragereport
