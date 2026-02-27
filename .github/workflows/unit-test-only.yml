@@ -68,7 +68,7 @@ jobs:
       uses: actions/checkout@v6
 
     - name: Download unit-test results
-      uses: actions/download-artifact@v7
+      uses: actions/download-artifact@v8
       with:
         name: unit-test-results
     

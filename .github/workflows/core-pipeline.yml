@@ -140,7 +140,7 @@ jobs:
         dotnet-version: 10.0.x
 
     - name: Download build artifacts
-      uses: actions/download-artifact@v7
+      uses: actions/download-artifact@v8
       with:
         name: ${{ env.BUILD_ARTIFACTS }}
         path: .   # restore bin/obj into expected project paths
@@ -202,7 +202,7 @@ jobs:
         dotnet-version: 10.0.x
 
     - name: Download build artifacts
-      uses: actions/download-artifact@v7
+      uses: actions/download-artifact@v8
       with:
         name: ${{ env.BUILD_ARTIFACTS }}
         path: .   # restore bin/obj into expected project paths
@@ -264,7 +264,7 @@ jobs:
         dotnet-version: 10.0.x
 
     - name: Download build artifacts
-      uses: actions/download-artifact@v7
+      uses: actions/download-artifact@v8
       with:
         name: ${{ env.BUILD_ARTIFACTS }}
         path: ${{ env.BUILD_ARTIFACTS }}
@@ -297,7 +297,7 @@ jobs:
         dotnet-version: 10.0.x
 
     - name: Download build artifacts
-      uses: actions/download-artifact@v7
+      uses: actions/download-artifact@v8
       with:
         name: ${{ env.BUILD_ARTIFACTS }}
         path: ${{ env.BUILD_ARTIFACTS }}
@@ -330,7 +330,7 @@ jobs:
         dotnet-version: 10.0.x
 
     - name: Download build artifacts
-      uses: actions/download-artifact@v7
+      uses: actions/download-artifact@v8
       with:
         name: ${{ env.BUILD_ARTIFACTS }}
         path: ${{ env.BUILD_ARTIFACTS }}
@@ -363,7 +363,7 @@ jobs:
         dotnet-version: 10.0.x
 
     - name: Download build artifacts
-      uses: actions/download-artifact@v7
+      uses: actions/download-artifact@v8
       with:
         name: ${{ env.BUILD_ARTIFACTS }}
         path: ${{ env.BUILD_ARTIFACTS }}
@@ -396,7 +396,7 @@ jobs:
         dotnet-version: 10.0.x
 
     - name: Download build artifacts
-      uses: actions/download-artifact@v7
+      uses: actions/download-artifact@v8
       with:
         name: ${{ env.BUILD_ARTIFACTS }}
         path: ${{ env.BUILD_ARTIFACTS }}
@@ -454,7 +454,7 @@ jobs:
         dotnet-version: 10.0.x
 
     - name: Download build artifacts
-      uses: actions/download-artifact@v7
+      uses: actions/download-artifact@v8
       with:
         name: ${{ env.BUILD_ARTIFACTS }}
         path: ${{ env.BUILD_ARTIFACTS }}
@@ -518,7 +518,7 @@ jobs:
         dotnet-version: 10.0.x
 
     - name: Download build artifacts
-      uses: actions/download-artifact@v7
+      uses: actions/download-artifact@v8
       with:
         name: ${{ env.BUILD_ARTIFACTS }}
 
@@ -600,55 +600,55 @@ jobs:
       uses: actions/checkout@v6
 
     - name: Download unit-test results
-      uses: actions/download-artifact@v7
+      uses: actions/download-artifact@v8
       with:
         name: unit-test-results
         path: ${{ env.COVERLET_DIR }}
 
     - name: Download nunit-integration-test results
-      uses: actions/download-artifact@v7
+      uses: actions/download-artifact@v8
       with:
         name: nunit-integration-test-results
         path: ${{ env.COVERLET_DIR }}
 
     - name: Download xunit-integration-test results
-      uses: actions/download-artifact@v7
+      uses: actions/download-artifact@v8
       with:
         name: xunit-integration-test-results
         path: ${{ env.COVERLET_DIR }}
 
     - name: Download nunit-real-integration-test results
-      uses: actions/download-artifact@v7
+      uses: actions/download-artifact@v8
       with:
         name: nunit-real-integration-test-results
         path: ${{ env.COVERLET_DIR }}
 
     - name: Download xunit-real-integration-test results
-      uses: actions/download-artifact@v7
+      uses: actions/download-artifact@v8
       with:
         name: xunit-real-integration-test-results
         path: ${{ env.COVERLET_DIR }}
 
     - name: Download tunit-integration-test results
-      uses: actions/download-artifact@v7
+      uses: actions/download-artifact@v8
       with:
         name: tunit-integration-test-results
         path: ${{ env.COVERLET_DIR }}
 
     - name: Download tunit-real-integration-test results
-      uses: actions/download-artifact@v7
+      uses: actions/download-artifact@v8
       with:
         name: tunit-real-integration-test-results
         path: ${{ env.COVERLET_DIR }}
 
     - name: Download xunit3-integration-test results
-      uses: actions/download-artifact@v7
+      uses: actions/download-artifact@v8
       with:
         name: xunit3-integration-test-results
         path: ${{ env.COVERLET_DIR }}
 
     - name: Download xunit3-real-integration-test results
-      uses: actions/download-artifact@v7
+      uses: actions/download-artifact@v8
       with:
         name: xunit3-real-integration-test-results
         path: ${{ env.COVERLET_DIR }}
