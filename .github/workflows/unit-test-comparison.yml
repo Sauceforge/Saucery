@@ -1,8 +1,9 @@
-name: TUnit Pipeline
+name: Unit Test Comparison
 
 on:
   push:
   pull_request:
+  workflow_dispatch:
 
 permissions:
   actions: write
@@ -17,7 +18,7 @@ jobs:
     name: Build and upload artifact
     runs-on: ubuntu-latest
     outputs:
-      artifact-name: ${{ env.ARTIFACT_NAME }}
+      artifact-name: build-artifacts
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -42,12 +43,10 @@ jobs:
             **/*.csproj
             **/bin/Release/**
 
-  run-saucery-core-tests:
-    name: Run Saucery.Core.Tests (dotnet run)
+  run-tunit:
+    name: Run Saucery.Core.Tests
     needs: build
     runs-on: ubuntu-latest
-    env:
-      BUILD_ARTIFACTS: ${{ env.BUILD_ARTIFACTS }}
     steps:
       - name: Create artifact folder
         run: mkdir -p "${{ env.BUILD_ARTIFACTS }}"
@@ -69,16 +68,13 @@ jobs:
             exit 2
           fi
 
-      - name: Execute Saucery.Core.Tests with dotnet run (no build)
-        run: |
-          dotnet run --project "${{ env.BUILD_ARTIFACTS }}/Saucery.Core.Tests/Saucery.Core.Tests.csproj" --configuration Release --no-build
+      - name: Run TUnit Unit tests (with coverage + TRX)
+        run: dotnet run -c ${{ env.CONFIG }} --project ${{ env.UT_PROJECT }}
 
   test-xunit:
-    name: Run Saucery.Core.Tests.XUnit (dotnet test)
-    needs: build
+    name: Run Saucery.Core.Tests.XUnit
+    needs: run-tunit
     runs-on: ubuntu-latest
-    env:
-      BUILD_ARTIFACTS: ${{ env.BUILD_ARTIFACTS }}
     steps:
       - name: Create artifact folder
         run: mkdir -p "${{ env.BUILD_ARTIFACTS }}"
@@ -100,11 +96,9 @@ jobs:
           dotnet test "$PROJECT_PATH" --configuration Release --no-build --nologo
 
   test-xunitv3:
-    name: Run Saucery.Core.Tests.XUnitv3 (dotnet test)
-    needs: build
+    name: Run Saucery.Core.Tests.XUnitv3
+    needs: test-xunit
     runs-on: ubuntu-latest
-    env:
-      BUILD_ARTIFACTS: ${{ env.BUILD_ARTIFACTS }}
     steps:
       - name: Create artifact folder
         run: mkdir -p "${{ env.BUILD_ARTIFACTS }}"
@@ -126,11 +120,9 @@ jobs:
           dotnet test "$PROJECT_PATH" --configuration Release --no-build --nologo
 
   test-nunit:
-    name: Run Saucery.Core.Tests.NUnit (dotnet test)
-    needs: build
+    name: Run Saucery.Core.Tests.NUnit
+    needs: test-xunitv3
     runs-on: ubuntu-latest
-    env:
-      BUILD_ARTIFACTS: ${{ env.BUILD_ARTIFACTS }}
     steps:
       - name: Create artifact folder
         run: mkdir -p "${{ env.BUILD_ARTIFACTS }}"
@@ -153,17 +145,12 @@ jobs:
 
   cleanup:
     name: Cleanup build artifact for this run
-    needs:
-      - run-saucery-core-tests
-      - test-xunit
-      - test-xunitv3
-      - test-nunit
+    needs: test-nunit
     runs-on: ubuntu-latest
     if: always()
     env:
       REPO: ${{ github.repository }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      ARTIFACT_NAME: ${{ env.ARTIFACT_NAME }}
     steps:
       - name: Install jq (if missing)
         run: |
