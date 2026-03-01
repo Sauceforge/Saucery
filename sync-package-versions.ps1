@@ -247,11 +247,13 @@ try { Clear-Host } catch {}
 .\Update-NuGetNext-All.ps1 -PackageId 'NUnit3TestAdapter'                     -Root (Join-Path $Repo 'Merlin.NUnit.RealDevices')
 
 # Merlin.Playwright.NUnit
-.\Update-NuGetNext-All.ps1 -PackageId 'Microsoft.NET.Test.Sdk' -Root (Join-Path $Repo 'Merlin.Playwright.NUnit')
-.\Update-NuGetNext-All.ps1 -PackageId 'NUnit'                  -Root (Join-Path $Repo 'Merlin.Playwright.NUnit')
-.\Update-NuGetNext-All.ps1 -PackageId 'NUnit3TestAdapter'      -Root (Join-Path $Repo 'Merlin.Playwright.NUnit')
-.\Update-NuGetNext-All.ps1 -PackageId 'NUnit.Analyzers'        -Root (Join-Path $Repo 'Merlin.Playwright.NUnit')
-.\Update-NuGetNext-All.ps1 -PackageId 'coverlet.collector'     -Root (Join-Path $Repo 'Merlin.Playwright.NUnit')
+.\Update-NuGetNext-All.ps1 -PackageId 'Microsoft.NET.Test.Sdk'      -Root (Join-Path $Repo 'Merlin.Playwright.NUnit')
+.\Update-NuGetNext-All.ps1 -PackageId 'NUnit'                       -Root (Join-Path $Repo 'Merlin.Playwright.NUnit')
+.\Update-NuGetNext-All.ps1 -PackageId 'NUnit3TestAdapter'           -Root (Join-Path $Repo 'Merlin.Playwright.NUnit')
+.\Update-NuGetNext-All.ps1 -PackageId 'Microsoft.Playwright.NUnit'  -Root (Join-Path $Repo 'Merlin.Playwright.NUnit')
+.\Update-NuGetNext-All.ps1 -PackageId 'Microsoft.SourceLink.GitHub' -Root (Join-Path $Repo 'Merlin.Playwright.NUnit')
+#.\Update-NuGetNext-All.ps1 -PackageId 'NUnit.Analyzers'        -Root (Join-Path $Repo 'Merlin.Playwright.NUnit')
+#.\Update-NuGetNext-All.ps1 -PackageId 'coverlet.collector'     -Root (Join-Path $Repo 'Merlin.Playwright.NUnit')
 
 # Merlin.TUnit
 .\Update-NuGetNext-All.ps1 -PackageId 'Microsoft.Testing.Extensions.CodeCoverage' -Root (Join-Path $Repo 'Merlin.TUnit')
