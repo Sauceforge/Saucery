@@ -1,6 +1,7 @@
 using Saucery.Core.Dojo.Platforms.Base;
 using Saucery.Core.RestAPI.FlowControl;
 using Saucery.Core.Tests.XUnit.Fixtures;
+using Shouldly;
 using System.Collections;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -8,8 +9,7 @@ using Xunit;
 
 namespace Saucery.Core.Tests.XUnit.REST;
 
-public class RestTests(PlatformConfiguratorAllFixture fixture) : IClassFixture<PlatformConfiguratorAllFixture>
-{
+public class RestTests(PlatformConfiguratorAllFixture fixture) : IClassFixture<PlatformConfiguratorAllFixture> {
     private readonly PlatformConfiguratorAllFixture _fixture = fixture;
 
     [Theory]
@@ -24,37 +24,36 @@ public class RestTests(PlatformConfiguratorAllFixture fixture) : IClassFixture<P
     [MemberData(nameof(PlatformTypes.SupportedPlatformTypes), MemberType = typeof(PlatformTypes))]
     public void SupportedPlatformTheory(Type platformType) {
         var availablePlatforms = _fixture.PlatformConfigurator!.AvailablePlatforms;
-        Assert.NotNull(availablePlatforms);
+        availablePlatforms.ShouldNotBeNull();
 
         var platformList = InvokeGetPlatformGeneric(availablePlatforms, platformType);
 
-        Assert.NotNull(platformList);
-        Assert.Equal(1, platformList.Count);
-        Assert.Equal(typeof(List<>).MakeGenericType(platformType), platformList.GetType());
+        platformList.ShouldNotBeNull();
+        platformList.Count.ShouldBe(1);
+        platformList.GetType().ShouldBe(typeof(List<>).MakeGenericType(platformType));
     }
 
     [Theory]
     [MemberData(nameof(PlatformTypes.SupportedRealDeviceTypes), MemberType = typeof(PlatformTypes))]
     public void SupportedRealDeviceTheory(Type realDeviceType) {
         var realDevices = _fixture.PlatformConfigurator!.AvailableRealDevices;
-        Assert.NotNull(realDevices);
+        realDevices.ShouldNotBeNull();
 
         var platformList = InvokeGetPlatformGeneric(realDevices, realDeviceType);
 
-        Assert.NotNull(platformList);
-        Assert.Equal(1, platformList.Count);
-        Assert.Equal(typeof(List<>).MakeGenericType(realDeviceType), platformList.GetType());
+        platformList.ShouldNotBeNull();
+        platformList.Count.ShouldBe(1);
+        platformList.GetType().ShouldBe(typeof(List<>).MakeGenericType(realDeviceType));
     }
 
     [Theory]
     [MemberData(nameof(PlatformTypes.PlatformsWithBrowsersTypes), MemberType = typeof(PlatformTypes))]
-    public void BrowserCountTest(Type platformsWithBrowsersType)
-    {
+    public void BrowserCountTest(Type platformsWithBrowsersType) {
         var availablePlatforms = _fixture.PlatformConfigurator!.AvailablePlatforms;
         var platformList = InvokeGetPlatformGeneric(availablePlatforms, platformsWithBrowsersType);
 
         var first = (PlatformBase)platformList[0]!;
-        Assert.Equal(first.Browsers.Count, first.Selenium4BrowserNames!.Count);
+        first.Browsers.Count.ShouldBe(first.Selenium4BrowserNames!.Count);
     }
 
     private static IList InvokeGetPlatformGeneric(object groups, Type platformType) {
@@ -85,7 +84,8 @@ public class RestTests(PlatformConfiguratorAllFixture fixture) : IClassFixture<P
                    let pars = m.GetParameters()
                    where pars.Length == 1 && ParameterAccepts(pars[0].ParameterType, groupsType)
                    select m).FirstOrDefault()
-                   ?? throw new InvalidOperationException($"Cannot find GetPlatform<T> as instance or extension for receiver type {groupsType.FullName}.");
+                  ?? throw new InvalidOperationException($"Cannot find GetPlatform<T> as instance or extension for receiver type {groupsType.FullName}.");
+
         var gm = ext.MakeGenericMethod(platformType);
 
         return (IList)gm.Invoke(null, [groups])!;

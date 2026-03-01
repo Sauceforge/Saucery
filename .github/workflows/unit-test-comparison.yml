@@ -39,7 +39,7 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release --no-restore
 
-      - name: Run TUnit Tests
+      - name: Test
         run: |
           set -e
           PROJECT_PATH="Saucery.Core.Tests/Saucery.Core.Tests.csproj"
@@ -73,7 +73,7 @@ jobs:
       - name: Restore
         run: dotnet restore Saucery.Core.Tests.XUnit/Saucery.Core.Tests.XUnit.csproj
 
-      - name: Test (Release)
+      - name: Test
         run: dotnet test Saucery.Core.Tests.XUnit/Saucery.Core.Tests.XUnit.csproj --configuration Release --nologo -v normal
 
   test-xunitv3:
@@ -99,7 +99,7 @@ jobs:
       - name: Restore
         run: dotnet restore Saucery.Core.Tests.XUnitv3/Saucery.Core.Tests.XUnitv3.csproj
 
-      - name: Test (Release)
+      - name: Test
         run: dotnet test Saucery.Core.Tests.XUnitv3/Saucery.Core.Tests.XUnitv3.csproj --configuration Release --nologo -v normal
 
   test-nunit:
@@ -125,5 +125,5 @@ jobs:
       - name: Restore
         run: dotnet restore Saucery.Core.Tests.NUnit/Saucery.Core.Tests.NUnit.csproj
 
-      - name: Test (Release)
+      - name: Test
         run: dotnet test Saucery.Core.Tests.NUnit/Saucery.Core.Tests.NUnit.csproj --configuration Release --nologo -v normal
