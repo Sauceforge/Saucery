@@ -45,7 +45,7 @@ jobs:
        --results-directory "TestResults"
 
     - name: Run Template Tests
-      run: dotnet test -c ${{ env.CONFIG }} ${{ env.TT_PROJECT }}
+      run: dotnet run --project ${{ env.TT_PROJECT }}
 
     - name: Upload TRX
       uses: actions/upload-artifact@v7
