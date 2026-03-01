@@ -37,9 +37,6 @@
 
   <ItemGroup>
     <PackageReference Include="NUnit" Version="4.5.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.3.0" PrivateAssets="All" />
     <PackageReference Include="NUnit3TestAdapter" Version="6.1.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.103" PrivateAssets="All" />

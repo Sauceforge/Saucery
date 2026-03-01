@@ -1,0 +1,68 @@
+using Saucery.Core.OnDemand;
+using Saucery.Core.OnDemand.Base;
+using Saucery.Core.Options;
+using Saucery.Core.Tests.XUnit.Fixtures;
+using Saucery.Core.Util;
+using Shouldly;
+using Xunit;
+
+namespace Saucery.Core.Tests.XUnit;
+
+public class DesktopFactoryVersionTests(PlatformConfiguratorAllFixture fixture) : IClassFixture<PlatformConfiguratorAllFixture>
+{
+    private readonly PlatformConfiguratorAllFixture _fixture = fixture;
+
+    [Theory]
+    [MemberData(nameof(DesktopDataClass.NotSupportedTestCases), MemberType = typeof(DesktopDataClass))]
+    public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform)
+    {
+        var validPlatform = _fixture.PlatformConfigurator.Validate(saucePlatform);
+        validPlatform.ShouldBeNull();
+    }
+
+    [Theory]
+    [MemberData(nameof(DesktopDataClass.SupportedTestCases), MemberType = typeof(DesktopDataClass))]
+    public void DesktopOptionTest(SaucePlatform saucePlatform)
+    {
+        var validPlatform = _fixture.PlatformConfigurator.Validate(saucePlatform);
+        validPlatform.ShouldNotBeNull();
+
+        var factory = new OptionFactory(validPlatform);
+        factory.ShouldNotBeNull();
+
+        var (opts, browserVersion) = factory.CreateOptions("DesktopOptionTest");
+        opts.ShouldNotBeNull();
+    }
+}
+
+public static class DesktopDataClass {
+    public static IEnumerable<object[]> SupportedTestCases =>
+        [
+            [new DesktopPlatform(SauceryConstants.PLATFORM_LINUX, SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_VERSION_LATEST)],
+            [new DesktopPlatform(SauceryConstants.PLATFORM_LINUX, SauceryConstants.BROWSER_FIREFOX, SauceryConstants.BROWSER_VERSION_LATEST)],
+            [new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_VERSION_LATEST, SauceryConstants.SCREENRES_1280_1024)],
+            [new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_CHROME, "99", SauceryConstants.SCREENRES_1280_1024)],
+            [new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_FIREFOX, "78")],
+            [new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_FIREFOX, "98")],
+            [new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_EDGE, "79")],
+            [new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_EDGE, "99")],
+            [new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_IE, "11")],
+            [new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "99")],
+            [new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_81, SauceryConstants.BROWSER_CHROME, "99")],
+            [new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_8, SauceryConstants.BROWSER_CHROME, "99")],
+            [new DesktopPlatform(SauceryConstants.PLATFORM_MAC_13, SauceryConstants.BROWSER_SAFARI, "16")],
+            [new DesktopPlatform(SauceryConstants.PLATFORM_MAC_12, SauceryConstants.BROWSER_CHROME, "99")],
+            [new DesktopPlatform(SauceryConstants.PLATFORM_MAC_11, SauceryConstants.BROWSER_CHROME, "99")]
+        ];
+
+    public static IEnumerable<object[]> NotSupportedTestCases =>
+        [
+            [new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_CHROME, "9999")],
+            [new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_CHROME, "25")],
+            [new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_FIREFOX, "3")],
+            [new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_FIREFOX, "9999")],
+            [new DesktopPlatform(SauceryConstants.PLATFORM_MAC_13, SauceryConstants.BROWSER_SAFARI, "7")],
+            [new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_IE, "8")],
+            [new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_IE, "9999")]
+        ];
+}

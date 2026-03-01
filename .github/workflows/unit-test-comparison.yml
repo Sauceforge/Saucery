@@ -1,0 +1,184 @@
+name: TUnit Pipeline
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  actions: write
+  contents: read
+
+env:
+  ARTIFACT_NAME: build-artifacts
+  BUILD_ARTIFACTS: ${{ github.workspace }}/build_artifacts
+
+jobs:
+  build:
+    name: Build and upload artifact
+    runs-on: ubuntu-latest
+    outputs:
+      artifact-name: ${{ env.ARTIFACT_NAME }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build (Release)
+        run: dotnet build --configuration Release --no-restore
+
+      # Include project files and compiled outputs so downstream jobs can run without rebuilding.
+      - name: Upload compiled binaries and project files
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ARTIFACT_NAME }}
+          path: |
+            **/*.csproj
+            **/bin/Release/**
+
+  run-saucery-core-tests:
+    name: Run Saucery.Core.Tests (dotnet run)
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      BUILD_ARTIFACTS: ${{ env.BUILD_ARTIFACTS }}
+    steps:
+      - name: Create artifact folder
+        run: mkdir -p "${{ env.BUILD_ARTIFACTS }}"
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build.outputs.artifact-name }}
+          path: ${{ env.BUILD_ARTIFACTS }}
+
+      - name: Locate Saucery.Core.Tests project
+        run: |
+          set -e
+          if [ -f "${{ env.BUILD_ARTIFACTS }}/Saucery.Core.Tests/Saucery.Core.Tests.csproj" ]; then
+            echo "Found project at Saucery.Core.Tests"
+          else
+            echo "Project Saucery.Core.Tests not found at expected path: ${{ env.BUILD_ARTIFACTS }}/Saucery.Core.Tests/Saucery.Core.Tests.csproj"
+            ls -la "${{ env.BUILD_ARTIFACTS }}" || true
+            exit 2
+          fi
+
+      - name: Execute Saucery.Core.Tests with dotnet run (no build)
+        run: |
+          dotnet run --project "${{ env.BUILD_ARTIFACTS }}/Saucery.Core.Tests/Saucery.Core.Tests.csproj" --configuration Release --no-build
+
+  test-xunit:
+    name: Run Saucery.Core.Tests.XUnit (dotnet test)
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      BUILD_ARTIFACTS: ${{ env.BUILD_ARTIFACTS }}
+    steps:
+      - name: Create artifact folder
+        run: mkdir -p "${{ env.BUILD_ARTIFACTS }}"
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build.outputs.artifact-name }}
+          path: ${{ env.BUILD_ARTIFACTS }}
+
+      - name: Run Saucery.Core.Tests.XUnit with dotnet test (no build)
+        run: |
+          PROJECT_PATH="${{ env.BUILD_ARTIFACTS }}/Saucery.Core.Tests.XUnit/Saucery.Core.Tests.XUnit.csproj"
+          if [ ! -f "$PROJECT_PATH" ]; then
+            echo "Project not found: $PROJECT_PATH"
+            ls -la "${{ env.BUILD_ARTIFACTS }}" || true
+            exit 2
+          fi
+          dotnet test "$PROJECT_PATH" --configuration Release --no-build --nologo
+
+  test-xunitv3:
+    name: Run Saucery.Core.Tests.XUnitv3 (dotnet test)
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      BUILD_ARTIFACTS: ${{ env.BUILD_ARTIFACTS }}
+    steps:
+      - name: Create artifact folder
+        run: mkdir -p "${{ env.BUILD_ARTIFACTS }}"
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build.outputs.artifact-name }}
+          path: ${{ env.BUILD_ARTIFACTS }}
+
+      - name: Run Saucery.Core.Tests.XUnitv3 with dotnet test (no build)
+        run: |
+          PROJECT_PATH="${{ env.BUILD_ARTIFACTS }}/Saucery.Core.Tests.XUnitv3/Saucery.Core.Tests.XUnitv3.csproj"
+          if [ ! -f "$PROJECT_PATH" ]; then
+            echo "Project not found: $PROJECT_PATH"
+            ls -la "${{ env.BUILD_ARTIFACTS }}" || true
+            exit 2
+          fi
+          dotnet test "$PROJECT_PATH" --configuration Release --no-build --nologo
+
+  test-nunit:
+    name: Run Saucery.Core.Tests.NUnit (dotnet test)
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      BUILD_ARTIFACTS: ${{ env.BUILD_ARTIFACTS }}
+    steps:
+      - name: Create artifact folder
+        run: mkdir -p "${{ env.BUILD_ARTIFACTS }}"
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build.outputs.artifact-name }}
+          path: ${{ env.BUILD_ARTIFACTS }}
+
+      - name: Run Saucery.Core.Tests.NUnit with dotnet test (no build)
+        run: |
+          PROJECT_PATH="${{ env.BUILD_ARTIFACTS }}/Saucery.Core.Tests.NUnit/Saucery.Core.Tests.NUnit.csproj"
+          if [ ! -f "$PROJECT_PATH" ]; then
+            echo "Project not found: $PROJECT_PATH"
+            ls -la "${{ env.BUILD_ARTIFACTS }}" || true
+            exit 2
+          fi
+          dotnet test "$PROJECT_PATH" --configuration Release --no-build --nologo
+
+  cleanup:
+    name: Cleanup build artifact for this run
+    needs:
+      - run-saucery-core-tests
+      - test-xunit
+      - test-xunitv3
+      - test-nunit
+    runs-on: ubuntu-latest
+    if: always()
+    env:
+      REPO: ${{ github.repository }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      ARTIFACT_NAME: ${{ env.ARTIFACT_NAME }}
+    steps:
+      - name: Install jq (if missing)
+        run: |
+          if ! command -v jq >/dev/null 2>&1; then
+            sudo apt-get update && sudo apt-get install -y jq
+          fi
+
+      - name: List artifacts and delete those named "${{ env.ARTIFACT_NAME }}"
+        run: |
+          set -e
+          echo "Listing artifacts for repository: $REPO"
+          ARTIFACTS_JSON=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/$REPO/actions/artifacts")
+          echo "$ARTIFACTS_JSON" | jq -r '.artifacts[] | select(.name == env.ARTIFACT_NAME) | .id' --arg ARTIFACT_NAME "${ARTIFACT_NAME}" | while read -r id; do
+            if [ -n "$id" ]; then
+              echo "Deleting artifact id: $id"
+              curl -s -X DELETE -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/$REPO/actions/artifacts/$id"
+            fi
+          done || echo "No artifacts named ${ARTIFACT_NAME} found or deletion completed."
