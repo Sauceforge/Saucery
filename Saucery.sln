@@ -178,6 +178,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Saucery.Core.Tests.XUnit", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Saucery.Core.Tests.NUnit", "Saucery.Core.Tests.NUnit\Saucery.Core.Tests.NUnit.csproj", "{85EC111C-5952-5079-AF96-68819878337B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Saucery.RealWorldRunner.Benchmarks", "Saucery.RealWorldRunner.Benchmarks\Saucery.RealWorldRunner.Benchmarks.csproj", "{824E3F3A-2450-FB81-D518-7003C11273AB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -308,6 +310,10 @@ Global
 		{85EC111C-5952-5079-AF96-68819878337B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{85EC111C-5952-5079-AF96-68819878337B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{85EC111C-5952-5079-AF96-68819878337B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{824E3F3A-2450-FB81-D518-7003C11273AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{824E3F3A-2450-FB81-D518-7003C11273AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{824E3F3A-2450-FB81-D518-7003C11273AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{824E3F3A-2450-FB81-D518-7003C11273AB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -355,6 +361,7 @@ Global
 		{828B3618-3800-4F3E-8DA9-A08A91678B31} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{2AC6B766-4BE7-495B-B3F6-E24A6F09DC60} = {828B3618-3800-4F3E-8DA9-A08A91678B31}
 		{A9325807-1F9C-4EE1-8E42-5C147F7B5183} = {578CF1EC-B10D-4D10-B1FE-C3028C375492}
+		{824E3F3A-2450-FB81-D518-7003C11273AB} = {C619E424-C15A-40BF-A464-5BB2803BEBA3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B287ECB9-947E-4E9C-B745-27048D5CC522}
