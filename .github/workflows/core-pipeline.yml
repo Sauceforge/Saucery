@@ -679,7 +679,7 @@ jobs:
            -r "${{ env.COVERLET_DIR }}/${{ env.TUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}"
 
     - name: ReportGenerator
-      uses: danielpalme/ReportGenerator-GitHub-Action@5.5.1
+      uses: danielpalme/ReportGenerator-GitHub-Action@5.5.2
       with:
         reports: '${{ env.COVERLET_DIR }}/opencover*.xml'
         targetdir: 'coveragereport'
