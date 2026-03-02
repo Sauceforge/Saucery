@@ -18,7 +18,7 @@ jobs:
     name: Run TUnit Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup .NET 10 SDK
         uses: actions/setup-dotnet@v4
@@ -55,7 +55,7 @@ jobs:
     needs: run-tunit
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup .NET 10 SDK
         uses: actions/setup-dotnet@v4
@@ -81,7 +81,7 @@ jobs:
     needs: test-xunit
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup .NET 10 SDK
         uses: actions/setup-dotnet@v4
@@ -107,7 +107,7 @@ jobs:
     needs: test-xunitv3
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup .NET 10 SDK
         uses: actions/setup-dotnet@v4
