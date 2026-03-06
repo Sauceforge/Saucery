@@ -12,6 +12,19 @@ permissions:
 env:
   SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
   SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
+  TUNIT_TESTS: "Saucery.Core.Tests"
+  NUNIT_TESTS: "Saucery.Core.Tests.NUnit"
+  XUNIT_TESTS: "Saucery.Core.Tests.XUnit"
+  XUNIT3_TESTS: "Saucery.Core.Tests.XUnitv3"
+  TEST_384: "Saucery.Core.Tests.384"
+  TEST_576: "Saucery.Core.Tests.576"
+  TEST_768: "Saucery.Core.Tests.768"
+  TEST_960: "Saucery.Core.Tests.960"
+  TEST_1152: "Saucery.Core.Tests.1152"
+  TEST_1344: "Saucery.Core.Tests.1344"
+  TEST_1536: "Saucery.Core.Tests.1536"
+  TEST_1728: "Saucery.Core.Tests.1728"
+  TEST_1920: "Saucery.Core.Tests.1920"
 
 jobs:
   run-tunit:
@@ -42,10 +55,10 @@ jobs:
       - name: Test
         run: |
           set -e
-          PROJECT_PATH="Saucery.Core.Tests/Saucery.Core.Tests.csproj"
+          PROJECT_PATH="${{ env.TUNIT_TESTS }}/${{ env.TUNIT_TESTS }}.csproj"
           if [ ! -f "$PROJECT_PATH" ]; then
             echo "TUnit project not found at $PROJECT_PATH"
-            find . -maxdepth 3 -name "Saucery.Core.Tests.csproj" -print
+            find . -maxdepth 3 -name "${{ env.TUNIT_TESTS }}.csproj" -print
             exit 2
           fi
           dotnet run --project "$PROJECT_PATH" --configuration Release --no-build
@@ -71,10 +84,10 @@ jobs:
             nuget-${{ runner.os }}-
 
       - name: Restore
-        run: dotnet restore Saucery.Core.Tests.XUnit/Saucery.Core.Tests.XUnit.csproj
+        run: dotnet restore ${{ env.XUNIT_TESTS }}/${{ env.XUNIT_TESTS }}.csproj
 
       - name: Test
-        run: dotnet test Saucery.Core.Tests.XUnit/Saucery.Core.Tests.XUnit.csproj --configuration Release --nologo -v normal
+        run: dotnet test ${{ env.XUNIT_TESTS }}/${{ env.XUNIT_TESTS }}.csproj --configuration Release --nologo -v normal
 
   test-xunitv3:
     name: Run XUnitv3 Tests
@@ -97,10 +110,10 @@ jobs:
             nuget-${{ runner.os }}-
 
       - name: Restore
-        run: dotnet restore Saucery.Core.Tests.XUnitv3/Saucery.Core.Tests.XUnitv3.csproj
+        run: dotnet restore ${{ env.XUNIT3_TESTS }}/${{ env.XUNIT3_TESTS }}.csproj
 
       - name: Test
-        run: dotnet test Saucery.Core.Tests.XUnitv3/Saucery.Core.Tests.XUnitv3.csproj --configuration Release --nologo -v normal
+        run: dotnet test ${{ env.XUNIT3_TESTS }}/${{ env.XUNIT3_TESTS }}.csproj --configuration Release --nologo -v normal
 
   test-nunit:
     name: Run NUnit Tests
@@ -123,7 +136,340 @@ jobs:
             nuget-${{ runner.os }}-
 
       - name: Restore
-        run: dotnet restore Saucery.Core.Tests.NUnit/Saucery.Core.Tests.NUnit.csproj
+        run: dotnet restore ${{ env.NUNIT_TESTS }}/${{ env.NUNIT_TESTS }}.csproj
 
       - name: Test
-        run: dotnet test Saucery.Core.Tests.NUnit/Saucery.Core.Tests.NUnit.csproj --configuration Release --nologo -v normal
+        run: dotnet test ${{ env.NUNIT_TESTS }}/${{ env.NUNIT_TESTS }}.csproj --configuration Release --nologo -v normal
+
+  test-tunit-384:
+    name: Run TUnit Tests (384)
+    needs: test-nunit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup .NET 10 SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Cache NuGet
+        uses: actions/cache@v5
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', '**/*.props', '**/*.targets', '**/Directory.Packages.props', '**/global.json', '**/NuGet.config') }}
+          restore-keys: |
+            nuget-${{ runner.os }}-
+
+      - name: Restore
+        run: dotnet restore ${{ env.TEST_384 }}/${{ env.TEST_384 }}.csproj
+
+      - name: Build
+        run: dotnet build ${{ env.TEST_384 }}/${{ env.TEST_384 }}.csproj --configuration Release --no-restore
+
+      - name: Test
+        run: |
+          set -e
+          PROJECT_PATH="${{ env.TEST_384 }}/${{ env.TEST_384 }}.csproj"
+          if [ ! -f "$PROJECT_PATH" ]; then
+            echo "TUnit project not found at $PROJECT_PATH"
+            find . -maxdepth 3 -name "${{ env.TEST_384 }}.csproj" -print
+            exit 2
+          fi
+          dotnet run --project "$PROJECT_PATH" --configuration Release --no-build
+
+  test-tunit-576:
+    name: Run TUnit Tests (576)
+    needs: test-tunit-384
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup .NET 10 SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Cache NuGet
+        uses: actions/cache@v5
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', '**/*.props', '**/*.targets', '**/Directory.Packages.props', '**/global.json', '**/NuGet.config') }}
+          restore-keys: |
+            nuget-${{ runner.os }}-
+
+      - name: Restore
+        run: dotnet restore ${{ env.TEST_576 }}/${{ env.TEST_576 }}.csproj
+
+      - name: Build
+        run: dotnet build ${{ env.TEST_576 }}/${{ env.TEST_576 }}.csproj --configuration Release --no-restore
+
+      - name: Test
+        run: |
+          set -e
+          PROJECT_PATH="${{ env.TEST_576 }}/${{ env.TEST_576 }}.csproj"
+          if [ ! -f "$PROJECT_PATH" ]; then
+            echo "TUnit project not found at $PROJECT_PATH"
+            find . -maxdepth 3 -name "${{ env.TEST_576 }}.csproj" -print
+            exit 2
+          fi
+          dotnet run --project "$PROJECT_PATH" --configuration Release --no-build
+
+  test-tunit-768:
+    name: Run TUnit Tests (768)
+    needs: test-tunit-576
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup .NET 10 SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Cache NuGet
+        uses: actions/cache@v5
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', '**/*.props', '**/*.targets', '**/Directory.Packages.props', '**/global.json', '**/NuGet.config') }}
+          restore-keys: |
+            nuget-${{ runner.os }}-
+
+      - name: Restore
+        run: dotnet restore ${{ env.TEST_768 }}/${{ env.TEST_768 }}.csproj
+
+      - name: Build
+        run: dotnet build ${{ env.TEST_768 }}/${{ env.TEST_768 }}.csproj --configuration Release --no-restore
+
+      - name: Test
+        run: |
+          set -e
+          PROJECT_PATH="${{ env.TEST_768 }}/${{ env.TEST_768 }}.csproj"
+          if [ ! -f "$PROJECT_PATH" ]; then
+            echo "TUnit project not found at $PROJECT_PATH"
+            find . -maxdepth 3 -name "${{ env.TEST_768 }}.csproj" -print
+            exit 2
+          fi
+          dotnet run --project "$PROJECT_PATH" --configuration Release --no-build
+
+  test-tunit-960:
+    name: Run TUnit Tests (960)
+    needs: test-tunit-768
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup .NET 10 SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Cache NuGet
+        uses: actions/cache@v5
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', '**/*.props', '**/*.targets', '**/Directory.Packages.props', '**/global.json', '**/NuGet.config') }}
+          restore-keys: |
+            nuget-${{ runner.os }}-
+
+      - name: Restore
+        run: dotnet restore ${{ env.TEST_960 }}/${{ env.TEST_960 }}.csproj
+
+      - name: Build
+        run: dotnet build ${{ env.TEST_960 }}/${{ env.TEST_960 }}.csproj --configuration Release --no-restore
+
+      - name: Test
+        run: |
+          set -e
+          PROJECT_PATH="${{ env.TEST_960 }}/${{ env.TEST_960 }}.csproj"
+          if [ ! -f "$PROJECT_PATH" ]; then
+            echo "TUnit project not found at $PROJECT_PATH"
+            find . -maxdepth 3 -name "${{ env.TEST_960 }}.csproj" -print
+            exit 2
+          fi
+          dotnet run --project "$PROJECT_PATH" --configuration Release --no-build
+
+  test-tunit-1152:
+    name: Run TUnit Tests (1152)
+    needs: test-tunit-960
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup .NET 10 SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Cache NuGet
+        uses: actions/cache@v5
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', '**/*.props', '**/*.targets', '**/Directory.Packages.props', '**/global.json', '**/NuGet.config') }}
+          restore-keys: |
+            nuget-${{ runner.os }}-
+
+      - name: Restore
+        run: dotnet restore ${{ env.TEST_1152 }}/${{ env.TEST_1152 }}.csproj
+
+      - name: Build
+        run: dotnet build ${{ env.TEST_1152 }}/${{ env.TEST_1152 }}.csproj --configuration Release --no-restore
+
+      - name: Test
+        run: |
+          set -e
+          PROJECT_PATH="${{ env.TEST_1152 }}/${{ env.TEST_1152 }}.csproj"
+          if [ ! -f "$PROJECT_PATH" ]; then
+            echo "TUnit project not found at $PROJECT_PATH"
+            find . -maxdepth 3 -name "${{ env.TEST_1152 }}.csproj" -print
+            exit 2
+          fi
+          dotnet run --project "$PROJECT_PATH" --configuration Release --no-build
+
+  test-tunit-1344:
+    name: Run TUnit Tests (1344)
+    needs: test-tunit-1152
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup .NET 10 SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Cache NuGet
+        uses: actions/cache@v5
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', '**/*.props', '**/*.targets', '**/Directory.Packages.props', '**/global.json', '**/NuGet.config') }}
+          restore-keys: |
+            nuget-${{ runner.os }}-
+
+      - name: Restore
+        run: dotnet restore ${{ env.TEST_1344 }}/${{ env.TEST_1344 }}.csproj
+
+      - name: Build
+        run: dotnet build ${{ env.TEST_1344 }}/${{ env.TEST_1344 }}.csproj --configuration Release --no-restore
+
+      - name: Test
+        run: |
+          set -e
+          PROJECT_PATH="${{ env.TEST_1344 }}/${{ env.TEST_1344 }}.csproj"
+          if [ ! -f "$PROJECT_PATH" ]; then
+            echo "TUnit project not found at $PROJECT_PATH"
+            find . -maxdepth 3 -name "${{ env.TEST_1344 }}.csproj" -print
+            exit 2
+          fi
+          dotnet run --project "$PROJECT_PATH" --configuration Release --no-build
+
+  test-tunit-1536:
+    name: Run TUnit Tests (1536)
+    needs: test-tunit-1344
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup .NET 10 SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Cache NuGet
+        uses: actions/cache@v5
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', '**/*.props', '**/*.targets', '**/Directory.Packages.props', '**/global.json', '**/NuGet.config') }}
+          restore-keys: |
+            nuget-${{ runner.os }}-
+
+      - name: Restore
+        run: dotnet restore ${{ env.TEST_1536 }}/${{ env.TEST_1536 }}.csproj
+
+      - name: Build
+        run: dotnet build ${{ env.TEST_1536 }}/${{ env.TEST_1536 }}.csproj --configuration Release --no-restore
+
+      - name: Test
+        run: |
+          set -e
+          PROJECT_PATH="${{ env.TEST_1536 }}/${{ env.TEST_1536 }}.csproj"
+          if [ ! -f "$PROJECT_PATH" ]; then
+            echo "TUnit project not found at $PROJECT_PATH"
+            find . -maxdepth 3 -name "${{ env.TEST_1536 }}.csproj" -print
+            exit 2
+          fi
+          dotnet run --project "$PROJECT_PATH" --configuration Release --no-build
+
+  test-tunit-1728:
+    name: Run TUnit Tests (1728)
+    needs: test-tunit-1536
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup .NET 10 SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Cache NuGet
+        uses: actions/cache@v5
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', '**/*.props', '**/*.targets', '**/Directory.Packages.props', '**/global.json', '**/NuGet.config') }}
+          restore-keys: |
+            nuget-${{ runner.os }}-
+
+      - name: Restore
+        run: dotnet restore ${{ env.TEST_1728 }}/${{ env.TEST_1728 }}.csproj
+
+      - name: Build
+        run: dotnet build ${{ env.TEST_1728 }}/${{ env.TEST_1728 }}.csproj --configuration Release --no-restore
+
+      - name: Test
+        run: |
+          set -e
+          PROJECT_PATH="${{ env.TEST_1728 }}/${{ env.TEST_1728 }}.csproj"
+          if [ ! -f "$PROJECT_PATH" ]; then
+            echo "TUnit project not found at $PROJECT_PATH"
+            find . -maxdepth 3 -name "${{ env.TEST_1728 }}.csproj" -print
+            exit 2
+          fi
+          dotnet run --project "$PROJECT_PATH" --configuration Release --no-build
+
+  test-tunit-1920:
+    name: Run TUnit Tests (1920)
+    needs: test-tunit-1728
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup .NET 10 SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Cache NuGet
+        uses: actions/cache@v5
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', '**/*.props', '**/*.targets', '**/Directory.Packages.props', '**/global.json', '**/NuGet.config') }}
+          restore-keys: |
+            nuget-${{ runner.os }}-
+
+      - name: Restore
+        run: dotnet restore ${{ env.TEST_1920 }}/${{ env.TEST_1920 }}.csproj
+
+      - name: Build
+        run: dotnet build ${{ env.TEST_1920 }}/${{ env.TEST_1920 }}.csproj --configuration Release --no-restore
+
+      - name: Test
+        run: |
+          set -e
+          PROJECT_PATH="${{ env.TEST_1920 }}/${{ env.TEST_1920 }}.csproj"
+          if [ ! -f "$PROJECT_PATH" ]; then
+            echo "TUnit project not found at $PROJECT_PATH"
+            find . -maxdepth 3 -name "${{ env.TEST_1920 }}.csproj" -print
+            exit 2
+          fi
+          dotnet run --project "$PROJECT_PATH" --configuration Release --no-build
