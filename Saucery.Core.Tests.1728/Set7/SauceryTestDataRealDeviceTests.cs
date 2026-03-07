@@ -1,0 +1,30 @@
+﻿using DataProviders;
+using Fixtures;
+using Saucery.Core.DataSources;
+using Shouldly;
+
+namespace Set7;
+
+[NotInParallel]
+public class SauceryTestDataRealDeviceTests7() : SauceryTestData {
+    private static PlatformConfiguratorRealDeviceFixture _fixture = null!;
+
+    [Before(Class)]
+    public static void SetupFixture(ClassHookContext context) => _fixture = new PlatformConfiguratorRealDeviceFixture();
+
+    [Test]
+    public void RealAndroidDeviceTest() {
+        SetPlatforms(PlatformDataClass.RealAndroidDevices, _fixture.PlatformConfigurator);
+
+        Items.ShouldNotBeNull();
+        Items.Count().ShouldBe(PlatformDataClass.RealAndroidDevices.Count);
+    }
+
+    [Test]
+    public void RealAppleDeviceTest() {
+        SetPlatforms(PlatformDataClass.RealIOSDevices, _fixture.PlatformConfigurator);
+
+        Items.ShouldNotBeNull();
+        Items.Count().ShouldBe(PlatformDataClass.RealIOSDevices.Count);
+    }
+}
