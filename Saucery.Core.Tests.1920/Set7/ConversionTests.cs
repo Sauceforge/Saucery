@@ -3,7 +3,7 @@ using Shouldly;
 
 namespace Set7;
 
-public class ConversionTests67
+public class ConversionTests7
 {
     [Test]
     public void SanitisedLongVersionTest()

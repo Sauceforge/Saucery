@@ -4,23 +4,23 @@ using Saucery.Core.OnDemand.Base;
 using Saucery.Core.Options;
 using Shouldly;
 
-namespace Set7;
+namespace Set8;
 
-public class RealIOSFactoryVersionTests7() {
+public class RealIOSFactoryVersionTests8() {
     private static PlatformConfiguratorAllFixture _fixture = null!;
 
     [Before(Class)]
     public static void SetupFixture(ClassHookContext context) => _fixture = new PlatformConfiguratorAllFixture();
 
     [Test]
-    [MethodDataSource(typeof(RealIOSDataClass7), nameof(RealIOSDataClass7.NotSupportedTestCases))]
+    [MethodDataSource(typeof(RealIOSDataClass8), nameof(RealIOSDataClass8.NotSupportedTestCases))]
     public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform) {
         var validPlatform = _fixture.PlatformConfigurator.Filter(saucePlatform);
         validPlatform.ShouldBeNull();
     }
 
     [Test]
-    [MethodDataSource(typeof(RealIOSDataClass7), nameof(RealIOSDataClass7.SupportedTestCases))]
+    [MethodDataSource(typeof(RealIOSDataClass8), nameof(RealIOSDataClass8.SupportedTestCases))]
     public void AppiumIOSOptionTest(SaucePlatform saucePlatform) {
         var validPlatform = _fixture.PlatformConfigurator.Filter(saucePlatform);
         validPlatform.ShouldNotBeNull();
@@ -33,7 +33,7 @@ public class RealIOSFactoryVersionTests7() {
     }
 }
 
-public class RealIOSDataClass7 {
+public class RealIOSDataClass8 {
     public static IEnumerable<object?[]> SupportedTestCases =>
         new[] { "13", "14", "15", "16", "17", "18", "26" }
             .Select(v => new object?[] { new IOSRealDevice("iPhone.*", v) });

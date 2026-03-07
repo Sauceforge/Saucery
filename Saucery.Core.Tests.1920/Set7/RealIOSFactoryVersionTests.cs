@@ -6,7 +6,7 @@ using Shouldly;
 
 namespace Set7;
 
-public class RealIOSFactoryVersionTests6() {
+public class RealIOSFactoryVersionTests7() {
     private static PlatformConfiguratorAllFixture _fixture = null!;
 
     [Before(Class)]

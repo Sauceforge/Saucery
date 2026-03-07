@@ -1,9 +1,9 @@
 ﻿using Saucery.Core.Util;
 using Shouldly;
 
-namespace Set7;
+namespace Set8;
 
-public class ConversionTests7
+public class ConversionTests8
 {
     [Test]
     public void SanitisedLongVersionTest()
