@@ -6,7 +6,7 @@ using Shouldly;
 
 namespace Set1;
 
-public class RealAndroidFactoryVersionTests2()
+public class RealAndroidFactoryVersionTests()
 {
     private static PlatformConfiguratorAllFixture _fixture = null!;
 
@@ -14,7 +14,7 @@ public class RealAndroidFactoryVersionTests2()
     public static void SetupFixture(ClassHookContext context) => _fixture = new PlatformConfiguratorAllFixture();
 
     [Test]
-    [MethodDataSource(typeof(RealAndroidDataClass2), nameof(RealAndroidDataClass2.NotSupportedTestCases))]
+    [MethodDataSource(typeof(RealAndroidDataClass), nameof(RealAndroidDataClass.NotSupportedTestCases))]
     public void IsNotSupportedPlatformTest(SaucePlatform saucePlatform)
     {
         var validPlatform = _fixture.PlatformConfigurator.Filter(saucePlatform);
@@ -22,7 +22,7 @@ public class RealAndroidFactoryVersionTests2()
     }
 
     [Test]
-    [MethodDataSource(typeof(RealAndroidDataClass2), nameof(RealAndroidDataClass2.SupportedTestCases))]
+    [MethodDataSource(typeof(RealAndroidDataClass), nameof(RealAndroidDataClass.SupportedTestCases))]
     public void AppiumAndroidOptionTest(SaucePlatform saucePlatform)
     {
         var validPlatform = _fixture.PlatformConfigurator.Filter(saucePlatform);
@@ -36,7 +36,7 @@ public class RealAndroidFactoryVersionTests2()
     }
 }
 
-public static class RealAndroidDataClass2
+public static class RealAndroidDataClass
 {
     public static IEnumerable<SaucePlatform> SupportedTestCases
     =>
