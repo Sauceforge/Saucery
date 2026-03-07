@@ -1,7 +1,7 @@
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Running;
 
-namespace Saucery.TestFrameworkBenchmarks;
+namespace Saucery.RealWorldRunner.Benchmarks;
 
 public static class Program {
     public static int Main(string[] args) {

@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace Saucery.TestFrameworkBenchmarks;
+namespace Saucery.RealWorldRunner.Benchmarks;
 
 internal static class DotnetCli
 {

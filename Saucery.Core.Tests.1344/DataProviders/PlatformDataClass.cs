@@ -2,7 +2,7 @@
 using Saucery.Core.OnDemand.Base;
 using Saucery.Core.Util;
 
-namespace Saucery.Core.Tests.DataProviders;
+namespace DataProviders;
 
 public static class PlatformDataClass {
     public static List<SaucePlatform> DesktopPlatforms =>

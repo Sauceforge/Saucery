@@ -2,7 +2,7 @@ using System.ComponentModel;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Jobs;
 
-namespace Saucery.TestFrameworkBenchmarks;
+namespace Saucery.RealWorldRunner.Benchmarks;
 
 /// <summary>
 /// Benchmarks "full test-suite execution" time for the four Saucery test-framework projects.

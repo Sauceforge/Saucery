@@ -1,6 +1,6 @@
 ﻿using Saucery.Core.Dojo;
 
-namespace Saucery.Core.Tests.Fixtures;
+namespace Fixtures;
 
 public class PlatformConfiguratorAllFixture {
     public readonly PlatformConfigurator PlatformConfigurator;

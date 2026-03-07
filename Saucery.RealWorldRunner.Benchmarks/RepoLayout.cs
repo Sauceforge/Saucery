@@ -1,4 +1,4 @@
-namespace Saucery.TestFrameworkBenchmarks;
+namespace Saucery.RealWorldRunner.Benchmarks;
 
 internal sealed class RepoLayout
 {
