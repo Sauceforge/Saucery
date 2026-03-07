@@ -20,7 +20,7 @@ function Show-Help {
     Write-Host "Unit Test Comparison Runner"
     Write-Host "------------------------------------------------------------"
     Write-Host "Runs all configured test suites multiple times and reports"
-    Write-Host "average execution time for each suite."
+    Write-Host "timing metrics for each suite."
     Write-Host ""
     Write-Host "Usage:"
     Write-Host "  .\Run-UnitTestComparison.ps1 [options]"
@@ -33,9 +33,9 @@ function Show-Help {
     Write-Host "                         Default: Release"
     Write-Host ""
     Write-Host "  -StartFrom <name>      Start execution from this suite."
-    Write-Host "                         Example: Saucery.Core.Tests.XUnit"
+    Write-Host "                         Example: Saucery.Core.Tests.XUnitv3"
     Write-Host ""
-    Write-Host "  -Help, -h, --help      Show this help message."
+    Write-Host "  -Help, -h, --help      Show this help message and exit."
     Write-Host ""
     Write-Host "Examples:"
     Write-Host "  Run everything once:"
@@ -72,121 +72,177 @@ function Resolve-ProjectPath {
     $found = Get-ChildItem -Path $PSScriptRoot -Recurse -Filter "$ProjectName.csproj" -File |
         Select-Object -First 1
 
-    if ($found) {
+    if ($null -ne $found) {
         return $found.FullName
     }
 
-    throw "Project '$ProjectName' not found."
+    throw "Project '$ProjectName' not found. Expected '$expected'."
 }
 
 function Invoke-TestSuite {
     param(
+        [Parameter(Mandatory = $true)]
         [string]$Name,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateSet("dotnet-test", "dotnet-run")]
         [string]$Mode,
+
+        [Parameter(Mandatory = $true)]
         [string]$ProjectPath,
+
+        [Parameter(Mandatory = $true)]
         [int]$Iterations,
+
+        [Parameter(Mandatory = $true)]
         [string]$Configuration
     )
 
     Write-Host ""
     Write-Host "============================================================" -ForegroundColor Cyan
-    Write-Host "Running suite: $Name"
+    Write-Host "Running suite: $Name" -ForegroundColor Cyan
+    Write-Host "Mode: $Mode" -ForegroundColor Cyan
+    Write-Host "Project: $ProjectPath" -ForegroundColor Cyan
+    Write-Host "Iterations: $Iterations" -ForegroundColor Cyan
     Write-Host "============================================================" -ForegroundColor Cyan
+    Write-Host ""
 
-    $durations = @()
+    $durations = New-Object System.Collections.Generic.List[double]
 
     for ($i = 1; $i -le $Iterations; $i++) {
-
-        Write-Host "[$Name] Iteration $i of $Iterations" -ForegroundColor Yellow
+        Write-Host "[$Name] Iteration $i of $Iterations..." -ForegroundColor Yellow
 
         $sw = [System.Diagnostics.Stopwatch]::StartNew()
 
         if ($Mode -eq "dotnet-test") {
+            $command = "dotnet test `"$ProjectPath`" --configuration $Configuration --nologo -v normal"
+            Write-Host "Executing: $command" -ForegroundColor DarkGray
             & dotnet test $ProjectPath --configuration $Configuration --nologo -v normal
         }
-        else {
+        elseif ($Mode -eq "dotnet-run") {
+            $command = "dotnet run --project `"$ProjectPath`" --configuration $Configuration --no-build"
+            Write-Host "Executing: $command" -ForegroundColor DarkGray
             & dotnet run --project $ProjectPath --configuration $Configuration --no-build
+        }
+        else {
+            throw "Unsupported mode '$Mode'."
         }
 
         $exitCode = $LASTEXITCODE
         $sw.Stop()
 
-        $seconds = $sw.Elapsed.TotalSeconds
-        $durations += $seconds
+        $elapsedSeconds = $sw.Elapsed.TotalSeconds
+        $elapsedRounded = [Math]::Round($elapsedSeconds, 3)
+        $durations.Add($elapsedSeconds)
 
         if ($exitCode -ne 0) {
-            throw "Suite '$Name' failed on iteration $i with exit code $exitCode after $seconds s"
+            throw @"
+Suite '$Name' failed on iteration $i.
+Command: $command
+Exit code: $exitCode
+Elapsed: $elapsedRounded s
+
+The non-zero exit code came from the test process, not from PowerShell.
+Scroll up to the test output above this error to find the real failure.
+"@
         }
 
-        Write-Host "Completed in $([Math]::Round($seconds,3)) s" -ForegroundColor Green
+        Write-Host "[$Name] Iteration $i completed in $elapsedRounded s" -ForegroundColor Green
     }
 
-    $avg = ($durations | Measure-Object -Average).Average
-    $min = ($durations | Measure-Object -Minimum).Minimum
-    $max = ($durations | Measure-Object -Maximum).Maximum
-    $sum = ($durations | Measure-Object -Sum).Sum
+    $average = ($durations | Measure-Object -Average).Average
+    $minimum = ($durations | Measure-Object -Minimum).Minimum
+    $maximum = ($durations | Measure-Object -Maximum).Maximum
+    $total   = ($durations | Measure-Object -Sum).Sum
 
-    return [pscustomobject]@{
-        Name = $Name
-        AverageSeconds = [Math]::Round($avg,3)
-        MinSeconds = [Math]::Round($min,3)
-        MaxSeconds = [Math]::Round($max,3)
-        TotalSeconds = [Math]::Round($sum,3)
+    $result = [pscustomobject]@{
+        Name           = $Name
+        Mode           = $Mode
+        Iterations     = $Iterations
+        AverageSeconds = [Math]::Round($average, 3)
+        MinSeconds     = [Math]::Round($minimum, 3)
+        MaxSeconds     = [Math]::Round($maximum, 3)
+        TotalSeconds   = [Math]::Round($total, 3)
     }
+
+    Write-Host ""
+    Write-Host "-------------------- Suite Summary --------------------" -ForegroundColor Magenta
+    Write-Host ("Suite      : {0}" -f $result.Name) -ForegroundColor Magenta
+    Write-Host ("Mode       : {0}" -f $result.Mode) -ForegroundColor Magenta
+    Write-Host ("Iterations : {0}" -f $result.Iterations) -ForegroundColor Magenta
+    Write-Host ("Average    : {0} s" -f $result.AverageSeconds) -ForegroundColor Magenta
+    Write-Host ("Minimum    : {0} s" -f $result.MinSeconds) -ForegroundColor Magenta
+    Write-Host ("Maximum    : {0} s" -f $result.MaxSeconds) -ForegroundColor Magenta
+    Write-Host ("Total      : {0} s" -f $result.TotalSeconds) -ForegroundColor Magenta
+    Write-Host "-------------------------------------------------------" -ForegroundColor Magenta
+    Write-Host ""
+
+    return $result
 }
 
 $suites = @(
-    @{ Name="Saucery.Core.Tests"; Mode="dotnet-run" }
-    @{ Name="Saucery.Core.Tests.XUnit"; Mode="dotnet-test" }
-    @{ Name="Saucery.Core.Tests.XUnitv3"; Mode="dotnet-test" }
-    @{ Name="Saucery.Core.Tests.NUnit"; Mode="dotnet-test" }
-    @{ Name="Saucery.Core.Tests.384"; Mode="dotnet-run" }
-    @{ Name="Saucery.Core.Tests.576"; Mode="dotnet-run" }
-    @{ Name="Saucery.Core.Tests.768"; Mode="dotnet-run" }
-    @{ Name="Saucery.Core.Tests.960"; Mode="dotnet-run" }
-    @{ Name="Saucery.Core.Tests.1152"; Mode="dotnet-run" }
-    @{ Name="Saucery.Core.Tests.1344"; Mode="dotnet-run" }
-    @{ Name="Saucery.Core.Tests.1536"; Mode="dotnet-run" }
-    @{ Name="Saucery.Core.Tests.1728"; Mode="dotnet-run" }
-    @{ Name="Saucery.Core.Tests.1920"; Mode="dotnet-run" }
+    @{ Name = "Saucery.Core.Tests";         Mode = "dotnet-run"  }
+    @{ Name = "Saucery.Core.Tests.XUnit";   Mode = "dotnet-test" }
+    @{ Name = "Saucery.Core.Tests.XUnitv3"; Mode = "dotnet-test" }
+    @{ Name = "Saucery.Core.Tests.NUnit";   Mode = "dotnet-test" }
+    @{ Name = "Saucery.Core.Tests.384";     Mode = "dotnet-run"  }
+    @{ Name = "Saucery.Core.Tests.576";     Mode = "dotnet-run"  }
+    @{ Name = "Saucery.Core.Tests.768";     Mode = "dotnet-run"  }
+    @{ Name = "Saucery.Core.Tests.960";     Mode = "dotnet-run"  }
+    @{ Name = "Saucery.Core.Tests.1152";    Mode = "dotnet-run"  }
+    @{ Name = "Saucery.Core.Tests.1344";    Mode = "dotnet-run"  }
+    @{ Name = "Saucery.Core.Tests.1536";    Mode = "dotnet-run"  }
+    @{ Name = "Saucery.Core.Tests.1728";    Mode = "dotnet-run"  }
+    @{ Name = "Saucery.Core.Tests.1920";    Mode = "dotnet-run"  }
 )
 
 if ($StartFrom) {
+    $startIndex = -1
 
-    $index = $suites.FindIndex({ param($s) $s.Name -eq $StartFrom })
-
-    if ($index -lt 0) {
-        throw "StartFrom suite '$StartFrom' not found."
+    for ($i = 0; $i -lt $suites.Count; $i++) {
+        if ($suites[$i].Name -eq $StartFrom) {
+            $startIndex = $i
+            break
+        }
     }
 
-    $suites = $suites[$index..($suites.Count-1)]
+    if ($startIndex -lt 0) {
+        $validNames = $suites | ForEach-Object { $_.Name }
+        throw "StartFrom suite '$StartFrom' not found. Valid values: $($validNames -join ', ')"
+    }
+
+    $suites = $suites[$startIndex..($suites.Count - 1)]
 }
 
 Write-Host "Restoring solution..." -ForegroundColor Cyan
-dotnet restore
+& dotnet restore
+if ($LASTEXITCODE -ne 0) {
+    throw "dotnet restore failed."
+}
 
 Write-Host "Building solution..." -ForegroundColor Cyan
-dotnet build --configuration $Configuration --no-restore
+& dotnet build --configuration $Configuration --no-restore
+if ($LASTEXITCODE -ne 0) {
+    throw "dotnet build failed."
+}
 
-$results = @()
+$results = New-Object System.Collections.Generic.List[object]
 
 foreach ($suite in $suites) {
-
-    $path = Resolve-ProjectPath $suite.Name
+    $projectPath = Resolve-ProjectPath -ProjectName $suite.Name
 
     $result = Invoke-TestSuite `
         -Name $suite.Name `
         -Mode $suite.Mode `
-        -ProjectPath $path `
+        -ProjectPath $projectPath `
         -Iterations $Iterations `
         -Configuration $Configuration
 
-    $results += $result
+    $results.Add($result)
 }
 
 Write-Host ""
 Write-Host "==================== Average Runtime Summary ====================" -ForegroundColor Magenta
-
 $results |
     Sort-Object AverageSeconds |
-    Format-Table Name, AverageSeconds, MinSeconds, MaxSeconds, TotalSeconds -AutoSize
+    Format-Table Name, Mode, Iterations, AverageSeconds, MinSeconds, MaxSeconds, TotalSeconds -AutoSize
