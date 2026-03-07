@@ -4,7 +4,7 @@ using Saucery.Core.OnDemand.Base;
 using Saucery.Core.Util;
 using Shouldly;
 
-namespace Saucery.Core.Tests;
+namespace Set1;
 
 public class PlatformExpansionTests() 
 {

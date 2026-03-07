@@ -3,7 +3,7 @@ using Fixtures;
 using Saucery.Core.DataSources;
 using Shouldly;
 
-namespace Saucery.Core.Tests;
+namespace Set1;
 
 public class SauceryTestDataAllTests() : SauceryTestData {
     private static PlatformConfiguratorAllFixture _fixture = null!;

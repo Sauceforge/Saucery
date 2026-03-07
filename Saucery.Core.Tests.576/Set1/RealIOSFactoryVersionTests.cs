@@ -4,7 +4,7 @@ using Saucery.Core.OnDemand.Base;
 using Saucery.Core.Options;
 using Shouldly;
 
-namespace Saucery.Core.Tests;
+namespace Set1;
 
 public class RealIOSFactoryVersionTests() {
     private static PlatformConfiguratorAllFixture _fixture = null!;

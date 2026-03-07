@@ -1,13 +1,13 @@
 ﻿using Fixtures;
-using REST.Data;
 using Saucery.Core.Dojo.Platforms.Base;
 using Saucery.Core.RestAPI.FlowControl;
+using Set1.REST.Data;
 using Shouldly;
 using System.Collections;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace REST;
+namespace Set1.REST;
 
 public class RestTests()
 {

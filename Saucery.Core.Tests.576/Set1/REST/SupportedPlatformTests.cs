@@ -1,7 +1,7 @@
 ﻿using Saucery.Core.Dojo;
 using Shouldly;
 
-namespace REST;
+namespace Set1.REST;
 
 public class SupportedPlatformTests {
     [Test]

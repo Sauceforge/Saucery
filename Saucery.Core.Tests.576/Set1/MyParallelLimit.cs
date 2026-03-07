@@ -1,6 +1,6 @@
 ﻿using TUnit.Core.Interfaces;
 
-namespace Saucery.Core.Tests;
+namespace Set1;
 
 public record MyParallelLimit : IParallelLimit
 {

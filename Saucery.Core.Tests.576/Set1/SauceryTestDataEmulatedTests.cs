@@ -3,7 +3,7 @@ using Fixtures;
 using Saucery.Core.DataSources;
 using Shouldly;
 
-namespace Saucery.Core.Tests;
+namespace Set1;
 
 [NotInParallel]
 public class SauceryTestDataEmulatedTests() : SauceryTestData {

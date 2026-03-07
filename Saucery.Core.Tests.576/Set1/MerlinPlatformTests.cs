@@ -5,7 +5,7 @@ using Saucery.Core.OnDemand;
 using Saucery.Core.OnDemand.Base;
 using Shouldly;
 
-namespace Saucery.Core.Tests;
+namespace Set1;
 
 public class MerlinPlatformTests()
 {

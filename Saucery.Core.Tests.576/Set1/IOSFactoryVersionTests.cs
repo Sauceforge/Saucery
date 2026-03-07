@@ -5,7 +5,7 @@ using Saucery.Core.Options;
 using Saucery.Core.Util;
 using Shouldly;
 
-namespace Saucery.Core.Tests;
+namespace Set1;
 
 public class IOSFactoryVersionTests() 
 {

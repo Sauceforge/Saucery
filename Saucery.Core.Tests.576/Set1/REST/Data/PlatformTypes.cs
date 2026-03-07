@@ -3,7 +3,7 @@ using Saucery.Core.Dojo.Platforms.ConcreteProducts.Google;
 using Saucery.Core.Dojo.Platforms.ConcreteProducts.Linux;
 using Saucery.Core.Dojo.Platforms.ConcreteProducts.PC;
 
-namespace REST.Data;
+namespace Set1.REST.Data;
 
 public class PlatformTypes {
     public static IEnumerable<object[]> SupportedPlatformTypes =>
