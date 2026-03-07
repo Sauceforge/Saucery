@@ -5,8 +5,49 @@ param(
     [int]$Iterations = 1,
 
     [Parameter(Mandatory = $false)]
-    [string]$Configuration = "Release"
+    [string]$Configuration = "Release",
+
+    [Parameter(Mandatory = $false)]
+    [Alias("h")]
+    [switch]$Help
 )
+
+function Show-Help {
+    Write-Host ""
+    Write-Host "Unit Test Comparison Runner"
+    Write-Host "------------------------------------------------------------"
+    Write-Host "Runs all configured test suites multiple times and reports"
+    Write-Host "average execution time for each suite."
+    Write-Host ""
+    Write-Host "Usage:"
+    Write-Host "  .\Run-UnitTestComparison.ps1 [options]"
+    Write-Host ""
+    Write-Host "Options:"
+    Write-Host "  -Iterations <int>     Number of times each suite is executed."
+    Write-Host "                        Default: 1"
+    Write-Host ""
+    Write-Host "  -Configuration <str>  Build configuration."
+    Write-Host "                        Default: Release"
+    Write-Host ""
+    Write-Host "  -Help, -h, --help     Show this help message and exit."
+    Write-Host ""
+    Write-Host "Examples:"
+    Write-Host "  Run each test suite once:"
+    Write-Host "    .\Run-UnitTestComparison.ps1"
+    Write-Host ""
+    Write-Host "  Run each test suite 5 times:"
+    Write-Host "    .\Run-UnitTestComparison.ps1 -Iterations 5"
+    Write-Host ""
+    Write-Host "  Run using Debug configuration:"
+    Write-Host "    .\Run-UnitTestComparison.ps1 -Iterations 3 -Configuration Debug"
+    Write-Host ""
+    exit 0
+}
+
+# Detect --help manually because PowerShell won't bind GNU-style long options automatically
+if ($Help -or $args -contains "--help" -or $args -contains "/?") {
+    Show-Help
+}
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
