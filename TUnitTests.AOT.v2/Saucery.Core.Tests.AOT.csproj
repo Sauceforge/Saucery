@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <OutputType>Exe</OutputType>
+    <Nullable>enable</Nullable>
+    <PublishAot>true</PublishAot>
+    <IsAotCompatible>true</IsAotCompatible>
+    <TUnitEnableVerboseDiagnostics>true</TUnitEnableVerboseDiagnostics>
+
+    <!-- Start by surfacing warnings without failing the build -->
+    <!--<TreatWarningsAsErrors>false</TreatWarningsAsErrors>-->
+    <!-- Make linker/AOT issues visible -->
+    <WarningsAsErrors>IL2###;IL3###</WarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="consoleRun.bat" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="TUnit" Version="1.18.37" />
+    <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.5.2" />
+    <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" Version="2.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Saucery.Core\Saucery.Core.csproj" />
+  </ItemGroup>
+
+</Project>

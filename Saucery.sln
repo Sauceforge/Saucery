@@ -213,6 +213,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Saucery.Core.Tests.1728", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Saucery.Core.Tests.1920", "Saucery.Core.Tests.1920\Saucery.Core.Tests.1920.csproj", "{F161EB62-CF70-8022-4C17-D88C834FEDD3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Saucery.Core.Tests.AOT", "TUnitTests.AOT.v2\Saucery.Core.Tests.AOT.csproj", "{E1F4C5EC-EDDD-7E99-D812-01F86D1FC865}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -403,6 +405,10 @@ Global
 		{F161EB62-CF70-8022-4C17-D88C834FEDD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F161EB62-CF70-8022-4C17-D88C834FEDD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F161EB62-CF70-8022-4C17-D88C834FEDD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E1F4C5EC-EDDD-7E99-D812-01F86D1FC865}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1F4C5EC-EDDD-7E99-D812-01F86D1FC865}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1F4C5EC-EDDD-7E99-D812-01F86D1FC865}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1F4C5EC-EDDD-7E99-D812-01F86D1FC865}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -469,6 +475,7 @@ Global
 		{12AC40C7-FEE8-BEC8-3D22-5A1983A24683} = {2AFC7A12-0CD4-47E7-96B1-CE4F04830D2B}
 		{2B248B03-1490-0B6B-B053-ADFB2C6A0EAC} = {2AFC7A12-0CD4-47E7-96B1-CE4F04830D2B}
 		{F161EB62-CF70-8022-4C17-D88C834FEDD3} = {2AFC7A12-0CD4-47E7-96B1-CE4F04830D2B}
+		{E1F4C5EC-EDDD-7E99-D812-01F86D1FC865} = {2AFC7A12-0CD4-47E7-96B1-CE4F04830D2B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B287ECB9-947E-4E9C-B745-27048D5CC522}
