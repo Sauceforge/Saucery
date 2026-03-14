@@ -20,7 +20,7 @@ public class SauceLabsRealDeviceAcquirer : RestBase {
     public virtual async Task<List<SupportedPlatform>?> AcquireRealDevicePlatforms(CancellationToken ct = default) {
         var json = await GetJsonResponseAsync(SauceryConstants.SUPPORTED_REALDEVICE_PLATFORMS_REQUEST, ct).ConfigureAwait(false);
         var supportedPlatforms = JsonSerializer.Deserialize<List<SupportedPlatform>>(json!, JsonOptions);
-        
+
         return supportedPlatforms;
     }
 

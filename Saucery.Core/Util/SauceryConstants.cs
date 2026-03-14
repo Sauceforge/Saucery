@@ -84,7 +84,7 @@ public static class SauceryConstants {
     internal const string RD_JOB_REQUEST = "v1/rdc/jobs/{0}";
     internal const string RECOMMENDED_APPIUM_REQUEST = "v1/info/platforms/appium";
     internal const string SUPPORTED_PLATFORMS_REQUEST = "v1/info/platforms/all";
-    internal const string SUPPORTED_REALDEVICE_PLATFORMS_REQUEST = "v1/rdc/devices";
+    internal const string SUPPORTED_REALDEVICE_PLATFORMS_REQUEST = "v1/rdc/devices"; //"v2/devices";
     internal const string RD_JOBS_REQUEST = "/v1/rdc/jobs";
     internal const string JSON_SEGMENT_CONTAINER = "{{{0}}}";
     internal const string NUGET_API = "https://packages.nuget.org/api/v2";

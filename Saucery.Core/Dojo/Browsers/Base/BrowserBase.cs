@@ -20,7 +20,7 @@ public abstract class BrowserBase
 
     internal List<string> ScreenResolutions { get; set; }
 
-    internal List<BrowserVersion> BrowserVersions { get; set; }
+    public List<BrowserVersion> BrowserVersions { get; set; }
 
 
     protected BrowserBase(

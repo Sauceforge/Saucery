@@ -1,4 +1,4 @@
-﻿using Saucery.Core.Dojo.Browsers;
+using Saucery.Core.Dojo.Browsers;
 using Saucery.Core.Dojo.Browsers.Base;
 using Saucery.Core.Dojo.Platforms;
 using Saucery.Core.Dojo.Platforms.Base;
@@ -48,8 +48,10 @@ public static class DojoExtensions
 
     private static PlatformBase? FindRealPlatform(this List<PlatformBase> platforms, SupportedPlatform sp) =>
         platforms.FirstOrDefault(mp =>
+            mp.Name != null && sp.Os != null && 
             mp.Name.Equals(sp.Os, StringComparison.Ordinal) &&
-            mp.PlatformVersion!.Equals(sp.OsVersion?.Split(".")[0], StringComparison.Ordinal));
+            mp.PlatformVersion != null && sp.OsVersion != null &&
+            mp.PlatformVersion.Equals(sp.OsVersion.Split(".")[0], StringComparison.Ordinal));
 
     private static PlatformBase? FindPlatform(this List<PlatformBase> platforms, SupportedPlatform sp)
     {

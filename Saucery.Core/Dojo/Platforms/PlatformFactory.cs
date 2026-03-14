@@ -13,7 +13,7 @@ public static class PlatformFactory
                 : DesktopPlatformFactory.CreatePlatform(sp);
 
     public static PlatformBase? CreateRealPlatform(SupportedPlatform sp) =>
-        sp.Manufacturer?[0] == "Apple" 
+        sp.Manufacturer?.FirstOrDefault() == "Apple" 
             ? ApplePlatformFactory.CreateRealPlatform(sp)
             : AndroidPlatformFactory.CreateRealPlatform(sp);
 }
