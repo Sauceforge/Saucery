@@ -40,7 +40,6 @@ env:
   XUNIT3_RD_INT_TEST_RESULTS_DIR: Merlin.XUnit3.RealDevices/bin/Release/net10.0/TestResults
   TUNIT_RD_INT_DIR: Merlin.TUnit.RealDevices
 
-  #UT_PROJECT: Saucery.Core.Tests/Saucery.Core.Tests.csproj
   UT_PROJECT: Saucery.Core.Tests.XUnitv3/Saucery.Core.Tests.XUnitv3.csproj
   TT_PROJECT: Template.Tests/Template.Tests.csproj
 
@@ -95,16 +94,6 @@ jobs:
     - name: Compile solution
       run: dotnet build -c ${{ env.CONFIG }} --no-restore
 
-    # - name: Run TUnit Unit tests (with coverage + TRX)
-    #   run: |
-    #    dotnet run -c ${{ env.CONFIG }} --project ${{ env.UT_PROJECT }} --no-build -- \
-    #    --report-trx \
-    #    --report-trx-filename "unit.trx" \
-    #    --coverage \
-    #    --coverage-output "${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}" \
-    #    --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
-    #    --results-directory "TestResults"
-
     - name: Run xUnit v3 unit tests with coverage
       shell: bash
       run: |
@@ -128,14 +117,8 @@ jobs:
           **/bin/${{ env.CONFIG }}/**/
           **/obj/
 
-    # - name: Publish Unit Test Results
-    #   uses: actions/upload-artifact@v7
-    #   with:
-    #     name: unit-test-results
-    #     path: ${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}
-
     - name: Publish Unit Test Results
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: unit-test-results
         path: Saucery.Core.Tests.XUnitv3/bin/${{ env.CONFIG }}/net10.0/TestResults/${{ env.UNIT_COVERAGE_FILENAME }}
