@@ -40,7 +40,8 @@ env:
   XUNIT3_RD_INT_TEST_RESULTS_DIR: Merlin.XUnit3.RealDevices/bin/Release/net10.0/TestResults
   TUNIT_RD_INT_DIR: Merlin.TUnit.RealDevices
 
-  UT_PROJECT: Saucery.Core.Tests/Saucery.Core.Tests.csproj
+  #UT_PROJECT: Saucery.Core.Tests/Saucery.Core.Tests.csproj
+  UT_PROJECT: Saucery.Core.Tests.XUnitv3/Saucery.Core.Tests.XUnitv3.csproj
   TT_PROJECT: Template.Tests/Template.Tests.csproj
 
   M_NUNIT_PROJECT: Merlin.NUnit/Merlin.NUnit.csproj
@@ -94,15 +95,26 @@ jobs:
     - name: Compile solution
       run: dotnet build -c ${{ env.CONFIG }} --no-restore
 
-    - name: Run TUnit Unit tests (with coverage + TRX)
+    # - name: Run TUnit Unit tests (with coverage + TRX)
+    #   run: |
+    #    dotnet run -c ${{ env.CONFIG }} --project ${{ env.UT_PROJECT }} --no-build -- \
+    #    --report-trx \
+    #    --report-trx-filename "unit.trx" \
+    #    --coverage \
+    #    --coverage-output "${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}" \
+    #    --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
+    #    --results-directory "TestResults"
+
+    - name: Run XUnit3 Unit tests (with coverage + TRX)
       run: |
-       dotnet run -c ${{ env.CONFIG }} --project ${{ env.UT_PROJECT }} --no-build -- \
-       --report-trx \
-       --report-trx-filename "unit.trx" \
-       --coverage \
-       --coverage-output "${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}" \
-       --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
-       --results-directory "TestResults"
+        dotnet test ${{ env.UT_PROJECT }} \
+          -c ${{ env.CONFIG }} \
+          --no-build \
+          --logger "trx;LogFileName=unit.trx" \
+          --results-directory "TestResults" \
+          --coverage \
+          --coverage-output "${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}" \
+          --coverage-output-format "${{ env.COVERAGE_FORMAT }}"
 
     - name: Run Template Tests
       run: dotnet run -c ${{ env.CONFIG }} --project ${{ env.TT_PROJECT }} --no-build
