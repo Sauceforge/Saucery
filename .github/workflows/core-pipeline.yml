@@ -105,13 +105,9 @@ jobs:
     #    --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
     #    --results-directory "TestResults"
 
-    - name: Run XUnit3 Unit tests (with coverage + TRX)
+    - name: Run xUnit v3 unit tests with coverage
       run: |
-        dotnet test ${{ env.UT_PROJECT }} \
-          -c ${{ env.CONFIG }} \
-          --no-build \
-          --logger "trx;LogFileName=unit.trx" \
-          --results-directory "TestResults" \
+        dotnet run -c ${{ env.CONFIG }} --project Saucery.Core.Tests.XUnitv3/Saucery.Core.Tests.XUnitv3.csproj -- \
           --coverage \
           --coverage-output "${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}" \
           --coverage-output-format "${{ env.COVERAGE_FORMAT }}"
