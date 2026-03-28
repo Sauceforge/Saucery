@@ -111,27 +111,11 @@ jobs:
         set -euo pipefail
         mkdir -p "${{ github.workspace }}/${{ env.COVERLET_DIR }}"
 
-        DLL="Saucery.Core.Tests.XUnitv3/bin/${{ env.CONFIG }}/net10.0/Saucery.Core.Tests.XUnitv3.dll"
-
-        if [[ ! -f "$DLL" ]]; then
-           echo "ERROR: runnable test assembly not found: $DLL"
-           find "Saucery.Core.Tests.XUnitv3" -type f -name "Saucery.Core.Tests.XUnitv3.dll" -print || true
-           find "Saucery.Core.Tests.XUnitv3" -type f -name "Saucery.Core.Tests.XUnitv3.runtimeconfig.json" -print || true
-           exit 1
-        fi
-
-        echo "Running $DLL"
-        dotnet "$DLL" \
-          --results-directory "${{ env.COVERLET_DIR }}" \
-          --diagnostic \
-          --diagnostic-verbosity Debug \
-          --diagnostic-output-directory "${{ env.COVERLET_DIR }}" \
+        dotnet run -c ${{ env.CONFIG }} \
+          --project ${{ env.UT_PROJECT }} -- \
           --coverage \
           --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
           --coverage-output "${{ env.UNIT_COVERAGE_FILENAME }}"
-
-        echo "Contents of ${{ env.COVERLET_DIR }}:"
-        ls -la "${{ github.workspace }}/${{ env.COVERLET_DIR }}" || true
 
     - name: Run Template Tests
       run: dotnet run -c ${{ env.CONFIG }} --project ${{ env.TT_PROJECT }} --no-build
@@ -144,17 +128,17 @@ jobs:
           **/bin/${{ env.CONFIG }}/**/
           **/obj/
 
-    # - name: Upload TRX
+    # - name: Publish Unit Test Results
     #   uses: actions/upload-artifact@v7
     #   with:
-    #     name: unit-test-trx
-    #     path: ${{ env.COVERLET_DIR }}/unit.trx
+    #     name: unit-test-results
+    #     path: ${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}
 
     - name: Publish Unit Test Results
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@v4
       with:
         name: unit-test-results
-        path: ${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}
+        path: Saucery.Core.Tests.XUnitv3/bin/${{ env.CONFIG }}/net10.0/TestResults/${{ env.UNIT_COVERAGE_FILENAME }}
 
   xunit3-integration-tests:
     runs-on: ubuntu-latest
