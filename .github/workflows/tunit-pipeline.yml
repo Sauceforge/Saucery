@@ -26,7 +26,7 @@ env:
   TUNIT_INT_DIR: Merlin.TUnit
   TUNIT_RD_INT_DIR: Merlin.TUnit.RealDevices
   COVERLET_DIR: ./TestResults
-  UT_PROJECT: Saucery.Core.Tests/Saucery.Core.Tests.csproj
+  UT_PROJECT: Saucery.Core.Tests.XUnitv3/Saucery.Core.Tests.XUnitv3.csproj
   TT_PROJECT: Template.Tests/Template.Tests.csproj
   M_TUNIT_PROJECT: Merlin.TUnit/Merlin.TUnit.csproj
   M_RD_TUNIT_PROJECT: Merlin.TUnit.RealDevices/Merlin.TUnit.RealDevices.csproj
@@ -201,20 +201,19 @@ jobs:
       - name: Compile solution
         run: dotnet build -c ${{ env.CONFIG }}
 
-      - name: Run TUnit Unit tests (with coverage + TRX)
+      - name: Run xUnit v3 Unit tests with coverage
+        shell: bash
         run: |
+          set -euo pipefail
+          mkdir -p "${{ github.workspace }}/${{ env.COVERLET_DIR }}"
+
           dotnet run -c ${{ env.CONFIG }} --project ${{ env.UT_PROJECT }} -- \
-          --report-trx \
-          --report-trx-filename "unit.trx" \
-          --coverage \
-          --coverage-output "${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}" \
-          --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
-          --results-directory "${{ env.COVERLET_DIR }}" \
-          --log-level Debug
+            --coverage \
+            --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
+            --coverage-output "${{ env.UNIT_COVERAGE_FILENAME }}"
 
       - name: Run Template Tests
         run: dotnet run --project ${{ env.TT_PROJECT }} -- --treenode-filter '/*/*/*/*[Category=TUnit]'
-
 
       - name: Upload compiled artifacts
         uses: actions/upload-artifact@v7
@@ -224,17 +223,11 @@ jobs:
             **/bin/${{ env.CONFIG }}/**/
             **/obj/
 
-      - name: Upload TRX
-        uses: actions/upload-artifact@v7
-        with:
-          name: unit-test-trx
-          path: ${{ env.COVERLET_DIR }}/unit.trx
-
       - name: Publish Unit Coverage Artifact
         uses: actions/upload-artifact@v7
         with:
           name: unit-test-results
-          path: ${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}
+          path: Saucery.Core.Tests.XUnitv3/bin/${{ env.CONFIG }}/net10.0/TestResults/${{ env.UNIT_COVERAGE_FILENAME }}
 
   tunit-integration-tests:
     runs-on: ubuntu-latest
