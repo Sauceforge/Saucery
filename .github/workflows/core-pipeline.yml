@@ -106,11 +106,32 @@ jobs:
     #    --results-directory "TestResults"
 
     - name: Run xUnit v3 unit tests with coverage
+      shell: bash
       run: |
-        dotnet run -c ${{ env.CONFIG }} --project Saucery.Core.Tests.XUnitv3/Saucery.Core.Tests.XUnitv3.csproj -- \
+        set -euo pipefail
+        mkdir -p "${{ github.workspace }}/${{ env.COVERLET_DIR }}"
+
+        DLL="Saucery.Core.Tests.XUnitv3/bin/${{ env.CONFIG }}/net10.0/Saucery.Core.Tests.XUnitv3.dll"
+
+        if [[ ! -f "$DLL" ]]; then
+           echo "ERROR: runnable test assembly not found: $DLL"
+           find "Saucery.Core.Tests.XUnitv3" -type f -name "Saucery.Core.Tests.XUnitv3.dll" -print || true
+           find "Saucery.Core.Tests.XUnitv3" -type f -name "Saucery.Core.Tests.XUnitv3.runtimeconfig.json" -print || true
+           exit 1
+        fi
+
+        echo "Running $DLL"
+        dotnet "$DLL" \
+          --results-directory "${{ env.COVERLET_DIR }}" \
+          --diagnostic \
+          --diagnostic-verbosity Debug \
+          --diagnostic-output-directory "${{ env.COVERLET_DIR }}" \
           --coverage \
-          --coverage-output "${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}" \
-          --coverage-output-format "${{ env.COVERAGE_FORMAT }}"
+          --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
+          --coverage-output "${{ env.UNIT_COVERAGE_FILENAME }}"
+
+        echo "Contents of ${{ env.COVERLET_DIR }}:"
+        ls -la "${{ github.workspace }}/${{ env.COVERLET_DIR }}" || true
 
     - name: Run Template Tests
       run: dotnet run -c ${{ env.CONFIG }} --project ${{ env.TT_PROJECT }} --no-build
@@ -123,11 +144,11 @@ jobs:
           **/bin/${{ env.CONFIG }}/**/
           **/obj/
 
-    - name: Upload TRX
-      uses: actions/upload-artifact@v7
-      with:
-        name: unit-test-trx
-        path: ${{ env.COVERLET_DIR }}/unit.trx
+    # - name: Upload TRX
+    #   uses: actions/upload-artifact@v7
+    #   with:
+    #     name: unit-test-trx
+    #     path: ${{ env.COVERLET_DIR }}/unit.trx
 
     - name: Publish Unit Test Results
       uses: actions/upload-artifact@v7
