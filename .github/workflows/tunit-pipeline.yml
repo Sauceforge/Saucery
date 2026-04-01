@@ -362,6 +362,10 @@ jobs:
       PACKAGE_ID: Saucery.TUnit
       BUILD_CONFIGURATION: Release
       ARTIFACT_DIR: artifacts
+    # Expose local_version and publish decision as job outputs for downstream jobs
+    outputs:
+      local_version: ${{ steps.localver.outputs.version }}
+      publish: ${{ steps.decide.outputs.publish }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
@@ -442,6 +446,20 @@ jobs:
             --api-key "$NUGET_API_KEY" \
             --source https://api.nuget.org/v3/index.json \
             --skip-duplicate
+            
+  tag:
+    needs: publish-saucery-tunit
+    if: ${{ needs.publish-saucery-tunit.outputs.publish == 'true' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master') }}
+    runs-on: ubuntu-latest
+    concurrency:
+      group: tunit-${{ needs.publish-saucery-tunit.outputs.local_version }}
+      cancel-in-progress: false
+    steps:
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.2
+        with:
+          github_token: ${{ secrets.ACTIONS_PUSH_PAT }}
 
   generate-report:
     runs-on: ubuntu-latest

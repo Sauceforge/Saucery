@@ -199,16 +199,16 @@ jobs:
       - name: Run External NUnit Real Integration Tests
         run: dotnet test -c ${{ env.CONFIG }} ${{ env.EM_RD_NUNIT_PROJECT }}
 
-  tag:
-    needs: [detect-changes, nunit-external-tests, nunit-real-external-tests]
-    if: ${{ needs.detect-changes.outputs.paths_changed == 'true' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master') && success() }}
-    runs-on: ubuntu-latest
-    concurrency:
-      group: tag-${{ github.ref }}
-      cancel-in-progress: false
-    steps:
-      - name: Bump version and push tag
-        id: tag_version
-        uses: mathieudutour/github-tag-action@v6.2
-        with:
-          github_token: ${{ secrets.ACTIONS_PUSH_PAT }}
+  # tag:
+  #   needs: [detect-changes, nunit-external-tests, nunit-real-external-tests]
+  #   if: ${{ needs.detect-changes.outputs.paths_changed == 'true' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master') && success() }}
+  #   runs-on: ubuntu-latest
+  #   concurrency:
+  #     group: tag-${{ github.ref }}
+  #     cancel-in-progress: false
+  #   steps:
+  #     - name: Bump version and push tag
+  #       id: tag_version
+  #       uses: mathieudutour/github-tag-action@v6.2
+  #       with:
+  #         github_token: ${{ secrets.ACTIONS_PUSH_PAT }}
