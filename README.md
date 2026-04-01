@@ -26,10 +26,10 @@ Saucery comes in multiple flavors supporting popular test frameworks. Targeting 
 | Package | Badges |
 | --- | --- |
 | Saucery.Core | [![nuget](https://img.shields.io/nuget/v/Saucery.Core.svg)](https://www.nuget.org/packages/Saucery.Core/) [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery.Core)](https://www.nuget.org/packages/Saucery.Core/) |
-| Saucery | [![nuget](https://img.shields.io/nuget/v/Saucery.svg)](https://www.nuget.org/packages/Saucery/) [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery)](https://www.nuget.org/packages/Saucery/) |
-| Saucery.XUnit | [![nuget](https://img.shields.io/nuget/v/Saucery.XUnit.svg)](https://www.nuget.org/packages/Saucery.XUnit/) [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery.XUnit)](https://www.nuget.org/packages/Saucery.XUnit/) |
-| Saucery.TUnit | [![nuget](https://img.shields.io/nuget/v/Saucery.TUnit.svg)](https://www.nuget.org/packages/Saucery.TUnit/) [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery.TUnit)](https://www.nuget.org/packages/Saucery.TUnit/) |
-| Saucery.XUnit.v3 | [![nuget](https://img.shields.io/nuget/v/Saucery.XUnit.v3.svg)](https://www.nuget.org/packages/Saucery.XUnit.v3/) [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery.XUnit.v3)](https://www.nuget.org/packages/Saucery.XUnit.v3/) |
+| Saucery ([NUnit](github.com/nunit/nunit)) | [![nuget](https://img.shields.io/nuget/v/Saucery.svg)](https://www.nuget.org/packages/Saucery/) [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery)](https://www.nuget.org/packages/Saucery/) |
+| Saucery.XUnit ([XUnit](github.com/xunit/xunit)) | [![nuget](https://img.shields.io/nuget/v/Saucery.XUnit.svg)](https://www.nuget.org/packages/Saucery.XUnit/) [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery.XUnit)](https://www.nuget.org/packages/Saucery.XUnit/) |
+| Saucery.TUnit ([TUnit](github.com/thomhurst/tunit)) | [![nuget](https://img.shields.io/nuget/v/Saucery.TUnit.svg)](https://www.nuget.org/packages/Saucery.TUnit/) [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery.TUnit)](https://www.nuget.org/packages/Saucery.TUnit/) |
+| Saucery.XUnit.v3 ([XUnit](github.com/xunit/xunit)) | [![nuget](https://img.shields.io/nuget/v/Saucery.XUnit.v3.svg)](https://www.nuget.org/packages/Saucery.XUnit.v3/) [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery.XUnit.v3)](https://www.nuget.org/packages/Saucery.XUnit.v3/) |
 | Number of Saucery Packages | [![nuget](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Sauceforge/Saucery/master/badges/nuget-package-count.json&cacheSeconds=60)](https://www.nuget.org/profiles/fullcircle) |
 | Total | [![nuget](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Sauceforge/Saucery/master/badges/nuget-total-downloads.json&cacheSeconds=60)](https://www.nuget.org/profiles/fullcircle) |
 
