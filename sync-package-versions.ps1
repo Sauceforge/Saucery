@@ -1,4 +1,4 @@
-﻿# sync-all-package-versions.ps1
+﻿# sync-package-versions.ps1
 # Cross-platform (Windows + GitHub Actions) package sync script
 # - Auto-detects both the script directory ($Root) and the repository root ($Repo)
 # - No parameters are required or expected
@@ -13,7 +13,7 @@ if ($PSVersionTable.PSVersion.Major -ge 3 -and $PSScriptRoot) {
     $Root = (Get-Location).Path
 }
 
-# Child script name INSIDE EACH PROJECT (singular, as you clarified)
+# Child script name INSIDE EACH PROJECT (singular)
 $ScriptName = 'sync-package-version.ps1'
 
 # ===================== Repo root detection (cross-platform) =====================
@@ -130,6 +130,38 @@ function Get-PackageReferencesFromPath([string]$path) {
   if (-not (Test-Path -LiteralPath $path)) { return @{} }
   $rf = Read-FileWithEncoding -path $path
   return Get-PackageReferencesFromXml -xmlText $rf.Text
+}
+
+# normalize package reference map: trim, lowercase keys, trim values, empty => $null
+function Normalize-PackageRefs([hashtable]$map) {
+  $norm = @{}
+  if (-not $map) { return $norm }
+  foreach ($rawKey in $map.Keys) {
+    $k = $rawKey.ToString().Trim().ToLowerInvariant()
+    $v = $map[$rawKey]
+    if ([string]::IsNullOrWhiteSpace($v)) { $v = $null } else { $v = $v.ToString().Trim() }
+    $norm[$k] = $v
+  }
+  return $norm
+}
+
+# Diagnostic helper: print before/after normalized maps and diffs
+function Write-PackageRefDiffs([hashtable]$beforeNorm, [hashtable]$afterNorm, [string]$context) {
+  Write-Host ""
+  Write-Host "=== PackageReference DIAGNOSTIC ($context) ==="
+  Write-Host "Keys in before: $($beforeNorm.Keys -join ', ')"
+  Write-Host "Keys in after : $($afterNorm.Keys -join ', ')"
+  $all = @($beforeNorm.Keys + $afterNorm.Keys) | Sort-Object -Unique
+  foreach ($k in $all) {
+    $b = $null; $a = $null
+    if ($beforeNorm.ContainsKey($k)) { $b = $beforeNorm[$k] }
+    if ($afterNorm.ContainsKey($k))  { $a = $afterNorm[$k] }
+    if ($b -ne $a) {
+      Write-Host ("  DIFF: {0} => before: '{1}'  after: '{2}'" -f $k, ($b -ne $null ? $b : '<null>'), ($a -ne $null ? $a : '<null>'))
+    }
+  }
+  Write-Host "=== END DIAGNOSTIC ($context) ==="
+  Write-Host ""
 }
 
 # Extract <PackageVersion> value from XML text
@@ -285,93 +317,23 @@ $Projects = @('Saucery','Saucery.Playwright.NUnit','Saucery.XUnit','Saucery.XUni
 
 try { Clear-Host } catch {}
 
-# ===================== IMMEDIATE Saucery.Core processing (must run first) =====================
+# ---------------------------------------------------------------------
+# Saucery.Core: capture package-ref snapshot, run update block, then
+# bump PackageVersion ONLY if package-reference versions actually changed.
+# ---------------------------------------------------------------------
 $sauceryCoreCsprojPath = Join-Path (Join-Path $Repo 'Saucery.Core') 'Saucery.Core.csproj'
+$SauceryCoreBumped = $false
+$origSauceryCoreRefsNorm = @{}
+$PostUpdateRefsChanged = $false
+
 if (Test-Path -LiteralPath $sauceryCoreCsprojPath) {
-  Write-Host "Processing Saucery.Core.csproj first (immediate check for PackageReference changes)..."
-
-  # read working copy package references and version
-  $currentRefs = Get-PackageReferencesFromPath -path $sauceryCoreCsprojPath
-  $currentVersion = Get-PackageVersionFromPath -path $sauceryCoreCsprojPath
-
-  # try to read committed HEAD version for comparison (HEAD may be used for diff only)
-  $gitCmd = Get-Command git -ErrorAction SilentlyContinue
-  $headAvailable = $false
-  $headRefs = @{}
-  $headVersion = $null
-  if ($gitCmd) {
-    $relPath = 'Saucery.Core/Saucery.Core.csproj' -replace '\\','/'
-    try {
-      $headText = & $gitCmd.Path -C $Repo show "HEAD:$relPath" 2>$null
-      if ($LASTEXITCODE -eq 0 -and $headText) {
-        $headAvailable = $true
-        $headRefs = Get-PackageReferencesFromXml -xmlText $headText
-        $headVersion = Get-PackageVersionFromXmlText -xmlText $headText
-      } else {
-        # HEAD unavailable or file not present at HEAD
-        $headAvailable = $false
-      }
-    } catch {
-      $headAvailable = $false
-    }
-  } else {
-    Write-Host "git not available; will still bump based on working copy if package references changed."
-    $headAvailable = $false
-  }
-
-  # detect changes: prefer HEAD comparison when available; otherwise compare refs to previously recorded copy in repo index or use working copy detection
-  $changed = $false
-  if ($headAvailable) {
-    $allKeys = @($currentRefs.Keys + $headRefs.Keys) | Select-Object -Unique
-    foreach ($k in $allKeys) {
-      $o = $null; $n = $null
-      if ($headRefs.ContainsKey($k)) { $o = $headRefs[$k] }
-      if ($currentRefs.ContainsKey($k)) { $n = $currentRefs[$k] }
-      if ($o -ne $n) { $changed = $true; break }
-    }
-  } else {
-    # If HEAD not available, treat ANY local change to PackageReference versions as a change.
-    # We determine that by checking whether any PackageReference has a non-empty Version value (conservative).
-    if ($currentRefs.Count -gt 0) { $changed = $true }
-  }
-
-  if ($changed) {
-    Write-Host "Detected PackageReference changes in Saucery.Core.csproj. Preparing to bump PackageVersion."
-
-    # Use the working copy's current <PackageVersion> as the base for bumping.
-    # This ensures an edit made directly in the csproj (e.g. updated PackageReference) results in a numeric +1 bump.
-    $baseVersion = $currentVersion
-    if (-not $baseVersion) {
-      # If working copy lacks PackageVersion, fall back to HEAD if available
-      $baseVersion = $headVersion
-    }
-
-    if (-not $baseVersion) {
-      Write-Warning "Unable to determine base PackageVersion (no working copy or HEAD PackageVersion). Skipping automatic bump."
-    } else {
-      $newVersion = Bump-VersionString -baseVersion $baseVersion
-      if (-not $newVersion) {
-        Write-Warning "Failed to compute bumped version from base '$baseVersion'. Skipping automatic bump."
-      } else {
-        if (Replace-PackageVersionInPath -path $sauceryCoreCsprojPath -newVersion $newVersion) {
-          Write-Host "Saucery.Core.csproj PackageVersion updated to $newVersion (before other processing)."
-        } else {
-          Write-Warning "Failed to write bumped PackageVersion to $sauceryCoreCsprojPath"
-        }
-      }
-    }
-  } else {
-    Write-Host "No PackageReference changes detected in Saucery.Core.csproj; no bump required."
-  }
+  $orig = Get-PackageReferencesFromPath -path $sauceryCoreCsprojPath
+  $origSauceryCoreRefsNorm = Normalize-PackageRefs -map $orig
 } else {
-  Write-Warning "Saucery.Core.csproj not found at expected path: $sauceryCoreCsprojPath"
+  Write-Warning "Saucery.Core.csproj not found at expected path before updates: $sauceryCoreCsprojPath"
 }
 
-# ===================== Pre-update bumps (rest of work) =====================
-.\Update-NuGetNext-All.ps1 -PackageId 'BenchmarkDotNet'                     -Root (Join-Path $Repo 'Saucery.Benchmark')
-.\Update-NuGetNext-All.ps1 -PackageId 'BenchmarkDotNet.Diagnostics.Windows' -Root (Join-Path $Repo 'Saucery.Benchmark')
-.\Update-NuGetNext-All.ps1 -PackageId 'Saucery.Core'                        -Root (Join-Path $Repo 'Saucery.Benchmark')
-
+# ===== The Update-NuGetNext-All calls for Saucery.Core =====
 .\Update-NuGetNext-All.ps1 -PackageId 'Appium.WebDriver'                     -Root (Join-Path $Repo 'Saucery.Core')
 .\Update-NuGetNext-All.ps1 -PackageId 'Castle.Core'                           -Root (Join-Path $Repo 'Saucery.Core')
 .\Update-NuGetNext-All.ps1 -PackageId 'DotNetSeleniumExtras.PageObjects.Core' -Root (Join-Path $Repo 'Saucery.Core')
@@ -380,6 +342,122 @@ if (Test-Path -LiteralPath $sauceryCoreCsprojPath) {
 .\Update-NuGetNext-All.ps1 -PackageId 'Selenium.Support'                      -Root (Join-Path $Repo 'Saucery.Core')
 .\Update-NuGetNext-All.ps1 -PackageId 'Selenium.WebDriver'                    -Root (Join-Path $Repo 'Saucery.Core')
 .\Update-NuGetNext-All.ps1 -PackageId 'Shouldly'                              -Root (Join-Path $Repo 'Saucery.Core')
+# ================================================================================
+
+# Re-capture package refs and compare normalized maps
+if (Test-Path -LiteralPath $sauceryCoreCsprojPath) {
+  $new = Get-PackageReferencesFromPath -path $sauceryCoreCsprojPath
+  $newSauceryCoreRefsNorm = Normalize-PackageRefs -map $new
+
+  $refsChanged = $false
+  $allKeys = @($origSauceryCoreRefsNorm.Keys + $newSauceryCoreRefsNorm.Keys) | Sort-Object -Unique
+  foreach ($k in $allKeys) {
+    $o = $null; $n = $null
+    if ($origSauceryCoreRefsNorm.ContainsKey($k)) { $o = $origSauceryCoreRefsNorm[$k] }
+    if ($newSauceryCoreRefsNorm.ContainsKey($k))  { $n = $newSauceryCoreRefsNorm[$k] }
+    if ($o -ne $n) { $refsChanged = $true; break }
+  }
+
+  # record for the HEAD-based step below
+  $PostUpdateRefsChanged = $refsChanged
+
+  if ($refsChanged) {
+    Write-Host "Saucery.Core PackageReference versions changed as a result of the Update-NuGetNext-All calls. Bumping PackageVersion."
+    Write-PackageRefDiffs -beforeNorm $origSauceryCoreRefsNorm -afterNorm $newSauceryCoreRefsNorm -context "post-update"
+
+    $currentVersion = Get-PackageVersionFromPath -path $sauceryCoreCsprojPath
+    if (-not $currentVersion) {
+      Write-Warning "Cannot determine current <PackageVersion> in Saucery.Core.csproj after updates; skipping bump."
+    } else {
+      $bumped = Bump-VersionString -baseVersion $currentVersion
+      if (-not $bumped) {
+        Write-Warning "Failed to compute bumped version from base '$currentVersion'; skipping bump."
+      } else {
+        if (Replace-PackageVersionInPath -path $sauceryCoreCsprojPath -newVersion $bumped) {
+          Write-Host "Saucery.Core.csproj PackageVersion updated to $bumped (post-update block)."
+          $SauceryCoreBumped = $true
+        } else {
+          Write-Warning "Failed to write bumped PackageVersion to $sauceryCoreCsprojPath"
+        }
+      }
+    }
+  } else {
+    Write-Host "Saucery.Core PackageReference versions were NOT changed by the Update-NuGetNext-All calls; no PackageVersion bump."
+  }
+} else {
+  Write-Host "Skipping post-update change detection for Saucery.Core.csproj (file missing)."
+}
+
+# -----------------------
+# Immediate HEAD-based check (run after the above but do not double-bump)
+# - ONLY run HEAD-based bump if the Update-NuGetNext-All block actually changed package refs.
+# -----------------------
+if (-not $PostUpdateRefsChanged) {
+  Write-Host "Skipping HEAD-based PackageVersion bump because Update-NuGetNext-All block did not change package-reference versions."
+} elseif (Test-Path -LiteralPath $sauceryCoreCsprojPath) {
+  $currentRefs = Get-PackageReferencesFromPath -path $sauceryCoreCsprojPath
+  $currentRefsNorm = Normalize-PackageRefs -map $currentRefs
+
+  $gitCmd = Get-Command git -ErrorAction SilentlyContinue
+  if ($gitCmd) {
+    $relPath = 'Saucery.Core/Saucery.Core.csproj' -replace '\\','/'
+    try {
+      $headText = & $gitCmd.Path -C $Repo show "HEAD:$relPath" 2>$null
+      if ($LASTEXITCODE -eq 0 -and $headText) {
+        $headRefs = Get-PackageReferencesFromXml -xmlText $headText
+        $headRefsNorm = Normalize-PackageRefs -map $headRefs
+
+        $headDiff = $false
+        $allKeys = @($currentRefsNorm.Keys + $headRefsNorm.Keys) | Sort-Object -Unique
+        foreach ($k in $allKeys) {
+          $c = $null; $h = $null
+          if ($currentRefsNorm.ContainsKey($k)) { $c = $currentRefsNorm[$k] }
+          if ($headRefsNorm.ContainsKey($k))    { $h = $headRefsNorm[$k] }
+          if ($c -ne $h) { $headDiff = $true; break }
+        }
+
+        if ($headDiff -and -not $SauceryCoreBumped) {
+          Write-Host "Detected PackageReference differences vs HEAD. Bumping PackageVersion based on HEAD package version."
+          Write-PackageRefDiffs -beforeNorm $headRefsNorm -afterNorm $currentRefsNorm -context "HEAD vs working copy"
+
+          $headVersion = Get-PackageVersionFromXmlText -xmlText $headText
+          if (-not $headVersion) {
+            Write-Warning "HEAD copy of Saucery.Core.csproj does not contain a <PackageVersion>; skipping HEAD-based bump."
+          } else {
+            $newVersion = Bump-VersionString -baseVersion $headVersion
+            if (-not $newVersion) {
+              Write-Warning "Failed to compute bumped version from HEAD base '$headVersion'."
+            } else {
+              if (Replace-PackageVersionInPath -path $sauceryCoreCsprojPath -newVersion $newVersion) {
+                Write-Host "Saucery.Core.csproj PackageVersion updated to $newVersion (HEAD-based bump)."
+                $SauceryCoreBumped = $true
+              } else {
+                Write-Warning "Failed to write HEAD-based bumped PackageVersion to $sauceryCoreCsprojPath"
+              }
+            }
+          }
+        } else {
+          if ($headDiff -and $SauceryCoreBumped) {
+            Write-Host "PackageReference difference vs HEAD detected but Saucery.Core was already bumped by post-update block; skipping."
+          } else {
+            Write-Host "No PackageReference differences vs HEAD; no HEAD-based bump."
+          }
+        }
+      } else {
+        Write-Host "No HEAD copy available for Saucery.Core.csproj; skipping HEAD comparison."
+      }
+    } catch {
+      Write-Warning "Error while comparing Saucery.Core.csproj with HEAD: $_"
+    }
+  } else {
+    Write-Host "git not available; skipping HEAD comparison."
+  }
+}
+
+# ===================== Continue with rest of the script =====================
+.\Update-NuGetNext-All.ps1 -PackageId 'BenchmarkDotNet'                     -Root (Join-Path $Repo 'Saucery.Benchmark')
+.\Update-NuGetNext-All.ps1 -PackageId 'BenchmarkDotNet.Diagnostics.Windows' -Root (Join-Path $Repo 'Saucery.Benchmark')
+.\Update-NuGetNext-All.ps1 -PackageId 'Saucery.Core'                        -Root (Join-Path $Repo 'Saucery.Benchmark')
 
 .\Update-NuGetNext-All.ps1 -PackageId 'NUnit'                  -Root (Join-Path $Repo 'Saucery')
 .\Update-NuGetNext-All.ps1 -PackageId 'Microsoft.NET.Test.Sdk' -Root (Join-Path $Repo 'Saucery')
