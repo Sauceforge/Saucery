@@ -65,6 +65,17 @@ function Write-FileWithEncoding([string]$path,[string]$text,[scriptblock]$Encode
   [System.IO.File]::WriteAllText($path,$text,$enc)
 }
 
+function New-NamespaceManager([xml]$xml) {
+  $nsMgr = New-Object System.Xml.XmlNamespaceManager($xml.NameTable)
+  $uri = $xml.DocumentElement.NamespaceURI
+  if ($uri) { $nsMgr.AddNamespace('msbuild', $uri) }
+  $nsMgr
+}
+function Select-SingleNodeNs([xml]$Xml,[string]$WithNs,[string]$NoNs){
+  $ns = New-NamespaceManager $Xml
+  if ($Xml.DocumentElement.NamespaceURI) { $Xml.SelectSingleNode($WithNs, $ns) } else { $Xml.SelectSingleNode($NoNs) }
+}
+
 function Update-VersionValue-InStartTag {
   param([string]$Text,[string]$PackageId,[string]$NewVersion)
   $pkgPattern = [regex]::new('Include\s*=\s*"'+[regex]::Escape($PackageId)+'"', 'IgnoreCase')
@@ -83,15 +94,98 @@ function Update-VersionValue-InStartTag {
   return $newText, $true
 }
 
-function New-NamespaceManager([xml]$xml) {
-  $nsMgr = New-Object System.Xml.XmlNamespaceManager($xml.NameTable)
-  $uri = $xml.DocumentElement.NamespaceURI
-  if ($uri) { $nsMgr.AddNamespace('msbuild', $uri) }
-  $nsMgr
+# Parse PackageReference Include/Version mapping from an XML string
+function Get-PackageReferencesFromXml([string]$xmlText) {
+  $map = @{}
+  if ([string]::IsNullOrWhiteSpace($xmlText)) { return $map }
+  try {
+    [xml]$x = $xmlText
+  } catch {
+    try { [xml]$x = [xml](Get-Content -Raw -LiteralPath $xmlText) } catch { return $map }
+  }
+  $ns = New-NamespaceManager $x
+  if ($x.DocumentElement.NamespaceURI) {
+    $nodes = $x.SelectNodes("//msbuild:PackageReference", $ns)
+  } else {
+    $nodes = $x.SelectNodes("//*[local-name()='PackageReference']")
+  }
+  foreach ($n in $nodes) {
+    $inc = $n.GetAttribute('Include')
+    $ver = $n.GetAttribute('Version')
+    if (-not $ver -and $n.HasChildNodes) {
+      if ($x.DocumentElement.NamespaceURI) {
+        $vnode = $n.SelectSingleNode("msbuild:Version", $ns)
+      } else {
+        $vnode = $n.SelectSingleNode("*[local-name()='Version']")
+      }
+      if ($vnode) { $ver = $vnode.InnerText.Trim() }
+    }
+    if ($inc) { $map[$inc] = $ver }
+  }
+  return $map
 }
-function Select-SingleNodeNs([xml]$Xml,[string]$WithNs,[string]$NoNs){
-  $ns = New-NamespaceManager $Xml
-  if ($Xml.DocumentElement.NamespaceURI) { $Xml.SelectSingleNode($WithNs, $ns) } else { $Xml.SelectSingleNode($NoNs) }
+
+# Get PackageReference mapping from a csproj file path
+function Get-PackageReferencesFromPath([string]$path) {
+  if (-not (Test-Path -LiteralPath $path)) { return @{} }
+  $rf = Read-FileWithEncoding -path $path
+  return Get-PackageReferencesFromXml -xmlText $rf.Text
+}
+
+# Extract <PackageVersion> value from XML text
+function Get-PackageVersionFromXmlText([string]$xmlText) {
+  if ([string]::IsNullOrWhiteSpace($xmlText)) { return $null }
+  $pattern = '(?ms)<PackageVersion\b[^>]*>\s*([^<\r\n]+?)\s*</PackageVersion>'
+  $m = [regex]::Match($xmlText, $pattern)
+  if ($m.Success) { return $m.Groups[1].Value.Trim() }
+  return $null
+}
+
+# Get <PackageVersion> from csproj path
+function Get-PackageVersionFromPath([string]$path) {
+  if (-not (Test-Path -LiteralPath $path)) { return $null }
+  $rf = Read-FileWithEncoding -path $path
+  return Get-PackageVersionFromXmlText -xmlText $rf.Text
+}
+
+# Replace <PackageVersion> value in a csproj path with the provided new version (preserve formatting)
+function Replace-PackageVersionInPath([string]$path, [string]$newVersion) {
+  if (-not (Test-Path -LiteralPath $path)) { Write-Warning "Project file not found: $path"; return $false }
+  $rf = Read-FileWithEncoding -path $path
+  $text = $rf.Text
+  $enc  = $rf.Encoder
+
+  $pattern = '(?ms)(<PackageVersion\b[^>]*>\s*)([^<\r\n]+?)(\s*</PackageVersion>)'
+  $m = [regex]::Match($text, $pattern)
+  if (-not $m.Success) {
+    Write-Warning "No <PackageVersion> element found in $path"
+    return $false
+  }
+
+  $old = $m.Groups[2].Value.Trim()
+  $newText = [regex]::Replace($text, $pattern, { param($mm) $mm.Groups[1].Value + $newVersion + $mm.Groups[3].Value }, 1)
+  Write-Host ("Setting PackageVersion in {0}: {1} -> {2}" -f $path, $old, $newVersion)
+  Write-FileWithEncoding -path $path -text $newText -EncoderFactory $enc
+  return $true
+}
+
+# Compute a SemVer-style bump of the last numeric segment (e.g. 4.10.6 -> 4.10.7)
+function Bump-VersionString([string]$baseVersion) {
+  if ([string]::IsNullOrWhiteSpace($baseVersion)) { return $null }
+  $segments = $baseVersion.Trim() -split '\.'
+  if ($segments.Length -eq 0) { return $null }
+
+  $lastIndex = $segments.Length - 1
+  $parsed = 0
+  if (-not [int]::TryParse($segments[$lastIndex], [ref]$parsed)) {
+    Write-Warning "Cannot bump non-numeric version segment in base version '$baseVersion'"
+    return $null
+  }
+
+  $parsed = $parsed + 1
+  $segments[$lastIndex] = $parsed.ToString()
+
+  return ($segments -join '.')
 }
 
 function Get-SelfPackageVersionFromProject([string]$ProjectRoot){
@@ -191,7 +285,89 @@ $Projects = @('Saucery','Saucery.Playwright.NUnit','Saucery.XUnit','Saucery.XUni
 
 try { Clear-Host } catch {}
 
-# ===================== Pre-update bumps (same as before) =====================
+# ===================== IMMEDIATE Saucery.Core processing (must run first) =====================
+$sauceryCoreCsprojPath = Join-Path (Join-Path $Repo 'Saucery.Core') 'Saucery.Core.csproj'
+if (Test-Path -LiteralPath $sauceryCoreCsprojPath) {
+  Write-Host "Processing Saucery.Core.csproj first (immediate check for PackageReference changes)..."
+
+  # read working copy package references and version
+  $currentRefs = Get-PackageReferencesFromPath -path $sauceryCoreCsprojPath
+  $currentVersion = Get-PackageVersionFromPath -path $sauceryCoreCsprojPath
+
+  # try to read committed HEAD version for comparison (HEAD may be used for diff only)
+  $gitCmd = Get-Command git -ErrorAction SilentlyContinue
+  $headAvailable = $false
+  $headRefs = @{}
+  $headVersion = $null
+  if ($gitCmd) {
+    $relPath = 'Saucery.Core/Saucery.Core.csproj' -replace '\\','/'
+    try {
+      $headText = & $gitCmd.Path -C $Repo show "HEAD:$relPath" 2>$null
+      if ($LASTEXITCODE -eq 0 -and $headText) {
+        $headAvailable = $true
+        $headRefs = Get-PackageReferencesFromXml -xmlText $headText
+        $headVersion = Get-PackageVersionFromXmlText -xmlText $headText
+      } else {
+        # HEAD unavailable or file not present at HEAD
+        $headAvailable = $false
+      }
+    } catch {
+      $headAvailable = $false
+    }
+  } else {
+    Write-Host "git not available; will still bump based on working copy if package references changed."
+    $headAvailable = $false
+  }
+
+  # detect changes: prefer HEAD comparison when available; otherwise compare refs to previously recorded copy in repo index or use working copy detection
+  $changed = $false
+  if ($headAvailable) {
+    $allKeys = @($currentRefs.Keys + $headRefs.Keys) | Select-Object -Unique
+    foreach ($k in $allKeys) {
+      $o = $null; $n = $null
+      if ($headRefs.ContainsKey($k)) { $o = $headRefs[$k] }
+      if ($currentRefs.ContainsKey($k)) { $n = $currentRefs[$k] }
+      if ($o -ne $n) { $changed = $true; break }
+    }
+  } else {
+    # If HEAD not available, treat ANY local change to PackageReference versions as a change.
+    # We determine that by checking whether any PackageReference has a non-empty Version value (conservative).
+    if ($currentRefs.Count -gt 0) { $changed = $true }
+  }
+
+  if ($changed) {
+    Write-Host "Detected PackageReference changes in Saucery.Core.csproj. Preparing to bump PackageVersion."
+
+    # Use the working copy's current <PackageVersion> as the base for bumping.
+    # This ensures an edit made directly in the csproj (e.g. updated PackageReference) results in a numeric +1 bump.
+    $baseVersion = $currentVersion
+    if (-not $baseVersion) {
+      # If working copy lacks PackageVersion, fall back to HEAD if available
+      $baseVersion = $headVersion
+    }
+
+    if (-not $baseVersion) {
+      Write-Warning "Unable to determine base PackageVersion (no working copy or HEAD PackageVersion). Skipping automatic bump."
+    } else {
+      $newVersion = Bump-VersionString -baseVersion $baseVersion
+      if (-not $newVersion) {
+        Write-Warning "Failed to compute bumped version from base '$baseVersion'. Skipping automatic bump."
+      } else {
+        if (Replace-PackageVersionInPath -path $sauceryCoreCsprojPath -newVersion $newVersion) {
+          Write-Host "Saucery.Core.csproj PackageVersion updated to $newVersion (before other processing)."
+        } else {
+          Write-Warning "Failed to write bumped PackageVersion to $sauceryCoreCsprojPath"
+        }
+      }
+    }
+  } else {
+    Write-Host "No PackageReference changes detected in Saucery.Core.csproj; no bump required."
+  }
+} else {
+  Write-Warning "Saucery.Core.csproj not found at expected path: $sauceryCoreCsprojPath"
+}
+
+# ===================== Pre-update bumps (rest of work) =====================
 .\Update-NuGetNext-All.ps1 -PackageId 'BenchmarkDotNet'                     -Root (Join-Path $Repo 'Saucery.Benchmark')
 .\Update-NuGetNext-All.ps1 -PackageId 'BenchmarkDotNet.Diagnostics.Windows' -Root (Join-Path $Repo 'Saucery.Benchmark')
 .\Update-NuGetNext-All.ps1 -PackageId 'Saucery.Core'                        -Root (Join-Path $Repo 'Saucery.Benchmark')
