@@ -44,9 +44,9 @@ env:
   COVERAGE_THRESHOLD: 80
 
   WATCHED_GLOBS: >
-    .github/workflows/nunit-pipeline.yml, 
-    Saucery/**, 
-    Merlin.NUnit/**, 
+    .github/workflows/nunit-pipeline.yml,
+    Saucery/**,
+    Merlin.NUnit/**,
     Merlin.NUnit.RealDevices/**
 
 jobs:
@@ -68,7 +68,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { owner, repo } = context.repo;
-            const branch = context.ref.replace('refs/heads/', '');  // e.g. "master"
+            const branch = (context.ref || "").replace("refs/heads/", "");
             const workflow_id = ".github/workflows/nunit-pipeline.yml";
 
             const runs = await github.rest.actions.listWorkflowRuns({
@@ -83,13 +83,13 @@ jobs:
             const prevSha = runs.data.workflow_runs[0]?.head_sha || "";
             const curSha = context.sha;
 
+            core.info(`Branch:       ${branch || "<unknown>"}`);
             core.info(`Current SHA:  ${curSha}`);
             core.info(`Previous SHA: ${prevSha || "<none>"}`);
 
             let changed = "true";
             let pathsChanged = "true";
 
-            // Get watched globs from env (comma-separated)
             const raw = process.env.WATCHED_GLOBS || "";
             const watchedGlobs = raw
               .split(",")
@@ -98,7 +98,6 @@ jobs:
 
             core.info(`WATCHED_GLOBS (parsed): [${watchedGlobs.join(", ")}]`);
 
-            // Very small glob matcher supporting '*' and '**'
             function globToRegexSource(pattern) {
               let out = "";
               for (let i = 0; i < pattern.length; i++) {
@@ -106,15 +105,15 @@ jobs:
                 if (ch === "*") {
                   const nextIsStar = i + 1 < pattern.length && pattern[i + 1] === "*";
                   if (nextIsStar) {
-                    out += ".*";  // '**' => any depth
-                    i++;          // skip second '*'
+                    out += ".*";
+                    i++;
                   } else {
-                    out += "[^/]*"; // '*' => any chars except '/'
+                    out += "[^/]*";
                   }
                 } else if (ch === "/") {
-                  out += "\\/"; // literal slash
+                  out += "\\/";
                 } else if ("\\.[]{}()+-?^$|".includes(ch)) {
-                  out += "\\" + ch; // escape regex special
+                  out += "\\" + ch;
                 } else {
                   out += ch;
                 }
@@ -129,21 +128,14 @@ jobs:
             }
 
             if (!prevSha) {
-              // First time this workflow has completed on this branch
               core.info("No previous completed run for this workflow+branch. Treating as changed.");
-              if (watchedGlobs.length === 0) {
-                core.info("No watched globs defined; treating paths_changed as true.");
-                pathsChanged = "true";
-              } else {
-                core.info("First run: skipping path-based filtering and treating paths_changed as true.");
-                pathsChanged = "true";
-              }
+              changed = "true";
+              pathsChanged = "true";
             } else if (prevSha === curSha) {
               core.info("No new commits since the last completed run on this branch.");
               changed = "false";
               pathsChanged = "false";
             } else {
-              // There are new commits; now see if watched paths changed.
               const comparison = await github.rest.repos.compareCommits({
                 owner,
                 repo,
@@ -177,6 +169,8 @@ jobs:
                   core.info("No changes in watched paths. Downstream jobs will be skipped.");
                 }
               }
+
+              changed = "true";
             }
 
             core.setOutput("changed", changed);
@@ -186,8 +180,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     needs: detect-changes
-    if: needs.detect-changes.outputs.changed == 'true' &&
-        needs.detect-changes.outputs.paths_changed == 'true'
+    if: needs.detect-changes.outputs.paths_changed == 'true'
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
@@ -215,9 +208,6 @@ jobs:
       - name: Run Template Tests
         run: dotnet run --project ${{ env.TT_PROJECT }} -- --treenode-filter '/*/*/*/*[Category=NUnit]'
 
-      - name: Display structure of downloaded files
-        run: ls -R
-
       - name: Publish Artifacts
         uses: actions/upload-artifact@v7
         with:
@@ -228,6 +218,7 @@ jobs:
     name: NUnit Integration Tests
     runs-on: ubuntu-latest
     needs: build
+    if: needs.build.result == 'success'
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
@@ -248,9 +239,6 @@ jobs:
           outputFormat: ${{ env.COVERAGE_FORMAT }}
           excludes: "[Merlin.NUnit]Tests.*"
 
-      - name: Display structure of downloaded files
-        run: ls -R
-
       - name: Publish Artifacts
         uses: actions/upload-artifact@v7
         with:
@@ -260,6 +248,7 @@ jobs:
   nunit-real-integration-tests:
     runs-on: ubuntu-latest
     needs: build
+    if: needs.build.result == 'success'
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
@@ -280,9 +269,6 @@ jobs:
           outputFormat: ${{ env.COVERAGE_FORMAT }}
           excludes: "[Merlin.NUnit.RealDevices]Tests.*"
 
-      - name: Display structure of downloaded files
-        run: ls -R
-
       - name: Publish Artifacts
         uses: actions/upload-artifact@v7
         with:
@@ -300,6 +286,9 @@ jobs:
       PACKAGE_ID: Saucery
       BUILD_CONFIGURATION: Release
       ARTIFACT_DIR: artifacts
+    outputs:
+      local_version: ${{ steps.localver.outputs.version }}
+      publish: ${{ steps.decide.outputs.publish }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
@@ -392,10 +381,28 @@ jobs:
             --source https://api.nuget.org/v3/index.json \
             --skip-duplicate
 
+  tag:
+    needs: publish-saucery
+    if: ${{ needs.publish-saucery.outputs.publish == 'true' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master') }}
+    runs-on: ubuntu-latest
+    concurrency:
+      group: nunit-${{ needs.publish-saucery.outputs.local_version }}
+      cancel-in-progress: false
+    steps:
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.2
+        with:
+          github_token: ${{ secrets.ACTIONS_PUSH_PAT }}
+          tag_prefix: ""
+          custom_tag: nunit-${{ needs.publish-saucery.outputs.local_version }}
+
   generate-report:
     runs-on: ubuntu-latest
     needs:
-      - publish-saucery
+      - nunit-integration-tests
+      - nunit-real-integration-tests
+    if: needs.nunit-integration-tests.result == 'success' && needs.nunit-real-integration-tests.result == 'success'
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
@@ -424,7 +431,7 @@ jobs:
 
       - name: Upload coverage report artifact
         uses: actions/upload-artifact@v7
+        if: ${{ always() }}
         with:
           name: CoverageReport
           path: coveragereport
-        if: ${{ always() }}
