@@ -292,6 +292,9 @@ jobs:
       PACKAGE_ID: Saucery.XUnit.v3
       BUILD_CONFIGURATION: Release
       ARTIFACT_DIR: artifacts
+    outputs:
+      local_version: ${{ steps.localver.outputs.version }}
+      publish: ${{ steps.decide.outputs.publish }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
@@ -329,7 +332,7 @@ jobs:
           LOCAL_VERSION="${BASENAME#${PACKAGE_ID}.}"
           LOCAL_VERSION="${LOCAL_VERSION%.nupkg}"
           echo "nupkg=$NUPKG"            >> "$GITHUB_OUTPUT"
-          echo "version=$LOCAL_VERSION" >> "$GITHUB_OUTPUT"
+          echo "version=$LOCAL_VERSION"  >> "$GITHUB_OUTPUT"
           echo "Local version: $LOCAL_VERSION"
 
       - name: Query NuGet for latest published version
@@ -384,10 +387,26 @@ jobs:
             --source https://api.nuget.org/v3/index.json \
             --skip-duplicate
 
+  tag:
+    needs: publish-saucery-xunit3
+    if: ${{ needs.publish-saucery-xunit3.outputs.publish == 'true' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master') }}
+    runs-on: ubuntu-latest
+    concurrency:
+      group: xunit3-${{ needs.publish-saucery-xunit3.outputs.local_version }}
+      cancel-in-progress: false
+    steps:
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.2
+        with:
+          github_token: ${{ secrets.ACTIONS_PUSH_PAT }}
+          tag_prefix: ""
+          custom_tag: xunit3-${{ needs.publish-saucery-xunit3.outputs.local_version }}
+
   generate-report:
     runs-on: ubuntu-latest
-    needs: [publish-saucery-xunit3]
-    if: needs.publish-saucery-xunit3.result == 'success'
+    needs: [xunit3-integration-tests, xunit3-real-integration-tests]
+    if: needs.xunit3-integration-tests.result == 'success' && needs.xunit3-real-integration-tests.result == 'success'
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
