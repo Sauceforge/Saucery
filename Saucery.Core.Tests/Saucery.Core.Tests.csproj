@@ -14,7 +14,7 @@
   <ItemGroup>
     <PackageReference Include="TUnit" Version="1.28.7" />
     <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.5.2" />
-    <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" Version="2.1.0" />
+    <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" Version="2.2.1" />
   </ItemGroup>
 
   <ItemGroup>
