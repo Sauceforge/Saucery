@@ -15,23 +15,35 @@ public class CsprojUpdaterSyncAdditionalTests
         """;
 
     [Fact]
-    public async Task UpdateAsync_SyncWithDependency_DryRun_DoesNotModifyFile_ButReportsNewPackageVersion()
-    {
+    public async Task UpdateAsync_SyncWithDependency_DryRun_DoesNotModifyFile_ButReportsNewPackageVersion() {
         var path = WriteTempCsproj(OptedInCsprojWithDependencyOnly);
         try {
-            var original = await File.ReadAllTextAsync(path);
+            var original = await File.ReadAllTextAsync(path, TestContext.Current.CancellationToken);
             var apiClient = new StubNuGetApiClient(new Dictionary<string, string[]> {
-                { "TUnit", new[] { "2.0.0", "3.0.0" } }
-            });
+            { "TUnit", new[] { "2.0.0", "3.0.0" } }
+        });
 
             var updater = new CsprojUpdater(apiClient);
-            var result = await updater.UpdateAsync(path, dryRun: true, syncWithPackageId: "TUnit");
+            var result = await updater.UpdateAsync(
+                path,
+                dryRun: true,
+                syncWithPackageId: "TUnit",
+                ct: TestContext.Current.CancellationToken);
 
             Assert.True(result.Success);
-            Assert.Single(result.Updates);
             Assert.Equal("3.0.0", result.NewPackageVersion);
 
-            var written = await File.ReadAllTextAsync(path);
+            Assert.Equal(2, result.Updates.Count);
+
+            var dependencyUpdate = Assert.Single(result.Updates.Where(x => x.PackageId == "TUnit"));
+            Assert.Equal("2.0.0", dependencyUpdate.FromVersion);
+            Assert.Equal("3.0.0", dependencyUpdate.ToVersion);
+
+            var packageVersionUpdate = Assert.Single(result.Updates.Where(x => x.PackageId == "PackageVersion"));
+            Assert.Equal(string.Empty, packageVersionUpdate.FromVersion);
+            Assert.Equal("3.0.0", packageVersionUpdate.ToVersion);
+
+            var written = await File.ReadAllTextAsync(path, TestContext.Current.CancellationToken);
             Assert.Equal(original, written);
         } finally {
             File.Delete(path);
@@ -58,12 +70,12 @@ public class CsprojUpdaterSyncAdditionalTests
             });
 
             var updater = new CsprojUpdater(apiClient);
-            var result = await updater.UpdateAsync(path, syncWithPackageId: "TUnit");
+            var result = await updater.UpdateAsync(path, syncWithPackageId: "TUnit", ct: TestContext.Current.CancellationToken);
 
             Assert.True(result.Success);
             Assert.Empty(result.Updates);
             Assert.Null(result.NewPackageVersion);
-            var written = await File.ReadAllTextAsync(path);
+            var written = await File.ReadAllTextAsync(path, TestContext.Current.CancellationToken);
             Assert.DoesNotContain("<PackageVersion>", written);
         } finally {
             File.Delete(path);
@@ -78,7 +90,7 @@ public class CsprojUpdaterSyncAdditionalTests
 
     private sealed class StubNuGetApiClient(Dictionary<string, string[]> data) : INuGetApiClient {
         public Task<IReadOnlyList<string>> GetAvailableVersionsAsync(string packageId, CancellationToken cancellationToken = default) {
-            var versions = data.TryGetValue(packageId, out var list) ? list : Array.Empty<string>();
+            var versions = data.TryGetValue(packageId, out var list) ? list : [];
             return Task.FromResult<IReadOnlyList<string>>(versions);
         }
     }
