@@ -217,6 +217,13 @@ public sealed class CsprojUpdater(INuGetApiClient apiClient) {
                         docModified = true;
                     }
 
+                    // Record the PackageVersion sync as an update so result.Updates.Count reflects it
+                    updates.Add(new PackageUpdate(
+                        projectPath,
+                        "PackageVersion",
+                        currentPackageVersion ?? string.Empty,
+                        depVersion));
+
                     newPackageVersion = depVersion;
                 }
             }

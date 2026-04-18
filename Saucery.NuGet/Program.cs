@@ -5,9 +5,8 @@ using Saucery.NuGet.Models;
 using Saucery.NuGet.Pipeline;
 
 var solutionOption = new Option<FileInfo>(
-    Constants.Cli.SolutionOption, 
-    [Constants.Cli.SolutionAlias])
-{ 
+    Constants.Cli.SolutionOption,
+    [Constants.Cli.SolutionAlias]) {
     Required = true,
     Description = "Path to the.sln to process."
 };
@@ -35,11 +34,11 @@ var versionSegmentOption = new Option<VersionSegment>(
     Description = "The semver segment to increment when --bump-own-version is set (patch, minor, major).",
     DefaultValueFactory = _ => VersionSegment.Patch
 };
+
 var projectOption = new Option<string[]>(
     Constants.Cli.ProjectOption,
     [Constants.Cli.ProjectAlias]) {
     Description = "Optional: limit processing to one or more opted-in projects by project name or path.",
-    // allow zero or more arguments
 };
 
 var syncWithOption = new Option<string?>(
@@ -55,22 +54,9 @@ var rootCommand = new RootCommand("Bumps each PackageReference in opted-in proje
     dryRunOption,
     bumpOwnVersionOption,
     versionSegmentOption,
-    projectOption
-};
-
-// Note: System.CommandLine RootCommand initializer accepts the options provided in the collection.
-// Add syncWithOption here as well so it's recognized without calling AddOption (not available on this version).
-rootCommand = new RootCommand(rootCommand.Description)
-{
-    solutionOption,
-    includePrereleaseOption,
-    dryRunOption,
-    bumpOwnVersionOption,
-    versionSegmentOption,
     projectOption,
     syncWithOption
 };
-
 
 rootCommand.SetAction(async (parseResult, cancellationToken) => {
     var solution = parseResult.GetValue(solutionOption);
@@ -80,8 +66,8 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
     var versionSegment = parseResult.GetValue(versionSegmentOption);
     var syncWith = parseResult.GetValue(syncWithOption);
 
-    if(!solution.Exists) {
-        Console.Error.WriteLine($"Error: Solution file not found: {solution.FullName}.");
+    if(solution is null || !solution.Exists) {
+        Console.Error.WriteLine($"Error: Solution file not found: {solution?.FullName ?? "(null)"}.");
         Environment.Exit(1);
     }
 
@@ -89,6 +75,8 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
     Console.WriteLine($"Prerelease: {(includePrerelease ? "included" : "stable only")}");
     Console.WriteLine($"Dry run: {dryRun}");
     Console.WriteLine($"Bump own version: {(bumpOwnVersion ? $"yes ({versionSegment})" : "no")}");
+    if(!string.IsNullOrWhiteSpace(syncWith))
+        Console.WriteLine($"Sync with: {syncWith}");
     Console.WriteLine();
 
     var allProjects = SolutionScanner.GetProjectPaths(solution.FullName);
@@ -99,11 +87,12 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
     Console.WriteLine();
 
     var projectFilters = parseResult.GetValue(projectOption) ?? Array.Empty<string>();
-    // --sync-with can only be used when one or more --project filters are supplied.
-    if(!string.IsNullOrWhiteSpace(syncWith) && (projectFilters is null || projectFilters.Length == 0)) {
+
+    if(!string.IsNullOrWhiteSpace(syncWith) && projectFilters.Length == 0) {
         Console.Error.WriteLine("Error: --sync-with requires at least one --project to be specified. Use --project to limit processing to a single project to sync with a dependency.");
         Environment.Exit(1);
     }
+
     if(projectFilters.Length > 0) {
         var matched = SolutionScanner.FilterByRequestedProjects(optedInProjects, projectFilters);
 
@@ -121,7 +110,7 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
     optedInProjects = SolutionScanner.TopologicallySortProjects(optedInProjects).ToList();
 
     if(optedInProjects.Count == 0) {
-        Console.WriteLine($"No projects are opted in. Add <PackageReference Include=\"{Constants.Package.OptInPackageId}\" Version\"...\" /> to opt in.");
+        Console.WriteLine($"No projects are opted in. Add <PackageReference Include=\"{Constants.Package.OptInPackageId}\" Version=\"...\" /> to opt in.");
         return;
     }
 
@@ -130,41 +119,45 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
 
     var allResults = new List<UpdateResult>();
 
-    foreach(var projectPath in optedInProjects) 
-    {
+    foreach(var projectPath in optedInProjects) {
         Console.WriteLine($"Processing {Path.GetFileName(projectPath)}");
+
         var result = await updater.UpdateAsync(
-            projectPath, 
-            includePrerelease, 
-            dryRun, 
-            bumpOwnVersion, 
+            projectPath,
+            includePrerelease,
+            dryRun,
+            bumpOwnVersion,
             versionSegment,
-            syncWith);
+            syncWith,
+            cancellationToken);
+
         allResults.Add(result);
 
         if(!result.Success) {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($" ERROR: {result.Error}");
+            Console.WriteLine($"  ERROR: {result.Error}");
             Console.ResetColor();
             continue;
         }
 
-        if(result.Updates.Count == 0) 
-        {
+        if(result.Updates.Count == 0) {
             Console.WriteLine("  No updates available.");
             continue;
         }
 
-        foreach(var update in result.Updates) 
-        {
+        foreach(var update in result.Updates) {
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"  {update.PackageId}: {update.FromVersion} -> {update.ToVersion}{(dryRun ? " (dry run)" : "")}");
-            Console.ResetColor();
-        }
 
-        if(!string.IsNullOrEmpty(result.NewPackageVersion)) {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"  <PackageVersion> bumped to {result.NewPackageVersion}{(dryRun ? " (dry run)" : "")}");
+            if(string.Equals(update.PackageId, "PackageVersion", StringComparison.OrdinalIgnoreCase)) {
+                var label = !string.IsNullOrWhiteSpace(syncWith)
+                    ? "PackageVersion synced"
+                    : "PackageVersion bumped";
+
+                Console.WriteLine($"  {label}: {update.FromVersion} -> {update.ToVersion}{(dryRun ? " (dry run)" : "")}");
+            } else {
+                Console.WriteLine($"  {update.PackageId}: {update.FromVersion} -> {update.ToVersion}{(dryRun ? " (dry run)" : "")}");
+            }
+
             Console.ResetColor();
         }
     }
@@ -173,15 +166,14 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
 
     var totalUpdates = allResults.Sum(r => r.Updates.Count);
     var errorCount = allResults.Count(r => !r.Success);
-    
+
     if(dryRun)
         Console.WriteLine($"Dry run complete. {totalUpdates} update(s) proposed across {optedInProjects.Count} project(s).");
     else
         Console.WriteLine($"Done. {totalUpdates} updates applied across {optedInProjects.Count} projects with {errorCount} error(s).");
 
-    if(errorCount > 0) {
+    if(errorCount > 0)
         Environment.Exit(1);
-    }
 
     await Task.CompletedTask;
 });
