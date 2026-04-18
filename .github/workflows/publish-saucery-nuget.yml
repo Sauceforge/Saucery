@@ -1,0 +1,108 @@
+name: Publish Saucery.NuGet to NuGet
+
+on:
+  workflow_dispatch:
+
+env:
+  PROJECT_NAME: Saucery.NuGet
+  PROJECT_PATH: Saucery.NuGet/Saucery.NuGet.csproj
+  PACKAGE_ID: Saucery.NuGet
+  CONFIG: Release
+  NUPKG_DIR: out
+  NUGET_SOURCE: https://api.nuget.org/v3/index.json
+  NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+
+jobs:
+  publish:
+    name: build, pack & push Saucery.NuGet
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        run: dotnet restore ${{ env.PROJECT_PATH }}
+
+      - name: Compile project
+        run: dotnet build ${{ env.PROJECT_PATH }} -c ${{ env.CONFIG }} --no-restore
+
+      - name: Pack NuGet package
+        run: dotnet pack ${{ env.PROJECT_PATH }} -c ${{ env.CONFIG }} --no-build -o ${{ env.NUPKG_DIR }}
+
+      - name: Determine package version
+        id: package_version
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          VERSION=$(grep -oPm1 '(?<=<PackageVersion>)[^<]+' "${PROJECT_PATH}" || true)
+
+          if [ -z "${VERSION}" ]; then
+            echo "Could not determine PackageVersion from ${PROJECT_PATH}"
+            exit 1
+          fi
+
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Resolved package version: ${VERSION}"
+
+      - name: Check whether package version already exists on NuGet
+        id: nuget_check
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          PACKAGE_ID_LOWER=$(echo "${PACKAGE_ID}" | tr '[:upper:]' '[:lower:]')
+          VERSION="${{ steps.package_version.outputs.version }}"
+          URL="https://api.nuget.org/v3-flatcontainer/${PACKAGE_ID_LOWER}/index.json"
+
+          echo "Checking published versions for ${PACKAGE_ID}..."
+          if curl -fsSL "$URL" -o versions.json; then
+            if grep -qi "\"${VERSION}\"" versions.json; then
+              echo "exists=true" >> "$GITHUB_OUTPUT"
+              echo "Package ${PACKAGE_ID} version ${VERSION} already exists on NuGet."
+            else
+              echo "exists=false" >> "$GITHUB_OUTPUT"
+              echo "Package ${PACKAGE_ID} version ${VERSION} does not exist yet."
+            fi
+          else
+            echo "Failed to query NuGet for existing versions."
+            exit 1
+          fi
+
+      - name: Resolve packed nupkg path
+        id: nupkg_path
+        if: steps.nuget_check.outputs.exists == 'false'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          VERSION="${{ steps.package_version.outputs.version }}"
+          PACKAGE_FILE="${NUPKG_DIR}/${PACKAGE_ID}.${VERSION}.nupkg"
+
+          if [ ! -f "$PACKAGE_FILE" ]; then
+            echo "Expected package not found: $PACKAGE_FILE"
+            echo "Contents of ${NUPKG_DIR}:"
+            ls -la "${NUPKG_DIR}" || true
+            exit 1
+          fi
+
+          echo "path=${PACKAGE_FILE}" >> "$GITHUB_OUTPUT"
+          echo "Resolved package file: ${PACKAGE_FILE}"
+
+      - name: Push generated package to NuGet
+        if: steps.nuget_check.outputs.exists == 'false'
+        run: |
+          dotnet nuget push "${{ steps.nupkg_path.outputs.path }}" \
+            --source "${{ env.NUGET_SOURCE }}" \
+            --api-key "${{ env.NUGET_API_KEY }}"
+
+      - name: Skip publish because version already exists
+        if: steps.nuget_check.outputs.exists == 'true'
+        run: |
+          echo "Skipping publish because ${{ env.PACKAGE_ID }} ${{ steps.package_version.outputs.version }} is already on NuGet."
