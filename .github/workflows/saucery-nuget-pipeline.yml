@@ -182,19 +182,18 @@ jobs:
           mkdir -p "${{ env.TEST_RESULTS_DIR }}"
 
           dotnet run -c "${{ env.CONFIG }}" --project "${{ env.TEST_PROJECT }}" -- \
-            --results-directory "${{ env.TEST_RESULTS_DIR }}" \
             --coverage \
             --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
             --coverage-output "${{ env.UNIT_COVERAGE_FILENAME }}"
 
-          echo "Produced files:"
-          ls -R "${{ env.TEST_RESULTS_DIR }}"
+      - name: Display structure of downloaded files
+        run: ls -R
 
       - name: Publish unit test artifact
         uses: actions/upload-artifact@v7
         with:
-          name: saucery-nuget-unit-test-results
-          path: ${{ env.TEST_RESULTS_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}
+          name: unit-test-results
+          path: Saucery.NuGet.Tests/bin/${{ env.CONFIG }}/net10.0/TestResults/${{ env.UNIT_COVERAGE_FILENAME }}
 
   publish-saucery-nuget:
     name: Publish Saucery.NuGet to NuGet
@@ -322,7 +321,7 @@ jobs:
       - name: Download unit-test results
         uses: actions/download-artifact@v8
         with:
-          name: saucery-nuget-unit-test-results
+          name: unit-test-results
 
       - name: ReportGenerator
         uses: danielpalme/ReportGenerator-GitHub-Action@5.5.5
