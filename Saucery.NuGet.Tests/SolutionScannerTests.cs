@@ -6,18 +6,22 @@ public class SolutionScannerTests {
     private static string CreateTempProject(string directory, string name, string content) {
         var dir = Path.Combine(directory, name);
         Directory.CreateDirectory(dir);
+
         var path = Path.Combine(dir, $"{name}.csproj");
         File.WriteAllText(path, content);
-        
+
         return path;
+    }
+
+    private static string CreateTempRoot() {
+        var tempDir = Path.Combine(Path.GetTempPath(), $"slntest_{Guid.NewGuid():N}");
+        Directory.CreateDirectory(tempDir);
+        return tempDir;
     }
 
     [Fact]
     public void GetProjectPaths_ReturnsExistingCsprojPaths() {
-        var tempDir = Path.Combine(Path.GetTempPath(), $"slntest_{Guid.NewGuid():N}");
-        Directory.CreateDirectory(tempDir);
-
-        
+        var tempDir = CreateTempRoot();
 
         try {
             var projPath = CreateTempProject(tempDir, "MyProject", "<Project />");
@@ -35,7 +39,6 @@ public class SolutionScannerTests {
 
             Assert.Single(result);
             Assert.Equal(projPath, result[0]);
-
         } finally {
             Directory.Delete(tempDir, true);
         }
@@ -43,20 +46,21 @@ public class SolutionScannerTests {
 
     [Fact]
     public void GetProjectPaths_IgnoresMissingProjects() {
-        var tempDir = Path.Combine(Path.GetTempPath(), $"slntest_{Guid.NewGuid():N}");
-        Directory.CreateDirectory(tempDir);
-        
+        var tempDir = CreateTempRoot();
+
         try {
+            var missingRelPath = Path.Combine("MissingProject", "MissingProject.csproj");
+
             var slnContent =
                 "\r\nMicrosoft Visual Studio Solution File, Format Version 12.00\r\n" +
-                "Project(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"MissingProject\", \"MissingProject\\MissingProject.csproj\", \"{GUID}\"\r\n" +
+                "Project(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"MissingProject\", \"" + missingRelPath + "\", \"{GUID}\"\r\n" +
                 "EndProject\r\n";
-            
+
             var slnPath = Path.Combine(tempDir, "Test.sln");
             File.WriteAllText(slnPath, slnContent);
-            
+
             var result = SolutionScanner.GetProjectPaths(slnPath);
-            
+
             Assert.Empty(result);
         } finally {
             Directory.Delete(tempDir, true);
@@ -65,88 +69,151 @@ public class SolutionScannerTests {
 
     [Fact]
     public void FilterOptedIn_ReturnsOnlyOptedInProjects() {
-        var projects = new[] {
-            "/path/a.csproj",
-            "/path/b.csproj",
-            "/path/c.csproj"
-        };
+        var root = CreateTempRoot();
 
-        var optedIn = new[] {
-            "/path/a.csproj",
-            "/path/c.csproj"
-        };
+        try {
+            var projectA = Path.Combine(root, "a", "a.csproj");
+            var projectB = Path.Combine(root, "b", "b.csproj");
+            var projectC = Path.Combine(root, "c", "c.csproj");
 
-        var result = SolutionScanner.FilterOptedIn(projects, p => optedIn.Contains(p));
+            var projects = new[]
+            {
+                projectA,
+                projectB,
+                projectC
+            };
 
-        Assert.Equal(2, result.Count);
-        Assert.Contains("/path/a.csproj", result);
-        Assert.Contains("/path/c.csproj", result);
+            var optedIn = new[]
+            {
+                projectA,
+                projectC
+            };
+
+            var result = SolutionScanner.FilterOptedIn(projects, p => optedIn.Contains(p));
+
+            Assert.Equal(2, result.Count);
+            Assert.Contains(projectA, result);
+            Assert.Contains(projectC, result);
+        } finally {
+            Directory.Delete(root, true);
+        }
     }
 
     [Fact]
     public void FilterByRequestedProjects_MatchesByNameWithoutExtension() {
-        var opted = new[] {
-            "C:\\repos\\Saucery\\Saucery.Core\\Saucery.Core.csproj",
-            "C:\\repos\\Saucery\\Saucery.XUnit\\Saucery.XUnit.csproj"
-        };
+        var root = CreateTempRoot();
 
-        var result = SolutionScanner.FilterByRequestedProjects(opted, ["Saucery.Core"]);
+        try {
+            var core = Path.Combine(root, "Saucery.Core", "Saucery.Core.csproj");
+            var xunit = Path.Combine(root, "Saucery.XUnit", "Saucery.XUnit.csproj");
 
-        Assert.Single(result);
-        Assert.Contains(opted[0], result);
+            var opted = new[]
+            {
+                core,
+                xunit
+            };
+
+            var result = SolutionScanner.FilterByRequestedProjects(opted, ["Saucery.Core"]);
+
+            Assert.Single(result);
+            Assert.Contains(core, result);
+        } finally {
+            Directory.Delete(root, true);
+        }
     }
 
     [Fact]
     public void FilterByRequestedProjects_MatchesByFilenameWithExtension() {
-        var opted = new[] {
-            "C:\\repos\\Saucery\\Saucery.Core\\Saucery.Core.csproj",
-            "C:\\repos\\Saucery\\Saucery.XUnit\\Saucery.XUnit.csproj"
-        };
+        var root = CreateTempRoot();
 
-        var result = SolutionScanner.FilterByRequestedProjects(opted, ["Saucery.XUnit.csproj"]);
+        try {
+            var core = Path.Combine(root, "Saucery.Core", "Saucery.Core.csproj");
+            var xunit = Path.Combine(root, "Saucery.XUnit", "Saucery.XUnit.csproj");
 
-        Assert.Single(result);
-        Assert.Contains(opted[1], result);
+            var opted = new[]
+            {
+                core,
+                xunit
+            };
+
+            var result = SolutionScanner.FilterByRequestedProjects(opted, ["Saucery.XUnit.csproj"]);
+
+            Assert.Single(result);
+            Assert.Contains(xunit, result);
+        } finally {
+            Directory.Delete(root, true);
+        }
     }
 
     [Fact]
     public void FilterByRequestedProjects_MatchesByFullPath() {
-        var opted = new[] {
-            "C:\\repos\\Saucery\\Saucery.Core\\Saucery.Core.csproj",
-            "C:\\repos\\Saucery\\Saucery.XUnit\\Saucery.XUnit.csproj"
-        };
+        var root = CreateTempRoot();
 
-        var path = Path.GetFullPath(opted[0]);
-        var result = SolutionScanner.FilterByRequestedProjects(opted, [path]);
+        try {
+            var core = Path.Combine(root, "Saucery.Core", "Saucery.Core.csproj");
+            var xunit = Path.Combine(root, "Saucery.XUnit", "Saucery.XUnit.csproj");
 
-        Assert.Single(result);
-        Assert.Contains(opted[0], result);
+            var opted = new[]
+            {
+                core,
+                xunit
+            };
+
+            var path = Path.GetFullPath(core);
+            var result = SolutionScanner.FilterByRequestedProjects(opted, [path]);
+
+            Assert.Single(result);
+            Assert.Contains(core, result);
+        } finally {
+            Directory.Delete(root, true);
+        }
     }
 
     [Fact]
     public void FilterByRequestedProjects_MultipleFilters() {
-        var opted = new[] {
-            "C:\\repos\\Saucery\\Saucery.Core\\Saucery.Core.csproj",
-            "C:\\repos\\Saucery\\Saucery.XUnit\\Saucery.XUnit.csproj",
-            "C:\\repos\\Saucery\\Saucery.NuGet\\Saucery.NuGet.csproj",
-        };
+        var root = CreateTempRoot();
 
-        var result = SolutionScanner.FilterByRequestedProjects(opted, ["Saucery.Core", "Saucery.NuGet"]);
+        try {
+            var core = Path.Combine(root, "Saucery.Core", "Saucery.Core.csproj");
+            var xunit = Path.Combine(root, "Saucery.XUnit", "Saucery.XUnit.csproj");
+            var nuget = Path.Combine(root, "Saucery.NuGet", "Saucery.NuGet.csproj");
 
-        Assert.Equal(2, result.Count);
-        Assert.Contains(opted[0], result);
-        Assert.Contains(opted[2], result);
+            var opted = new[]
+            {
+                core,
+                xunit,
+                nuget
+            };
+
+            var result = SolutionScanner.FilterByRequestedProjects(opted, ["Saucery.Core", "Saucery.NuGet"]);
+
+            Assert.Equal(2, result.Count);
+            Assert.Contains(core, result);
+            Assert.Contains(nuget, result);
+        } finally {
+            Directory.Delete(root, true);
+        }
     }
 
     [Fact]
     public void FilterByRequestedProjects_NoMatches_ReturnsEmpty() {
-        var opted = new[] {
-            "C:\\repos\\Saucery\\Saucery.Core\\Saucery.Core.csproj",
-            "C:\\repos\\Saucery\\Saucery.XUnit\\Saucery.XUnit.csproj"
-        };
+        var root = CreateTempRoot();
 
-        var result = SolutionScanner.FilterByRequestedProjects(opted, ["Nonexistent"]);
+        try {
+            var core = Path.Combine(root, "Saucery.Core", "Saucery.Core.csproj");
+            var xunit = Path.Combine(root, "Saucery.XUnit", "Saucery.XUnit.csproj");
 
-        Assert.Empty(result);
+            var opted = new[]
+            {
+                core,
+                xunit
+            };
+
+            var result = SolutionScanner.FilterByRequestedProjects(opted, ["Nonexistent"]);
+
+            Assert.Empty(result);
+        } finally {
+            Directory.Delete(root, true);
+        }
     }
 }
