@@ -16,7 +16,6 @@ on:
   workflow_dispatch:
 
 env:
-  SOLN_FILE: Saucery.sln
   CONFIG: Release
 
   PROJECT_PATH: Saucery.NuGet/Saucery.NuGet.csproj
@@ -170,10 +169,10 @@ jobs:
           dotnet-version: 10.0.x
 
       - name: Restore dependencies
-        run: dotnet restore "${{ env.SOLN_FILE }}"
+        run: dotnet restore "${{ env.PROJECT_PATH }}"
 
       - name: Compile solution
-        run: dotnet build "${{ env.SOLN_FILE }}" -c "${{ env.CONFIG }}" --no-restore
+        run: dotnet build "${{ env.PROJECT_PATH }}" -c "${{ env.CONFIG }}" --no-restore
 
       - name: Run Saucery.NuGet xUnit v3 unit tests with coverage
         shell: bash
