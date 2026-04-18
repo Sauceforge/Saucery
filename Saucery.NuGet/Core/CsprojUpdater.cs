@@ -6,8 +6,51 @@ namespace Saucery.NuGet.Core;
 
 public sealed class CsprojUpdater(INuGetApiClient apiClient) {
     public static bool IsOptedIn(string projectPath) {
-        var text = File.ReadAllText(projectPath);
-        return text.Contains($"{Constants.Xml.IncludeAttribute}=\"{Constants.Package.OptInPackageId}\"", StringComparison.OrdinalIgnoreCase);
+        // Exclude the test project for the tool itself to avoid self-updating during scans
+        var projectFileName = Path.GetFileNameWithoutExtension(projectPath);
+        if (projectFileName != null && projectFileName.Equals("Saucery.NuGet.Tests", StringComparison.OrdinalIgnoreCase))
+            return false;
+        try {
+            var doc = new XmlDocument();
+            doc.Load(projectPath);
+
+            // Check PackageReference Include="Saucery.NuGet"
+            var packageRefs = doc.SelectNodes($"//*[local-name()='{Constants.Xml.PackageReferenceElement}' and @{Constants.Xml.IncludeAttribute}]");
+            if(packageRefs is not null) {
+                foreach(XmlElement pr in packageRefs.Cast<XmlElement>()) {
+                    var include = pr.GetAttribute(Constants.Xml.IncludeAttribute);
+                    if(include.Equals(Constants.Package.OptInPackageId, StringComparison.OrdinalIgnoreCase))
+                        return true;
+                }
+            }
+
+            // Check ProjectReference Include="..\Saucery.NuGet.csproj" or <ProjectReference> with <Name>Saucery.NuGet</Name>
+            var projectRefs = doc.SelectNodes("//*[local-name()='ProjectReference' and @Include]");
+            if(projectRefs is not null) {
+                foreach(XmlElement projRef in projectRefs.Cast<XmlElement>()) {
+                    var include = projRef.GetAttribute("Include");
+                    if(!string.IsNullOrEmpty(include)) {
+                        var fileName = Path.GetFileName(include.Replace('/', Path.DirectorySeparatorChar));
+                        if(fileName.Equals(Constants.Package.OptInPackageId + ".csproj", StringComparison.OrdinalIgnoreCase))
+                            return true;
+                    }
+
+                    var nameNode = projRef.SelectSingleNode("*[local-name()='Name']") as XmlElement;
+                    if(nameNode is not null) {
+                        var name = nameNode.InnerText?.Trim();
+                        if(name is not null && name.Equals(Constants.Package.OptInPackageId, StringComparison.OrdinalIgnoreCase))
+                            return true;
+                    }
+                }
+            }
+        }
+        catch (Exception) {
+            // Fall back to the old textual check if XML parsing fails for some reason
+            var text = File.ReadAllText(projectPath);
+            return text.Contains($"{Constants.Xml.IncludeAttribute}=\"{Constants.Package.OptInPackageId}\"", StringComparison.OrdinalIgnoreCase);
+        }
+
+        return false;
     }
 
     public async Task<UpdateResult> UpdateAsync(

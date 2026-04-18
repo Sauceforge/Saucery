@@ -37,6 +37,11 @@
 		<None Include="Images\Saucery.Core.128x128.png" Pack="true" PackagePath="\" />
 	</ItemGroup>
 
+ <!-- ProjectReference to Saucery.NuGet to enable dogfooding (opt-in via ProjectReference) -->
+	<ItemGroup>
+		<ProjectReference Include="..\Saucery.NuGet\Saucery.NuGet.csproj" />
+	</ItemGroup>
+
 	<ItemGroup>
 	  <None Update="Images\Saucery.Core.png">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>

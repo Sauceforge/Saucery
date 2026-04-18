@@ -107,6 +107,12 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
         foreach(var update in result.Updates) 
         {
             Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"  {update.PackageId}: {update.FromVersion} -> {update.ToVersion}{(dryRun ? " (dry run)" : "")}");
+            Console.ResetColor();
+        }
+
+        if(!string.IsNullOrEmpty(result.NewPackageVersion)) {
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"  <PackageVersion> bumped to {result.NewPackageVersion}{(dryRun ? " (dry run)" : "")}");
             Console.ResetColor();
         }
