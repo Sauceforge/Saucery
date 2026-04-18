@@ -8,8 +8,9 @@ public sealed class CsprojUpdater(INuGetApiClient apiClient) {
     public static bool IsOptedIn(string projectPath) {
         // Exclude the test project for the tool itself to avoid self-updating during scans
         var projectFileName = Path.GetFileNameWithoutExtension(projectPath);
-        if (projectFileName != null && projectFileName.Equals("Saucery.NuGet.Tests", StringComparison.OrdinalIgnoreCase))
+        if(projectFileName != null && projectFileName.Equals("Saucery.NuGet.Tests", StringComparison.OrdinalIgnoreCase))
             return false;
+
         try {
             var doc = new XmlDocument();
             doc.Load(projectPath);
@@ -24,13 +25,16 @@ public sealed class CsprojUpdater(INuGetApiClient apiClient) {
                 }
             }
 
-            // Check ProjectReference Include="..\Saucery.NuGet.csproj" or <ProjectReference> with <Name>Saucery.NuGet</Name>
+            // Check ProjectReference Include="..\Saucery.NuGet\Saucery.NuGet.csproj"
+            // or <ProjectReference><Name>Saucery.NuGet</Name></ProjectReference>
             var projectRefs = doc.SelectNodes("//*[local-name()='ProjectReference' and @Include]");
             if(projectRefs is not null) {
                 foreach(XmlElement projRef in projectRefs.Cast<XmlElement>()) {
                     var include = projRef.GetAttribute("Include");
                     if(!string.IsNullOrEmpty(include)) {
-                        var fileName = Path.GetFileName(include.Replace('/', Path.DirectorySeparatorChar));
+                        var normalizedInclude = NormalizeProjectReferencePath(include);
+                        var fileName = Path.GetFileName(normalizedInclude);
+
                         if(fileName.Equals(Constants.Package.OptInPackageId + ".csproj", StringComparison.OrdinalIgnoreCase))
                             return true;
                     }
@@ -43,11 +47,16 @@ public sealed class CsprojUpdater(INuGetApiClient apiClient) {
                     }
                 }
             }
-        }
-        catch (Exception) {
-            // Fall back to the old textual check if XML parsing fails for some reason
+        } catch(Exception) {
+            // Fall back to textual checks if XML parsing fails for some reason.
+            // Support both PackageReference-based opt-in and ProjectReference dogfooding.
             var text = File.ReadAllText(projectPath);
-            return text.Contains($"{Constants.Xml.IncludeAttribute}=\"{Constants.Package.OptInPackageId}\"", StringComparison.OrdinalIgnoreCase);
+
+            if(text.Contains($"{Constants.Xml.IncludeAttribute}=\"{Constants.Package.OptInPackageId}\"", StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            if(text.Contains($"{Constants.Package.OptInPackageId}.csproj", StringComparison.OrdinalIgnoreCase))
+                return true;
         }
 
         return false;
@@ -60,36 +69,35 @@ public sealed class CsprojUpdater(INuGetApiClient apiClient) {
         bool bumpOwnVersion = false,
         VersionSegment versionSegment = VersionSegment.Patch,
         string? syncWithPackageId = null,
-        CancellationToken ct = default) 
-    {
+        CancellationToken ct = default) {
         var (rawText, encodingFactory) = ReadPreservingEncoding(projectPath);
 
         XmlDocument doc;
         try {
             doc = new XmlDocument { PreserveWhitespace = true };
             doc.LoadXml(rawText);
-        }
-        catch (XmlException ex) {
+        } catch(XmlException ex) {
             return new UpdateResult(projectPath, [], $"Failed to parse XML: {ex.Message}");
         }
 
-        var packageRefs = doc.SelectNodes($"//*[local-name()='{Constants.Xml.PackageReferenceElement}' and @{Constants.Xml.IncludeAttribute} and @{Constants.Xml.VersionAttribute}]");
+        var packageRefs = doc.SelectNodes(
+            $"//*[local-name()='{Constants.Xml.PackageReferenceElement}' and @{Constants.Xml.IncludeAttribute} and @{Constants.Xml.VersionAttribute}]");
+
         if(packageRefs is null || packageRefs.Count == 0)
             return new UpdateResult(projectPath, []);
 
         var updates = new List<PackageUpdate>();
 
-        foreach(XmlElement node in packageRefs.Cast<XmlElement>()) 
-        {
+        foreach(XmlElement node in packageRefs.Cast<XmlElement>()) {
             var id = node.GetAttribute(Constants.Xml.IncludeAttribute);
             var currentVersion = node.GetAttribute(Constants.Xml.VersionAttribute);
 
-            //Skip if it's the opt-in marker itself
+            // Skip if it's the opt-in marker itself
             if(id.Equals(Constants.Package.OptInPackageId, StringComparison.OrdinalIgnoreCase))
                 continue;
 
-            var avaiable = await apiClient.GetAvailableVersionsAsync(id, ct).ConfigureAwait(false);
-            var next = VersionResolver.FindNextVersion(currentVersion, avaiable, includePrerelease);
+            var available = await apiClient.GetAvailableVersionsAsync(id, ct).ConfigureAwait(false);
+            var next = VersionResolver.FindNextVersion(currentVersion, available, includePrerelease);
 
             if(next is null || next == currentVersion)
                 continue;
@@ -106,8 +114,7 @@ public sealed class CsprojUpdater(INuGetApiClient apiClient) {
         // Track whether we modified the in-memory XmlDocument and therefore need to persist it
         var docModified = false;
 
-        if(!dryRun && updates.Count > 0) 
-        {
+        if(!dryRun && updates.Count > 0) {
             var updated = SerializeDocument(doc);
             WritePreservingEncoding(projectPath, updated, encodingFactory);
         }
@@ -119,7 +126,10 @@ public sealed class CsprojUpdater(INuGetApiClient apiClient) {
             string? depVersion = null;
 
             // 1) Try PackageReference matching
-            var syncPkgNode = doc.SelectSingleNode($"//*[local-name()='{Constants.Xml.PackageReferenceElement}' and translate(@{Constants.Xml.IncludeAttribute}, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='{syncWithPackageId.ToLowerInvariant()}' and @{Constants.Xml.VersionAttribute}]") as XmlElement;
+            var syncPkgNode = doc.SelectSingleNode(
+                $"//*[local-name()='{Constants.Xml.PackageReferenceElement}' and translate(@{Constants.Xml.IncludeAttribute}, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='{syncWithPackageId.ToLowerInvariant()}' and @{Constants.Xml.VersionAttribute}]")
+                as XmlElement;
+
             if(syncPkgNode is not null) {
                 var depId = syncPkgNode.GetAttribute(Constants.Xml.IncludeAttribute);
                 if(!string.IsNullOrWhiteSpace(depId) && proposedUpdates.TryGetValue(depId, out var proposed)) {
@@ -135,33 +145,42 @@ public sealed class CsprojUpdater(INuGetApiClient apiClient) {
                 if(projectRefs is not null) {
                     foreach(XmlElement projRef in projectRefs.Cast<XmlElement>()) {
                         var include = projRef.GetAttribute("Include");
-                        if(string.IsNullOrWhiteSpace(include)) continue;
+                        if(string.IsNullOrWhiteSpace(include))
+                            continue;
 
-                        var fileNameNoExt = Path.GetFileNameWithoutExtension(include.Replace('/', Path.DirectorySeparatorChar));
+                        var normalizedInclude = NormalizeProjectReferencePath(include);
+                        var fileNameNoExt = Path.GetFileNameWithoutExtension(normalizedInclude);
+                        var fileName = Path.GetFileName(normalizedInclude);
+
                         if(string.Equals(fileNameNoExt, syncWithPackageId, StringComparison.OrdinalIgnoreCase) ||
-                           string.Equals(Path.GetFileName(include), syncWithPackageId + ".csproj", StringComparison.OrdinalIgnoreCase))
-                        {
+                           string.Equals(fileName, syncWithPackageId + ".csproj", StringComparison.OrdinalIgnoreCase)) {
                             // resolve path relative to projectPath
-                            var resolved = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(projectPath) ?? string.Empty, include.Replace('/', Path.DirectorySeparatorChar)));
+                            var resolved = Path.GetFullPath(
+                                Path.Combine(Path.GetDirectoryName(projectPath) ?? string.Empty, normalizedInclude));
+
                             if(File.Exists(resolved)) {
-                                // Prefer reading PackageVersion from the referenced project's file (it may have been updated earlier in the run)
+                                // Prefer reading PackageVersion from the referenced project's file
+                                // (it may have been updated earlier in the run)
                                 depVersion = PackageVersionBumper.ReadPackageVersion(resolved);
-                                if(!string.IsNullOrWhiteSpace(depVersion)) break;
+                                if(!string.IsNullOrWhiteSpace(depVersion))
+                                    break;
 
                                 // As a fallback, try to read <PackageId> from referenced project and continue searching
                                 try {
                                     var refDoc = new XmlDocument();
                                     refDoc.Load(resolved);
+
                                     var pkgIdNode = refDoc.SelectSingleNode("//*[local-name()='PackageId']") as XmlElement;
                                     if(pkgIdNode is not null) {
                                         var pkgId = pkgIdNode.InnerText?.Trim();
                                         if(string.Equals(pkgId, syncWithPackageId, StringComparison.OrdinalIgnoreCase)) {
                                             depVersion = PackageVersionBumper.ReadPackageVersion(resolved);
-                                            if(!string.IsNullOrWhiteSpace(depVersion)) break;
+                                            if(!string.IsNullOrWhiteSpace(depVersion))
+                                                break;
                                         }
                                     }
                                 } catch {
-                                    // ignore referenced project parse issues
+                                    // Ignore referenced project parse issues
                                 }
                             }
                         }
@@ -203,13 +222,16 @@ public sealed class CsprojUpdater(INuGetApiClient apiClient) {
             }
         }
 
-        // If syncing wasn't requested or didn't produce a new version, fall back to bumping own version when requested
+        // If syncing wasn't requested or didn't produce a new version,
+        // fall back to bumping own version when requested
         var skipFinalWrite = false;
         if(newPackageVersion is null && bumpOwnVersion && updates.Count > 0) {
             var bumped = PackageVersionBumper.Bump(projectPath, versionSegment, dryRun);
             newPackageVersion = bumped;
+
             if(!dryRun && bumped is not null) {
-                // PackageVersionBumper.Bump already wrote the file when not dryRun, so skip the final write to avoid overwriting
+                // PackageVersionBumper.Bump already wrote the file when not dryRun,
+                // so skip the final write to avoid overwriting
                 skipFinalWrite = true;
             }
         }
@@ -223,9 +245,12 @@ public sealed class CsprojUpdater(INuGetApiClient apiClient) {
         return new UpdateResult(projectPath, updates, NewPackageVersion: newPackageVersion);
     }
 
-    private static (string Text, Func<Encoding> EncodingFactory) ReadPreservingEncoding(string path) 
-    {
+    private static string NormalizeProjectReferencePath(string include) =>
+        include.Replace('\\', '/');
+
+    private static (string Text, Func<Encoding> EncodingFactory) ReadPreservingEncoding(string path) {
         var bytes = File.ReadAllBytes(path);
+
         if(bytes.Length >= 3 && bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF)
             return (new UTF8Encoding(true).GetString(bytes, 3, bytes.Length - 3), () => new UTF8Encoding(true));
 
@@ -238,21 +263,19 @@ public sealed class CsprojUpdater(INuGetApiClient apiClient) {
         return (new UTF8Encoding(false).GetString(bytes), () => new UTF8Encoding(false));
     }
 
-    private static void WritePreservingEncoding(string path, string text, Func<Encoding> encodingFactory) 
-    {
+    private static void WritePreservingEncoding(string path, string text, Func<Encoding> encodingFactory) {
         var encoding = encodingFactory();
         File.WriteAllText(path, text, encoding);
     }
 
-    private static string SerializeDocument(XmlDocument doc) 
-    {
+    private static string SerializeDocument(XmlDocument doc) {
         using var sw = new StringWriter();
-        using var xw = XmlWriter.Create(sw, new XmlWriterSettings 
-        { 
+        using var xw = XmlWriter.Create(sw, new XmlWriterSettings {
             Indent = false,
-            OmitXmlDeclaration = doc.FirstChild is not XmlDeclaration, 
-            ConformanceLevel = ConformanceLevel.Document 
+            OmitXmlDeclaration = doc.FirstChild is not XmlDeclaration,
+            ConformanceLevel = ConformanceLevel.Document
         });
+
         doc.Save(xw);
         return sw.ToString();
     }
