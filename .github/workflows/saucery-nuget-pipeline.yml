@@ -182,9 +182,10 @@ jobs:
           mkdir -p "${{ env.TEST_RESULTS_DIR }}"
 
           dotnet run -c "${{ env.CONFIG }}" --project "${{ env.TEST_PROJECT }}" -- \
+            --results-directory "${{ env.TEST_RESULTS_DIR }}" \
             --coverage \
             --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
-            --coverage-output "${{ env.TEST_RESULTS_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}"
+            --coverage-output "${{ env.UNIT_COVERAGE_FILENAME }}"
 
           echo "Produced files:"
           ls -R "${{ env.TEST_RESULTS_DIR }}"
