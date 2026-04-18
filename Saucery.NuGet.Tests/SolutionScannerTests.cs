@@ -90,7 +90,7 @@ public class SolutionScannerTests {
             "C:\\repos\\Saucery\\Saucery.XUnit\\Saucery.XUnit.csproj"
         };
 
-        var result = SolutionScanner.FilterByRequestedProjects(opted, new[] { "Saucery.Core" });
+        var result = SolutionScanner.FilterByRequestedProjects(opted, ["Saucery.Core"]);
 
         Assert.Single(result);
         Assert.Contains(opted[0], result);
@@ -103,7 +103,7 @@ public class SolutionScannerTests {
             "C:\\repos\\Saucery\\Saucery.XUnit\\Saucery.XUnit.csproj"
         };
 
-        var result = SolutionScanner.FilterByRequestedProjects(opted, new[] { "Saucery.XUnit.csproj" });
+        var result = SolutionScanner.FilterByRequestedProjects(opted, ["Saucery.XUnit.csproj"]);
 
         Assert.Single(result);
         Assert.Contains(opted[1], result);
@@ -117,7 +117,7 @@ public class SolutionScannerTests {
         };
 
         var path = Path.GetFullPath(opted[0]);
-        var result = SolutionScanner.FilterByRequestedProjects(opted, new[] { path });
+        var result = SolutionScanner.FilterByRequestedProjects(opted, [path]);
 
         Assert.Single(result);
         Assert.Contains(opted[0], result);
@@ -131,7 +131,7 @@ public class SolutionScannerTests {
             "C:\\repos\\Saucery\\Saucery.NuGet\\Saucery.NuGet.csproj",
         };
 
-        var result = SolutionScanner.FilterByRequestedProjects(opted, new[] { "Saucery.Core", "Saucery.NuGet" });
+        var result = SolutionScanner.FilterByRequestedProjects(opted, ["Saucery.Core", "Saucery.NuGet"]);
 
         Assert.Equal(2, result.Count);
         Assert.Contains(opted[0], result);
@@ -145,7 +145,7 @@ public class SolutionScannerTests {
             "C:\\repos\\Saucery\\Saucery.XUnit\\Saucery.XUnit.csproj"
         };
 
-        var result = SolutionScanner.FilterByRequestedProjects(opted, new[] { "Nonexistent" });
+        var result = SolutionScanner.FilterByRequestedProjects(opted, ["Nonexistent"]);
 
         Assert.Empty(result);
     }
