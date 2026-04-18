@@ -12,13 +12,15 @@
   <PropertyGroup>
     <IsPackable>true</IsPackable>
     <PackageId>Saucery.NuGet</PackageId>
-    <PackageVersion>1.0.0</PackageVersion>
+    <PackageVersion>1.0.1</PackageVersion>
     <Authors>Andrew Gray</Authors>
     <Company>SauceForge</Company>
     <Copyright>Copyright (c) Andrew Gray 2024</Copyright>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Description>Bumps every PackageReference in opted-in .csproj files to the next available version on NuGet.org.</Description>
+    <PackageIcon>Saucery.NuGet.128x128.png</PackageIcon>
     <PackageTags>nuget versions update upgrade csproj tool</PackageTags>
+    
     <PackageProjectUrl>https://github.com/Sauceforge/Saucery</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Sauceforge/Saucery</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
