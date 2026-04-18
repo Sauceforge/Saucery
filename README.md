@@ -115,9 +115,17 @@ This will test on Windows 11 Chrome all available versions from 100 to 119 inclu
 
 Yes, Saucery supports Real Devices!
 
+### NuGet
+
+<img src="/Saucery.NuGet/Images/Saucery.NuGet.png" alt="Saucery.NuGet" width="100"/>
+
+A global .NET tool for managing NuGet package upgrades from NuGet.org and managing version relationships across multiple packages.
+
+We use it ourselves to manage our own packages, and we hope you find it useful too!
+
 ### Trends
 
-[Nuget downloads](https://nugettrends.com/packages?months=24&ids=Saucery&ids=Saucery.XUnit&ids=Saucery.TUnit&ids=Saucery.Core&ids=Saucery.XUnit.v3)  
+[Nuget downloads](https://nugettrends.com/packages?months=24&ids=Saucery&ids=Saucery.XUnit&ids=Saucery.TUnit&ids=Saucery.Core&ids=Saucery.XUnit.v3&ids=Saucery.NuGet)
 [GitHub stars](https://star-history.com/#sauceforge/Saucery)
 
 ## Contact
