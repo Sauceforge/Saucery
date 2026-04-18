@@ -74,6 +74,69 @@ saucery-nuget --solution MySolution.sln --bump-own-version --version-segment maj
 
 If no dependencies changed for the project, its `<PackageVersion>` is left untouched.
 
+### Process specific opted-in projects
+
+When multiple projects in a solution are opted in, you can limit processing to one or more specific opted-in projects using `--project` (alias `-p`). You can pass the project by its file name (with or without `.csproj`) or by an absolute path to the `.csproj` file. The option may be provided multiple times to process multiple projects.
+
+Examples:
+
+- By project name (no extension):
+
+  ```bash
+  saucery-nuget --solution MySolution.sln --project Saucery.Core
+  ```
+
+- By project filename:
+
+  ```bash
+  saucery-nuget --solution MySolution.sln --project Saucery.Core.csproj
+  ```
+
+- By absolute path:
+
+  ```bash
+  saucery-nuget --solution MySolution.sln --project C:\repos\Saucery\Saucery.Core\Saucery.Core.csproj
+  ```
+
+If no opted-in project matches the supplied filter(s), the tool exits with a non-zero code and prints an error detailing the filters that failed to match.
+
+### Sync PackageVersion with a dependency
+
+You can keep an opted-in project's `<PackageVersion>` in sync with the version of a specific dependency using `--sync-with` (alias `-w`). The sync target can be either:
+
+- a PackageReference within the same project (e.g. `--sync-with TUnit` will sync to the `TUnit` PackageReference version), or
+- a ProjectReference to another project in the solution (e.g. `--sync-with Saucery.Core` will sync to the `Saucery.Core.csproj` <PackageVersion>).
+
+Behavior:
+
+- The tool first looks for a PackageReference that matches the supplied id and, if present, uses its version (preferring any proposed update from the run).
+- If no matching PackageReference exists, the tool will examine ProjectReference entries and resolve the referenced project file. If the referenced project contains a `<PackageVersion>` element, that value is used for the sync. If the referenced project was processed earlier in the same run and had its `<PackageVersion>` updated, the new value will be read from disk and used.
+- If the dependency (package or project) is not present or has no `<PackageVersion>`, no sync occurs for that target project.
+- Sync takes precedence over `--bump-own-version`. If `--sync-with` produces a new `<PackageVersion>`, `--bump-own-version` is ignored for that project.
+- When `--dry-run` is used the tool reports the new package version but does not write changes to disk.
+
+Note: `--sync-with` is only valid when used together with one or more `--project` filters. The tool requires you to explicitly target the project(s) whose `<PackageVersion>` you want to sync. If `--sync-with` is provided without any `--project` values, the tool will exit with an error.
+
+Examples:
+
+- Sync the PackageVersion with package `TUnit` for the specified project(s):
+
+  ```bash
+  saucery-nuget --solution MySolution.sln --project Saucery.TUnit --sync-with TUnit
+  ```
+
+- Sync Saucery's PackageVersion to match the PackageVersion defined in Saucery.Core (ProjectReference):
+
+  ```bash
+  saucery-nuget --solution MySolution.sln --project Saucery --sync-with Saucery.Core
+  ```
+
+- Sync only for Saucery.TUnit and perform a dry run:
+
+  ```bash
+  saucery-nuget --solution MySolution.sln --project Saucery.TUnit --sync-with TUnit --dry-run
+  ```
+
 ### All options
 
 | Option | Alias | Description |
@@ -83,6 +146,8 @@ If no dependencies changed for the project, its `<PackageVersion>` is left untou
 | `--include-prerelease` |  | Consider prerelease versions as candidates. |
 | `--bump-own-version` |  | Increment `<PackageVersion>` when dependencies change. |
 | `--version-segment <seg>` |  | Segment to bump: `patch` (default), `minor`, or `major` |
+| `--project <name|path>` | -p | Limit processing to one or more opted-in projects by project name, filename, or absolute path. May be provided multiple times. |
+| `--sync-with <packageId>` | -w | Keep each processed project's `<PackageVersion>` equal to the specified dependency package id's version (if present). |
 
 ---
 
@@ -110,6 +175,8 @@ Trigger it manually from the GitHub Actions UI. Available inputs:
 | `bump-own-version` | `false` | Bump each project's `<PackageVersion>` when it's dependencies change |
 | `version-segment` | `patch` | Semver segment to increment (`patch`, `minor`, `major`) |
 | `dry-run` | `false` | Print changes without commiting |
+| `project` | (none) | Limit processing to one or more opted-in projects (name, filename, or absolute path). May be specified multiple times. |
+| `sync-with` | (none) | Keep each processed project's `<PackageVersion>` equal to the specified dependency package id's version. Requires one or more `project` inputs. |
 
 ### Using a tool manifest in CI
 

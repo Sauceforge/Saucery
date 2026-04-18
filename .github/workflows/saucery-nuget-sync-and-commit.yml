@@ -1,0 +1,99 @@
+name: Saucery NuGet Sync & Commit
+
+on:
+  workflow_dispatch: {}
+  #schedule:
+    # Runs at 00:00, 06:00, 12:00, 18:00 UTC daily (4× per day)
+  #  - cron: "0 0,6,12,18 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: saucery-nuget-sync-and-commit
+  cancel-in-progress: false
+
+env:
+  BUILD_CONFIGURATION: Release
+  SOLUTION_FILE: Saucery.sln
+
+jobs:
+  run-saucery-nuget-and-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: |
+            10.0.x
+
+      - name: Restore .NET tools
+        run: dotnet tool restore
+
+      - name: Run saucery-nuget for each opted-in project in order
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          run_saucery_nuget() {
+            local project="$1"
+            shift
+
+            echo "=================================================="
+            echo "Running saucery-nuget for project: $project"
+            echo "Extra args: $*"
+            echo "=================================================="
+
+            dotnet tool run saucery-nuget \
+              --solution "$SOLUTION_FILE" \
+              --project "$project" \
+              "$@"
+          }
+
+          # 1. Saucery.Core:
+          #    bump PackageReferences and bump its own PackageVersion (patch) if deps changed
+          run_saucery_nuget "Saucery.Core" --bump-own-version
+
+          # 2. Projects with explicit sync rules
+          run_saucery_nuget "Saucery.TUnit" --sync-with "TUnit"
+          run_saucery_nuget "Saucery.XUnit.v3" --sync-with "xunit.v3.mtp-v2"
+          run_saucery_nuget "Saucery.XUnit" --sync-with "Saucery.Core"
+          run_saucery_nuget "Saucery" --sync-with "Saucery.Core"
+          run_saucery_nuget "Saucery.Playwright.NUnit" --sync-with "Saucery.Core"
+
+      - name: Commit and push if there are changes
+        shell: bash
+        env:
+          GH_PAT: ${{ secrets.ACTIONS_PUSH_PAT }}
+        run: |
+          set -euo pipefail
+
+          git config user.name "agray"
+          git config user.email "agray@users.noreply.github.com"
+          export GIT_AUTHOR_NAME="agray"
+          export GIT_AUTHOR_EMAIL="agray@users.noreply.github.com"
+          export GIT_COMMITTER_NAME="agray"
+          export GIT_COMMITTER_EMAIL="agray@users.noreply.github.com"
+
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "✅ No changes detected after running saucery-nuget"
+            exit 0
+          fi
+
+          git commit -m "Automated NuGet package sync"
+
+          git pull --rebase origin master
+
+          echo "🔐 Using PAT to push changes..."
+          git push "https://x-access-token:${GH_PAT}@github.com/${{ github.repository }}" HEAD:master
+
+          echo "🚀 Changes committed and pushed to master via PAT."

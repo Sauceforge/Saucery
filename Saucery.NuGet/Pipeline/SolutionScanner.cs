@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
+using System.Xml;
 
 namespace Saucery.NuGet.Pipeline;
 
@@ -38,4 +36,89 @@ public static class SolutionScanner {
         IEnumerable<string> projectPaths,
         Func<string, bool> isOptedIn) 
         => projectPaths.Where(isOptedIn).ToList();
+
+    /// <summary>
+    /// Filter an existing list of opted-in project paths down to those requested by the user via
+    /// the --project / -p option. Matching supports:
+    /// - project file name without extension (e.g. Saucery.Core)
+    /// - project file name with extension (e.g. Saucery.Core.csproj)
+    /// - absolute path to the project file
+    /// </summary>
+    public static List<string> FilterByRequestedProjects(
+        IEnumerable<string> optedInProjectPaths,
+        IEnumerable<string> requestedFilters)
+    {
+        var optedList = optedInProjectPaths.ToList();
+        var filters = requestedFilters?.Select(f => f?.Trim()).Where(s => !string.IsNullOrEmpty(s)).ToList() ?? new List<string>();
+        if(filters.Count == 0)
+            return optedList;
+
+        var matched = optedList.Where(pp => filters.Any(req =>
+            string.Equals(Path.GetFileNameWithoutExtension(pp), req, StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(Path.GetFileName(pp), req, StringComparison.OrdinalIgnoreCase) ||
+            (Path.IsPathRooted(req) && string.Equals(Path.GetFullPath(req), Path.GetFullPath(pp), StringComparison.OrdinalIgnoreCase))
+        )).ToList();
+
+        return matched;
+    }
+
+    /// <summary>
+    /// Topologically sort the supplied project paths so that projects referenced by others
+    /// appear before dependents. If a cycle is detected, the original ordering is returned.
+    /// </summary>
+    public static List<string> TopologicallySortProjects(IEnumerable<string> projectPaths)
+    {
+        var fullPaths = projectPaths.Select(p => Path.GetFullPath(p)).ToList();
+        var set = fullPaths.ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        // build adjacency: referenced -> dependents
+        var dependents = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
+        var indegree = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+
+        foreach(var p in fullPaths) {
+            dependents[p] = new List<string>();
+            indegree[p] = 0;
+        }
+
+        foreach(var p in fullPaths) {
+            try {
+                var doc = new XmlDocument();
+                doc.Load(p);
+                var projectRefs = doc.SelectNodes("//*[local-name()='ProjectReference' and @Include]");
+                if(projectRefs is null) continue;
+
+                foreach(XmlElement projRef in projectRefs.Cast<XmlElement>()) {
+                    var include = projRef.GetAttribute("Include");
+                    if(string.IsNullOrWhiteSpace(include)) continue;
+                    var resolved = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(p) ?? string.Empty, include.Replace('/', Path.DirectorySeparatorChar)));
+                    if(set.Contains(resolved)) {
+                        // edge: resolved -> p (resolved must come before p)
+                        dependents[resolved].Add(p);
+                        indegree[p] = indegree.GetValueOrDefault(p) + 1;
+                    }
+                }
+            }
+            catch {
+                // ignore parse errors and continue
+            }
+        }
+
+        // Kahn's algorithm
+        var q = new Queue<string>(indegree.Where(kv => kv.Value == 0).Select(kv => kv.Key));
+        var result = new List<string>();
+
+        while(q.Count > 0) {
+            var n = q.Dequeue();
+            result.Add(n);
+            foreach(var d in dependents[n]) {
+                indegree[d] = indegree[d] - 1;
+                if(indegree[d] == 0) q.Enqueue(d);
+            }
+        }
+
+        if(result.Count != fullPaths.Count)
+            return fullPaths; // cycle detected or parse issues - fall back
+
+        return result;
+    }
 }

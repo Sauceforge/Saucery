@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Saucery.NuGet;
+﻿namespace Saucery.NuGet;
 
 internal static class Constants {
     internal static class NuGetApi {
@@ -27,6 +23,10 @@ internal static class Constants {
     internal static class Cli {
         internal const string SolutionOption = "--solution";
         internal const string SolutionAlias = "-s";
+        internal const string ProjectOption = "--project";
+        internal const string ProjectAlias = "-p";
+        internal const string SyncWithOption = "--sync-with";
+        internal const string SyncWithAlias = "-w";
         internal const string IncludePrereleaseOption = "--include-prerelease";
         internal const string DryRunOption = "--dry-run";
         internal const string BumpOwnVersionOption = "--bump-own-version";

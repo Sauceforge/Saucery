@@ -43,7 +43,7 @@ public class CsprojUpdaterTests {
 
         try {
             var apiClient = new StubNuGetApiClient(new Dictionary<string, string[]> {
-                ["Newtonsoft.Json"] = ["12.0.0", "13.0.0"]
+                ["Newtonsoft.Json"] = new[] { "12.0.0", "13.0.0" }
             });
 
             var updater = new CsprojUpdater(apiClient);
@@ -69,7 +69,7 @@ public class CsprojUpdaterTests {
         
         try {
             var apiClient = new StubNuGetApiClient(new Dictionary<string, string[]> {
-                ["Newtonsoft.Json"] = ["12.0.0"]
+                ["Newtonsoft.Json"] = new[] { "12.0.0" }
             });
             
             var updater = new CsprojUpdater(apiClient);
@@ -106,8 +106,8 @@ public class CsprojUpdaterTests {
         try {
             var originalContent = await File.ReadAllTextAsync(path, ct);
             var apiClient = new StubNuGetApiClient(new Dictionary<string, string[]> {
-                ["Newtonsoft.Json"] = ["12.0.0", "13.0.0", "13.0.1"],
-                ["Serilog"] = ["2.10.0", "2.11.0", "3.0.0"]
+                ["Newtonsoft.Json"] = new[] { "12.0.0", "13.0.0", "13.0.1" },
+                ["Serilog"] = new[] { "2.10.0", "2.11.0", "3.0.0" }
             });
 
             var updater = new CsprojUpdater(apiClient);
@@ -132,8 +132,8 @@ public class CsprojUpdaterTests {
         
         try {
             var apiClient = new StubNuGetApiClient(new Dictionary<string, string[]> {
-                ["Newtonsoft.Json"] = ["12.0.0", "13.0.0"],
-                ["Serilog"] = ["2.10.0", "2.11.0"]
+                ["Newtonsoft.Json"] = new[] { "12.0.0", "13.0.0" },
+                ["Serilog"] = new[] { "2.10.0", "2.11.0" }
             });
             
             var updater = new CsprojUpdater(apiClient);
@@ -159,8 +159,8 @@ public class CsprojUpdaterTests {
         
         try {
             var apiClient = new StubNuGetApiClient(new Dictionary<string, string[]> {
-                ["Newtonsoft.Json"] = ["12.0.0"],
-                ["Serilog"] = ["2.10.0"]
+                ["Newtonsoft.Json"] = new[] { "12.0.0" },
+                ["Serilog"] = new[] { "2.10.0" }
             });
             
             var updater = new CsprojUpdater(apiClient);
@@ -182,7 +182,7 @@ public class CsprojUpdaterTests {
 
     private sealed class StubNuGetApiClient(Dictionary<string, string[]> data) : INuGetApiClient {
         public Task<IReadOnlyList<string>> GetAvailableVersionsAsync(string packageId, CancellationToken cancellationToken = default) {
-            var versions = data.TryGetValue(packageId, out var list) ? list : [];
+            var versions = data.TryGetValue(packageId, out var list) ? list : Array.Empty<string>();
             
             return Task.FromResult<IReadOnlyList<string>>(versions);
         }

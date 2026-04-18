@@ -82,4 +82,71 @@ public class SolutionScannerTests {
         Assert.Contains("/path/a.csproj", result);
         Assert.Contains("/path/c.csproj", result);
     }
+
+    [Fact]
+    public void FilterByRequestedProjects_MatchesByNameWithoutExtension() {
+        var opted = new[] {
+            "C:\\repos\\Saucery\\Saucery.Core\\Saucery.Core.csproj",
+            "C:\\repos\\Saucery\\Saucery.XUnit\\Saucery.XUnit.csproj"
+        };
+
+        var result = SolutionScanner.FilterByRequestedProjects(opted, new[] { "Saucery.Core" });
+
+        Assert.Single(result);
+        Assert.Contains(opted[0], result);
+    }
+
+    [Fact]
+    public void FilterByRequestedProjects_MatchesByFilenameWithExtension() {
+        var opted = new[] {
+            "C:\\repos\\Saucery\\Saucery.Core\\Saucery.Core.csproj",
+            "C:\\repos\\Saucery\\Saucery.XUnit\\Saucery.XUnit.csproj"
+        };
+
+        var result = SolutionScanner.FilterByRequestedProjects(opted, new[] { "Saucery.XUnit.csproj" });
+
+        Assert.Single(result);
+        Assert.Contains(opted[1], result);
+    }
+
+    [Fact]
+    public void FilterByRequestedProjects_MatchesByFullPath() {
+        var opted = new[] {
+            "C:\\repos\\Saucery\\Saucery.Core\\Saucery.Core.csproj",
+            "C:\\repos\\Saucery\\Saucery.XUnit\\Saucery.XUnit.csproj"
+        };
+
+        var path = Path.GetFullPath(opted[0]);
+        var result = SolutionScanner.FilterByRequestedProjects(opted, new[] { path });
+
+        Assert.Single(result);
+        Assert.Contains(opted[0], result);
+    }
+
+    [Fact]
+    public void FilterByRequestedProjects_MultipleFilters() {
+        var opted = new[] {
+            "C:\\repos\\Saucery\\Saucery.Core\\Saucery.Core.csproj",
+            "C:\\repos\\Saucery\\Saucery.XUnit\\Saucery.XUnit.csproj",
+            "C:\\repos\\Saucery\\Saucery.NuGet\\Saucery.NuGet.csproj",
+        };
+
+        var result = SolutionScanner.FilterByRequestedProjects(opted, new[] { "Saucery.Core", "Saucery.NuGet" });
+
+        Assert.Equal(2, result.Count);
+        Assert.Contains(opted[0], result);
+        Assert.Contains(opted[2], result);
+    }
+
+    [Fact]
+    public void FilterByRequestedProjects_NoMatches_ReturnsEmpty() {
+        var opted = new[] {
+            "C:\\repos\\Saucery\\Saucery.Core\\Saucery.Core.csproj",
+            "C:\\repos\\Saucery\\Saucery.XUnit\\Saucery.XUnit.csproj"
+        };
+
+        var result = SolutionScanner.FilterByRequestedProjects(opted, new[] { "Nonexistent" });
+
+        Assert.Empty(result);
+    }
 }

@@ -59,6 +59,7 @@ public sealed class CsprojUpdater(INuGetApiClient apiClient) {
         bool dryRun = false,
         bool bumpOwnVersion = false,
         VersionSegment versionSegment = VersionSegment.Patch,
+        string? syncWithPackageId = null,
         CancellationToken ct = default) 
     {
         var (rawText, encodingFactory) = ReadPreservingEncoding(projectPath);
@@ -99,6 +100,12 @@ public sealed class CsprojUpdater(INuGetApiClient apiClient) {
                 node.SetAttribute(Constants.Xml.VersionAttribute, next);
         }
 
+        // Build a lookup of proposed new versions for packages updated during this run
+        var proposedUpdates = updates.ToDictionary(u => u.PackageId, u => u.ToVersion, StringComparer.OrdinalIgnoreCase);
+
+        // Track whether we modified the in-memory XmlDocument and therefore need to persist it
+        var docModified = false;
+
         if(!dryRun && updates.Count > 0) 
         {
             var updated = SerializeDocument(doc);
@@ -106,9 +113,111 @@ public sealed class CsprojUpdater(INuGetApiClient apiClient) {
         }
 
         string? newPackageVersion = null;
-        if(bumpOwnVersion && updates.Count > 0) 
-        {
-            newPackageVersion = PackageVersionBumper.Bump(projectPath, versionSegment, dryRun);
+
+        // If syncWithPackageId is provided, set the project's PackageVersion to the dependency's version
+        if(!string.IsNullOrWhiteSpace(syncWithPackageId)) {
+            string? depVersion = null;
+
+            // 1) Try PackageReference matching
+            var syncPkgNode = doc.SelectSingleNode($"//*[local-name()='{Constants.Xml.PackageReferenceElement}' and translate(@{Constants.Xml.IncludeAttribute}, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='{syncWithPackageId.ToLowerInvariant()}' and @{Constants.Xml.VersionAttribute}]") as XmlElement;
+            if(syncPkgNode is not null) {
+                var depId = syncPkgNode.GetAttribute(Constants.Xml.IncludeAttribute);
+                if(!string.IsNullOrWhiteSpace(depId) && proposedUpdates.TryGetValue(depId, out var proposed)) {
+                    depVersion = proposed;
+                } else {
+                    depVersion = syncPkgNode.GetAttribute(Constants.Xml.VersionAttribute);
+                }
+            }
+
+            // 2) If not found as PackageReference, attempt ProjectReference matching
+            if(depVersion is null) {
+                var projectRefs = doc.SelectNodes("//*[local-name()='ProjectReference' and @Include]") as XmlNodeList;
+                if(projectRefs is not null) {
+                    foreach(XmlElement projRef in projectRefs.Cast<XmlElement>()) {
+                        var include = projRef.GetAttribute("Include");
+                        if(string.IsNullOrWhiteSpace(include)) continue;
+
+                        var fileNameNoExt = Path.GetFileNameWithoutExtension(include.Replace('/', Path.DirectorySeparatorChar));
+                        if(string.Equals(fileNameNoExt, syncWithPackageId, StringComparison.OrdinalIgnoreCase) ||
+                           string.Equals(Path.GetFileName(include), syncWithPackageId + ".csproj", StringComparison.OrdinalIgnoreCase))
+                        {
+                            // resolve path relative to projectPath
+                            var resolved = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(projectPath) ?? string.Empty, include.Replace('/', Path.DirectorySeparatorChar)));
+                            if(File.Exists(resolved)) {
+                                // Prefer reading PackageVersion from the referenced project's file (it may have been updated earlier in the run)
+                                depVersion = PackageVersionBumper.ReadPackageVersion(resolved);
+                                if(!string.IsNullOrWhiteSpace(depVersion)) break;
+
+                                // As a fallback, try to read <PackageId> from referenced project and continue searching
+                                try {
+                                    var refDoc = new XmlDocument();
+                                    refDoc.Load(resolved);
+                                    var pkgIdNode = refDoc.SelectSingleNode("//*[local-name()='PackageId']") as XmlElement;
+                                    if(pkgIdNode is not null) {
+                                        var pkgId = pkgIdNode.InnerText?.Trim();
+                                        if(string.Equals(pkgId, syncWithPackageId, StringComparison.OrdinalIgnoreCase)) {
+                                            depVersion = PackageVersionBumper.ReadPackageVersion(resolved);
+                                            if(!string.IsNullOrWhiteSpace(depVersion)) break;
+                                        }
+                                    }
+                                } catch {
+                                    // ignore referenced project parse issues
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if(!string.IsNullOrWhiteSpace(depVersion)) {
+                var currentPackageVersion = PackageVersionBumper.ReadPackageVersion(projectPath);
+                if(!string.Equals(currentPackageVersion, depVersion, StringComparison.OrdinalIgnoreCase)) {
+                    if(!dryRun) {
+                        // Modify the in-memory XmlDocument to set PackageVersion
+                        var pkgNode = doc.SelectSingleNode("//*[local-name()='PackageVersion']") as XmlElement;
+                        if(pkgNode is not null) {
+                            pkgNode.InnerText = depVersion;
+                        } else {
+                            var propGroup = doc.SelectSingleNode("//*[local-name()='PropertyGroup']") as XmlElement;
+                            if(propGroup is not null) {
+                                var newElem = doc.CreateElement("PackageVersion");
+                                newElem.InnerText = depVersion;
+                                propGroup.AppendChild(newElem);
+                            } else {
+                                var projectRoot = doc.DocumentElement;
+                                if(projectRoot is not null) {
+                                    var pg = doc.CreateElement("PropertyGroup");
+                                    var newElem = doc.CreateElement("PackageVersion");
+                                    newElem.InnerText = depVersion;
+                                    pg.AppendChild(newElem);
+                                    projectRoot.AppendChild(pg);
+                                }
+                            }
+                        }
+
+                        docModified = true;
+                    }
+
+                    newPackageVersion = depVersion;
+                }
+            }
+        }
+
+        // If syncing wasn't requested or didn't produce a new version, fall back to bumping own version when requested
+        var skipFinalWrite = false;
+        if(newPackageVersion is null && bumpOwnVersion && updates.Count > 0) {
+            var bumped = PackageVersionBumper.Bump(projectPath, versionSegment, dryRun);
+            newPackageVersion = bumped;
+            if(!dryRun && bumped is not null) {
+                // PackageVersionBumper.Bump already wrote the file when not dryRun, so skip the final write to avoid overwriting
+                skipFinalWrite = true;
+            }
+        }
+
+        // Persist the modified XmlDocument once if any modifications were made (and not a dry run)
+        if(!dryRun && !skipFinalWrite && (docModified || updates.Count > 0)) {
+            var final = SerializeDocument(doc);
+            WritePreservingEncoding(projectPath, final, encodingFactory);
         }
 
         return new UpdateResult(projectPath, updates, NewPackageVersion: newPackageVersion);

@@ -35,6 +35,18 @@ var versionSegmentOption = new Option<VersionSegment>(
     Description = "The semver segment to increment when --bump-own-version is set (patch, minor, major).",
     DefaultValueFactory = _ => VersionSegment.Patch
 };
+var projectOption = new Option<string[]>(
+    Constants.Cli.ProjectOption,
+    [Constants.Cli.ProjectAlias]) {
+    Description = "Optional: limit processing to one or more opted-in projects by project name or path.",
+    // allow zero or more arguments
+};
+
+var syncWithOption = new Option<string?>(
+    Constants.Cli.SyncWithOption,
+    Constants.Cli.SyncWithAlias) {
+    Description = "Optional: keep each processed project's <PackageVersion> in sync with the specified dependency package id (e.g. TUnit)."
+};
 
 var rootCommand = new RootCommand("Bumps each PackageReference in opted-in projects to its next available NuGet version.")
 {
@@ -42,8 +54,23 @@ var rootCommand = new RootCommand("Bumps each PackageReference in opted-in proje
     includePrereleaseOption,
     dryRunOption,
     bumpOwnVersionOption,
-    versionSegmentOption
+    versionSegmentOption,
+    projectOption
 };
+
+// Note: System.CommandLine RootCommand initializer accepts the options provided in the collection.
+// Add syncWithOption here as well so it's recognized without calling AddOption (not available on this version).
+rootCommand = new RootCommand(rootCommand.Description)
+{
+    solutionOption,
+    includePrereleaseOption,
+    dryRunOption,
+    bumpOwnVersionOption,
+    versionSegmentOption,
+    projectOption,
+    syncWithOption
+};
+
 
 rootCommand.SetAction(async (parseResult, cancellationToken) => {
     var solution = parseResult.GetValue(solutionOption);
@@ -51,6 +78,7 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
     var dryRun = parseResult.GetValue(dryRunOption);
     var bumpOwnVersion = parseResult.GetValue(bumpOwnVersionOption);
     var versionSegment = parseResult.GetValue(versionSegmentOption);
+    var syncWith = parseResult.GetValue(syncWithOption);
 
     if(!solution.Exists) {
         Console.Error.WriteLine($"Error: Solution file not found: {solution.FullName}.");
@@ -66,9 +94,31 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
     var allProjects = SolutionScanner.GetProjectPaths(solution.FullName);
     Console.WriteLine($"Found {allProjects.Count} projects in the solution.");
 
-    var optedInProjects = SolutionScanner.FilterOptedIn(allProjects, CsprojUpdater.IsOptedIn);
+    var optedInProjects = SolutionScanner.FilterOptedIn(allProjects, CsprojUpdater.IsOptedIn).ToList();
     Console.WriteLine($"{optedInProjects.Count} projects are opted in for updates.");
     Console.WriteLine();
+
+    var projectFilters = parseResult.GetValue(projectOption) ?? Array.Empty<string>();
+    // --sync-with can only be used when one or more --project filters are supplied.
+    if(!string.IsNullOrWhiteSpace(syncWith) && (projectFilters is null || projectFilters.Length == 0)) {
+        Console.Error.WriteLine("Error: --sync-with requires at least one --project to be specified. Use --project to limit processing to a single project to sync with a dependency.");
+        Environment.Exit(1);
+    }
+    if(projectFilters.Length > 0) {
+        var matched = SolutionScanner.FilterByRequestedProjects(optedInProjects, projectFilters);
+
+        if(matched.Count == 0) {
+            Console.Error.WriteLine($"No opted-in projects matched the requested filters: {string.Join(", ", projectFilters)}");
+            Environment.Exit(1);
+        }
+
+        optedInProjects = matched;
+        Console.WriteLine($"Processing limited to {optedInProjects.Count} opted-in project(s) by request.");
+        Console.WriteLine();
+    }
+
+    // Ensure referenced projects are processed before dependents so --sync-with can read updated PackageVersion
+    optedInProjects = SolutionScanner.TopologicallySortProjects(optedInProjects).ToList();
 
     if(optedInProjects.Count == 0) {
         Console.WriteLine($"No projects are opted in. Add <PackageReference Include=\"{Constants.Package.OptInPackageId}\" Version\"...\" /> to opt in.");
@@ -88,7 +138,8 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
             includePrerelease, 
             dryRun, 
             bumpOwnVersion, 
-            versionSegment);
+            versionSegment,
+            syncWith);
         allResults.Add(result);
 
         if(!result.Success) {
