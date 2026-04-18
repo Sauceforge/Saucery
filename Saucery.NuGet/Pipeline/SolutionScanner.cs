@@ -35,7 +35,7 @@ public static class SolutionScanner {
     public static IReadOnlyList<string> FilterOptedIn(
         IEnumerable<string> projectPaths,
         Func<string, bool> isOptedIn) 
-        => projectPaths.Where(isOptedIn).ToList();
+        => [.. projectPaths.Where(isOptedIn)];
 
     /// <summary>
     /// Filter an existing list of opted-in project paths down to those requested by the user via
@@ -49,7 +49,7 @@ public static class SolutionScanner {
         IEnumerable<string> requestedFilters)
     {
         var optedList = optedInProjectPaths.ToList();
-        var filters = requestedFilters?.Select(f => f?.Trim()).Where(s => !string.IsNullOrEmpty(s)).ToList() ?? new List<string>();
+        var filters = requestedFilters?.Select(f => f?.Trim()).Where(s => !string.IsNullOrEmpty(s)).ToList() ?? [];
         if(filters.Count == 0)
             return optedList;
 
@@ -68,7 +68,7 @@ public static class SolutionScanner {
     /// </summary>
     public static List<string> TopologicallySortProjects(IEnumerable<string> projectPaths)
     {
-        var fullPaths = projectPaths.Select(p => Path.GetFullPath(p)).ToList();
+        var fullPaths = projectPaths.Select(Path.GetFullPath).ToList();
         var set = fullPaths.ToHashSet(StringComparer.OrdinalIgnoreCase);
 
         // build adjacency: referenced -> dependents
@@ -76,7 +76,7 @@ public static class SolutionScanner {
         var indegree = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
 
         foreach(var p in fullPaths) {
-            dependents[p] = new List<string>();
+            dependents[p] = [];
             indegree[p] = 0;
         }
 

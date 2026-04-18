@@ -21,7 +21,7 @@ public class CsprojUpdaterSyncTests {
         var path = WriteTempCsproj(OptedInCsprojWithPackageVersionAndDependency);
         try {
             var apiClient = new StubNuGetApiClient(new Dictionary<string, string[]> {
-                ["TUnit"] = new[] { "2.0.0", "3.0.0" }
+                ["TUnit"] = ["2.0.0", "3.0.0"]
             });
 
             var updater = new CsprojUpdater(apiClient);
@@ -35,11 +35,11 @@ public class CsprojUpdaterSyncTests {
 
             Assert.Equal(2, result.Updates.Count);
 
-            var dependencyUpdate = Assert.Single(result.Updates.Where(x => x.PackageId == "TUnit"));
+            var dependencyUpdate = Assert.Single(result.Updates, x => x.PackageId == "TUnit");
             Assert.Equal("2.0.0", dependencyUpdate.FromVersion);
             Assert.Equal("3.0.0", dependencyUpdate.ToVersion);
 
-            var packageVersionUpdate = Assert.Single(result.Updates.Where(x => x.PackageId == "PackageVersion"));
+            var packageVersionUpdate = Assert.Single(result.Updates, x => x.PackageId == "PackageVersion");
             Assert.Equal("1.0.0", packageVersionUpdate.FromVersion);
             Assert.Equal("3.0.0", packageVersionUpdate.ToVersion);
 
@@ -56,7 +56,7 @@ public class CsprojUpdaterSyncTests {
         var path = WriteTempCsproj(OptedInCsprojWithPackageVersionAndDependency);
         try {
             var apiClient = new StubNuGetApiClient(new Dictionary<string, string[]> {
-                ["TUnit"] = new[] { "2.0.0" }
+                ["TUnit"] = ["2.0.0"]
             });
 
             var updater = new CsprojUpdater(apiClient);
@@ -89,7 +89,7 @@ public class CsprojUpdaterSyncTests {
 
     private sealed class StubNuGetApiClient(Dictionary<string, string[]> data) : INuGetApiClient {
         public Task<IReadOnlyList<string>> GetAvailableVersionsAsync(string packageId, CancellationToken cancellationToken = default) {
-            var versions = data.TryGetValue(packageId, out var list) ? list : Array.Empty<string>();
+            var versions = data.TryGetValue(packageId, out var list) ? list : [];
             return Task.FromResult<IReadOnlyList<string>>(versions);
         }
     }
