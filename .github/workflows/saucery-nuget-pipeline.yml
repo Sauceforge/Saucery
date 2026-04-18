@@ -1,0 +1,335 @@
+name: Saucery.NuGet
+
+on:
+  push:
+    paths:
+      - '.github/workflows/saucery-nuget-pipeline.yml'
+      - 'Saucery.NuGet/**'
+      - 'Saucery.NuGet.Tests/**'
+    branches:
+      - master
+      - 'releases/**'
+      - 'feat/**'
+      - 'feature/**'
+      - 'fix/**'
+      - 'test/**'
+  workflow_dispatch:
+
+env:
+  SOLN_FILE: Saucery.sln
+  CONFIG: Release
+
+  PROJECT_PATH: Saucery.NuGet/Saucery.NuGet.csproj
+  TEST_PROJECT: Saucery.NuGet.Tests/Saucery.NuGet.Tests.csproj
+  PACKAGE_ID: Saucery.NuGet
+
+  ARTIFACT_DIR: artifacts
+  TEST_RESULTS_DIR: Saucery.NuGet.Tests/bin/Release/net10.0/TestResults
+  COVERAGE_FORMAT: cobertura
+  UNIT_COVERAGE_FILENAME: cobertura.unit.xml
+
+  WATCHED_GLOBS: |
+    .github/workflows/saucery-nuget-pipeline.yml
+    Saucery.NuGet/**
+    Saucery.NuGet.Tests/**
+
+permissions:
+  contents: write
+
+jobs:
+  detect-changes:
+    name: Detect watched path changes since last completed run
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+    outputs:
+      changed: ${{ steps.decide.outputs.changed }}
+      previous_sha: ${{ steps.decide.outputs.previous_sha }}
+      paths_changed: ${{ steps.decide.outputs.paths_changed }}
+    steps:
+      - name: Resolve last completed run head_sha for this workflow+branch AND check paths
+        id: decide
+        uses: actions/github-script@v9
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { owner, repo } = context.repo;
+            const branch = context.ref.replace('refs/heads/', '');
+            const workflow_id = ".github/workflows/saucery-nuget-pipeline.yml";
+
+            const runs = await github.rest.actions.listWorkflowRuns({
+              owner,
+              repo,
+              workflow_id,
+              branch,
+              status: "completed",
+              per_page: 1
+            });
+
+            const prevSha = runs.data.workflow_runs[0]?.head_sha || "";
+            const curSha = context.sha;
+
+            core.info(`Event:       ${context.eventName}`);
+            core.info(`Branch:      ${branch}`);
+            core.info(`Current SHA: ${curSha}`);
+            core.info(`Prev SHA:    ${prevSha || "<none>"}`);
+
+            let changed = "true";
+            let pathsChanged = "true";
+
+            const raw = process.env.WATCHED_GLOBS || "";
+            const watchedGlobs = raw
+              .split(/[\n,]+/g)
+              .map(x => x.trim())
+              .filter(Boolean);
+
+            core.info(`WATCHED_GLOBS (parsed): [${watchedGlobs.join(", ")}]`);
+
+            function globToRegexSource(pattern) {
+              let out = "";
+              for (let i = 0; i < pattern.length; i++) {
+                const ch = pattern[i];
+                if (ch === "*") {
+                  const nextIsStar = i + 1 < pattern.length && pattern[i + 1] === "*";
+                  if (nextIsStar) {
+                    out += ".*";
+                    i++;
+                  } else {
+                    out += "[^/]*";
+                  }
+                } else if (ch === "/") {
+                  out += "\\/";
+                } else if ("\\.[]{}()+-?^$|".includes(ch)) {
+                  out += "\\" + ch;
+                } else {
+                  out += ch;
+                }
+              }
+              return out;
+            }
+
+            function matchesGlob(path, pattern) {
+              const source = globToRegexSource(pattern);
+              const regex = new RegExp("^" + source + "$");
+              return regex.test(path);
+            }
+
+            if (!prevSha) {
+              core.info("No previous completed run for this workflow+branch. Treating as changed.");
+              changed = "true";
+              pathsChanged = "true";
+            } else if (prevSha === curSha) {
+              core.info("No new commits since last completed run on this branch.");
+              changed = "false";
+              pathsChanged = "false";
+            } else {
+              const comparison = await github.rest.repos.compareCommits({
+                owner,
+                repo,
+                base: prevSha,
+                head: curSha
+              });
+
+              const files = comparison.data.files || [];
+              const changedPaths = files.map(f => f.filename);
+
+              core.info("Changed files since last run:");
+              if (changedPaths.length === 0) {
+                core.info(" (none reported by compareCommits)");
+              } else {
+                for (const p of changedPaths) core.info(` - ${p}`);
+              }
+
+              if (watchedGlobs.length === 0) {
+                pathsChanged = "true";
+              } else {
+                const matches = changedPaths.some(path =>
+                  watchedGlobs.some(pattern => matchesGlob(path, pattern))
+                );
+                pathsChanged = matches ? "true" : "false";
+              }
+            }
+
+            core.setOutput("changed", changed);
+            core.setOutput("paths_changed", pathsChanged);
+            core.setOutput("previous_sha", prevSha);
+
+  build-and-test:
+    name: Build and run Saucery.NuGet unit tests
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.paths_changed == 'true'
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore "${{ env.SOLN_FILE }}"
+
+      - name: Compile solution
+        run: dotnet build "${{ env.SOLN_FILE }}" -c "${{ env.CONFIG }}" --no-restore
+
+      - name: Run Saucery.NuGet xUnit v3 unit tests with coverage
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "${{ github.workspace }}/TestResults"
+
+          dotnet run -c "${{ env.CONFIG }}" --project "${{ env.TEST_PROJECT }}" -- \
+            --coverage \
+            --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
+            --coverage-output "${{ env.UNIT_COVERAGE_FILENAME }}"
+
+      - name: Publish unit test artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: saucery-nuget-unit-test-results
+          path: ${{ env.TEST_RESULTS_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}
+
+  publish-saucery-nuget:
+    name: Publish Saucery.NuGet to NuGet
+    runs-on: ubuntu-latest
+    needs: [build-and-test]
+    if: github.ref == 'refs/heads/master' && needs.build-and-test.result == 'success'
+    outputs:
+      local_version: ${{ steps.localver.outputs.version }}
+      publish: ${{ steps.decide.outputs.publish }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Ensure jq is available
+        run: |
+          if ! command -v jq >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y jq
+          fi
+
+      - name: Build and pack Saucery.NuGet
+        run: |
+          dotnet restore "${{ env.PROJECT_PATH }}"
+          dotnet build "${{ env.PROJECT_PATH }}" -c "${{ env.CONFIG }}" --no-restore
+          mkdir -p "${{ env.ARTIFACT_DIR }}"
+          dotnet pack "${{ env.PROJECT_PATH }}" -c "${{ env.CONFIG }}" -o "${{ env.ARTIFACT_DIR }}" --no-build
+
+      - name: Determine local packed version
+        id: localver
+        shell: bash
+        run: |
+          set -euo pipefail
+          NUPKG="$(ls "${{ env.ARTIFACT_DIR }}"/${{ env.PACKAGE_ID }}.*.nupkg | grep -v '\.symbols\.nupkg' | head -n1)"
+          if [[ -z "${NUPKG:-}" ]]; then
+            echo "No nupkg found for ${{ env.PACKAGE_ID }} in ${{ env.ARTIFACT_DIR }}" >&2
+            exit 1
+          fi
+          BASENAME="$(basename "$NUPKG")"
+          LOCAL_VERSION="${BASENAME#${{ env.PACKAGE_ID }}.}"
+          LOCAL_VERSION="${LOCAL_VERSION%.nupkg}"
+          echo "nupkg=$NUPKG" >> "$GITHUB_OUTPUT"
+          echo "version=$LOCAL_VERSION" >> "$GITHUB_OUTPUT"
+          echo "Local version: $LOCAL_VERSION"
+
+      - name: Query NuGet for latest published version
+        id: remotever
+        shell: bash
+        run: |
+          set -euo pipefail
+          LOWER_ID="$(echo "${{ env.PACKAGE_ID }}" | tr '[:upper:]' '[:lower:]')"
+          INDEX_URL="https://api.nuget.org/v3-flatcontainer/${LOWER_ID}/index.json"
+          if ! curl -fsSL "$INDEX_URL" -o /tmp/nuget_index.json; then
+            echo "version=" >> "$GITHUB_OUTPUT"
+            echo "Package not found on NuGet (first publish)."
+            exit 0
+          fi
+          REMOTE_VERSION="$(jq -r '.versions | last // empty' /tmp/nuget_index.json)"
+          echo "version=$REMOTE_VERSION" >> "$GITHUB_OUTPUT"
+          echo "Remote version: ${REMOTE_VERSION:-<none>}"
+
+      - name: Decide if publish is needed
+        id: decide
+        shell: bash
+        run: |
+          set -euo pipefail
+          LOCAL="${{ steps.localver.outputs.version }}"
+          REMOTE="${{ steps.remotever.outputs.version }}"
+          if [[ -z "$REMOTE" ]]; then
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+            echo "No remote version; will publish."
+            exit 0
+          fi
+          HIGHEST="$(printf '%s\n' "$REMOTE" "$LOCAL" | sort -V | tail -n1)"
+          if [[ "$HIGHEST" == "$LOCAL" && "$LOCAL" != "$REMOTE" ]]; then
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+            echo "Local ($LOCAL) > Remote ($REMOTE); will publish."
+          else
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            echo "Local ($LOCAL) is NOT greater than Remote ($REMOTE); skipping publish."
+          fi
+
+      - name: Publish to NuGet (only if newer)
+        if: steps.decide.outputs.publish == 'true'
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${NUGET_API_KEY:-}" ]]; then
+            echo "NUGET_API_KEY secret is missing." >&2
+            exit 1
+          fi
+          dotnet nuget push "${{ steps.localver.outputs.nupkg }}" \
+            --api-key "$NUGET_API_KEY" \
+            --source https://api.nuget.org/v3/index.json \
+            --skip-duplicate
+
+  tag:
+    needs: publish-saucery-nuget
+    if: ${{ needs.publish-saucery-nuget.outputs.publish == 'true' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master') }}
+    runs-on: ubuntu-latest
+    concurrency:
+      group: saucery-nuget-${{ needs.publish-saucery-nuget.outputs.local_version }}
+      cancel-in-progress: false
+    steps:
+      - name: Bump version and push tag
+        uses: mathieudutour/github-tag-action@v6.2
+        with:
+          github_token: ${{ secrets.ACTIONS_PUSH_PAT }}
+          tag_prefix: ""
+          custom_tag: saucery-nuget-${{ needs.publish-saucery-nuget.outputs.local_version }}
+
+  generate-report:
+    runs-on: ubuntu-latest
+    needs: [build-and-test]
+    if: needs.build-and-test.result == 'success'
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Download unit-test results
+        uses: actions/download-artifact@v8
+        with:
+          name: saucery-nuget-unit-test-results
+
+      - name: ReportGenerator
+        uses: danielpalme/ReportGenerator-GitHub-Action@5.5.5
+        with:
+          reports: ${{ env.UNIT_COVERAGE_FILENAME }}
+          targetdir: 'coveragereport'
+          reporttypes: 'HtmlInline;Cobertura'
+
+      - name: Upload coverage report artifact
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: CoverageReport
+          path: coveragereport
