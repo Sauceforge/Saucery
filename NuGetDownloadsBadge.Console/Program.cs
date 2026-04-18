@@ -10,6 +10,7 @@ var packages = new[]
     "Saucery.XUnit",
     "Saucery.TUnit",
     "Saucery.XUnit.v3",
+    "Saucery.NuGet"
 };
 
 using var http = new HttpClient();
