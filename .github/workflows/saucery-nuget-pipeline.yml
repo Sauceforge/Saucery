@@ -184,9 +184,9 @@ jobs:
           dotnet run -c "${{ env.CONFIG }}" --project "${{ env.TEST_PROJECT }}" -- \
             --coverage \
             --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
-            --coverage-output "${{ env.UNIT_COVERAGE_FILENAME }}"
+            --coverage-output "${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}"
 
-      - name: Display structure of downloaded files
+      - name: Display workspace structure
         run: ls -R
 
       - name: Publish unit test artifact
