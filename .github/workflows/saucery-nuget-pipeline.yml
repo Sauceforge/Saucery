@@ -24,7 +24,7 @@ env:
   PACKAGE_ID: Saucery.NuGet
 
   ARTIFACT_DIR: artifacts
-  TEST_RESULTS_DIR: Saucery.NuGet.Tests/bin/Release/net10.0/TestResults
+  TEST_RESULTS_DIR: ./TestResults
   COVERAGE_FORMAT: cobertura
   UNIT_COVERAGE_FILENAME: cobertura.unit.xml
 
@@ -179,7 +179,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p "${{ env.TEST_RESULTS_DIR }}"
+          mkdir -p "${{ github.workspace }}/"${{ env.TEST_RESULTS_DIR }}"
 
           dotnet run -c "${{ env.CONFIG }}" --project "${{ env.TEST_PROJECT }}" -- \
             --coverage \
