@@ -14,13 +14,15 @@ public class CsprojUpdaterSyncAdditionalTests
         </Project>
         """;
 
+    private static readonly string[] tunitVersions = ["2.0.0", "3.0.0"];
+
     [Fact]
     public async Task UpdateAsync_SyncWithDependency_DryRun_DoesNotModifyFile_ButReportsNewPackageVersion() {
         var path = WriteTempCsproj(OptedInCsprojWithDependencyOnly);
         try {
             var original = await File.ReadAllTextAsync(path, TestContext.Current.CancellationToken);
             var apiClient = new StubNuGetApiClient(new Dictionary<string, string[]> {
-            { "TUnit", new[] { "2.0.0", "3.0.0" } }
+            { "TUnit", tunitVersions }
         });
 
             var updater = new CsprojUpdater(apiClient);
@@ -35,11 +37,11 @@ public class CsprojUpdaterSyncAdditionalTests
 
             Assert.Equal(2, result.Updates.Count);
 
-            var dependencyUpdate = Assert.Single(result.Updates.Where(x => x.PackageId == "TUnit"));
+            var dependencyUpdate = Assert.Single(result.Updates, x => x.PackageId == "TUnit");
             Assert.Equal("2.0.0", dependencyUpdate.FromVersion);
             Assert.Equal("3.0.0", dependencyUpdate.ToVersion);
 
-            var packageVersionUpdate = Assert.Single(result.Updates.Where(x => x.PackageId == "PackageVersion"));
+            var packageVersionUpdate = Assert.Single(result.Updates, x => x.PackageId == "PackageVersion");
             Assert.Equal(string.Empty, packageVersionUpdate.FromVersion);
             Assert.Equal("3.0.0", packageVersionUpdate.ToVersion);
 
@@ -66,7 +68,7 @@ public class CsprojUpdaterSyncAdditionalTests
         var path = WriteTempCsproj(content);
         try {
             var apiClient = new StubNuGetApiClient(new Dictionary<string, string[]> {
-                { "TUnit", new[] { "2.0.0", "3.0.0" } }
+                { "TUnit", tunitVersions }
             });
 
             var updater = new CsprojUpdater(apiClient);
