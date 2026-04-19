@@ -8,6 +8,7 @@
     <CollectCoverage>true</CollectCoverage>
     <CoverletExclude>TUnit.*</CoverletExclude>
     <CoverletOutputFormat>opencover</CoverletOutputFormat>
+    <SauceryNuGetOptIn>true</SauceryNuGetOptIn>
   </PropertyGroup>
 
 	<ItemGroup>

@@ -8,6 +8,7 @@
     <IsTestProject>true</IsTestProject>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <SauceryNuGetOptIn>true</SauceryNuGetOptIn>
   </PropertyGroup>
 
   <ItemGroup>

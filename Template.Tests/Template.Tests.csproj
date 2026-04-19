@@ -6,11 +6,12 @@
     <Nullable>enable</Nullable>
     <OutputType>Exe</OutputType>
     <IsPackable>false</IsPackable>
+    <SauceryNuGetOptIn>true</SauceryNuGetOptIn>
   </PropertyGroup>
 
   <ItemGroup>
     <!-- Run under TUnit (console test host) -->
-    <PackageReference Include="TUnit" Version="1.36.0" />
+    <PackageReference Include="TUnit" Version="1.37.0" />
     <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.6.2" />
     <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" Version="2.2.1" />
 
