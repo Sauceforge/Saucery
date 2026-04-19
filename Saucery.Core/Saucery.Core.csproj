@@ -4,6 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <SauceryNuGetOptIn>true</SauceryNuGetOptIn>
   </PropertyGroup>
 
 	<PropertyGroup>
@@ -35,11 +36,6 @@
 		<PackageReference Include="Selenium.WebDriver" Version="4.43.0" />
 		<PackageReference Include="Shouldly" Version="4.3.0" />
 		<None Include="Images\Saucery.Core.128x128.png" Pack="true" PackagePath="/" />
-	</ItemGroup>
-
- <!-- ProjectReference to Saucery.NuGet to enable dogfooding (opt-in via ProjectReference) -->
-	<ItemGroup>
-		<ProjectReference Include="..\Saucery.NuGet\Saucery.NuGet.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

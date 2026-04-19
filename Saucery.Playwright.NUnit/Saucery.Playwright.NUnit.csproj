@@ -4,6 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <SauceryNuGetOptIn>true</SauceryNuGetOptIn>
 
     <IncludeBuildOutput>true</IncludeBuildOutput>
     <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
@@ -53,7 +54,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Saucery.Core\Saucery.Core.csproj" />
-    <ProjectReference Include="..\Saucery.NuGet\Saucery.NuGet.csproj" />
   </ItemGroup>
 
   <ItemGroup>

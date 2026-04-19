@@ -8,6 +8,7 @@
     <GenerateRuntimeConfigDevFile>true</GenerateRuntimeConfigDevFile>
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <SauceryNuGetOptIn>true</SauceryNuGetOptIn>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -54,7 +55,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Saucery.Core\Saucery.Core.csproj" />
-    <ProjectReference Include="..\Saucery.NuGet\Saucery.NuGet.csproj" />
   </ItemGroup>
 
   <ItemGroup>
