@@ -15,6 +15,7 @@ concurrency:
 env:
   BUILD_CONFIGURATION: Release
   SOLUTION_FILE: Saucery.sln
+  SAUCERY_NUGET_VERSION: 1.0.3
 
 jobs:
   run-saucery-nuget-and-commit:
@@ -36,8 +37,23 @@ jobs:
       - name: Restore solution
         run: dotnet restore "$SOLUTION_FILE"
 
-      - name: Build Saucery.NuGet
-        run: dotnet build ./Saucery.NuGet/Saucery.NuGet.csproj -c "$BUILD_CONFIGURATION" --no-restore
+      - name: Install Saucery.NuGet global tool
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet tool install --global Saucery.NuGet --version "$SAUCERY_NUGET_VERSION"
+
+      - name: Add .NET global tools to PATH
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
+
+      - name: Verify Saucery.NuGet installation
+        shell: bash
+        run: |
+          set -euo pipefail
+          saucery-nuget --help
 
       - name: Run saucery-nuget for each configured project in order
         shell: bash
@@ -57,11 +73,7 @@ jobs:
             fi
             echo "=================================================="
 
-            dotnet run \
-              --project Saucery.NuGet \
-              -c "$BUILD_CONFIGURATION" \
-              --no-build \
-              -- \
+            saucery-nuget \
               --solution "$SOLUTION_FILE" \
               --project "$project" \
               "$@"
@@ -91,14 +103,14 @@ jobs:
           git add -A
 
           if git diff --cached --quiet; then
-            echo "✅ No changes detected after running saucery-nuget"
+            echo "No changes detected after running saucery-nuget"
             exit 0
           fi
 
           git commit -m "Automated NuGet package sync"
           git pull --rebase origin master
 
-          echo "🔐 Using PAT to push changes..."
+          echo "Using PAT to push changes..."
           git push "https://x-access-token:${GH_PAT}@github.com/${{ github.repository }}" HEAD:master
 
-          echo "🚀 Changes committed and pushed to master via PAT."
+          echo "Changes committed and pushed to master via PAT."
