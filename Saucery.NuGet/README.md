@@ -186,12 +186,17 @@ It always picks the **smallest version strictly greater than current**.
 Typical usage:
 
 ```yaml
-- name: Restore .NET tools
-  run: dotnet tool restore
+- name: Install Saucery.NuGet tool
+  run: dotnet tool install --global Saucery.NuGet --version 1.0.1
+
+- name: Add .NET tools to PATH
+  run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
 - name: Run Saucery.NuGet
-  run: dotnet saucery-nuget --solution MySolution.sln
+  run: saucery-nuget --solution MySolution.sln
 ```
+
+See our [dogfooding pipeline](https://github.com/Sauceforge/Saucery/blob/master/.github/workflows/saucery-nuget-sync-and-commit.yml) for a real-world example.
 
 ---
 
