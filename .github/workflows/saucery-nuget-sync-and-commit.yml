@@ -85,6 +85,7 @@ jobs:
           run_saucery_nuget "Saucery.XUnit" --sync-with "Saucery.Core"
           run_saucery_nuget "Saucery" --sync-with "Saucery.Core"
           run_saucery_nuget "Saucery.Playwright.NUnit" --sync-with "Saucery.Core"
+          saucery-nuget --solution "$SOLUTION_FILE" --scan-unregistered
 
       - name: Commit and push if there are changes
         shell: bash

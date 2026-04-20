@@ -259,6 +259,149 @@ public class CsprojUpdaterTests {
         }
     }
 
+    [Fact]
+    public async Task UpdateAsync_ExcludePackage_IsNotUpdated() {
+        var ct = new CancellationToken();
+        var path = WriteTempCsproj(OptedInCsproj);
+        
+        try {
+            var apiClient = new StubNuGetApiClient(new Dictionary<string, string[]> {
+                ["Newtonsoft.Json"] = ["12.0.0", "13.0.0"],
+                ["Serilog"] = ["2.10.0", "2.11.0"]
+            });
+
+            var updater = new CsprojUpdater(apiClient);
+            var result = await updater.UpdateAsync(
+                path, 
+                excludePackageIds: ["Serilog"], 
+                dryRun: false, 
+                ct: ct);
+
+            Assert.True(result.Success);
+            Assert.Single(result.Updates);
+            Assert.Equal("Newtonsoft.Json", result.Updates[0].PackageId);
+            
+            var written = await File.ReadAllTextAsync(path, ct);
+            Assert.Contains("Version=\"13.0.0\"", written);
+            Assert.Contains("Version=\"2.10.0\"", written); // Serilog should remain unchanged
+        } finally {
+            File.Delete(path);
+        }
+    }
+
+    [Fact]
+    public async Task UpdateAsync_MultipleExcludedPackages_NoneAreUpdated() {
+        var ct = new CancellationToken();
+        var path = WriteTempCsproj(OptedInCsproj);
+        
+        try {
+            var apiClient = new StubNuGetApiClient(new Dictionary<string, string[]> {
+                ["Newtonsoft.Json"] = ["12.0.0", "13.0.0"],
+                ["Serilog"] = ["2.10.0", "2.11.0"]
+            });
+            
+            var updater = new CsprojUpdater(apiClient);
+            var result = await updater.UpdateAsync(
+                path, 
+                excludePackageIds: ["Newtonsoft.Json", "Serilog"], 
+                ct: ct);
+            
+            Assert.True(result.Success);
+            Assert.Empty(result.Updates);
+            
+            var written = await File.ReadAllTextAsync(path, ct);
+            Assert.Contains("Include=\"Newtonsoft.Json\" Version=\"12.0.0\"", written); // Newtonsoft.Json should remain unchanged
+            Assert.Contains("Include=\"Serilog\" Version=\"2.10.0\"", written); // Serilog should remain unchanged
+        } finally {
+            File.Delete(path);
+        }
+    }
+
+    [Fact]
+    public async Task UpdateAsync_NonExcludedPackages_StillUpdate() {
+        var ct = new CancellationToken();
+        var path = WriteTempCsproj(OptedInCsproj);
+        
+        try {
+            var apiClient = new StubNuGetApiClient(new Dictionary<string, string[]> {
+                ["Newtonsoft.Json"] = ["12.0.0", "13.0.0"],
+                ["Serilog"] = ["2.10.0", "2.11.0"]
+            });
+            
+            var updater = new CsprojUpdater(apiClient);
+            var result = await updater.UpdateAsync(
+                path, 
+                excludePackageIds: ["Newtonsoft.Json"], 
+                ct: ct);
+            
+            Assert.True(result.Success);
+            Assert.Single(result.Updates);
+            Assert.Equal("Serilog", result.Updates[0].PackageId);
+            
+            var written = await File.ReadAllTextAsync(path, ct);
+            Assert.Contains("Include=\"Newtonsoft.Json\" Version=\"12.0.0\"", written); // Newtonsoft.Json should remain unchanged
+            Assert.Contains("Include=\"Serilog\" Version=\"2.11.0\"", written); // Serilog should be updated
+        } finally {
+            File.Delete(path);
+        }
+    }
+
+    [Fact]
+    public async Task UdateAsync_ExcludeIsCaseInsensitive() {
+        var ct = new CancellationToken();
+        var path = WriteTempCsproj(OptedInCsproj);
+        
+        try {
+            var apiClient = new StubNuGetApiClient(new Dictionary<string, string[]> {
+                ["Newtonsoft.Json"] = ["12.0.0", "13.0.0"],
+                ["Serilog"] = ["2.10.0", "2.11.0"]
+            });
+            
+            var updater = new CsprojUpdater(apiClient);
+            var result = await updater.UpdateAsync(
+                path, 
+                excludePackageIds: ["NEWTONSOFT.JSON"],
+                ct: ct);
+            
+            Assert.True(result.Success);
+            Assert.Single(result.Updates);
+            Assert.Equal("Serilog", result.Updates[0].PackageId);
+            
+            var written = await File.ReadAllTextAsync(path, ct);
+            Assert.Contains("Include=\"Newtonsoft.Json\" Version=\"12.0.0\"", written); // Newtonsoft.Json should remain unchanged
+        } finally {
+            File.Delete(path);
+        }
+    }
+
+    [Fact]
+    public async Task UpdateAsync_EmptyExcludeList_HasNoEffect() {
+        var ct = new CancellationToken();
+        var path = WriteTempCsproj(OptedInCsproj);
+        
+        try {
+            var apiClient = new StubNuGetApiClient(new Dictionary<string, string[]> {
+                ["Newtonsoft.Json"] = ["12.0.0", "13.0.0"],
+                ["Serilog"] = ["2.10.0", "2.11.0"]
+            });
+            
+            var updater = new CsprojUpdater(apiClient);
+            var result = await updater.UpdateAsync(
+                path, 
+                excludePackageIds: null, 
+                ct: ct);
+            
+            Assert.True(result.Success);
+            Assert.Equal(2, result.Updates.Count);
+            
+            //var written = await File.ReadAllTextAsync(path, ct);
+            //Assert.Contains("Include=\"Newtonsoft.Json\" Version=\"13.0.0\"", written); // Newtonsoft.Json should be updated
+            //Assert.Contains("Include=\"Serilog\" Version=\"2.11.0\"", written); // Serilog should be updated
+        } finally {
+            File.Delete(path);
+        }
+    }
+
     private static string WriteTempCsproj(string content) {
         var path = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid():N}.csproj");
         File.WriteAllText(path, content);

@@ -47,6 +47,18 @@ var syncWithOption = new Option<string?>(
     Description = "Optional: keep each processed project's <PackageVersion> in sync with the specified dependency package id (e.g. TUnit)."
 };
 
+var scanUnregisteredOption = new Option<bool>(
+    Constants.Cli.ScanUnregisteredOption) {
+    Description = "Optional: Include .csproj files found on disk but not registered as Project(...) entries in the solution.",
+    DefaultValueFactory = _ => false
+};
+
+var excludePackagesOption = new Option<string[]>(
+    Constants.Cli.ExcludePackagesOption) {
+    Description = "Optional: one or more package IDs to exclude from being updated.",
+    AllowMultipleArgumentsPerToken = true
+};
+
 var rootCommand = new RootCommand("Bumps each PackageReference in opted-in projects to its next available NuGet version.")
 {
     solutionOption,
@@ -55,7 +67,9 @@ var rootCommand = new RootCommand("Bumps each PackageReference in opted-in proje
     bumpOwnVersionOption,
     versionSegmentOption,
     projectOption,
-    syncWithOption
+    syncWithOption,
+    scanUnregisteredOption,
+    excludePackagesOption
 };
 
 rootCommand.SetAction(async (parseResult, cancellationToken) => {
@@ -65,6 +79,8 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
     var bumpOwnVersion = parseResult.GetValue(bumpOwnVersionOption);
     var versionSegment = parseResult.GetValue(versionSegmentOption);
     var syncWith = parseResult.GetValue(syncWithOption);
+    var scanUnregistered = parseResult.GetValue(scanUnregisteredOption);
+    var excludePackages = parseResult.GetValue(excludePackagesOption) ?? Array.Empty<string>();
 
     if(solution is null || !solution.Exists) {
         Console.Error.WriteLine($"Error: Solution file not found: {solution?.FullName ?? "(null)"}.");
@@ -77,10 +93,20 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
     Console.WriteLine($"Bump own version: {(bumpOwnVersion ? $"yes ({versionSegment})" : "no")}");
     if(!string.IsNullOrWhiteSpace(syncWith))
         Console.WriteLine($"Sync with: {syncWith}");
+    if(excludePackages.Length > 0)
+        Console.WriteLine($"Excluded packages: {string.Join(", ", excludePackages)}");
     Console.WriteLine();
 
     var allProjects = SolutionScanner.GetProjectPaths(solution.FullName);
     Console.WriteLine($"Found {allProjects.Count} projects in the solution.");
+
+    if(scanUnregistered) {
+        var orphans = SolutionScanner.FindOrphanedCsprojs(solution.FullName);
+        if(orphans.Count > 0) {
+            Console.WriteLine($"Found {orphans.Count} unregistered project(s) on disk:");
+            allProjects = [.. allProjects, .. orphans];
+        }
+    }
 
     var optedInProjects = SolutionScanner.FilterOptedIn(allProjects, CsprojUpdater.IsOptedIn).ToList();
     Console.WriteLine($"{optedInProjects.Count} projects are opted in for updates.");
@@ -129,6 +155,7 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
             bumpOwnVersion,
             versionSegment,
             syncWith,
+            excludePackages.Length > 0 ? excludePackages : null,
             cancellationToken);
 
         allResults.Add(result);

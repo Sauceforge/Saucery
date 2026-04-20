@@ -44,6 +44,7 @@ public sealed class CsprojUpdater(INuGetApiClient apiClient) {
         bool bumpOwnVersion = false,
         VersionSegment versionSegment = VersionSegment.Patch,
         string? syncWithPackageId = null,
+        IReadOnlyList<string>? excludePackageIds = null,
         CancellationToken ct = default) {
         var (rawText, encodingFactory) = ReadPreservingEncoding(projectPath);
 
@@ -69,6 +70,11 @@ public sealed class CsprojUpdater(INuGetApiClient apiClient) {
 
             // Skip if it's the opt-in marker itself
             if(id.Equals(Constants.Package.OptInPackageId, StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            // Skip if it's in the exclude list
+            if(excludePackageIds is not null && 
+                excludePackageIds.Any(e => string.Equals(e, id, StringComparison.OrdinalIgnoreCase)))
                 continue;
 
             var available = await apiClient.GetAvailableVersionsAsync(id, ct).ConfigureAwait(false);

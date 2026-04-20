@@ -24,6 +24,8 @@ dotnet tool install Saucery.NuGet
 - Optionally includes prerelease versions when resolving the next version
 - Optionally increments the project's own `<PackageVersion>` when updates are applied
 - Supports dry-run mode to preview changes without modifying files
+- Optionally scans `csproj` files on disk that are not registered in the solution
+- Optionally excludes specific projects from being updated
 
 ---
 
@@ -148,6 +150,31 @@ saucery-nuget --solution MySolution.sln --project Saucery.TUnit --sync-with TUni
 
 ---
 
+## Scan unregistered projects
+
+Include `.csproj` files found on disk that are not listed as `Project(...)` entries in the solution file:
+
+```bash
+saucery-nuget --solution MySolution.sln --scan-unregistered
+```
+
+Useful when projects exist in the repository but have not been added to the solution.
+
+---
+
+## Exclude packages from updates
+
+Skip one or more packages when resolving new versions using `--exclude-packages`:
+
+```bash
+saucery-nuget --solution MySolution.sln --exclude-packages Microsoft.Extensions.Logging
+saucery-nuget --solution MySolution.sln --exclude-packages Microsoft.Extensions.Logging Newtonsoft.Json
+```
+
+The listed package IDs will not be updated even if newer versions are available.
+
+---
+
 ## All options
 
 | Option | Alias | Description |
@@ -159,6 +186,8 @@ saucery-nuget --solution MySolution.sln --project Saucery.TUnit --sync-with TUni
 | `--version-segment <seg>` |  | `patch` (default), `minor`, or `major` |
 | `--project <name\|path>` | `-p` | Limit processing to opted-in projects. |
 | `--sync-with <packageId>` | `-w` | Sync `<PackageVersion>` with dependency. |
+| `--scan-unregistered` |  | Include `.csproj` files not registered in the solution. |
+| `--exclude-packages <ids>` |  | Exclude one or more packages from updates. |
 
 ---
 
@@ -203,11 +232,12 @@ See our [dogfooding pipeline](https://github.com/Sauceforge/Saucery/blob/master/
 ## How it works
 
 1. Parses the `.sln` file to discover all `.csproj` files
-2. Filters to projects with `<SauceryNuGetOptIn>true</SauceryNuGetOptIn>`
-3. Finds all `PackageReference` entries
-4. Resolves the next version using `NuGet.Versioning`
-5. Updates the `.csproj` file (preserving encoding and BOM)
-6. Optionally updates `<PackageVersion>`
+2. Optionally adds `.csproj` files found on disk that are not registered in the solution (`--scan-unregistered`)
+3. Filters to projects with `<SauceryNuGetOptIn>true</SauceryNuGetOptIn>`
+4. Finds all `PackageReference` entries, skipping any listed in `--exclude-packages`
+5. Resolves the next version using `NuGet.Versioning`
+6. Updates the `.csproj` file (preserving encoding and BOM)
+7. Optionally updates `<PackageVersion>`
 
 ---
 

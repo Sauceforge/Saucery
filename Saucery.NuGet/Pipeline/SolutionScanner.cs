@@ -121,4 +121,29 @@ public static class SolutionScanner {
 
         return result;
     }
+
+    public static IReadOnlyList<string> FindOrphanedCsprojs(string solutionPath) {
+        var solutionDir = Path.GetDirectoryName(Path.GetFullPath(solutionPath))
+            ?? throw new ArgumentException($"Cannot determine directory of solution: {solutionPath}");
+        
+        var registeredPaths  = GetProjectPaths(solutionPath)
+            .Select(Path.GetFullPath)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        var orphans = new List<string>();
+
+        foreach(var file in Directory.EnumerateFiles(solutionDir, "*.csproj", SearchOption.AllDirectories)) {
+            var fullPath = Path.GetFullPath(file);
+            var segments = fullPath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
+            if(segments.Any(s => s.Equals("bin", StringComparison.OrdinalIgnoreCase) ||
+                                 s.Equals("obj", StringComparison.OrdinalIgnoreCase)))
+                continue;
+
+            if(!registeredPaths.Contains(fullPath))
+                orphans.Add(fullPath);
+        }
+        
+        return orphans;
+    }
 }
