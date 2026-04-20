@@ -61,31 +61,27 @@ jobs:
           set -euo pipefail
 
           run_saucery_nuget() {
-            local project="$1"
-            shift
-
             echo "=================================================="
-            echo "Running saucery-nuget for project: $project"
+            echo "Running saucery-nuget"
             if [ "$#" -gt 0 ]; then
-              echo "Extra args: $*"
+              echo "Args: $*"
             else
-              echo "Extra args: (none)"
+              echo "Args: (none)"
             fi
             echo "=================================================="
 
             saucery-nuget \
               --solution "$SOLUTION_FILE" \
-              --project "$project" \
               "$@"
           }
 
-          run_saucery_nuget "Saucery.Core" --bump-own-version
-          run_saucery_nuget "Saucery.TUnit" --sync-with "TUnit"
-          run_saucery_nuget "Saucery.XUnit3" --sync-with "xunit.v3.mtp-v2"
-          run_saucery_nuget "Saucery.XUnit" --sync-with "Saucery.Core"
-          run_saucery_nuget "Saucery" --sync-with "Saucery.Core"
-          run_saucery_nuget "Saucery.Playwright.NUnit" --sync-with "Saucery.Core"
-          saucery-nuget --solution "$SOLUTION_FILE" --scan-unregistered
+          run_saucery_nuget --project "Saucery.Core" --bump-own-version
+          run_saucery_nuget --project "Saucery.TUnit" --sync-with "TUnit"
+          run_saucery_nuget --project "Saucery.XUnit3" --sync-with "xunit.v3.mtp-v2"
+          run_saucery_nuget --project "Saucery.XUnit" --sync-with "Saucery.Core"
+          run_saucery_nuget --project "Saucery" --sync-with "Saucery.Core"
+          run_saucery_nuget --project "Saucery.Playwright.NUnit" --sync-with "Saucery.Core"
+          run_saucery_nuget --scan-unregistered
 
       - name: Commit and push if there are changes
         shell: bash
