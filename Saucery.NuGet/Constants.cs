@@ -31,5 +31,7 @@ internal static class Constants {
         internal const string DryRunOption = "--dry-run";
         internal const string BumpOwnVersionOption = "--bump-own-version";
         internal const string VersionSegmentOption = "--version-segment";
+        internal const string ScanUnregisteredOption = "--scan-unregistered";
+        internal const string ExcludePackagesOption = "--exclude-packages";
     }
 }

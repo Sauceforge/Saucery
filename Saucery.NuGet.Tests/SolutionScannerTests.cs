@@ -216,4 +216,80 @@ public class SolutionScannerTests {
             Directory.Delete(root, true);
         }
     }
+
+    [Fact]
+    public void FindOrphanedCsprojs_ReturnsOrphanNotInSolution() {
+        var tempDir = CreateTempRoot();
+        
+        try {
+            var registeredPath = CreateTempProject(tempDir, "Registered", "<Project />");
+            var orphanPath = CreateTempProject(tempDir, "Orphan", "<Project />");
+            var relPath = Path.Combine("Registered", "Registered.csproj");
+
+            var slnContent =
+                "\r\nMicrosoft Visual Studio Solution File, Format Version 12.00\r\n" +
+                "Project(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"Registered\", \"" + relPath + "\", \"{GUID}\"\r\n" +
+                "EndProject\r\n";
+            
+            var slnPath = Path.Combine(tempDir, "Test.sln");
+            File.WriteAllText(slnPath, slnContent);
+            
+            var result = SolutionScanner.FindOrphanedCsprojs(slnPath);
+            
+            Assert.Single(result);
+            Assert.Equal(Path.GetFullPath(orphanPath), result[0]);
+        } finally {
+            Directory.Delete(tempDir, true);
+        }
+    }
+
+    [Fact]
+    public void FindOrphanedCsprojs_ReturnsEmpty_WhenAllRegistered() {
+        var tempDir = CreateTempRoot();
+        
+        try {
+            var projPath = CreateTempProject(tempDir, "MyProject", "<Project />");
+            var relPath = Path.Combine("MyProject", "MyProject.csproj");
+            
+            
+            var slnContent =
+                "\r\nMicrosoft Visual Studio Solution File, Format Version 12.00\r\n" +
+                "Project(\"{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}\") = \"MyProject\", \"" + relPath + "\", \"{GUID}\"\r\n" +
+                "EndProject\r\n";
+            
+            var slnPath = Path.Combine(tempDir, "Test.sln");
+            File.WriteAllText(slnPath, slnContent);
+            
+            var result = SolutionScanner.FindOrphanedCsprojs(slnPath);
+            
+            Assert.Empty(result);
+        } finally {
+            Directory.Delete(tempDir, true);
+        }
+    }
+
+    [Fact]
+    public void FindOphanedCsprojs_ExcludesBinAndObj() {
+        var tempDir = CreateTempRoot();
+
+        try {
+            var slnContent = "\r\nMicrosoft Visual Studio Solution File, Format Version 12.00\r\n";
+            var slnPath = Path.Combine(tempDir, "Test.sln");
+            File.WriteAllText(slnPath, slnContent);
+
+            var binDir = Path.Combine(tempDir, "SomeProject", "bin", "Debug");
+            Directory.CreateDirectory(binDir);
+            File.WriteAllText(Path.Combine(binDir, "SomeProject.csproj"), "<Project />");
+
+            var objDir = Path.Combine(tempDir, "SomeProject", "obj");
+            Directory.CreateDirectory(objDir);
+            File.WriteAllText(Path.Combine(objDir, "SomeProject.csproj"), "<Project />");
+
+            var result = SolutionScanner.FindOrphanedCsprojs(slnPath);
+
+            Assert.Empty(result);
+        } finally {
+            Directory.Delete(tempDir, true);
+        }
+    }
 }
