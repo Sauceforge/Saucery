@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Saucery.NuGet": {
+      "commandName": "Project",
+      "commandLineArgs": "--solution Saucery.sln --scan-unregistered",
+      "workingDirectory": "C:\\gitrepos\\Saucery"
+    }
+  }
+}

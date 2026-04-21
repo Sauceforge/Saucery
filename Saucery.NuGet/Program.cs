@@ -104,7 +104,8 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
         var orphans = SolutionScanner.FindOrphanedCsprojs(solution.FullName);
         if(orphans.Count > 0) {
             Console.WriteLine($"Found {orphans.Count} unregistered project(s) on disk:");
-            allProjects = [.. allProjects, .. orphans];
+            //allProjects = [.. allProjects, .. orphans];
+            allProjects = orphans;
         }
     }
 
