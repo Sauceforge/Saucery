@@ -33,5 +33,6 @@ internal static class Constants {
         internal const string VersionSegmentOption = "--version-segment";
         internal const string ScanUnregisteredOption = "--scan-unregistered";
         internal const string ExcludePackagesOption = "--exclude-packages";
+        internal const string ExcludeProjectsOption = "--exclude-projects";
     }
 }

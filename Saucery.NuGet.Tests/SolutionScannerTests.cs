@@ -292,4 +292,139 @@ public class SolutionScannerTests {
             Directory.Delete(tempDir, true);
         }
     }
+
+    [Fact]
+    public void FilterExcludedProjects_ExcludesByNameWithoutExtension() {
+        var root = CreateTempRoot();
+
+        try {
+            var core = Path.Combine(root, "Saucery.Core", "Saucery.Core.csproj");
+            var xunit = Path.Combine(root, "Saucery.XUnit", "Saucery.XUnit.csproj");
+            
+            var projects = new[] { core, xunit };
+
+            var result = SolutionScanner.FilterByRequestedProjects(projects, ["Saucery.Core"]);
+
+            Assert.Single(result);
+            Assert.Contains(core, result);
+        } finally {
+            Directory.Delete(root, true);
+        }
+    }
+
+    [Fact]
+    public void FilterExcludedProjects_ExcludesByFilenameWithExtension() {
+        var root = CreateTempRoot();
+        
+        try {
+            var core = Path.Combine(root, "Saucery.Core", "Saucery.Core.csproj");
+            var xunit = Path.Combine(root, "Saucery.XUnit", "Saucery.XUnit.csproj");
+            
+            var projects = new[] { core, xunit };
+            
+            var result = SolutionScanner.FilterByRequestedProjects(projects, ["Saucery.XUnit.csproj"]);
+            
+            Assert.Single(result);
+            Assert.Contains(xunit, result);
+        } finally {
+            Directory.Delete(root, true);
+        }
+    }
+
+    [Fact]
+    public void FilterExcludedProjects_ExcludesByFullPath() {
+        var root = CreateTempRoot();
+        
+        try {
+            var core = Path.Combine(root, "Saucery.Core", "Saucery.Core.csproj");
+            var xunit = Path.Combine(root, "Saucery.XUnit", "Saucery.XUnit.csproj");
+            
+            var projects = new[] { core, xunit };
+            
+            var result = SolutionScanner.FilterByRequestedProjects(projects, [Path.GetFullPath(core)]);
+            
+            Assert.Single(result);
+            Assert.Contains(core, result);
+        } finally {
+            Directory.Delete(root, true);
+        }
+    }
+
+    [Fact]
+    public void FilterExcludedProjects_MultipleExclusions() {
+        var root = CreateTempRoot();
+        
+        try {
+            var core = Path.Combine(root, "Saucery.Core", "Saucery.Core.csproj");
+            var xunit = Path.Combine(root, "Saucery.XUnit", "Saucery.XUnit.csproj");
+            var nuget = Path.Combine(root, "Saucery.NuGet", "Saucery.NuGet.csproj");
+            
+            var projects = new[] { core, xunit, nuget };
+            
+            var result = SolutionScanner.FilterExcludedProjects(projects, ["Saucery.Core", "Saucery.NuGet"]);
+            
+            Assert.Single(result);
+            Assert.Contains(xunit, result);
+        } finally {
+            Directory.Delete(root, true);
+        }
+    }
+
+    [Fact]
+    public void FilterExcludedProjects_NoMatchingExclusions_ReturnsAll() {
+        var root = CreateTempRoot();
+        
+        try {
+            var core = Path.Combine(root, "Saucery.Core", "Saucery.Core.csproj");
+            var xunit = Path.Combine(root, "Saucery.XUnit", "Saucery.XUnit.csproj");
+            
+            var projects = new[] { core, xunit };
+            
+            var result = SolutionScanner.FilterExcludedProjects(projects, ["Nonexistent"]);
+            
+            Assert.Equal(2, result.Count);
+            Assert.Contains(core, result);
+            Assert.Contains(xunit, result);
+        } finally {
+            Directory.Delete(root, true);
+        }
+    }
+
+    [Fact]
+    public void FilterExcludedProjects_EmptyExclusions_ReturnsAll() {
+        var root = CreateTempRoot();
+        
+        try {
+            var core = Path.Combine(root, "Saucery.Core", "Saucery.Core.csproj");
+            var xunit = Path.Combine(root, "Saucery.XUnit", "Saucery.XUnit.csproj");
+            
+            var projects = new[] { core, xunit };
+            
+            var result = SolutionScanner.FilterExcludedProjects(projects, []);
+            
+            Assert.Equal(2, result.Count);
+            Assert.Contains(core, result);
+            Assert.Contains(xunit, result);
+        } finally {
+            Directory.Delete(root, true);
+        }
+    }
+
+    [Fact]
+    public void FilterExcludedProjects_ExcludeAll_ReturnsEmpty() {
+        var root = CreateTempRoot();
+        
+        try {
+            var core = Path.Combine(root, "Saucery.Core", "Saucery.Core.csproj");
+            var xunit = Path.Combine(root, "Saucery.XUnit", "Saucery.XUnit.csproj");
+            
+            var projects = new[] { core, xunit };
+            
+            var result = SolutionScanner.FilterExcludedProjects(projects, ["Saucery.Core", "Saucery.XUnit"]);
+            
+            Assert.Empty(result);
+        } finally {
+            Directory.Delete(root, true);
+        }
+    }
 }

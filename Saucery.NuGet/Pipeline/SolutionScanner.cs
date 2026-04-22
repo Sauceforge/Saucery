@@ -63,6 +63,31 @@ public static class SolutionScanner {
     }
 
     /// <summary>
+    /// Remove projects from the list that match any of the supplied exclude filters via
+    /// the --exclude-projects option. Matching supports:
+    /// - project file name without extension (e.g. Saucery.Core)
+    /// - project file name with extension (e.g. Saucery.Core.csproj)
+    /// - absolute path to the project file
+    /// </summary>
+    /// <param name="projectPaths"></param>
+    /// <param name="excludedFilters"></param>
+    /// <returns></returns>
+    public static List<string> FilterExcludedProjects(
+        IEnumerable<string> projectPaths,
+        IEnumerable<string> excludedFilters)
+    {
+        var projectList = projectPaths.ToList();
+        var filters = excludedFilters?.Select(f => f?.Trim()).Where(s => !string.IsNullOrEmpty(s)).ToList() ?? [];
+
+        return filters.Count == 0
+            ? projectList
+            : [.. projectList.Where(pp => !filters.Any(req =>
+            string.Equals(Path.GetFileNameWithoutExtension(pp), req, StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(Path.GetFileName(pp), req, StringComparison.OrdinalIgnoreCase) ||
+            (Path.IsPathRooted(req) && string.Equals(Path.GetFullPath(req), Path.GetFullPath(pp), StringComparison.OrdinalIgnoreCase))))];
+    }
+
+    /// <summary>
     /// Topologically sort the supplied project paths so that projects referenced by others
     /// appear before dependents. If a cycle is detected, the original ordering is returned.
     /// </summary>

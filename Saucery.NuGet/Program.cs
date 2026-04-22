@@ -59,6 +59,12 @@ var excludePackagesOption = new Option<string[]>(
     AllowMultipleArgumentsPerToken = true
 };
 
+var excludeProjectsOption = new Option<string[]>(
+    Constants.Cli.ExcludeProjectsOption) {
+    Description = "Optional: one or more project names or paths to exclude from processing.",
+    AllowMultipleArgumentsPerToken = true
+};
+
 var rootCommand = new RootCommand("Bumps each PackageReference in opted-in projects to its next available NuGet version.")
 {
     solutionOption,
@@ -69,7 +75,8 @@ var rootCommand = new RootCommand("Bumps each PackageReference in opted-in proje
     projectOption,
     syncWithOption,
     scanUnregisteredOption,
-    excludePackagesOption
+    excludePackagesOption,
+    excludeProjectsOption
 };
 
 rootCommand.SetAction(async (parseResult, cancellationToken) => {
@@ -80,7 +87,8 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
     var versionSegment = parseResult.GetValue(versionSegmentOption);
     var syncWith = parseResult.GetValue(syncWithOption);
     var scanUnregistered = parseResult.GetValue(scanUnregisteredOption);
-    var excludePackages = parseResult.GetValue(excludePackagesOption) ?? Array.Empty<string>();
+    var excludePackages = parseResult.GetValue(excludePackagesOption) ?? [];
+    var excludeProjects = parseResult.GetValue(excludeProjectsOption) ?? [];
 
     if(solution is null || !solution.Exists) {
         Console.Error.WriteLine($"Error: Solution file not found: {solution?.FullName ?? "(null)"}.");
@@ -95,6 +103,8 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
         Console.WriteLine($"Sync with: {syncWith}");
     if(excludePackages.Length > 0)
         Console.WriteLine($"Excluded packages: {string.Join(", ", excludePackages)}");
+    if(excludeProjects.Length > 0)
+        Console.WriteLine($"Excluded projects: {string.Join(", ", excludeProjects)}");
     Console.WriteLine();
 
     var allProjects = SolutionScanner.GetProjectPaths(solution.FullName);
@@ -110,8 +120,14 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
     }
 
     var optedInProjects = SolutionScanner.FilterOptedIn(allProjects, CsprojUpdater.IsOptedIn).ToList();
-    Console.WriteLine($"{optedInProjects.Count} projects are opted in for updates.");
+    Console.WriteLine($"{optedInProjects.Count} project(s) remain after applying --exclude-projects.");
     Console.WriteLine();
+
+    if(excludeProjects.Length > 0) {
+        optedInProjects = SolutionScanner.FilterByRequestedProjects(optedInProjects, excludeProjects);
+        Console.WriteLine($"Excluded {excludeProjects.Length} project(s) by request.");
+        Console.WriteLine();
+    }
 
     var projectFilters = parseResult.GetValue(projectOption) ?? Array.Empty<string>();
 

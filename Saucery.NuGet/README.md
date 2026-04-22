@@ -26,6 +26,7 @@ dotnet tool install Saucery.NuGet
 - Supports dry-run mode to preview changes without modifying files
 - Optionally scans `csproj` files on disk that are not registered in the solution
 - Optionally excludes specific projects from being updated
+- Optionally excludes specific packages from processing
 
 ---
 
@@ -162,16 +163,35 @@ Useful when projects exist in the repository but have not been added to the solu
 
 ---
 
-## Exclude packages from updates
+## Exclude projects from updates
 
-Skip one or more packages when resolving new versions using `--exclude-packages`:
+Skip one or more projects entirely using `--exclude-packages`:
 
 ```bash
-saucery-nuget --solution MySolution.sln --exclude-packages Microsoft.Extensions.Logging
-saucery-nuget --solution MySolution.sln --exclude-packages Microsoft.Extensions.Logging Newtonsoft.Json
+saucery-nuget --solution MySolution.sln --exclude-projects Saucery.Core
+saucery-nuget --solution MySolution.sln --exclude-projects Saucery.Core Saucery.XUnit
 ```
 
-The listed package IDs will not be updated even if newer versions are available.
+You can pass:
+
+- project name (no extension)
+- project filename (`.csproj`)
+- absolute path
+
+The listed projects will be removed from the opted-in set before any processing begins.
+
+---
+
+## Exclude projects from processing
+
+Skip one or more projects when resolving updates using `--exclude-projects`:
+
+```bash
+saucery-nuget --solution MySolution.sln --exclude-projects Saucery.Core
+saucery-nuget --solution MySolution.sln --exclude-projects Saucery.Core Saucery.TUnit
+```
+
+The listed project names or paths will not be processed even if they are opted-in.
 
 ---
 
@@ -188,6 +208,7 @@ The listed package IDs will not be updated even if newer versions are available.
 | `--sync-with <packageId>` | `-w` | Sync `<PackageVersion>` with dependency. |
 | `--scan-unregistered` |  | Include `.csproj` files not registered in the solution. |
 | `--exclude-packages <ids>` |  | Exclude one or more packages from updates. |
+| `--exclude-projects <names>` |  | Exclude one or more projects from processing. |
 
 ---
 
@@ -234,10 +255,11 @@ See our [dogfooding pipeline](https://github.com/Sauceforge/Saucery/blob/master/
 1. Parses the `.sln` file to discover all `.csproj` files
 2. Optionally adds `.csproj` files found on disk that are not registered in the solution (`--scan-unregistered`)
 3. Filters to projects with `<SauceryNuGetOptIn>true</SauceryNuGetOptIn>`
-4. Finds all `PackageReference` entries, skipping any listed in `--exclude-packages`
-5. Resolves the next version using `NuGet.Versioning`
-6. Updates the `.csproj` file (preserving encoding and BOM)
-7. Optionally updates `<PackageVersion>`
+4. Removes any projects listed in `--exclude-projects`
+5. Finds all `PackageReference` entries, skipping any listed in `--exclude-packages`
+6. Resolves the next version using `NuGet.Versioning`
+7. Updates the `.csproj` file (preserving encoding and BOM)
+8. Optionally updates `<PackageVersion>`
 
 ---
 
