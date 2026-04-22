@@ -124,7 +124,7 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
     Console.WriteLine();
 
     if(excludeProjects.Length > 0) {
-        optedInProjects = SolutionScanner.FilterByRequestedProjects(optedInProjects, excludeProjects);
+        optedInProjects = SolutionScanner.FilterExcludedProjects(optedInProjects, excludeProjects);
         Console.WriteLine($"Excluded {excludeProjects.Length} project(s) by request.");
         Console.WriteLine();
     }
