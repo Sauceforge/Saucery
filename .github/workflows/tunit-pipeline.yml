@@ -201,6 +201,13 @@ jobs:
       - name: Compile solution
         run: dotnet build -c ${{ env.CONFIG }}
 
+      - name: Enable Automated Test Report Artifact Upload
+        uses: actions/github-script@v7
+        with:
+          script: |
+            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env['ACTIONS_RUNTIME_TOKEN']);
+            core.exportVariable('ACTIONS_RESULTS_URL', process.env['ACTIONS_RESULTS_URL']);
+
       - name: Run xUnit v3 Unit tests with coverage
         shell: bash
         run: |
@@ -292,13 +299,6 @@ jobs:
         with:
           name: tunit-integration-test-results
           path: ${{ env.COVERLET_DIR }}/${{ env.TUNIT_INTEGRATION_COVERAGE_FILENAME }}
-
-      - name: Upload HTML Test Report
-        uses: actions/upload-artifact@v7
-        if: always()
-        with:
-          name: TestReport
-          path: '**/*-report.html'
 
   tunit-real-integration-tests:
     runs-on: ubuntu-latest
