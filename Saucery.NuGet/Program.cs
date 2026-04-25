@@ -129,7 +129,7 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
         Console.WriteLine();
     }
 
-    var projectFilters = parseResult.GetValue(projectOption) ?? Array.Empty<string>();
+    var projectFilters = parseResult.GetValue(projectOption) ?? [];
 
     if(!string.IsNullOrWhiteSpace(syncWith) && projectFilters.Length == 0) {
         Console.Error.WriteLine("Error: --sync-with requires at least one --project to be specified. Use --project to limit processing to a single project to sync with a dependency.");
@@ -150,7 +150,7 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
     }
 
     // Ensure referenced projects are processed before dependents so --sync-with can read updated PackageVersion
-    optedInProjects = SolutionScanner.TopologicallySortProjects(optedInProjects).ToList();
+    optedInProjects = [.. SolutionScanner.TopologicallySortProjects(optedInProjects)];
 
     if(optedInProjects.Count == 0) {
         Console.WriteLine($"No projects are opted in. Add <PackageReference Include=\"{Constants.Package.OptInPackageId}\" Version=\"...\" /> to opt in.");
