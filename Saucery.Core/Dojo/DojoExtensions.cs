@@ -142,6 +142,7 @@ public static class DojoExtensions
         string platformToSearchFor = $"{sp.Os} {sp.LongVersion}";
         PlatformBase? platform = platformToSearchFor switch
         {
+            "Linux 17.0" => platforms.GetPlatform<Android17Platform>().FirstOrDefault(),
             "Linux 16.0" => platforms.GetPlatform<Android16Platform>().FirstOrDefault(),
             "Linux 15.0" => platforms.GetPlatform<Android15Platform>().FirstOrDefault(),
             "Linux 14.0" => platforms.GetPlatform<Android14Platform>().FirstOrDefault(),
@@ -179,6 +180,7 @@ public static class DojoExtensions
         string platformToSearchFor = $"{sp.Os} {sp.LongVersion}";
         return platformToSearchFor switch
         {
+            "Linux 17" => platforms.GetPlatform<Android17Platform>().FirstOrDefault(),
             "Linux 16" => platforms.GetPlatform<Android16Platform>().FirstOrDefault(),
             "Linux 15" => platforms.GetPlatform<Android15Platform>().FirstOrDefault(),
             "Linux 14" => platforms.GetPlatform<Android14Platform>().FirstOrDefault(),

@@ -1,14 +1,13 @@
 using Saucery.Core.Dojo.Platforms.Base;
 using Saucery.Core.RestAPI.FlowControl;
 using Saucery.Core.Tests.XUnitv3.Fixtures;
-using Saucery.Core.Tests.XUnitv3.REST;
 using Shouldly;
 using System.Collections;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Xunit;
 
-namespace Saucery.Core.Tests.XUnit.REST;
+namespace Saucery.Core.Tests.XUnitv3.REST;
 
 public class RestTests(PlatformConfiguratorAllFixture fixture) : IClassFixture<PlatformConfiguratorAllFixture> {
     private readonly PlatformConfiguratorAllFixture _fixture = fixture;

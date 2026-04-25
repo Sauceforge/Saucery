@@ -8,6 +8,7 @@ public static class AndroidPlatformFactory
 {
     public static PlatformBase? CreatePlatform(SupportedPlatform sp) => sp.short_version switch
     {
+        "17.0" => new Android17PlatformCreator(sp).Create(),
         "16.0" => new Android16PlatformCreator(sp).Create(),
         "15.0" => new Android15PlatformCreator(sp).Create(),
         "14.0" => new Android14PlatformCreator(sp).Create(),
@@ -26,6 +27,7 @@ public static class AndroidPlatformFactory
     };
 
     public static PlatformBase? CreateRealPlatform(SupportedPlatform sp) => sp.OsVersion?.Split(".")[0] switch {
+        "17" => new Android17PlatformCreator(sp).Create(),
         "16" => new Android16PlatformCreator(sp).Create(),
         "15" => new Android15PlatformCreator(sp).Create(),
         "14" => new Android14PlatformCreator(sp).Create(),
