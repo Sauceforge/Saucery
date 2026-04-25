@@ -293,6 +293,13 @@ jobs:
           name: tunit-integration-test-results
           path: ${{ env.COVERLET_DIR }}/${{ env.TUNIT_INTEGRATION_COVERAGE_FILENAME }}
 
+      - name: Upload HTML Test Report
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: TestReport
+          path: '**/*-report.html'
+
   tunit-real-integration-tests:
     runs-on: ubuntu-latest
     needs: build
