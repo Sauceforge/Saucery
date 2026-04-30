@@ -13,7 +13,7 @@
     <!-- Run under TUnit (console test host) -->
     <PackageReference Include="TUnit" Version="1.41.0" />
     <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.6.2" />
-    <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" Version="2.2.1" />
+    <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" Version="2.2.2" />
 
     <!-- Template verifier + assertions -->
     <PackageReference Include="Microsoft.TemplateEngine.Authoring.TemplateVerifier" Version="10.0.203" />
