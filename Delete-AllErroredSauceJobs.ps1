@@ -390,24 +390,6 @@ foreach ($job in $deletable) {
   Write-Host ""
 }
 
-if ($notDeletable.Count -gt 0) {
-  $notDeletablePath = Join-Path (Get-Location) "sauce-analytics-only-not-deletable.csv"
-  $notDeletable |
-    Select-Object CandidateIds, Owner, Name, Status, Created, Error |
-    Export-Csv -Path $notDeletablePath -NoTypeInformation
-
-  Write-Host "Analytics-only report: $notDeletablePath"
-}
-
-if ($failedDeletes.Count -gt 0) {
-  $failedPath = Join-Path (Get-Location) "failed-sauce-deletes.csv"
-  $failedDeletes |
-    Select-Object JobId, Kind, CandidateIds, Owner, Name, Status, Created, Error |
-    Export-Csv -Path $failedPath -NoTypeInformation
-
-  Write-Host "Failed delete report:   $failedPath"
-}
-
 Write-Host ""
 Write-Host "Done."
 Write-Host "-----"
