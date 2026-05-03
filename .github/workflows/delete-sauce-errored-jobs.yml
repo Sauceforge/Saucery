@@ -1,0 +1,35 @@
+name: Delete SauceLabs Errored Jobs
+
+on:
+  schedule:
+    - cron: "0 2 * * *" # Runs daily at 02:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  delete-errored-jobs:
+    runs-on: windows-latest
+
+    env:
+      SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+      SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Verify script exists
+        shell: pwsh
+        run: |
+          if (!(Test-Path "./Delete-AllErroredSauceJobs.ps1")) {
+            Write-Error "Script not found!"
+            exit 1
+          }
+
+      - name: Run deletion script
+        shell: pwsh
+        run: |
+          Set-ExecutionPolicy -Scope Process Bypass
+          ./Delete-AllErroredSauceJobs.ps1 -From "2026-02-01"
