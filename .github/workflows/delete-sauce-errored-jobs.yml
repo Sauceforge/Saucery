@@ -32,4 +32,5 @@ jobs:
         shell: pwsh
         run: |
           Set-ExecutionPolicy -Scope Process Bypass
-          ./Delete-AllErroredSauceJobs.ps1 -From "2026-02-01"
+          $from = (Get-Date).AddDays(-1).ToString("yyyy-MM-dd")
+          ./Delete-AllErroredSauceJobs.ps1 -From $from
