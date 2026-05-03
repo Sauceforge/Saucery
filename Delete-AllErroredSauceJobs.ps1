@@ -206,7 +206,7 @@ function Get-TestResultsForWindowAndStatus {
       "&descending=true" +
       "&status=$Status"
 
-    Write-Host "Fetching Analytics Test Results: $url"
+    Write-Output "Fetching Analytics Test Results: $url"
 
     $response = Invoke-SauceJsonGet -Url $url
     if ($null -eq $response) { break }
@@ -260,14 +260,14 @@ function Resolve-DeletableJob {
   return $null
 }
 
-Write-Host ""
-Write-Host "Sauce region:   $Region"
-Write-Host "Sauce user:     $SauceUser"
-Write-Host "From UTC:       $($From.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"))"
-Write-Host "To UTC:         $($To.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"))"
-Write-Host "Statuses:       $($statuses -join ', ')"
-Write-Host "Dry run:        $DryRun"
-Write-Host ""
+Write-Output ""
+Write-Output "Sauce region:   $Region"
+Write-Output "Sauce user:     $SauceUser"
+Write-Output "From UTC:       $($From.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"))"
+Write-Output "To UTC:         $($To.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"))"
+Write-Output "Statuses:       $($statuses -join ', ')"
+Write-Output "Dry run:        $DryRun"
+Write-Output ""
 
 $analyticsSeen = @{}
 $analyticsRecords = @()
@@ -278,8 +278,8 @@ while ($cursor -lt $To) {
   $windowEnd = $cursor.AddDays($ChunkDays)
   if ($windowEnd -gt $To) { $windowEnd = $To }
 
-  Write-Host ""
-  Write-Host "Window: $($cursor.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")) -> $($windowEnd.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"))"
+  Write-Output ""
+  Write-Output "Window: $($cursor.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")) -> $($windowEnd.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss"))"
 
   foreach ($status in $statuses) {
     $items = @(Get-TestResultsForWindowAndStatus -WindowStart $cursor -WindowEnd $windowEnd -Status $status)
@@ -299,10 +299,10 @@ while ($cursor -lt $To) {
   $cursor = $windowEnd
 }
 
-Write-Host ""
-Write-Host "Analytics errored records found: $($analyticsRecords.Count)"
-Write-Host "Resolving deletable jobs..."
-Write-Host ""
+Write-Output ""
+Write-Output "Analytics errored records found: $($analyticsRecords.Count)"
+Write-Output "Resolving deletable jobs..."
+Write-Output ""
 
 $deletable = @()
 $notDeletable = @()
@@ -312,7 +312,7 @@ foreach ($item in $analyticsRecords) {
   $count++
   $candidateIds = @(Get-CandidateJobIds -Item $item)
 
-  Write-Host "Resolving [$count / $($analyticsRecords.Count)]: $($candidateIds -join ', ')"
+  Write-Output "Resolving [$count / $($analyticsRecords.Count)]: $($candidateIds -join ', ')"
 
   $resolved = Resolve-DeletableJob -CandidateIds $candidateIds
 
@@ -345,41 +345,41 @@ foreach ($item in $analyticsRecords) {
   }
 }
 
-Write-Host ""
-Write-Host "Accurate summary"
-Write-Host "----------------"
-Write-Host "Analytics errored records found: $($analyticsRecords.Count)"
-Write-Host "Deletable errored jobs found:   $($deletable.Count)"
-Write-Host "Analytics-only / not deletable: $($notDeletable.Count)"
-Write-Host ""
+Write-Output ""
+Write-Output "Accurate summary"
+Write-Output "----------------"
+Write-Output "Analytics errored records found: $($analyticsRecords.Count)"
+Write-Output "Deletable errored jobs found:   $($deletable.Count)"
+Write-Output "Analytics-only / not deletable: $($notDeletable.Count)"
+Write-Output ""
 
 $deleted = 0
 $failedDeletes = @()
 
 foreach ($job in $deletable) {
-  Write-Host "DELETABLE ERRORED JOB:"
-  Write-Host "  Job Id:     $($job.JobId)"
-  Write-Host "  Kind:       $($job.Kind)"
-  Write-Host "  Name:       $($job.Name)"
-  Write-Host "  Status:     $($job.Status)"
-  Write-Host "  Created:    $($job.Created)"
-  Write-Host "  Error:      $($job.Error)"
+  Write-Output "DELETABLE ERRORED JOB:"
+  Write-Output "  Job Id:     $($job.JobId)"
+  Write-Output "  Kind:       $($job.Kind)"
+  Write-Output "  Name:       $($job.Name)"
+  Write-Output "  Status:     $($job.Status)"
+  Write-Output "  Created:    $($job.Created)"
+  Write-Output "  Error:      $($job.Error)"
 
   if ($VerboseJobDump) {
-    Write-Host "  Raw:"
+    Write-Output "  Raw:"
     $job.Raw | ConvertTo-Json -Depth 30
   }
 
   if ($DryRun) {
-    Write-Host "DRY RUN: would delete $($job.DeleteUrl)"
-    Write-Host ""
+    Write-Output "DRY RUN: would delete $($job.DeleteUrl)"
+    Write-Output ""
     continue
   }
 
   $deleteResult = Invoke-SauceWeb -Method DELETE -Url $job.DeleteUrl
 
   if ($deleteResult.Success -or $deleteResult.StatusCode -eq 404) {
-    Write-Host "Deleted or already gone: $($job.JobId)"
+    Write-Output "Deleted or already gone: $($job.JobId)"
     $deleted++
   }
   else {
@@ -387,19 +387,19 @@ foreach ($job in $deletable) {
     $failedDeletes += $job
   }
 
-  Write-Host ""
+  Write-Output ""
 }
 
-Write-Host ""
-Write-Host "Done."
-Write-Host "-----"
-Write-Host "Analytics errored records found: $($analyticsRecords.Count)"
-Write-Host "Deletable errored jobs found:   $($deletable.Count)"
-Write-Host "Deleted:                       $deleted"
-Write-Host "Analytics-only / not deletable: $($notDeletable.Count)"
-Write-Host "Failed deletes:                 $($failedDeletes.Count)"
+Write-Output ""
+Write-Output "Done."
+Write-Output "-----"
+Write-Output "Analytics errored records found: $($analyticsRecords.Count)"
+Write-Output "Deletable errored jobs found:   $($deletable.Count)"
+Write-Output "Deleted:                       $deleted"
+Write-Output "Analytics-only / not deletable: $($notDeletable.Count)"
+Write-Output "Failed deletes:                 $($failedDeletes.Count)"
 
 if ($DryRun) {
-  Write-Host ""
-  Write-Host "Dry run only. Nothing was deleted."
+  Write-Output ""
+  Write-Output "Dry run only. Nothing was deleted."
 }
