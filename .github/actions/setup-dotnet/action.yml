@@ -1,0 +1,12 @@
+name: Setup .NET SDK
+inputs:
+  dotnet-version:
+    required: false
+    default: 10.0.x
+runs:
+  using: composite
+  steps:
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: ${{ inputs.dotnet-version }}
