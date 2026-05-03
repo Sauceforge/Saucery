@@ -10,6 +10,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{55213913-D55D-41EC-ADEC-F87672492ECB}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\core-pipeline.yml = .github\workflows\core-pipeline.yml
+		Delete-AllErroredSauceJobs.ps1 = Delete-AllErroredSauceJobs.ps1
 		.github\workflows\delete-sauce-errored-jobs.yml = .github\workflows\delete-sauce-errored-jobs.yml
 		.github\dependabot.yml = .github\dependabot.yml
 		.github\workflows\json-yaml-validate.yml = .github\workflows\json-yaml-validate.yml
