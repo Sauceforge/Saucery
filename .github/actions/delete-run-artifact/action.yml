@@ -1,0 +1,38 @@
+name: Delete artifact created by this run
+inputs:
+  artifact-name:
+    required: true
+  github-token:
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Ensure jq is installed
+      shell: bash
+      run: sudo apt-get update && sudo apt-get install -y jq
+    - name: Delete artifact from this run
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        BUILD_ARTIFACTS: ${{ inputs.artifact-name }}
+      run: |
+        set -euo pipefail
+        API="https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts"
+        PAGE=1
+        while :; do
+          RESP=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" "${API}?per_page=100&page=${PAGE}")
+          COUNT=$(echo "$RESP" | jq '.artifacts | length')
+          if [ "$COUNT" -eq 0 ]; then break; fi
+          echo "$RESP" | jq -c '.artifacts[]' | while read -r ART; do
+            ART_ID=$(echo "$ART" | jq -r '.id')
+            ART_NAME=$(echo "$ART" | jq -r '.name')
+            RUN_ID=$(echo "$ART" | jq -r '.workflow_run.id // empty')
+            if [ "$RUN_ID" = "$GITHUB_RUN_ID" ] && [ "$ART_NAME" = "$BUILD_ARTIFACTS" ]; then
+              echo "Deleting artifact ${ART_NAME} (id=${ART_ID}) for run ${RUN_ID}"
+              curl -s -X DELETE -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" \
+                "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/${ART_ID}"
+            fi
+          done
+          PAGE=$((PAGE+1))
+        done
+        echo "Cleanup complete."

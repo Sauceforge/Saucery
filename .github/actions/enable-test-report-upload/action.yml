@@ -1,0 +1,10 @@
+name: Enable automated test report artifact upload
+runs:
+  using: composite
+  steps:
+    - name: Enable Automated Test Report Artifact Upload
+      uses: actions/github-script@v9
+      with:
+        script: |
+          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env['ACTIONS_RUNTIME_TOKEN']);
+          core.exportVariable('ACTIONS_RESULTS_URL', process.env['ACTIONS_RESULTS_URL']);

@@ -1,0 +1,25 @@
+name: Run coverlet project coverage
+inputs:
+  test-project:
+    required: true
+  output:
+    required: true
+  output-format:
+    required: false
+    default: cobertura
+  excludes:
+    required: false
+    default: ''
+runs:
+  using: composite
+  steps:
+    - name: Ensure TestResults dir exists
+      shell: bash
+      run: mkdir -p "${{ github.workspace }}/TestResults"
+    - name: Run project with coverlet-action
+      uses: b3b00/coverlet-action@1.3.5
+      with:
+        testProject: ${{ inputs.test-project }}
+        output: ${{ inputs.output }}
+        outputFormat: ${{ inputs.output-format }}
+        excludes: ${{ inputs.excludes }}

@@ -1,0 +1,62 @@
+name: Find and run compiled test DLL with coverage
+inputs:
+  search-root:
+    required: true
+  dll-name:
+    required: true
+  runtimeconfig-name:
+    required: true
+  coverage-output:
+    required: true
+  coverage-format:
+    required: false
+    default: cobertura
+  results-directory:
+    required: false
+    default: ./TestResults
+  runner-kind:
+    required: false
+    default: mtp
+runs:
+  using: composite
+  steps:
+    - name: Find and run compiled test DLL
+      shell: bash
+      run: |
+        set -euo pipefail
+        mkdir -p '${{ inputs.results-directory }}'
+        echo "Searching for runnable ${{ inputs.dll-name }} under ${{ inputs.search-root }}..."
+        DLL=""
+        while IFS= read -r CANDIDATE; do
+          DIR="$(dirname "$CANDIDATE")"
+          if [[ -f "$DIR/${{ inputs.runtimeconfig-name }}" ]]; then
+            DLL="$CANDIDATE"
+            break
+          fi
+        done < <(find '${{ inputs.search-root }}' -type f -name '${{ inputs.dll-name }}' ! -path '*/obj/*' ! -path '*/ref/*' -print)
+
+        if [[ -z "$DLL" ]]; then
+          echo "ERROR: runnable ${{ inputs.dll-name }} not found (no adjacent runtimeconfig)." >&2
+          find '${{ inputs.search-root }}' -type f -name '${{ inputs.dll-name }}' -print || true
+          find '${{ inputs.search-root }}' -type f -name '${{ inputs.runtimeconfig-name }}' -print || true
+          exit 1
+        fi
+
+        echo "Running $DLL"
+        if [[ '${{ inputs.runner-kind }}' == 'tunit' ]]; then
+          dotnet "$DLL" \
+            --coverage \
+            --coverage-output '${{ inputs.coverage-output }}' \
+            --coverage-output-format '${{ inputs.coverage-format }}' \
+            --results-directory '${{ inputs.results-directory }}' \
+            --log-level Debug
+        else
+          dotnet "$DLL" \
+            --results-directory '${{ inputs.results-directory }}' \
+            --diagnostic \
+            --diagnostic-verbosity Debug \
+            --diagnostic-output-directory '${{ inputs.results-directory }}' \
+            --coverage \
+            --coverage-output-format '${{ inputs.coverage-format }}' \
+            --coverage-output '${{ inputs.coverage-output }}'
+        fi

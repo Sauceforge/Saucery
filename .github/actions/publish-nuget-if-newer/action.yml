@@ -1,0 +1,110 @@
+name: Pack and publish NuGet package if local version is newer
+inputs:
+  project-path:
+    required: true
+  package-id:
+    required: true
+  build-configuration:
+    required: false
+    default: Release
+  artifact-dir:
+    required: false
+    default: artifacts
+  nuget-api-key:
+    required: true
+  pack-no-build:
+    required: false
+    default: 'false'
+outputs:
+  local_version:
+    value: ${{ steps.localver.outputs.version }}
+  publish:
+    value: ${{ steps.decide.outputs.publish }}
+runs:
+  using: composite
+  steps:
+    - name: Ensure jq is available
+      shell: bash
+      run: |
+        if ! command -v jq >/dev/null 2>&1; then
+          sudo apt-get update
+          sudo apt-get install -y jq
+        fi
+    - name: Build and pack
+      shell: bash
+      run: |
+        set -euo pipefail
+        mkdir -p '${{ inputs.artifact-dir }}'
+        if [[ '${{ inputs.pack-no-build }}' == 'true' ]]; then
+          dotnet pack '${{ inputs.project-path }}' -c '${{ inputs.build-configuration }}' -o '${{ inputs.artifact-dir }}' --no-build
+        else
+          dotnet restore '${{ inputs.project-path }}'
+          dotnet build '${{ inputs.project-path }}' -c '${{ inputs.build-configuration }}' --no-restore
+          dotnet pack '${{ inputs.project-path }}' -c '${{ inputs.build-configuration }}' -o '${{ inputs.artifact-dir }}' --no-build
+        fi
+    - name: Determine local packed version
+      id: localver
+      shell: bash
+      run: |
+        set -euo pipefail
+        NUPKG="$(ls '${{ inputs.artifact-dir }}'/${{ inputs.package-id }}.*.nupkg | grep -v '\.symbols\.nupkg' | head -n1)"
+        if [[ -z "${NUPKG:-}" ]]; then
+          echo "No nupkg found for ${{ inputs.package-id }} in ${{ inputs.artifact-dir }}" >&2
+          exit 1
+        fi
+        BASENAME="$(basename "$NUPKG")"
+        LOCAL_VERSION="${BASENAME#${{ inputs.package-id }}.}"
+        LOCAL_VERSION="${LOCAL_VERSION%.nupkg}"
+        echo "nupkg=$NUPKG" >> "$GITHUB_OUTPUT"
+        echo "version=$LOCAL_VERSION" >> "$GITHUB_OUTPUT"
+        echo "Local version: $LOCAL_VERSION"
+    - name: Query NuGet for latest published version
+      id: remotever
+      shell: bash
+      run: |
+        set -euo pipefail
+        LOWER_ID="$(echo '${{ inputs.package-id }}' | tr '[:upper:]' '[:lower:]')"
+        INDEX_URL="https://api.nuget.org/v3-flatcontainer/${LOWER_ID}/index.json"
+        if ! curl -fsSL "$INDEX_URL" -o /tmp/nuget_index.json; then
+          echo "version=" >> "$GITHUB_OUTPUT"
+          echo "Package not found on NuGet (first publish)."
+          exit 0
+        fi
+        REMOTE_VERSION="$(jq -r '.versions | last // empty' /tmp/nuget_index.json)"
+        echo "version=$REMOTE_VERSION" >> "$GITHUB_OUTPUT"
+        echo "Remote version: ${REMOTE_VERSION:-<none>}"
+    - name: Decide if publish is needed
+      id: decide
+      shell: bash
+      run: |
+        set -euo pipefail
+        LOCAL='${{ steps.localver.outputs.version }}'
+        REMOTE='${{ steps.remotever.outputs.version }}'
+        if [[ -z "$REMOTE" ]]; then
+          echo "publish=true" >> "$GITHUB_OUTPUT"
+          echo "No remote version; will publish."
+          exit 0
+        fi
+        HIGHEST="$(printf '%s\n' "$REMOTE" "$LOCAL" | sort -V | tail -n1)"
+        if [[ "$HIGHEST" == "$LOCAL" && "$LOCAL" != "$REMOTE" ]]; then
+          echo "publish=true" >> "$GITHUB_OUTPUT"
+          echo "Local ($LOCAL) > Remote ($REMOTE); will publish."
+        else
+          echo "publish=false" >> "$GITHUB_OUTPUT"
+          echo "Local ($LOCAL) is NOT greater than Remote ($REMOTE); skipping publish."
+        fi
+    - name: Publish to NuGet only if newer
+      if: steps.decide.outputs.publish == 'true'
+      shell: bash
+      env:
+        NUGET_API_KEY: ${{ inputs.nuget-api-key }}
+      run: |
+        set -euo pipefail
+        if [[ -z "${NUGET_API_KEY:-}" ]]; then
+          echo "NUGET_API_KEY secret is missing." >&2
+          exit 1
+        fi
+        dotnet nuget push '${{ steps.localver.outputs.nupkg }}' \
+          --api-key "$NUGET_API_KEY" \
+          --source https://api.nuget.org/v3/index.json \
+          --skip-duplicate

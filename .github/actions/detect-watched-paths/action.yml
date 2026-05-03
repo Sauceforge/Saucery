@@ -1,0 +1,103 @@
+name: Detect watched path changes since last completed run
+inputs:
+  workflow-id:
+    required: true
+  watched-globs:
+    required: true
+  github-token:
+    required: true
+outputs:
+  changed:
+    value: ${{ steps.decide.outputs.changed }}
+  paths_changed:
+    value: ${{ steps.decide.outputs.paths_changed }}
+  previous_sha:
+    value: ${{ steps.decide.outputs.previous_sha }}
+runs:
+  using: composite
+  steps:
+    - name: Resolve previous run and watched path changes
+      id: decide
+      uses: actions/github-script@v9
+      env:
+        WATCHED_GLOBS: ${{ inputs.watched-globs }}
+        WORKFLOW_ID: ${{ inputs.workflow-id }}
+      with:
+        github-token: ${{ inputs.github-token }}
+        script: |
+          const { owner, repo } = context.repo;
+          const branch = context.ref.replace('refs/heads/', '');
+          const workflow_id = process.env.WORKFLOW_ID;
+
+          const runs = await github.rest.actions.listWorkflowRuns({
+            owner,
+            repo,
+            workflow_id,
+            branch,
+            status: 'completed',
+            per_page: 1
+          });
+
+          const prevSha = runs.data.workflow_runs[0]?.head_sha || '';
+          const curSha = context.sha;
+
+          core.info(`Event:       ${context.eventName}`);
+          core.info(`Branch:      ${branch}`);
+          core.info(`Current SHA: ${curSha}`);
+          core.info(`Prev SHA:    ${prevSha || '<none>'}`);
+
+          let changed = 'true';
+          let pathsChanged = 'true';
+
+          const watchedGlobs = (process.env.WATCHED_GLOBS || '')
+            .split(/[\n,]+/g)
+            .map(x => x.trim())
+            .filter(Boolean);
+
+          core.info(`WATCHED_GLOBS: [${watchedGlobs.join(', ')}]`);
+
+          function globToRegexSource(pattern) {
+            let out = '';
+            for (let i = 0; i < pattern.length; i++) {
+              const ch = pattern[i];
+              if (ch === '*') {
+                const nextIsStar = i + 1 < pattern.length && pattern[i + 1] === '*';
+                if (nextIsStar) {
+                  out += '.*';
+                  i++;
+                } else {
+                  out += '[^/]*';
+                }
+              } else if (ch === '/') {
+                out += '\\/';
+              } else if ('\\.[]{}()+-?^$|'.includes(ch)) {
+                out += '\\' + ch;
+              } else {
+                out += ch;
+              }
+            }
+            return out;
+          }
+
+          function matchesGlob(path, pattern) {
+            return new RegExp('^' + globToRegexSource(pattern) + '$').test(path);
+          }
+
+          if (!prevSha) {
+            core.info('No previous completed run for this workflow+branch. Treating as changed.');
+          } else if (prevSha === curSha) {
+            changed = 'false';
+            pathsChanged = 'false';
+            core.info('No new commits since last completed run on this branch.');
+          } else {
+            const comparison = await github.rest.repos.compareCommits({ owner, repo, base: prevSha, head: curSha });
+            const changedPaths = (comparison.data.files || []).map(f => f.filename);
+            core.info('Changed files since last run:');
+            changedPaths.length ? changedPaths.forEach(p => core.info(` - ${p}`)) : core.info(' (none reported)');
+            pathsChanged = watchedGlobs.length === 0 || changedPaths.some(path => watchedGlobs.some(pattern => matchesGlob(path, pattern))) ? 'true' : 'false';
+            core.info(pathsChanged === 'true' ? 'Detected changes in watched paths.' : 'No changes in watched paths.');
+          }
+
+          core.setOutput('changed', changed);
+          core.setOutput('paths_changed', pathsChanged);
+          core.setOutput('previous_sha', prevSha);

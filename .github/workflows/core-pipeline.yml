@@ -2,754 +2,346 @@ name: Saucery.Core Pipeline
 
 on:
   pull_request:
-     branches:
-      - '**'
+    branches: ['**']
   push:
     paths:
       - '.github/workflows/core-pipeline.yml'
+      - '.github/actions/**'
       - 'Saucery.Core/**'
-    branches:
-      - master
-      - 'releases/**'
-      - 'feat/**'
-      - 'feature/**'
-      - 'fix/**'
-      - 'test/**'
-      - 'bug/**'
+    branches: [master, 'releases/**', 'feat/**', 'feature/**', 'fix/**', 'test/**', 'bug/**']
   workflow_dispatch:
   schedule:
-    # Runs first day of the month at midnight UTC
     - cron: "0 0 1 * *"
 
 run-name: ${{ github.event.head_commit.message || github.event.inputs.message || 'Manual Run' }}
+
+permissions:
+  contents: write
 
 env:
   PROJECT_NAME: Saucery
   SOLN_FILE: Saucery.sln
   COVERLET_DIR: ./TestResults
-
-  NUNIT_INT_DIR: Merlin.NUnit
-  XUNIT_INT_DIR: Merlin.XUnit
-  XUNIT3_INT_DIR: Merlin.XUnit3
-  XUNIT3_INT_TEST_RESULTS_DIR: Merlin.XUnit3/bin/Release/net10.0/TestResults
-  TUNIT_INT_DIR: Merlin.TUnit
-
-  NUNIT_RD_INT_DIR: Merlin.NUnit.RealDevices
-  XUNIT_RD_INT_DIR: Merlin.XUnit.RealDevices
-  XUNIT3_RD_INT_DIR: Merlin.XUnit3.RealDevices
-  XUNIT3_RD_INT_TEST_RESULTS_DIR: Merlin.XUnit3.RealDevices/bin/Release/net10.0/TestResults
-  TUNIT_RD_INT_DIR: Merlin.TUnit.RealDevices
+  CONFIG: Release
+  BUILD_ARTIFACTS: build-artifacts
+  COVERAGE_FORMAT: cobertura
 
   UT_PROJECT: Saucery.Core.Tests.XUnitv3/Saucery.Core.Tests.XUnitv3.csproj
   TT_PROJECT: Template.Tests/Template.Tests.csproj
-
   M_NUNIT_PROJECT: Merlin.NUnit/Merlin.NUnit.csproj
   M_RD_NUNIT_PROJECT: Merlin.NUnit.RealDevices/Merlin.NUnit.RealDevices.csproj
-
   M_XUNIT_PROJECT: Merlin.XUnit/Merlin.XUnit.csproj
   M_RD_XUNIT_PROJECT: Merlin.XUnit.RealDevices/Merlin.XUnit.RealDevices.csproj
 
-  M_XUNIT3_PROJECT: Merlin.XUnit3/Merlin.XUnit3.csproj
-  M_RD_XUNIT3_PROJECT: Merlin.XUnit3.RealDevices/Merlin.XUnit3.RealDevices.csproj
-
-  M_TUNIT_PROJECT: Merlin.TUnit/Merlin.TUnit.csproj
-  M_RD_TUNIT_PROJECT: Merlin.TUnit.RealDevices/Merlin.TUnit.RealDevices.csproj
+  UNIT_COVERAGE_FILENAME: opencover.unit.xml
+  NUNIT_INTEGRATION_COVERAGE_FILENAME: opencover.nunit.integration.xml
+  XUNIT_INTEGRATION_COVERAGE_FILENAME: opencover.xunit.integration.xml
+  NUNIT_RD_INTEGRATION_COVERAGE_FILENAME: opencover.nunit.realdevice.integration.xml
+  XUNIT_RD_INTEGRATION_COVERAGE_FILENAME: opencover.xunit.realdevice.integration.xml
+  XUNIT3_INTEGRATION_COVERAGE_FILENAME: opencover.xunit3.integration.xml
+  XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME: opencover.xunit3.realdevice.integration.xml
+  TUNIT_INTEGRATION_COVERAGE_FILENAME: opencover.tunit.integration.xml
+  TUNIT_RD_INTEGRATION_COVERAGE_FILENAME: opencover.tunit.realdevice.integration.xml
 
   SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
   SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
   CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
 
-  CONFIG: Release
-  APP_PACKAGE_PATH: 'published'
-
-  COVERAGE_FORMAT: cobertura
-  UNIT_COVERAGE_FILENAME: opencover.unit.xml
-  NUNIT_INTEGRATION_COVERAGE_FILENAME: opencover.nunit.integration.xml
-  XUNIT_INTEGRATION_COVERAGE_FILENAME: opencover.xunit.integration.xml
-  XUNIT3_INTEGRATION_COVERAGE_FILENAME: opencover.xunit3.integration.xml
-  TUNIT_INTEGRATION_COVERAGE_FILENAME: opencover.tunit.integration.xml
-  NUNIT_RD_INTEGRATION_COVERAGE_FILENAME: opencover.nunit.realdevice.integration.xml
-  XUNIT_RD_INTEGRATION_COVERAGE_FILENAME: opencover.xunit.realdevice.integration.xml
-  XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME: opencover.xunit3.realdevice.integration.xml
-  TUNIT_RD_INTEGRATION_COVERAGE_FILENAME: opencover.tunit.realdevice.integration.xml
-
-  COVERAGE_THRESHOLD: 80
-  BUILD_ARTIFACTS: build-artifacts
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v6
-
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: 10.0.x
-
-    - name: Restore solution
-      run: dotnet restore
-
-    - name: Compile solution
-      run: dotnet build -c ${{ env.CONFIG }} --no-restore
-
-    - name: Run xUnit v3 unit tests with coverage
-      shell: bash
-      run: |
-        set -euo pipefail
-        mkdir -p "${{ github.workspace }}/${{ env.COVERLET_DIR }}"
-
-        dotnet run -c ${{ env.CONFIG }} \
-          --project ${{ env.UT_PROJECT }} -- \
-          --coverage \
-          --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
-          --coverage-output "${{ env.UNIT_COVERAGE_FILENAME }}"
-    
-    - name: Enable Automated Test Report Artifact Upload
-      uses: actions/github-script@v9
-      with:
-        script: |
-          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env['ACTIONS_RUNTIME_TOKEN']);
-          core.exportVariable('ACTIONS_RESULTS_URL', process.env['ACTIONS_RESULTS_URL']);
-
-    - name: Run Template Tests
-      run: dotnet run -c ${{ env.CONFIG }} --project ${{ env.TT_PROJECT }} --no-build
-
-    - name: Upload compiled artifacts
-      uses: actions/upload-artifact@v7
-      with:
-        name: ${{ env.BUILD_ARTIFACTS }}
-        path: |
-          **/bin/${{ env.CONFIG }}/**/
-          **/obj/
-
-    - name: Publish Unit Test Results
-      uses: actions/upload-artifact@v7
-      with:
-        name: unit-test-results
-        path: Saucery.Core.Tests.XUnitv3/bin/${{ env.CONFIG }}/net10.0/TestResults/${{ env.UNIT_COVERAGE_FILENAME }}
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-dotnet
+      - name: Restore solution
+        run: dotnet restore
+      - name: Compile solution
+        run: dotnet build -c ${{ env.CONFIG }} --no-restore
+      - uses: ./.github/actions/run-xunit3-coverage
+        with:
+          project: ${{ env.UT_PROJECT }}
+          configuration: ${{ env.CONFIG }}
+          coverage-format: ${{ env.COVERAGE_FORMAT }}
+          coverage-output: ${{ env.UNIT_COVERAGE_FILENAME }}
+      - uses: ./.github/actions/enable-test-report-upload
+      - name: Run Template Tests
+        run: dotnet run -c ${{ env.CONFIG }} --project ${{ env.TT_PROJECT }} --no-build
+      - name: Upload compiled artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ env.BUILD_ARTIFACTS }}
+          path: |
+            **/bin/${{ env.CONFIG }}/**/
+            **/obj/
+      - name: Publish Unit Test Results
+        uses: actions/upload-artifact@v7
+        with:
+          name: unit-test-results
+          path: Saucery.Core.Tests.XUnitv3/bin/${{ env.CONFIG }}/net10.0/TestResults/${{ env.UNIT_COVERAGE_FILENAME }}
 
   xunit3-integration-tests:
     runs-on: ubuntu-latest
     needs: build
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v6
-
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: 10.0.x
-
-    - name: Download build artifacts
-      uses: actions/download-artifact@v8
-      with:
-        name: ${{ env.BUILD_ARTIFACTS }}
-        path: .   # restore bin/obj into expected project paths
-
-    - name: Run XUnit3 Integration Tests
-      shell: bash
-      run: |
-        set -euo pipefail
-        mkdir -p "${{ github.workspace }}/${{ env.COVERLET_DIR }}"
-
-        echo "Searching for runnable Merlin.XUnit3.dll under Merlin.XUnit3..."
-        DLL=""
-        while IFS= read -r CANDIDATE; do
-          DIR="$(dirname "$CANDIDATE")"
-          if [[ -f "$DIR/Merlin.XUnit3.runtimeconfig.json" ]]; then
-            DLL="$CANDIDATE"
-            break
-          fi
-        done < <(find "Merlin.XUnit3" -type f -name "Merlin.XUnit3.dll" \
-                  ! -path "*/obj/*" ! -path "*/ref/*" -print)
-
-        if [[ -z "$DLL" ]]; then
-          echo "ERROR: runnable Merlin.XUnit3.dll not found (no adjacent runtimeconfig)."
-          find "Merlin.XUnit3" -type f -name "Merlin.XUnit3.dll" -print || true
-          find "Merlin.XUnit3" -type f -name "Merlin.XUnit3.runtimeconfig.json" -print || true
-          exit 1
-        fi
-
-        echo "Running $DLL"
-        dotnet "$DLL" \
-          --results-directory "${{ env.COVERLET_DIR }}" \
-          --diagnostic \
-          --diagnostic-verbosity Debug \
-          --diagnostic-output-directory "${{ env.COVERLET_DIR }}" \
-          --coverage \
-          --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
-          --coverage-output "${{ env.XUNIT3_INTEGRATION_COVERAGE_FILENAME }}"
-
-        echo "Contents of ${{ env.COVERLET_DIR }}:"
-        ls -la "${{ github.workspace }}/${{ env.COVERLET_DIR }}" || true
-
-    - name: Publish XUnit3 Integration Artifacts
-      if: ${{ always() }}
-      uses: actions/upload-artifact@v7
-      with:
-        name: xunit3-integration-test-results
-        path: ${{ env.COVERLET_DIR }}/${{ env.XUNIT3_INTEGRATION_COVERAGE_FILENAME }}
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-dotnet
+      - name: Download build artifacts
+        uses: actions/download-artifact@v8
+        with:
+          name: ${{ env.BUILD_ARTIFACTS }}
+          path: .
+      - uses: ./.github/actions/run-dotnet-dll-coverage
+        with:
+          search-root: Merlin.XUnit3
+          dll-name: Merlin.XUnit3.dll
+          runtimeconfig-name: Merlin.XUnit3.runtimeconfig.json
+          coverage-format: ${{ env.COVERAGE_FORMAT }}
+          results-directory: ${{ env.COVERLET_DIR }}
+          coverage-output: ${{ env.XUNIT3_INTEGRATION_COVERAGE_FILENAME }}
+      - uses: actions/upload-artifact@v7
+        with:
+          name: xunit3-integration-test-results
+          path: ${{ env.COVERLET_DIR }}/${{ env.XUNIT3_INTEGRATION_COVERAGE_FILENAME }}
 
   xunit3-real-integration-tests:
     runs-on: ubuntu-latest
     needs: build
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v6
-
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: 10.0.x
-
-    - name: Download build artifacts
-      uses: actions/download-artifact@v8
-      with:
-        name: ${{ env.BUILD_ARTIFACTS }}
-        path: .   # restore bin/obj into expected project paths
-
-    - name: Run XUnit3 Real Integration Tests
-      shell: bash
-      run: |
-        set -euo pipefail
-        mkdir -p "${{ github.workspace }}/${{ env.COVERLET_DIR }}"
-
-        echo "Searching for runnable Merlin.XUnit3.RealDevices.dll under Merlin.XUnit3.RealDevices..."
-        DLL=""
-        while IFS= read -r CANDIDATE; do
-          DIR="$(dirname "$CANDIDATE")"
-          if [[ -f "$DIR/Merlin.XUnit3.RealDevices.runtimeconfig.json" ]]; then
-            DLL="$CANDIDATE"
-            break
-          fi
-        done < <(find "Merlin.XUnit3.RealDevices" -type f -name "Merlin.XUnit3.RealDevices.dll" \
-                  ! -path "*/obj/*" ! -path "*/ref/*" -print)
-
-        if [[ -z "$DLL" ]]; then
-          echo "ERROR: runnable Merlin.XUnit3.RealDevices.dll not found (no adjacent runtimeconfig)."
-          find "Merlin.XUnit3.RealDevices" -type f -name "Merlin.XUnit3.RealDevices.dll" -print || true
-          find "Merlin.XUnit3.RealDevices" -type f -name "Merlin.XUnit3.RealDevices.runtimeconfig.json" -print || true
-          exit 1
-        fi
-
-        echo "Running $DLL"
-        dotnet "$DLL" \
-          --results-directory "${{ env.COVERLET_DIR }}" \
-          --diagnostic \
-          --diagnostic-verbosity Debug \
-          --diagnostic-output-directory "${{ env.COVERLET_DIR }}" \
-          --coverage \
-          --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
-          --coverage-output "${{ env.XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME }}"
-
-        echo "Contents of ${{ env.COVERLET_DIR }}:"
-        ls -la "${{ github.workspace }}/${{ env.COVERLET_DIR }}" || true
-
-    - name: Publish XUnit3 Real Integration Artifacts
-      if: ${{ always() }}
-      uses: actions/upload-artifact@v7
-      with:
-        name: xunit3-real-integration-test-results
-        path: ${{ env.COVERLET_DIR }}/${{ env.XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME }}
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-dotnet
+      - name: Download build artifacts
+        uses: actions/download-artifact@v8
+        with:
+          name: ${{ env.BUILD_ARTIFACTS }}
+          path: .
+      - uses: ./.github/actions/run-dotnet-dll-coverage
+        with:
+          search-root: Merlin.XUnit3.RealDevices
+          dll-name: Merlin.XUnit3.RealDevices.dll
+          runtimeconfig-name: Merlin.XUnit3.RealDevices.runtimeconfig.json
+          coverage-format: ${{ env.COVERAGE_FORMAT }}
+          results-directory: ${{ env.COVERLET_DIR }}
+          coverage-output: ${{ env.XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME }}
+      - uses: actions/upload-artifact@v7
+        with:
+          name: xunit3-real-integration-test-results
+          path: ${{ env.COVERLET_DIR }}/${{ env.XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME }}
 
   xunit-integration-tests:
     runs-on: ubuntu-latest
-    needs: [tunit-integration-tests, tunit-real-integration-tests]
+    needs: build
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v6
-
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: 10.0.x
-
-    - name: Download build artifacts
-      uses: actions/download-artifact@v8
-      with:
-        name: ${{ env.BUILD_ARTIFACTS }}
-        path: ${{ env.BUILD_ARTIFACTS }}
-
-    - name: Run XUnit Integration Tests
-      uses: b3b00/coverlet-action@1.3.5
-      with:
-        testProject: ${{ env.M_XUNIT_PROJECT }}
-        output: ${{ env.XUNIT_INTEGRATION_COVERAGE_FILENAME }}
-        outputFormat: ${{ env.COVERAGE_FORMAT }}
-        excludes: '[Merlin.XUnit]Tests.*'
-        debug: "--no-build -c ${{ env.CONFIG }}"
-
-    - name: Publish Artifacts
-      uses: actions/upload-artifact@v7
-      with:
-        name: xunit-integration-test-results
-        path: ${{ env.COVERLET_DIR }}/${{ env.XUNIT_INTEGRATION_COVERAGE_FILENAME }}
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-dotnet
+      - name: Download build artifacts
+        uses: actions/download-artifact@v8
+        with: { name: '${{ env.BUILD_ARTIFACTS }}', path: . }
+      - uses: ./.github/actions/run-coverlet-project
+        with:
+          test-project: ${{ env.M_XUNIT_PROJECT }}
+          output: ${{ env.XUNIT_INTEGRATION_COVERAGE_FILENAME }}
+          output-format: ${{ env.COVERAGE_FORMAT }}
+          excludes: '[Merlin.XUnit]Tests.*'
+      - uses: actions/upload-artifact@v7
+        with:
+          name: xunit-integration-test-results
+          path: ${{ env.COVERLET_DIR }}/${{ env.XUNIT_INTEGRATION_COVERAGE_FILENAME }}
 
   nunit-integration-tests:
     runs-on: ubuntu-latest
-    needs: [tunit-integration-tests, tunit-real-integration-tests]
+    needs: build
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v6
-
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: 10.0.x
-
-    - name: Download build artifacts
-      uses: actions/download-artifact@v8
-      with:
-        name: ${{ env.BUILD_ARTIFACTS }}
-        path: ${{ env.BUILD_ARTIFACTS }}
-
-    - name: Run NUnit Integration Tests
-      uses: b3b00/coverlet-action@1.3.5
-      with:
-        testProject: ${{ env.M_NUNIT_PROJECT }}
-        output: ${{ env.NUNIT_INTEGRATION_COVERAGE_FILENAME }}
-        outputFormat: ${{ env.COVERAGE_FORMAT }}
-        excludes: '[Merlin.NUnit]Tests.*'
-        debug: "--no-build -c ${{ env.CONFIG }}"
-
-    - name: Publish Artifacts
-      uses: actions/upload-artifact@v7
-      with:
-        name: nunit-integration-test-results
-        path: ${{ env.COVERLET_DIR }}/${{ env.NUNIT_INTEGRATION_COVERAGE_FILENAME }}
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-dotnet
+      - name: Download build artifacts
+        uses: actions/download-artifact@v8
+        with: { name: '${{ env.BUILD_ARTIFACTS }}', path: . }
+      - uses: ./.github/actions/run-coverlet-project
+        with:
+          test-project: ${{ env.M_NUNIT_PROJECT }}
+          output: ${{ env.NUNIT_INTEGRATION_COVERAGE_FILENAME }}
+          output-format: ${{ env.COVERAGE_FORMAT }}
+          excludes: '[Merlin.NUnit]Tests.*'
+      - uses: actions/upload-artifact@v7
+        with:
+          name: nunit-integration-test-results
+          path: ${{ env.COVERLET_DIR }}/${{ env.NUNIT_INTEGRATION_COVERAGE_FILENAME }}
 
   nunit-real-integration-tests:
     runs-on: ubuntu-latest
     needs: build
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v6
-
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: 10.0.x
-
-    - name: Download build artifacts
-      uses: actions/download-artifact@v8
-      with:
-        name: ${{ env.BUILD_ARTIFACTS }}
-        path: ${{ env.BUILD_ARTIFACTS }}
-
-    - name: Run NUnit Real Integration Tests
-      uses: b3b00/coverlet-action@1.3.5
-      with:
-        testProject: ${{ env.M_RD_NUNIT_PROJECT }}
-        output: ${{ env.NUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}
-        outputFormat: ${{ env.COVERAGE_FORMAT }}
-        excludes: '[Merlin.NUnit.RealDevices]Tests.*'
-        debug: "--no-build -c ${{ env.CONFIG }}"
-
-    - name: Publish Artifacts
-      uses: actions/upload-artifact@v7
-      with:
-        name: nunit-real-integration-test-results
-        path: ${{ env.COVERLET_DIR }}/${{ env.NUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-dotnet
+      - name: Download build artifacts
+        uses: actions/download-artifact@v8
+        with: { name: '${{ env.BUILD_ARTIFACTS }}', path: . }
+      - uses: ./.github/actions/run-coverlet-project
+        with:
+          test-project: ${{ env.M_RD_NUNIT_PROJECT }}
+          output: ${{ env.NUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}
+          output-format: ${{ env.COVERAGE_FORMAT }}
+          excludes: '[Merlin.NUnit.RealDevices]Tests.*'
+      - uses: actions/upload-artifact@v7
+        with:
+          name: nunit-real-integration-test-results
+          path: ${{ env.COVERLET_DIR }}/${{ env.NUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}
 
   xunit-real-integration-tests:
     runs-on: ubuntu-latest
     needs: build
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v6
-
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: 10.0.x
-
-    - name: Download build artifacts
-      uses: actions/download-artifact@v8
-      with:
-        name: ${{ env.BUILD_ARTIFACTS }}
-        path: ${{ env.BUILD_ARTIFACTS }}
-
-    - name: Run XUnit Real Integration Tests
-      uses: b3b00/coverlet-action@1.3.5
-      with:
-        testProject: ${{ env.M_RD_XUNIT_PROJECT }}
-        output: ${{ env.XUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}
-        outputFormat: ${{ env.COVERAGE_FORMAT }}
-        excludes: '[Merlin.XUnit.RealDevice]Tests.*'
-        debug: "--no-build -c ${{ env.CONFIG }}"
-
-    - name: Publish Artifacts
-      uses: actions/upload-artifact@v7
-      with:
-        name: xunit-real-integration-test-results
-        path: ${{ env.COVERLET_DIR }}/${{ env.XUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-dotnet
+      - name: Download build artifacts
+        uses: actions/download-artifact@v8
+        with: { name: '${{ env.BUILD_ARTIFACTS }}', path: . }
+      - uses: ./.github/actions/run-coverlet-project
+        with:
+          test-project: ${{ env.M_RD_XUNIT_PROJECT }}
+          output: ${{ env.XUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}
+          output-format: ${{ env.COVERAGE_FORMAT }}
+          excludes: '[Merlin.XUnit.RealDevices]Tests.*'
+      - uses: actions/upload-artifact@v7
+        with:
+          name: xunit-real-integration-test-results
+          path: ${{ env.COVERLET_DIR }}/${{ env.XUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}
 
   tunit-integration-tests:
     runs-on: ubuntu-latest
-    needs: [xunit3-real-integration-tests, xunit3-integration-tests]
+    needs: build
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v6
-
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: 10.0.x
-
-    - name: Download build artifacts
-      uses: actions/download-artifact@v8
-      with:
-        name: ${{ env.BUILD_ARTIFACTS }}
-        path: ${{ env.BUILD_ARTIFACTS }}
-
-    - name: Enable Automated Test Report Artifact Upload
-      uses: actions/github-script@v9
-      with:
-        script: |
-          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env['ACTIONS_RUNTIME_TOKEN']);
-          core.exportVariable('ACTIONS_RESULTS_URL', process.env['ACTIONS_RESULTS_URL']);
-
-    - name: Find and run TUnit Integration Tests
-      shell: bash
-      run: |
-        set -euo pipefail
-        ART_DIR="${{ github.workspace }}/${{ env.BUILD_ARTIFACTS }}"
-        echo "Searching for runnable Merlin.TUnit.dll under $ART_DIR..."
-
-        DLL=""
-        while IFS= read -r CANDIDATE; do
-          DIR="$(dirname "$CANDIDATE")"
-          if [[ -f "$DIR/Merlin.TUnit.runtimeconfig.json" ]]; then
-            DLL="$CANDIDATE"
-            break
-          fi
-        done < <(find "$ART_DIR" -type f -name "Merlin.TUnit.dll" \
-                  ! -path "*/obj/*" ! -path "*/ref/*" -print)
-
-        if [[ -z "$DLL" ]]; then
-          echo "ERROR: runnable Merlin.TUnit.dll not found (no adjacent runtimeconfig)."
-          echo "All dll candidates:"
-          find "$ART_DIR" -type f -name "Merlin.TUnit.dll" -print || true
-          echo "All runtimeconfigs:"
-          find "$ART_DIR" -type f -name "Merlin.TUnit.runtimeconfig.json" -print || true
-          exit 1
-        fi
-
-        echo "Running $DLL"
-        dotnet "$DLL" \
-          --coverage \
-          --coverage-output "${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.TUNIT_INTEGRATION_COVERAGE_FILENAME }}" \
-          --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
-          --results-directory "${{ env.COVERLET_DIR }}" \
-          --log-level Debug
-
-    - name: Publish Artifacts
-      uses: actions/upload-artifact@v7
-      with:
-        name: tunit-integration-test-results
-        path: ${{ env.COVERLET_DIR }}/${{ env.TUNIT_INTEGRATION_COVERAGE_FILENAME }}
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-dotnet
+      - name: Download build artifacts
+        uses: actions/download-artifact@v8
+        with: { name: '${{ env.BUILD_ARTIFACTS }}', path: '${{ env.BUILD_ARTIFACTS }}' }
+      - uses: ./.github/actions/enable-test-report-upload
+      - uses: ./.github/actions/run-dotnet-dll-coverage
+        with:
+          search-root: ${{ github.workspace }}/${{ env.BUILD_ARTIFACTS }}
+          dll-name: Merlin.TUnit.dll
+          runtimeconfig-name: Merlin.TUnit.runtimeconfig.json
+          runner-kind: tunit
+          coverage-format: ${{ env.COVERAGE_FORMAT }}
+          results-directory: ${{ env.COVERLET_DIR }}
+          coverage-output: ${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.TUNIT_INTEGRATION_COVERAGE_FILENAME }}
+      - uses: actions/upload-artifact@v7
+        with:
+          name: tunit-integration-test-results
+          path: ${{ env.COVERLET_DIR }}/${{ env.TUNIT_INTEGRATION_COVERAGE_FILENAME }}
 
   tunit-real-integration-tests:
     runs-on: ubuntu-latest
-    needs: [xunit3-real-integration-tests, xunit3-integration-tests]
+    needs: build
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v6
-
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: 10.0.x
-
-    - name: Download build artifacts
-      uses: actions/download-artifact@v8
-      with:
-        name: ${{ env.BUILD_ARTIFACTS }}
-        path: ${{ env.BUILD_ARTIFACTS }}
-
-    - name: Enable Automated Test Report Artifact Upload
-      uses: actions/github-script@v9
-      with:
-        script: |
-          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env['ACTIONS_RUNTIME_TOKEN']);
-          core.exportVariable('ACTIONS_RESULTS_URL', process.env['ACTIONS_RESULTS_URL']);
-
-    - name: Find and run TUnit Real Integration Tests
-      shell: bash
-      run: |
-        set -euo pipefail
-        ART_DIR="${{ github.workspace }}/${{ env.BUILD_ARTIFACTS }}"
-        echo "Searching for runnable Merlin.TUnit.RealDevices.dll under $ART_DIR..."
-
-        DLL=""
-        while IFS= read -r CANDIDATE; do
-          DIR="$(dirname "$CANDIDATE")"
-          if [[ -f "$DIR/Merlin.TUnit.RealDevices.runtimeconfig.json" ]]; then
-            DLL="$CANDIDATE"
-            break
-          fi
-        done < <(find "$ART_DIR" -type f -name "Merlin.TUnit.RealDevices.dll" \
-                  ! -path "*/obj/*" ! -path "*/ref/*" -print)
-
-        if [[ -z "$DLL" ]]; then
-          echo "ERROR: runnable Merlin.TUnit.RealDevices.dll not found (no adjacent runtimeconfig)."
-          echo "All dll candidates:"
-          find "$ART_DIR" -type f -name "Merlin.TUnit.RealDevices.dll" -print || true
-          echo "All runtimeconfigs:"
-          find "$ART_DIR" -type f -name "Merlin.TUnit.RealDevices.runtimeconfig.json" -print || true
-          exit 1
-        fi
-
-        echo "Running $DLL"
-        dotnet "$DLL" \
-          --coverage \
-          --coverage-output "${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.TUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}" \
-          --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
-          --results-directory "${{ env.COVERLET_DIR }}" \
-          --log-level Debug
-
-    - name: Publish Artifacts
-      uses: actions/upload-artifact@v7
-      with:
-        name: tunit-real-integration-test-results
-        path: ${{ env.COVERLET_DIR }}/${{ env.TUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-dotnet
+      - name: Download build artifacts
+        uses: actions/download-artifact@v8
+        with: { name: '${{ env.BUILD_ARTIFACTS }}', path: '${{ env.BUILD_ARTIFACTS }}' }
+      - uses: ./.github/actions/enable-test-report-upload
+      - uses: ./.github/actions/run-dotnet-dll-coverage
+        with:
+          search-root: ${{ github.workspace }}/${{ env.BUILD_ARTIFACTS }}
+          dll-name: Merlin.TUnit.RealDevices.dll
+          runtimeconfig-name: Merlin.TUnit.RealDevices.runtimeconfig.json
+          runner-kind: tunit
+          coverage-format: ${{ env.COVERAGE_FORMAT }}
+          results-directory: ${{ env.COVERLET_DIR }}
+          coverage-output: ${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.TUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}
+      - uses: actions/upload-artifact@v7
+        with:
+          name: tunit-real-integration-test-results
+          path: ${{ env.COVERLET_DIR }}/${{ env.TUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}
 
   publish-saucery-core:
     if: ${{ github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
     needs: [xunit-integration-tests, nunit-integration-tests]
-    env:
-      PROJECT_PATH: Saucery.Core/Saucery.Core.csproj
-      PACKAGE_ID: Saucery.Core
-      BUILD_CONFIGURATION: Release
-      ARTIFACT_DIR: artifacts
+    outputs:
+      local_version: ${{ steps.publish.outputs.local_version }}
+      publish: ${{ steps.publish.outputs.publish }}
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v6
-
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: 10.0.x
-
-    - name: Download build artifacts
-      uses: actions/download-artifact@v8
-      with:
-        name: ${{ env.BUILD_ARTIFACTS }}
-
-    - name: Build and pack
-      run: |
-        mkdir -p "$ARTIFACT_DIR"
-        dotnet pack "$PROJECT_PATH" -c "$BUILD_CONFIGURATION" -o "$ARTIFACT_DIR" --no-build
-
-    - name: Determine local packed version
-      id: localver
-      shell: bash
-      run: |
-        set -euo pipefail
-        NUPKG="$(ls "$ARTIFACT_DIR"/${PACKAGE_ID}.*.nupkg | grep -v '\.symbols\.nupkg' | head -n1)"
-        BASENAME="$(basename "$NUPKG")"
-        LOCAL_VERSION="${BASENAME#${PACKAGE_ID}.}"
-        LOCAL_VERSION="${LOCAL_VERSION%.nupkg}"
-        echo "nupkg=$NUPKG"            >> "$GITHUB_OUTPUT"
-        echo "version=$LOCAL_VERSION"  >> "$GITHUB_OUTPUT"
-        echo "Local version: $LOCAL_VERSION"
-
-    - name: Query NuGet for latest published version
-      id: remotever
-      shell: bash
-      run: |
-        set -euo pipefail
-        LOWER_ID="$(echo "$PACKAGE_ID" | tr '[:upper:]' '[:lower:]')"
-        INDEX_URL="https://api.nuget.org/v3-flatcontainer/${LOWER_ID}/index.json"
-        if ! curl -fsSL "$INDEX_URL" -o /tmp/nuget_index.json; then
-          echo "version=" >> "$GITHUB_OUTPUT"
-          echo "Package not found on NuGet (first publish)."
-          exit 0
-        fi
-        REMOTE_VERSION="$(jq -r '.versions | last // empty' /tmp/nuget_index.json)"
-        echo "version=$REMOTE_VERSION" >> "$GITHUB_OUTPUT"
-        echo "Remote version: ${REMOTE_VERSION:-<none>}"
-
-    - name: Decide if publish is needed
-      id: decide
-      shell: bash
-      run: |
-        set -euo pipefail
-        LOCAL="${{ steps.localver.outputs.version }}"
-        REMOTE="${{ steps.remotever.outputs.version }}"
-        if [[ -z "$REMOTE" ]]; then
-          echo "publish=true" >> "$GITHUB_OUTPUT"
-          echo "No remote version; will publish."
-          exit 0
-        fi
-        HIGHEST="$(printf '%s\n' "$REMOTE" "$LOCAL" | sort -V | tail -n1)"
-        if [[ "$HIGHEST" == "$LOCAL" && "$LOCAL" != "$REMOTE" ]]; then
-          echo "publish=true" >> "$GITHUB_OUTPUT"
-          echo "Local ($LOCAL) > Remote ($REMOTE); will publish."
-        else
-          echo "publish=false" >> "$GITHUB_OUTPUT"
-          echo "Local ($LOCAL) is NOT greater than Remote ($REMOTE); skipping publish."
-        fi
-
-    - name: Publish to NuGet (only if newer)
-      if: steps.decide.outputs.publish == 'true'
-      env:
-        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-      run: |
-        set -euo pipefail
-        if [[ -z "${NUGET_API_KEY:-}" ]]; then
-          echo "NUPKG=" >> "$GITHUB_OUTPUT"
-          exit 1
-        fi
-        dotnet nuget push "${{ steps.localver.outputs.nupkg }}" \
-          --api-key "$NUGET_API_KEY" \
-          --source https://api.nuget.org/v3/index.json \
-          --skip-duplicate
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-dotnet
+      - name: Download build artifacts
+        uses: actions/download-artifact@v8
+        with: { name: '${{ env.BUILD_ARTIFACTS }}' }
+      - id: publish
+        uses: ./.github/actions/publish-nuget-if-newer
+        with:
+          project-path: Saucery.Core/Saucery.Core.csproj
+          package-id: Saucery.Core
+          build-configuration: ${{ env.CONFIG }}
+          artifact-dir: artifacts
+          pack-no-build: 'true'
+          nuget-api-key: ${{ secrets.NUGET_API_KEY }}
 
   generate-report:
     runs-on: ubuntu-latest
-    needs: [xunit-integration-tests, nunit-integration-tests]
+    needs: [xunit-integration-tests, nunit-integration-tests, xunit-real-integration-tests, nunit-real-integration-tests, xunit3-integration-tests, xunit3-real-integration-tests, tunit-integration-tests, tunit-real-integration-tests]
+    if: ${{ always() && needs.xunit-integration-tests.result == 'success' && needs.nunit-integration-tests.result == 'success' }}
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v6
-
-    - name: Download unit-test results
-      uses: actions/download-artifact@v8
-      with:
-        name: unit-test-results
-        path: ${{ env.COVERLET_DIR }}
-
-    - name: Download nunit-integration-test results
-      uses: actions/download-artifact@v8
-      with:
-        name: nunit-integration-test-results
-        path: ${{ env.COVERLET_DIR }}
-
-    - name: Download xunit-integration-test results
-      uses: actions/download-artifact@v8
-      with:
-        name: xunit-integration-test-results
-        path: ${{ env.COVERLET_DIR }}
-
-    - name: Download nunit-real-integration-test results
-      uses: actions/download-artifact@v8
-      with:
-        name: nunit-real-integration-test-results
-        path: ${{ env.COVERLET_DIR }}
-
-    - name: Download xunit-real-integration-test results
-      uses: actions/download-artifact@v8
-      with:
-        name: xunit-real-integration-test-results
-        path: ${{ env.COVERLET_DIR }}
-
-    - name: Download tunit-integration-test results
-      uses: actions/download-artifact@v8
-      with:
-        name: tunit-integration-test-results
-        path: ${{ env.COVERLET_DIR }}
-
-    - name: Download tunit-real-integration-test results
-      uses: actions/download-artifact@v8
-      with:
-        name: tunit-real-integration-test-results
-        path: ${{ env.COVERLET_DIR }}
-
-    - name: Download xunit3-integration-test results
-      uses: actions/download-artifact@v8
-      with:
-        name: xunit3-integration-test-results
-        path: ${{ env.COVERLET_DIR }}
-
-    - name: Download xunit3-real-integration-test results
-      uses: actions/download-artifact@v8
-      with:
-        name: xunit3-real-integration-test-results
-        path: ${{ env.COVERLET_DIR }}
-
-    - name: List downloaded coverage files
-      shell: bash
-      run: |
-        set -euo pipefail
-        echo "Contents of ${{ env.COVERLET_DIR }}:"
-        ls -la "${{ env.COVERLET_DIR }}" || true
-
-    - name: Setup Java JDK for Codacy Code Coverage
-      uses: actions/setup-java@v5.2.0
-      with:
-        distribution: 'oracle'
-        java-version: '21'
-
-    - name: Codacy Code Coverage
-      run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -l CSharp \
-           -r "${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}" \
-           -r "${{ env.COVERLET_DIR }}/${{ env.NUNIT_INTEGRATION_COVERAGE_FILENAME }}" \
-           -r "${{ env.COVERLET_DIR }}/${{ env.XUNIT_INTEGRATION_COVERAGE_FILENAME }}" \
-           -r "${{ env.COVERLET_DIR }}/${{ env.XUNIT3_INTEGRATION_COVERAGE_FILENAME }}" \
-           -r "${{ env.COVERLET_DIR }}/${{ env.TUNIT_INTEGRATION_COVERAGE_FILENAME }}" \
-           -r "${{ env.COVERLET_DIR }}/${{ env.NUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}" \
-           -r "${{ env.COVERLET_DIR }}/${{ env.XUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}" \
-           -r "${{ env.COVERLET_DIR }}/${{ env.XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME }}" \
-           -r "${{ env.COVERLET_DIR }}/${{ env.TUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}"
-
-    - name: ReportGenerator
-      uses: danielpalme/ReportGenerator-GitHub-Action@5.5.7
-      with:
-        reports: '${{ env.COVERLET_DIR }}/opencover*.xml'
-        targetdir: 'coveragereport'
-        reporttypes: 'HtmlInline;Cobertura'
-
-    - name: Upload coverage report artifact
-      uses: actions/upload-artifact@v7
-      with:
-        name: CoverageReport
-        path: coveragereport
-      if: ${{ always() }}
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-dotnet
+      - uses: actions/download-artifact@v8
+        with: { name: unit-test-results, path: '${{ env.COVERLET_DIR }}' }
+      - uses: actions/download-artifact@v8
+        with: { name: nunit-integration-test-results, path: '${{ env.COVERLET_DIR }}' }
+      - uses: actions/download-artifact@v8
+        with: { name: xunit-integration-test-results, path: '${{ env.COVERLET_DIR }}' }
+      - uses: actions/download-artifact@v8
+        with: { name: nunit-real-integration-test-results, path: '${{ env.COVERLET_DIR }}' }
+      - uses: actions/download-artifact@v8
+        with: { name: xunit-real-integration-test-results, path: '${{ env.COVERLET_DIR }}' }
+      - uses: actions/download-artifact@v8
+        with: { name: tunit-integration-test-results, path: '${{ env.COVERLET_DIR }}' }
+      - uses: actions/download-artifact@v8
+        with: { name: tunit-real-integration-test-results, path: '${{ env.COVERLET_DIR }}' }
+      - uses: actions/download-artifact@v8
+        with: { name: xunit3-integration-test-results, path: '${{ env.COVERLET_DIR }}' }
+      - uses: actions/download-artifact@v8
+        with: { name: xunit3-real-integration-test-results, path: '${{ env.COVERLET_DIR }}' }
+      - name: List downloaded coverage files
+        run: ls -la '${{ env.COVERLET_DIR }}' || true
+      - name: Setup Java JDK for Codacy Code Coverage
+        uses: actions/setup-java@v5.2.0
+        with:
+          distribution: oracle
+          java-version: '21'
+      - name: Codacy Code Coverage
+        run: |
+          bash <(curl -Ls https://coverage.codacy.com/get.sh) report -l CSharp \
+            -r "${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}" \
+            -r "${{ env.COVERLET_DIR }}/${{ env.NUNIT_INTEGRATION_COVERAGE_FILENAME }}" \
+            -r "${{ env.COVERLET_DIR }}/${{ env.XUNIT_INTEGRATION_COVERAGE_FILENAME }}" \
+            -r "${{ env.COVERLET_DIR }}/${{ env.XUNIT3_INTEGRATION_COVERAGE_FILENAME }}" \
+            -r "${{ env.COVERLET_DIR }}/${{ env.TUNIT_INTEGRATION_COVERAGE_FILENAME }}" \
+            -r "${{ env.COVERLET_DIR }}/${{ env.NUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}" \
+            -r "${{ env.COVERLET_DIR }}/${{ env.XUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}" \
+            -r "${{ env.COVERLET_DIR }}/${{ env.XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME }}" \
+            -r "${{ env.COVERLET_DIR }}/${{ env.TUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}"
+      - name: ReportGenerator
+        uses: danielpalme/ReportGenerator-GitHub-Action@5.5.7
+        with:
+          reports: '${{ env.COVERLET_DIR }}/opencover*.xml'
+          targetdir: coveragereport
+          reporttypes: HtmlInline;Cobertura
+      - name: Upload coverage report artifact
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: CoverageReport
+          path: coveragereport
 
   cleanup-artifacts:
     runs-on: ubuntu-latest
     needs: [generate-report, publish-saucery-core]
     if: ${{ always() }}
     steps:
-    - name: Ensure jq is installed
-      run: sudo apt-get update && sudo apt-get install -y jq
-
-    - name: Delete ONLY build artifacts created by this run
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        BUILD_ARTIFACTS: ${{ env.BUILD_ARTIFACTS }}
-      run: |
-        set -euo pipefail
-        echo "Listing repository artifacts..."
-        API="https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts"
-
-        PAGE=1
-        while :; do
-          RESP=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" "${API}?per_page=100&page=${PAGE}")
-          COUNT=$(echo "$RESP" | jq '.artifacts | length')
-          if [ "$COUNT" -eq 0 ]; then
-            break
-          fi
-
-          echo "$RESP" | jq -c '.artifacts[]' | while read -r ART; do
-            ART_ID=$(echo "$ART" | jq -r '.id')
-            ART_NAME=$(echo "$ART" | jq -r '.name')
-            RUN_ID=$(echo "$ART" | jq -r '.workflow_run.id // empty')
-
-            # Delete ONLY the build artifact for THIS run
-            if [ "$RUN_ID" = "$GITHUB_RUN_ID" ] && [ "$ART_NAME" = "$BUILD_ARTIFACTS" ]; then
-              echo "Deleting build artifact ${ART_NAME} (id=${ART_ID}) for run ${RUN_ID}"
-              curl -s -X DELETE \
-                -H "Authorization: Bearer $GITHUB_TOKEN" \
-                -H "Accept: application/vnd.github+json" \
-                "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/${ART_ID}"
-            fi
-          done
-
-          PAGE=$((PAGE+1))
-        done
-
-        echo "Cleanup complete."
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/delete-run-artifact
+        with:
+          artifact-name: ${{ env.BUILD_ARTIFACTS }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}

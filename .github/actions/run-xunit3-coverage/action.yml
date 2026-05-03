@@ -1,0 +1,27 @@
+name: Run xUnit v3/MTP project with coverage
+inputs:
+  project:
+    required: true
+  configuration:
+    required: false
+    default: Release
+  coverage-format:
+    required: false
+    default: cobertura
+  coverage-output:
+    required: true
+  extra-args:
+    required: false
+    default: ''
+runs:
+  using: composite
+  steps:
+    - name: Run project with coverage
+      shell: bash
+      run: |
+        set -euo pipefail
+        dotnet run -c '${{ inputs.configuration }}' --project '${{ inputs.project }}' -- \
+          --coverage \
+          --coverage-output-format '${{ inputs.coverage-format }}' \
+          --coverage-output '${{ inputs.coverage-output }}' \
+          ${{ inputs.extra-args }}

@@ -2,226 +2,75 @@ name: TUnit Only
 
 on:
   schedule:
-    # Runs at 01:00, 07:00, 13:00, 19:00 UTC daily (4× per day)
     - cron: "0 1,7,13,19 * * *"
   push:
     paths:
-      - ".github/workflows/tunit-pipeline.yml"
-      - "Saucery.TUnit/**"
-      - "Merlin.TUnit/**"
-      - "Merlin.TUnit.RealDevices/**"
-    branches:
-      - master
-      - "releases/**"
-      - "feat/**"
-      - "feature/**"
-      - "fix/**"
-      - "test/**"
-      - "bug/**"
+      - '.github/workflows/tunit-pipeline.yml'
+      - '.github/actions/**'
+      - 'Saucery.TUnit/**'
+      - 'Merlin.TUnit/**'
+      - 'Merlin.TUnit.RealDevices/**'
+    branches: [master, 'releases/**', 'feat/**', 'feature/**', 'fix/**', 'test/**', 'bug/**']
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 env:
-  PROJECT_NAME: Saucery
-  SOLN_FILE: Saucery.sln
-  TUNIT_INT_DIR: Merlin.TUnit
-  TUNIT_RD_INT_DIR: Merlin.TUnit.RealDevices
+  CONFIG: Release
   COVERLET_DIR: ./TestResults
+  BUILD_ARTIFACTS: build-artifacts
   UT_PROJECT: Saucery.Core.Tests.XUnitv3/Saucery.Core.Tests.XUnitv3.csproj
   TT_PROJECT: Template.Tests/Template.Tests.csproj
-  M_TUNIT_PROJECT: Merlin.TUnit/Merlin.TUnit.csproj
-  M_RD_TUNIT_PROJECT: Merlin.TUnit.RealDevices/Merlin.TUnit.RealDevices.csproj
-  SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
-  SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
-  CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
-  CONFIG: Release
-  APP_PACKAGE_PATH: published
   COVERAGE_FORMAT: cobertura
   UNIT_COVERAGE_FILENAME: cobertura.unit.xml
   TUNIT_INTEGRATION_COVERAGE_FILENAME: cobertura.tunit.integration.xml
   TUNIT_RD_INTEGRATION_COVERAGE_FILENAME: cobertura.tunit.realdevice.integration.xml
-  COVERAGE_THRESHOLD: 80
-  BUILD_ARTIFACTS: build-artifacts
-
-  # Newline-separated patterns (script splits on newline OR comma)
+  SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+  SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
+  CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
   WATCHED_GLOBS: |
     .github/workflows/tunit-pipeline.yml
+    .github/actions/**
     Saucery.TUnit/**
     Merlin.TUnit/**
     Merlin.TUnit.RealDevices/**
 
 jobs:
   detect-changes:
-    name: Detect if watched paths changed since last completed run
     runs-on: ubuntu-latest
-    permissions:
-      actions: read
-      contents: read
+    permissions: { actions: read, contents: read }
     outputs:
-      # Keep both for clarity; downstream uses paths_changed
-      changed: ${{ steps.decide.outputs.changed }}
-      previous_sha: ${{ steps.decide.outputs.previous_sha }}
-      paths_changed: ${{ steps.decide.outputs.paths_changed }}
+      changed: ${{ steps.detect.outputs.changed }}
+      paths_changed: ${{ steps.detect.outputs.paths_changed }}
+      previous_sha: ${{ steps.detect.outputs.previous_sha }}
     steps:
-      - name: Resolve last completed run head_sha for this workflow+branch AND check watched paths
-        id: decide
-        uses: actions/github-script@v8
+      - uses: actions/checkout@v6
+      - id: detect
+        uses: ./.github/actions/detect-watched-paths
         with:
+          workflow-id: .github/workflows/tunit-pipeline.yml
+          watched-globs: ${{ env.WATCHED_GLOBS }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { owner, repo } = context.repo;
-
-            // On schedule, context.ref will typically be the default branch (e.g. refs/heads/master)
-            const branch = (context.ref || "").replace("refs/heads/", "");
-            const workflow_id = ".github/workflows/tunit-pipeline.yml";
-
-            const runs = await github.rest.actions.listWorkflowRuns({
-              owner,
-              repo,
-              workflow_id,
-              branch,
-              status: "completed",
-              per_page: 1
-            });
-
-            const prevSha = runs.data.workflow_runs[0]?.head_sha || "";
-            const curSha = context.sha;
-
-            core.info(`Branch:       ${branch || "<unknown>"}`);
-            core.info(`Current SHA:  ${curSha}`);
-            core.info(`Previous SHA: ${prevSha || "<none>"}`);
-
-            // Outputs are strings
-            let changed = "true";
-            let pathsChanged = "true";
-
-            // Watched globs: allow newline or comma-separated
-            const raw = process.env.WATCHED_GLOBS || "";
-            const watchedGlobs = raw
-              .split(/\r?\n|,/g)
-              .map(x => x.trim())
-              .filter(x => x.length > 0);
-
-            core.info(`WATCHED_GLOBS (parsed): [${watchedGlobs.join(", ")}]`);
-
-            // Very small glob matcher supporting '*' and '**'
-            function globToRegexSource(pattern) {
-              let out = "";
-              for (let i = 0; i < pattern.length; i++) {
-                const ch = pattern[i];
-                if (ch === "*") {
-                  const nextIsStar = i + 1 < pattern.length && pattern[i + 1] === "*";
-                  if (nextIsStar) {
-                    out += ".*";  // '**' => any depth
-                    i++;          // skip second '*'
-                  } else {
-                    out += "[^/]*"; // '*' => any chars except '/'
-                  }
-                } else if (ch === "/") {
-                  out += "\\/"; // literal slash
-                } else if ("\\.[]{}()+-?^$|".includes(ch)) {
-                  out += "\\" + ch; // escape regex special
-                } else {
-                  out += ch;
-                }
-              }
-              return out;
-            }
-
-            function matchesGlob(path, pattern) {
-              const source = globToRegexSource(pattern);
-              const regex = new RegExp("^" + source + "$");
-              return regex.test(path);
-            }
-
-            if (!prevSha) {
-              core.info("No previous completed run for this workflow+branch. Treating as changed.");
-              changed = "true";
-              pathsChanged = "true";
-            } else if (prevSha === curSha) {
-              core.info("No new commits since the last completed run on this branch.");
-              changed = "false";
-              pathsChanged = "false";
-            } else {
-              // There are new commits; now see if watched paths changed.
-              const comparison = await github.rest.repos.compareCommits({
-                owner,
-                repo,
-                base: prevSha,
-                head: curSha
-              });
-
-              const files = comparison.data.files || [];
-              const changedPaths = files.map(f => f.filename);
-
-              core.info("Changed files since last run:");
-              if (changedPaths.length === 0) {
-                core.info(" (none reported by compareCommits)");
-              } else {
-                for (const p of changedPaths) core.info(` - ${p}`);
-              }
-
-              if (watchedGlobs.length === 0) {
-                core.info("No watched globs defined; treating paths_changed as true.");
-                pathsChanged = "true";
-              } else {
-                const matches = changedPaths.some(path =>
-                  watchedGlobs.some(pattern => matchesGlob(path, pattern))
-                );
-
-                pathsChanged = matches ? "true" : "false";
-
-                if (pathsChanged === "true") {
-                  core.info("Detected changes in watched paths. Downstream jobs are eligible to run.");
-                } else {
-                  core.info("No changes in watched paths. Downstream jobs will be skipped.");
-                }
-              }
-
-              // This reflects “new commits exist”; keep for visibility
-              changed = "true";
-            }
-
-            core.setOutput("changed", changed);
-            core.setOutput("paths_changed", pathsChanged);
-            core.setOutput("previous_sha", prevSha);
 
   build:
     runs-on: ubuntu-latest
     needs: detect-changes
     if: needs.detect-changes.outputs.paths_changed == 'true'
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v6
-
-      - name: Setup dotnet
-        uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: 10.0.x
-
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-dotnet
       - name: Compile solution
         run: dotnet build -c ${{ env.CONFIG }}
-
-      - name: Enable Automated Test Report Artifact Upload
-        uses: actions/github-script@v9
+      - uses: ./.github/actions/enable-test-report-upload
+      - uses: ./.github/actions/run-xunit3-coverage
         with:
-          script: |
-            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env['ACTIONS_RUNTIME_TOKEN']);
-            core.exportVariable('ACTIONS_RESULTS_URL', process.env['ACTIONS_RESULTS_URL']);
-
-      - name: Run xUnit v3 Unit tests with coverage
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p "${{ github.workspace }}/${{ env.COVERLET_DIR }}"
-
-          dotnet run -c ${{ env.CONFIG }} --project ${{ env.UT_PROJECT }} -- \
-            --coverage \
-            --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
-            --coverage-output "${{ env.UNIT_COVERAGE_FILENAME }}"
-
+          project: ${{ env.UT_PROJECT }}
+          configuration: ${{ env.CONFIG }}
+          coverage-format: ${{ env.COVERAGE_FORMAT }}
+          coverage-output: ${{ env.UNIT_COVERAGE_FILENAME }}
       - name: Run Template Tests
         run: dotnet run --project ${{ env.TT_PROJECT }} -- --treenode-filter '/*/*/*/*[Category=TUnit]'
-
       - name: Upload compiled artifacts
         uses: actions/upload-artifact@v7
         with:
@@ -229,8 +78,7 @@ jobs:
           path: |
             **/bin/${{ env.CONFIG }}/**/
             **/obj/
-
-      - name: Publish Unit Coverage Artifact
+      - name: Publish Unit Test Results
         uses: actions/upload-artifact@v7
         with:
           name: unit-test-results
@@ -239,69 +87,26 @@ jobs:
   tunit-integration-tests:
     runs-on: ubuntu-latest
     needs: build
-    # Not strictly necessary (needs: build will skip if build skipped),
-    # but explicit and protects you if you ever add `if: always()` upstream.
     if: needs.build.result == 'success'
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v6
-
-      - name: Setup dotnet
-        uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: 10.0.x
-
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-dotnet
       - name: Download build artifacts
         uses: actions/download-artifact@v8
         with:
           name: ${{ env.BUILD_ARTIFACTS }}
-          path: ${{ env.BUILD_ARTIFACTS }}   # restore bin/obj into a dedicated folder
-
-      - name: Enable Automated Test Report Artifact Upload
-        uses: actions/github-script@v9
+          path: ${{ env.BUILD_ARTIFACTS }}
+      - uses: ./.github/actions/enable-test-report-upload
+      - uses: ./.github/actions/run-dotnet-dll-coverage
         with:
-          script: |
-            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env['ACTIONS_RUNTIME_TOKEN']);
-            core.exportVariable('ACTIONS_RESULTS_URL', process.env['ACTIONS_RESULTS_URL']);
-
-      - name: Find and run TUnit Integration Tests
-        shell: bash
-        run: |
-          set -euo pipefail
-          ART_DIR="${{ github.workspace }}/${{ env.BUILD_ARTIFACTS }}"
-          echo "Searching for runnable Merlin.TUnit.dll under $ART_DIR..."
-
-          DLL=""
-          while IFS= read -r CANDIDATE; do
-            DIR="$(dirname "$CANDIDATE")"
-            if [[ -f "$DIR/Merlin.TUnit.runtimeconfig.json" ]]; then
-              DLL="$CANDIDATE"
-              break
-            fi
-          done < <(find "$ART_DIR" -type f -name "Merlin.TUnit.dll" \
-                    ! -path "*/obj/*" ! -path "*/ref/*" -print)
-
-          if [[ -z "$DLL" ]]; then
-            echo "ERROR: runnable Merlin.TUnit.dll not found (no adjacent runtimeconfig)."
-            echo "All dll candidates:"
-            find "$ART_DIR" -type f -name "Merlin.TUnit.dll" -print || true
-            echo "All runtimeconfigs:"
-            find "$ART_DIR" -type f -name "Merlin.TUnit.runtimeconfig.json" -print || true
-            exit 1
-          fi
-
-          echo "Running $DLL"
-          dotnet "$DLL" \
-            --coverage \
-            --coverage-output "${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.TUNIT_INTEGRATION_COVERAGE_FILENAME }}" \
-            --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
-            --results-directory "${{ env.COVERLET_DIR }}" \
-            --log-level Debug
-
-      - name: Display structure of downloaded files
-        run: ls -R
-
-      - name: Publish Artifacts
+          search-root: ${{ github.workspace }}/${{ env.BUILD_ARTIFACTS }}
+          dll-name: Merlin.TUnit.dll
+          runtimeconfig-name: Merlin.TUnit.runtimeconfig.json
+          runner-kind: tunit
+          coverage-format: ${{ env.COVERAGE_FORMAT }}
+          results-directory: ${{ env.COVERLET_DIR }}
+          coverage-output: ${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.TUNIT_INTEGRATION_COVERAGE_FILENAME }}
+      - name: Publish TUnit Integration Results
         uses: actions/upload-artifact@v7
         with:
           name: tunit-integration-test-results
@@ -312,162 +117,48 @@ jobs:
     needs: build
     if: needs.build.result == 'success'
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v6
-
-      - name: Setup dotnet
-        uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: 10.0.x
-
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-dotnet
       - name: Download build artifacts
         uses: actions/download-artifact@v8
         with:
           name: ${{ env.BUILD_ARTIFACTS }}
-          path: ${{ env.BUILD_ARTIFACTS }}   # restore bin/obj into a dedicated folder
-
-      - name: Enable Automated Test Report Artifact Upload
-        uses: actions/github-script@v9
+          path: ${{ env.BUILD_ARTIFACTS }}
+      - uses: ./.github/actions/enable-test-report-upload
+      - uses: ./.github/actions/run-dotnet-dll-coverage
         with:
-          script: |
-            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env['ACTIONS_RUNTIME_TOKEN']);
-            core.exportVariable('ACTIONS_RESULTS_URL', process.env['ACTIONS_RESULTS_URL']);
-
-      - name: Find and run TUnit Real Integration Tests
-        shell: bash
-        run: |
-          set -euo pipefail
-          ART_DIR="${{ github.workspace }}/${{ env.BUILD_ARTIFACTS }}"
-          echo "Searching for runnable Merlin.TUnit.RealDevices.dll under $ART_DIR..."
-
-          DLL=""
-          while IFS= read -r CANDIDATE; do
-            DIR="$(dirname "$CANDIDATE")"
-            if [[ -f "$DIR/Merlin.TUnit.RealDevices.runtimeconfig.json" ]]; then
-              DLL="$CANDIDATE"
-              break
-            fi
-          done < <(find "$ART_DIR" -type f -name "Merlin.TUnit.RealDevices.dll" \
-                    ! -path "*/obj/*" ! -path "*/ref/*" -print)
-
-          if [[ -z "$DLL" ]]; then
-            echo "ERROR: runnable Merlin.TUnit.RealDevices.dll not found (no adjacent runtimeconfig)."
-            echo "All dll candidates:"
-            find "$ART_DIR" -type f -name "Merlin.TUnit.RealDevices.dll" -print || true
-            echo "All runtimeconfigs:"
-            find "$ART_DIR" -type f -name "Merlin.TUnit.RealDevices.runtimeconfig.json" -print || true
-            exit 1
-          fi
-
-          echo "Running $DLL"
-          dotnet "$DLL" \
-            --coverage \
-            --coverage-output "${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.TUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}" \
-            --coverage-output-format "${{ env.COVERAGE_FORMAT }}" \
-            --results-directory "${{ env.COVERLET_DIR }}" \
-            --log-level Debug
-
-      - name: Publish Artifacts
+          search-root: ${{ github.workspace }}/${{ env.BUILD_ARTIFACTS }}
+          dll-name: Merlin.TUnit.RealDevices.dll
+          runtimeconfig-name: Merlin.TUnit.RealDevices.runtimeconfig.json
+          runner-kind: tunit
+          coverage-format: ${{ env.COVERAGE_FORMAT }}
+          results-directory: ${{ env.COVERLET_DIR }}
+          coverage-output: ${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.TUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}
+      - name: Publish TUnit Real Integration Results
         uses: actions/upload-artifact@v7
         with:
           name: tunit-real-integration-test-results
           path: ${{ env.COVERLET_DIR }}/${{ env.TUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}
 
-  # Publish Saucery.TUnit to NuGet if newer (only master + only if tests ran)
   publish-saucery-tunit:
     runs-on: ubuntu-latest
     needs: [tunit-integration-tests, tunit-real-integration-tests]
-    if: github.ref == 'refs/heads/master'
-    env:
-      PROJECT_PATH: Saucery.TUnit/Saucery.TUnit.csproj
-      PACKAGE_ID: Saucery.TUnit
-      BUILD_CONFIGURATION: Release
-      ARTIFACT_DIR: artifacts
-    # Expose local_version and publish decision as job outputs for downstream jobs
+    if: github.ref == 'refs/heads/master' && needs.tunit-integration-tests.result == 'success' && needs.tunit-real-integration-tests.result == 'success'
     outputs:
-      local_version: ${{ steps.localver.outputs.version }}
-      publish: ${{ steps.decide.outputs.publish }}
+      local_version: ${{ steps.publish.outputs.local_version }}
+      publish: ${{ steps.publish.outputs.publish }}
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v6
-
-      - name: Setup dotnet
-        uses: actions/setup-dotnet@v5
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-dotnet
+      - id: publish
+        uses: ./.github/actions/publish-nuget-if-newer
         with:
-          dotnet-version: 10.0.x
+          project-path: Saucery.TUnit/Saucery.TUnit.csproj
+          package-id: Saucery.TUnit
+          build-configuration: ${{ env.CONFIG }}
+          artifact-dir: artifacts
+          nuget-api-key: ${{ secrets.NUGET_API_KEY }}
 
-      - name: Build package
-        run: |
-          dotnet restore "$PROJECT_PATH"
-          dotnet build "$PROJECT_PATH" -c "$BUILD_CONFIGURATION" --no-restore
-          mkdir -p "$ARTIFACT_DIR"
-          dotnet pack "$PROJECT_PATH" -c "$BUILD_CONFIGURATION" -o "$ARTIFACT_DIR" --no-build
-
-      - name: Determine local packed version
-        id: localver
-        shell: bash
-        run: |
-          set -euo pipefail
-          NUPKG="$(ls "$ARTIFACT_DIR"/${PACKAGE_ID}.*.nupkg | grep -v '\.symbols\.nupkg' | head -n1)"
-          BASENAME="$(basename "$NUPKG")"
-          LOCAL_VERSION="${BASENAME#${PACKAGE_ID}.}"
-          LOCAL_VERSION="${LOCAL_VERSION%.nupkg}"
-          echo "nupkg=$NUPKG"            >> "$GITHUB_OUTPUT"
-          echo "version=$LOCAL_VERSION"  >> "$GITHUB_OUTPUT"
-          echo "Local version: $LOCAL_VERSION"
-
-      - name: Query NuGet for latest published version
-        id: remotever
-        shell: bash
-        run: |
-          set -euo pipefail
-          LOWER_ID="$(echo "$PACKAGE_ID" | tr '[:upper:]' '[:lower:]')"
-          INDEX_URL="https://api.nuget.org/v3-flatcontainer/${LOWER_ID}/index.json"
-          if ! curl -fsSL "$INDEX_URL" -o /tmp/nuget_index.json; then
-            echo "version=" >> "$GITHUB_OUTPUT"
-            echo "Package not found on NuGet (first publish)."
-            exit 0
-          fi
-          REMOTE_VERSION="$(jq -r '.versions | last // empty' /tmp/nuget_index.json)"
-          echo "version=$REMOTE_VERSION" >> "$GITHUB_OUTPUT"
-          echo "Remote version: ${REMOTE_VERSION:-<none>}"
-
-      - name: Decide if publish is needed
-        id: decide
-        shell: bash
-        run: |
-          set -euo pipefail
-          LOCAL="${{ steps.localver.outputs.version }}"
-          REMOTE="${{ steps.remotever.outputs.version }}"
-          if [[ -z "$REMOTE" ]]; then
-            echo "publish=true" >> "$GITHUB_OUTPUT"
-            echo "No remote version; will publish."
-            exit 0
-          fi
-          HIGHEST="$(printf '%s\n' "$REMOTE" "$LOCAL" | sort -V | tail -n1)"
-          if [[ "$HIGHEST" == "$LOCAL" && "$LOCAL" != "$REMOTE" ]]; then
-            echo "publish=true" >> "$GITHUB_OUTPUT"
-            echo "Local ($LOCAL) > Remote ($REMOTE); will publish."
-          else
-            echo "publish=false" >> "$GITHUB_OUTPUT"
-            echo "Local ($LOCAL) is NOT greater than Remote ($REMOTE); skipping publish."
-          fi
-
-      - name: Publish to NuGet (only if newer)
-        if: steps.decide.outputs.publish == 'true'
-        env:
-          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-        run: |
-          set -euo pipefail
-          if [[ -z "${NUGET_API_KEY:-}" ]]; then
-            echo "NUGET_API_KEY secret is missing." >&2
-            exit 1
-          fi
-          dotnet nuget push "${{ steps.localver.outputs.nupkg }}" \
-            --api-key "$NUGET_API_KEY" \
-            --source https://api.nuget.org/v3/index.json \
-            --skip-duplicate
-            
   tag:
     needs: publish-saucery-tunit
     if: ${{ needs.publish-saucery-tunit.outputs.publish == 'true' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master') }}
@@ -477,7 +168,6 @@ jobs:
       cancel-in-progress: false
     steps:
       - name: Bump version and push tag
-        id: tag_version
         uses: mathieudutour/github-tag-action@v6.2
         with:
           github_token: ${{ secrets.ACTIONS_PUSH_PAT }}
@@ -489,37 +179,29 @@ jobs:
     needs: [tunit-integration-tests, tunit-real-integration-tests]
     if: needs.tunit-integration-tests.result == 'success' && needs.tunit-real-integration-tests.result == 'success'
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v6
-
-      - name: Download unit-test results
-        uses: actions/download-artifact@v8
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-dotnet
+      - uses: actions/download-artifact@v8
         with:
           name: unit-test-results
           path: ${{ env.COVERLET_DIR }}
-
-      - name: Download tunit-integration-test results
-        uses: actions/download-artifact@v8
+      - uses: actions/download-artifact@v8
         with:
           name: tunit-integration-test-results
           path: ${{ env.COVERLET_DIR }}
-
-      - name: Download tunit-real-integration-test results
-        uses: actions/download-artifact@v8
+      - uses: actions/download-artifact@v8
         with:
           name: tunit-real-integration-test-results
           path: ${{ env.COVERLET_DIR }}
-
       - name: ReportGenerator
-        uses: danielpalme/ReportGenerator-GitHub-Action@5.5.0
+        uses: danielpalme/ReportGenerator-GitHub-Action@5.5.7
         with:
-          reports: '${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}'
+          reports: '${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }};${{ env.COVERLET_DIR }}/${{ env.TUNIT_INTEGRATION_COVERAGE_FILENAME }};${{ env.COVERLET_DIR }}/${{ env.TUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}'
           targetdir: coveragereport
-          reporttypes: "HtmlInline;Cobertura"
-
+          reporttypes: HtmlInline;Cobertura
       - name: Upload coverage report artifact
-        uses: actions/upload-artifact@v7
         if: ${{ always() }}
+        uses: actions/upload-artifact@v7
         with:
           name: CoverageReport
           path: coveragereport
@@ -529,42 +211,8 @@ jobs:
     needs: [generate-report, publish-saucery-tunit]
     if: ${{ always() }}
     steps:
-      - name: Ensure jq is installed
-        run: sudo apt-get update && sudo apt-get install -y jq
-
-      - name: Delete ONLY build artifacts created by this run
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BUILD_ARTIFACTS: ${{ env.BUILD_ARTIFACTS }}
-        run: |
-          set -euo pipefail
-          echo "Listing repository artifacts..."
-          API="https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts"
-
-          PAGE=1
-          while :; do
-            RESP=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" "${API}?per_page=100&page=${PAGE}")
-            COUNT=$(echo "$RESP" | jq '.artifacts | length')
-            if [ "$COUNT" -eq 0 ]; then
-              break
-            fi
-
-            echo "$RESP" | jq -c '.artifacts[]' | while read -r ART; do
-              ART_ID=$(echo "$ART" | jq -r '.id')
-              ART_NAME=$(echo "$ART" | jq -r '.name')
-              RUN_ID=$(echo "$ART" | jq -r '.workflow_run.id // empty')
-
-              # Delete ONLY the build artifact for THIS run
-              if [ "$RUN_ID" = "$GITHUB_RUN_ID" ] && [ "$ART_NAME" = "$BUILD_ARTIFACTS" ]; then
-                echo "Deleting build artifact ${ART_NAME} (id=${ART_ID}) for run ${RUN_ID}"
-                curl -s -X DELETE \
-                  -H "Authorization: Bearer $GITHUB_TOKEN" \
-                  -H "Accept: application/vnd.github+json" \
-                  "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/${ART_ID}"
-              fi
-            done
-
-            PAGE=$((PAGE+1))
-          done
-
-          echo "Cleanup complete."
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/delete-run-artifact
+        with:
+          artifact-name: ${{ env.BUILD_ARTIFACTS }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
