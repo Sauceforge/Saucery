@@ -6,7 +6,7 @@ on:
   push:
     paths:
       - '.github/workflows/xunit3-pipeline.yml'
-      - '.github/actions/**'
+    #  - '.github/actions/**'
       - 'Saucery.XUnit3/**'
       - 'Merlin.XUnit3/**'
       - 'Merlin.XUnit3.RealDevices/**'
@@ -135,13 +135,15 @@ jobs:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-dotnet
       - id: publish
-        uses: ./.github/actions/publish-nuget-if-newer
+        uses: ./.github/actions/publish-nuget-package
         with:
           project-path: Saucery.XUnit3/Saucery.XUnit3.csproj
           package-id: Saucery.XUnit.v3
-          build-configuration: ${{ env.CONFIG }}
-          artifact-dir: artifacts
+          configuration: ${{ env.CONFIG }}
+          nupkg-dir: artifacts
           nuget-api-key: ${{ secrets.NUGET_API_KEY }}
+          publish-mode: local-version-newer
+          build-mode: project
 
   tag:
     needs: publish-saucery-xunit3

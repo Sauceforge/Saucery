@@ -6,7 +6,7 @@ on:
   push:
     paths:
       - '.github/workflows/core-pipeline.yml'
-      - '.github/actions/**'
+    #  - '.github/actions/**'
       - 'Saucery.Core/**'
     branches: [master, 'releases/**', 'feat/**', 'feature/**', 'fix/**', 'test/**', 'bug/**']
   workflow_dispatch:
@@ -269,14 +269,15 @@ jobs:
         uses: actions/download-artifact@v8
         with: { name: '${{ env.BUILD_ARTIFACTS }}' }
       - id: publish
-        uses: ./.github/actions/publish-nuget-if-newer
+        uses: ./.github/actions/publish-nuget-package
         with:
           project-path: Saucery.Core/Saucery.Core.csproj
           package-id: Saucery.Core
-          build-configuration: ${{ env.CONFIG }}
-          artifact-dir: artifacts
-          pack-no-build: 'true'
+          configuration: ${{ env.CONFIG }}
+          nupkg-dir: artifacts
           nuget-api-key: ${{ secrets.NUGET_API_KEY }}
+          publish-mode: local-version-newer
+          build-mode: none
 
   generate-report:
     runs-on: ubuntu-latest
