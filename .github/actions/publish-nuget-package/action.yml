@@ -1,9 +1,8 @@
 name: Build, pack and publish NuGet package
 
 description: >-
-  Builds, packs, checks NuGet, and publishes a package using one of two policies:
-  publish only when the exact version is missing, or publish only when the local
-  package version is newer than the latest published version.
+  Builds, packs, checks NuGet, and publishes a package using one of three build modes:
+  none, solution, or project.
 
 inputs:
   project-path:
@@ -32,7 +31,7 @@ inputs:
     required: false
     default: local-version-newer
   build-mode:
-    description: "solution or project. solution runs dotnet build at the repository root; project restores/builds only project-path."
+    description: "none, solution, or project. none skips restore/build and packs with --no-build."
     required: false
     default: solution
 
@@ -68,9 +67,9 @@ runs:
         set -euo pipefail
 
         case "${BUILD_MODE}" in
-          solution|project) ;;
+          none|solution|project) ;;
           *)
-            echo "Invalid build-mode: ${BUILD_MODE}. Expected 'solution' or 'project'." >&2
+            echo "Invalid build-mode: ${BUILD_MODE}. Expected 'none', 'solution', or 'project'." >&2
             exit 1
             ;;
         esac
@@ -97,6 +96,11 @@ runs:
       if: inputs.build-mode == 'solution'
       shell: bash
       run: dotnet build -c '${{ inputs.configuration }}'
+
+    - name: Skip build
+      if: inputs.build-mode == 'none'
+      shell: bash
+      run: echo "Skipping restore/build because build-mode=none."
 
     - name: Pack NuGet package
       shell: bash
@@ -133,15 +137,8 @@ runs:
         VERSION="${FILE_NAME#${PACKAGE_ID}.}"
         VERSION="${VERSION%.nupkg}"
 
-        if [ -z "${VERSION}" ] || [ "${VERSION}" = "${FILE_NAME}" ]; then
-          echo "Could not resolve version from package file name: ${FILE_NAME}" >&2
-          exit 1
-        fi
-
         echo "package_path=${PACKAGE_PATH}" >> "$GITHUB_OUTPUT"
         echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
-        echo "Resolved package: ${PACKAGE_PATH}"
-        echo "Resolved version: ${VERSION}"
 
     - name: Decide whether to publish
       id: decision
@@ -156,7 +153,6 @@ runs:
         PACKAGE_ID_LOWER="$(echo "${PACKAGE_ID}" | tr '[:upper:]' '[:lower:]')"
         URL="https://api.nuget.org/v3-flatcontainer/${PACKAGE_ID_LOWER}/index.json"
 
-        echo "Checking published versions for ${PACKAGE_ID} at ${URL}..."
         HTTP_STATUS="$(curl -sS -L -w '%{http_code}' -o versions.json "${URL}" || true)"
 
         if [ "${HTTP_STATUS}" = "404" ]; then
@@ -171,7 +167,6 @@ runs:
         import json
         import os
         import re
-        import sys
 
         package_id = os.environ["PACKAGE_ID"]
         local_version = os.environ["LOCAL_VERSION"]
@@ -193,16 +188,15 @@ runs:
             r"(?:\+[0-9A-Za-z.-]+)?\s*$"
         )
 
-        def parse(version: str):
+        def parse(version):
             m = semver_re.match(version)
             if not m:
                 raise ValueError(f"Unsupported NuGet version format: {version}")
             nums = tuple(int(m.group(name) or 0) for name in ("major", "minor", "patch", "revision"))
             pre = m.group("prerelease")
-            pre_parts = None if pre is None else pre.split(".")
-            return nums, pre_parts
+            return nums, None if pre is None else pre.split(".")
 
-        def compare_identifier(a: str, b: str) -> int:
+        def compare_identifier(a, b):
             a_num = a.isdigit()
             b_num = b.isdigit()
             if a_num and b_num:
@@ -213,7 +207,7 @@ runs:
                 return 1
             return (a.lower() > b.lower()) - (a.lower() < b.lower())
 
-        def compare_versions(a: str, b: str) -> int:
+        def compare_versions(a, b):
             a_nums, a_pre = parse(a)
             b_nums, b_pre = parse(b)
             if a_nums != b_nums:
@@ -267,12 +261,12 @@ runs:
         NUGET_API_KEY: ${{ inputs.nuget-api-key }}
       run: |
         set -euo pipefail
+
         if [ -z "${NUGET_API_KEY:-}" ]; then
           echo "NUGET_API_KEY secret is missing." >&2
           exit 1
         fi
 
-        echo "Publishing ${{ steps.package.outputs.package_path }}"
         dotnet nuget push '${{ steps.package.outputs.package_path }}' \
           --source '${{ inputs.nuget-source }}' \
           --api-key "${NUGET_API_KEY}" \
