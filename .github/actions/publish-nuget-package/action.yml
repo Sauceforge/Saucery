@@ -1,0 +1,284 @@
+name: Build, pack and publish NuGet package
+
+description: >-
+  Builds, packs, checks NuGet, and publishes a package using one of two policies:
+  publish only when the exact version is missing, or publish only when the local
+  package version is newer than the latest published version.
+
+inputs:
+  project-path:
+    description: Path to the project file to pack.
+    required: true
+  package-id:
+    description: NuGet package ID.
+    required: true
+  configuration:
+    description: Build configuration.
+    required: false
+    default: Release
+  nupkg-dir:
+    description: Output directory for generated NuGet packages.
+    required: false
+    default: out
+  nuget-source:
+    description: NuGet source URL used by dotnet nuget push.
+    required: false
+    default: https://api.nuget.org/v3/index.json
+  nuget-api-key:
+    description: NuGet API key.
+    required: true
+  publish-mode:
+    description: "local-version-newer or exact-version-missing."
+    required: false
+    default: local-version-newer
+  build-mode:
+    description: "solution or project. solution runs dotnet build at the repository root; project restores/builds only project-path."
+    required: false
+    default: solution
+
+outputs:
+  package-path:
+    description: Resolved .nupkg path.
+    value: ${{ steps.package.outputs.package_path }}
+  version:
+    description: Version resolved from the generated .nupkg filename.
+    value: ${{ steps.package.outputs.version }}
+  latest-version:
+    description: Latest published NuGet version detected from the flat container feed.
+    value: ${{ steps.decision.outputs.latest_version }}
+  exact-version-exists:
+    description: Whether the exact generated package version already exists on NuGet.
+    value: ${{ steps.decision.outputs.exact_version_exists }}
+  should-publish:
+    description: Whether this action decided to publish the package.
+    value: ${{ steps.decision.outputs.should_publish }}
+  reason:
+    description: Human-readable publish/skip reason.
+    value: ${{ steps.decision.outputs.reason }}
+
+runs:
+  using: composite
+  steps:
+    - name: Validate inputs
+      shell: bash
+      env:
+        BUILD_MODE: ${{ inputs.build-mode }}
+        PUBLISH_MODE: ${{ inputs.publish-mode }}
+      run: |
+        set -euo pipefail
+
+        case "${BUILD_MODE}" in
+          solution|project) ;;
+          *)
+            echo "Invalid build-mode: ${BUILD_MODE}. Expected 'solution' or 'project'." >&2
+            exit 1
+            ;;
+        esac
+
+        case "${PUBLISH_MODE}" in
+          local-version-newer|exact-version-missing) ;;
+          *)
+            echo "Invalid publish-mode: ${PUBLISH_MODE}. Expected 'local-version-newer' or 'exact-version-missing'." >&2
+            exit 1
+            ;;
+        esac
+
+    - name: Restore project
+      if: inputs.build-mode == 'project'
+      shell: bash
+      run: dotnet restore '${{ inputs.project-path }}'
+
+    - name: Compile project
+      if: inputs.build-mode == 'project'
+      shell: bash
+      run: dotnet build '${{ inputs.project-path }}' -c '${{ inputs.configuration }}' --no-restore
+
+    - name: Compile solution
+      if: inputs.build-mode == 'solution'
+      shell: bash
+      run: dotnet build -c '${{ inputs.configuration }}'
+
+    - name: Pack NuGet package
+      shell: bash
+      run: |
+        set -euo pipefail
+        rm -rf '${{ inputs.nupkg-dir }}'
+        mkdir -p '${{ inputs.nupkg-dir }}'
+
+        dotnet pack '${{ inputs.project-path }}' \
+          -c '${{ inputs.configuration }}' \
+          --no-build \
+          -o '${{ inputs.nupkg-dir }}'
+
+    - name: Resolve generated package and version
+      id: package
+      shell: bash
+      env:
+        NUPKG_DIR: ${{ inputs.nupkg-dir }}
+        PACKAGE_ID: ${{ inputs.package-id }}
+      run: |
+        set -euo pipefail
+
+        mapfile -t PACKAGE_FILES < <(find "${NUPKG_DIR}" -maxdepth 1 -type f -name "${PACKAGE_ID}.*.nupkg" ! -name "*.symbols.nupkg" | sort)
+
+        if [ "${#PACKAGE_FILES[@]}" -ne 1 ]; then
+          echo "Expected exactly one ${PACKAGE_ID} .nupkg in ${NUPKG_DIR}, found ${#PACKAGE_FILES[@]}." >&2
+          echo "Contents of ${NUPKG_DIR}:" >&2
+          ls -la "${NUPKG_DIR}" >&2 || true
+          exit 1
+        fi
+
+        PACKAGE_PATH="${PACKAGE_FILES[0]}"
+        FILE_NAME="$(basename "${PACKAGE_PATH}")"
+        VERSION="${FILE_NAME#${PACKAGE_ID}.}"
+        VERSION="${VERSION%.nupkg}"
+
+        if [ -z "${VERSION}" ] || [ "${VERSION}" = "${FILE_NAME}" ]; then
+          echo "Could not resolve version from package file name: ${FILE_NAME}" >&2
+          exit 1
+        fi
+
+        echo "package_path=${PACKAGE_PATH}" >> "$GITHUB_OUTPUT"
+        echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+        echo "Resolved package: ${PACKAGE_PATH}"
+        echo "Resolved version: ${VERSION}"
+
+    - name: Decide whether to publish
+      id: decision
+      shell: bash
+      env:
+        PACKAGE_ID: ${{ inputs.package-id }}
+        LOCAL_VERSION: ${{ steps.package.outputs.version }}
+        PUBLISH_MODE: ${{ inputs.publish-mode }}
+      run: |
+        set -euo pipefail
+
+        PACKAGE_ID_LOWER="$(echo "${PACKAGE_ID}" | tr '[:upper:]' '[:lower:]')"
+        URL="https://api.nuget.org/v3-flatcontainer/${PACKAGE_ID_LOWER}/index.json"
+
+        echo "Checking published versions for ${PACKAGE_ID} at ${URL}..."
+        HTTP_STATUS="$(curl -sS -L -w '%{http_code}' -o versions.json "${URL}" || true)"
+
+        if [ "${HTTP_STATUS}" = "404" ]; then
+          echo '{"versions":[]}' > versions.json
+        elif [ "${HTTP_STATUS}" != "200" ]; then
+          echo "Failed to query NuGet. HTTP status: ${HTTP_STATUS}" >&2
+          cat versions.json >&2 || true
+          exit 1
+        fi
+
+        python3 <<'PY' >> "$GITHUB_OUTPUT"
+        import json
+        import os
+        import re
+        import sys
+
+        package_id = os.environ["PACKAGE_ID"]
+        local_version = os.environ["LOCAL_VERSION"]
+        publish_mode = os.environ["PUBLISH_MODE"]
+
+        with open("versions.json", "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        versions = data.get("versions", []) or []
+        versions_lower = {v.lower() for v in versions}
+        exact_exists = local_version.lower() in versions_lower
+
+        semver_re = re.compile(
+            r"^\s*(?P<major>\d+)"
+            r"(?:\.(?P<minor>\d+))?"
+            r"(?:\.(?P<patch>\d+))?"
+            r"(?:\.(?P<revision>\d+))?"
+            r"(?:-(?P<prerelease>[0-9A-Za-z.-]+))?"
+            r"(?:\+[0-9A-Za-z.-]+)?\s*$"
+        )
+
+        def parse(version: str):
+            m = semver_re.match(version)
+            if not m:
+                raise ValueError(f"Unsupported NuGet version format: {version}")
+            nums = tuple(int(m.group(name) or 0) for name in ("major", "minor", "patch", "revision"))
+            pre = m.group("prerelease")
+            pre_parts = None if pre is None else pre.split(".")
+            return nums, pre_parts
+
+        def compare_identifier(a: str, b: str) -> int:
+            a_num = a.isdigit()
+            b_num = b.isdigit()
+            if a_num and b_num:
+                return (int(a) > int(b)) - (int(a) < int(b))
+            if a_num and not b_num:
+                return -1
+            if not a_num and b_num:
+                return 1
+            return (a.lower() > b.lower()) - (a.lower() < b.lower())
+
+        def compare_versions(a: str, b: str) -> int:
+            a_nums, a_pre = parse(a)
+            b_nums, b_pre = parse(b)
+            if a_nums != b_nums:
+                return (a_nums > b_nums) - (a_nums < b_nums)
+            if a_pre is None and b_pre is None:
+                return 0
+            if a_pre is None:
+                return 1
+            if b_pre is None:
+                return -1
+            for left, right in zip(a_pre, b_pre):
+                c = compare_identifier(left, right)
+                if c:
+                    return c
+            return (len(a_pre) > len(b_pre)) - (len(a_pre) < len(b_pre))
+
+        latest = ""
+        for version in versions:
+            if not latest or compare_versions(version, latest) > 0:
+                latest = version
+
+        if publish_mode == "exact-version-missing":
+            should_publish = not exact_exists
+            reason = (
+                f"{package_id} {local_version} is missing on NuGet."
+                if should_publish
+                else f"{package_id} {local_version} already exists on NuGet."
+            )
+        elif publish_mode == "local-version-newer":
+            should_publish = not latest or compare_versions(local_version, latest) > 0
+            reason = (
+                f"{package_id} {local_version} is newer than latest published version {latest}."
+                if latest and should_publish
+                else f"{package_id} has no published versions yet."
+                if should_publish
+                else f"{package_id} {local_version} is not newer than latest published version {latest}."
+            )
+        else:
+            raise ValueError(f"Unsupported publish mode: {publish_mode}")
+
+        print(f"latest_version={latest}")
+        print(f"exact_version_exists={str(exact_exists).lower()}")
+        print(f"should_publish={str(should_publish).lower()}")
+        print(f"reason={reason}")
+        PY
+
+    - name: Publish package to NuGet
+      if: steps.decision.outputs.should_publish == 'true'
+      shell: bash
+      env:
+        NUGET_API_KEY: ${{ inputs.nuget-api-key }}
+      run: |
+        set -euo pipefail
+        if [ -z "${NUGET_API_KEY:-}" ]; then
+          echo "NUGET_API_KEY secret is missing." >&2
+          exit 1
+        fi
+
+        echo "Publishing ${{ steps.package.outputs.package_path }}"
+        dotnet nuget push '${{ steps.package.outputs.package_path }}' \
+          --source '${{ inputs.nuget-source }}' \
+          --api-key "${NUGET_API_KEY}" \
+          --skip-duplicate
+
+    - name: Skip publish
+      if: steps.decision.outputs.should_publish != 'true'
+      shell: bash
+      run: echo "Skipping publish. ${{ steps.decision.outputs.reason }}"
