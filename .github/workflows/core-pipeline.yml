@@ -258,7 +258,7 @@ jobs:
   publish-saucery-core:
     if: ${{ github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
-    needs: [xunit-integration-tests, nunit-integration-tests]
+    needs: [xunit-integration-tests, nunit-integration-tests, xunit-real-integration-tests, nunit-real-integration-tests, xunit3-integration-tests, xunit3-real-integration-tests, tunit-integration-tests, tunit-real-integration-tests]
     outputs:
       local_version: ${{ steps.publish.outputs.local_version }}
       publish: ${{ steps.publish.outputs.publish }}
