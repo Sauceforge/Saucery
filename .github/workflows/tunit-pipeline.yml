@@ -196,7 +196,7 @@ jobs:
           name: tunit-real-integration-test-results
           path: ${{ env.COVERLET_DIR }}
       - name: ReportGenerator
-        uses: danielpalme/ReportGenerator-GitHub-Action@5.5.7
+        uses: danielpalme/ReportGenerator-GitHub-Action@5.5.9
         with:
           reports: '${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }};${{ env.COVERLET_DIR }}/${{ env.TUNIT_INTEGRATION_COVERAGE_FILENAME }};${{ env.COVERLET_DIR }}/${{ env.TUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}'
           targetdir: coveragereport
