@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <!-- Run under TUnit (console test host) -->
-    <PackageReference Include="TUnit" Version="1.43.11" />
+    <PackageReference Include="TUnit" Version="1.43.37" />
     <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.6.2" />
     <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" Version="2.2.2" />
 
