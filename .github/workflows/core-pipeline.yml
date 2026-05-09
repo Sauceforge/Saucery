@@ -6,7 +6,6 @@ on:
   push:
     paths:
       - '.github/workflows/core-pipeline.yml'
-    #  - '.github/actions/**'
       - 'Saucery.Core/**'
     branches: [master, 'releases/**', 'feat/**', 'feature/**', 'fix/**', 'test/**', 'bug/**']
   workflow_dispatch:
@@ -53,19 +52,25 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-dotnet
+
       - name: Restore solution
         run: dotnet restore
+
       - name: Compile solution
         run: dotnet build -c ${{ env.CONFIG }} --no-restore
+
       - uses: ./.github/actions/run-xunit3-coverage
         with:
           project: ${{ env.UT_PROJECT }}
           configuration: ${{ env.CONFIG }}
           coverage-format: ${{ env.COVERAGE_FORMAT }}
           coverage-output: ${{ env.UNIT_COVERAGE_FILENAME }}
+
       - uses: ./.github/actions/enable-test-report-upload
+
       - name: Run Template Tests
         run: dotnet run -c ${{ env.CONFIG }} --project ${{ env.TT_PROJECT }} --no-build
+
       - name: Upload compiled artifacts
         uses: actions/upload-artifact@v7
         with:
@@ -73,6 +78,7 @@ jobs:
           path: |
             **/bin/${{ env.CONFIG }}/**/
             **/obj/
+
       - name: Publish Unit Test Results
         uses: actions/upload-artifact@v7
         with:
@@ -85,11 +91,13 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-dotnet
+
       - name: Download build artifacts
         uses: actions/download-artifact@v8
         with:
           name: ${{ env.BUILD_ARTIFACTS }}
           path: .
+
       - uses: ./.github/actions/run-dotnet-dll-coverage
         with:
           search-root: Merlin.XUnit3
@@ -98,6 +106,7 @@ jobs:
           coverage-format: ${{ env.COVERAGE_FORMAT }}
           results-directory: ${{ env.COVERLET_DIR }}
           coverage-output: ${{ env.XUNIT3_INTEGRATION_COVERAGE_FILENAME }}
+
       - uses: actions/upload-artifact@v7
         with:
           name: xunit3-integration-test-results
@@ -109,11 +118,13 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-dotnet
+
       - name: Download build artifacts
         uses: actions/download-artifact@v8
         with:
           name: ${{ env.BUILD_ARTIFACTS }}
           path: .
+
       - uses: ./.github/actions/run-dotnet-dll-coverage
         with:
           search-root: Merlin.XUnit3.RealDevices
@@ -122,6 +133,7 @@ jobs:
           coverage-format: ${{ env.COVERAGE_FORMAT }}
           results-directory: ${{ env.COVERLET_DIR }}
           coverage-output: ${{ env.XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME }}
+
       - uses: actions/upload-artifact@v7
         with:
           name: xunit3-real-integration-test-results
@@ -133,15 +145,20 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-dotnet
+
       - name: Download build artifacts
         uses: actions/download-artifact@v8
-        with: { name: '${{ env.BUILD_ARTIFACTS }}', path: . }
+        with:
+          name: ${{ env.BUILD_ARTIFACTS }}
+          path: .
+
       - uses: ./.github/actions/run-coverlet-project
         with:
           test-project: ${{ env.M_XUNIT_PROJECT }}
           output: ${{ env.XUNIT_INTEGRATION_COVERAGE_FILENAME }}
           output-format: ${{ env.COVERAGE_FORMAT }}
           excludes: '[Merlin.XUnit]Tests.*'
+
       - uses: actions/upload-artifact@v7
         with:
           name: xunit-integration-test-results
@@ -153,15 +170,20 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-dotnet
+
       - name: Download build artifacts
         uses: actions/download-artifact@v8
-        with: { name: '${{ env.BUILD_ARTIFACTS }}', path: . }
+        with:
+          name: ${{ env.BUILD_ARTIFACTS }}
+          path: .
+
       - uses: ./.github/actions/run-coverlet-project
         with:
           test-project: ${{ env.M_NUNIT_PROJECT }}
           output: ${{ env.NUNIT_INTEGRATION_COVERAGE_FILENAME }}
           output-format: ${{ env.COVERAGE_FORMAT }}
           excludes: '[Merlin.NUnit]Tests.*'
+
       - uses: actions/upload-artifact@v7
         with:
           name: nunit-integration-test-results
@@ -173,15 +195,20 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-dotnet
+
       - name: Download build artifacts
         uses: actions/download-artifact@v8
-        with: { name: '${{ env.BUILD_ARTIFACTS }}', path: . }
+        with:
+          name: ${{ env.BUILD_ARTIFACTS }}
+          path: .
+
       - uses: ./.github/actions/run-coverlet-project
         with:
           test-project: ${{ env.M_RD_NUNIT_PROJECT }}
           output: ${{ env.NUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}
           output-format: ${{ env.COVERAGE_FORMAT }}
           excludes: '[Merlin.NUnit.RealDevices]Tests.*'
+
       - uses: actions/upload-artifact@v7
         with:
           name: nunit-real-integration-test-results
@@ -193,15 +220,20 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-dotnet
+
       - name: Download build artifacts
         uses: actions/download-artifact@v8
-        with: { name: '${{ env.BUILD_ARTIFACTS }}', path: . }
+        with:
+          name: ${{ env.BUILD_ARTIFACTS }}
+          path: .
+
       - uses: ./.github/actions/run-coverlet-project
         with:
           test-project: ${{ env.M_RD_XUNIT_PROJECT }}
           output: ${{ env.XUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}
           output-format: ${{ env.COVERAGE_FORMAT }}
           excludes: '[Merlin.XUnit.RealDevices]Tests.*'
+
       - uses: actions/upload-artifact@v7
         with:
           name: xunit-real-integration-test-results
@@ -213,10 +245,15 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-dotnet
+
       - name: Download build artifacts
         uses: actions/download-artifact@v8
-        with: { name: '${{ env.BUILD_ARTIFACTS }}', path: '${{ env.BUILD_ARTIFACTS }}' }
+        with:
+          name: ${{ env.BUILD_ARTIFACTS }}
+          path: ${{ env.BUILD_ARTIFACTS }}
+
       - uses: ./.github/actions/enable-test-report-upload
+
       - uses: ./.github/actions/run-dotnet-dll-coverage
         with:
           search-root: ${{ github.workspace }}/${{ env.BUILD_ARTIFACTS }}
@@ -226,6 +263,7 @@ jobs:
           coverage-format: ${{ env.COVERAGE_FORMAT }}
           results-directory: ${{ env.COVERLET_DIR }}
           coverage-output: ${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.TUNIT_INTEGRATION_COVERAGE_FILENAME }}
+
       - uses: actions/upload-artifact@v7
         with:
           name: tunit-integration-test-results
@@ -237,10 +275,15 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-dotnet
+
       - name: Download build artifacts
         uses: actions/download-artifact@v8
-        with: { name: '${{ env.BUILD_ARTIFACTS }}', path: '${{ env.BUILD_ARTIFACTS }}' }
+        with:
+          name: ${{ env.BUILD_ARTIFACTS }}
+          path: ${{ env.BUILD_ARTIFACTS }}
+
       - uses: ./.github/actions/enable-test-report-upload
+
       - uses: ./.github/actions/run-dotnet-dll-coverage
         with:
           search-root: ${{ github.workspace }}/${{ env.BUILD_ARTIFACTS }}
@@ -250,6 +293,7 @@ jobs:
           coverage-format: ${{ env.COVERAGE_FORMAT }}
           results-directory: ${{ env.COVERLET_DIR }}
           coverage-output: ${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.TUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}
+
       - uses: actions/upload-artifact@v7
         with:
           name: tunit-real-integration-test-results
@@ -258,16 +302,22 @@ jobs:
   publish-saucery-core:
     if: ${{ github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
-    needs: [xunit-integration-tests, nunit-integration-tests, xunit-real-integration-tests, nunit-real-integration-tests, xunit3-integration-tests, xunit3-real-integration-tests, tunit-integration-tests, tunit-real-integration-tests]
+    needs:
+      - xunit-integration-tests
+      - nunit-integration-tests
+      - xunit-real-integration-tests
+      - nunit-real-integration-tests
+      - xunit3-integration-tests
+      - xunit3-real-integration-tests
+      - tunit-integration-tests
+      - tunit-real-integration-tests
     outputs:
       local_version: ${{ steps.publish.outputs.local_version }}
       publish: ${{ steps.publish.outputs.publish }}
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-dotnet
-      - name: Download build artifacts
-        uses: actions/download-artifact@v8
-        with: { name: '${{ env.BUILD_ARTIFACTS }}' }
+
       - id: publish
         uses: ./.github/actions/publish-nuget-package
         with:
@@ -277,40 +327,78 @@ jobs:
           nupkg-dir: artifacts
           nuget-api-key: ${{ secrets.NUGET_API_KEY }}
           publish-mode: local-version-newer
-          build-mode: none
+          build-mode: project
 
   generate-report:
     runs-on: ubuntu-latest
-    needs: [xunit-integration-tests, nunit-integration-tests, xunit-real-integration-tests, nunit-real-integration-tests, xunit3-integration-tests, xunit3-real-integration-tests, tunit-integration-tests, tunit-real-integration-tests]
+    needs:
+      - xunit-integration-tests
+      - nunit-integration-tests
+      - xunit-real-integration-tests
+      - nunit-real-integration-tests
+      - xunit3-integration-tests
+      - xunit3-real-integration-tests
+      - tunit-integration-tests
+      - tunit-real-integration-tests
     if: ${{ always() && needs.xunit-integration-tests.result == 'success' && needs.nunit-integration-tests.result == 'success' }}
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-dotnet
+
       - uses: actions/download-artifact@v8
-        with: { name: unit-test-results, path: '${{ env.COVERLET_DIR }}' }
+        with:
+          name: unit-test-results
+          path: ${{ env.COVERLET_DIR }}
+
       - uses: actions/download-artifact@v8
-        with: { name: nunit-integration-test-results, path: '${{ env.COVERLET_DIR }}' }
+        with:
+          name: nunit-integration-test-results
+          path: ${{ env.COVERLET_DIR }}
+
       - uses: actions/download-artifact@v8
-        with: { name: xunit-integration-test-results, path: '${{ env.COVERLET_DIR }}' }
+        with:
+          name: xunit-integration-test-results
+          path: ${{ env.COVERLET_DIR }}
+
       - uses: actions/download-artifact@v8
-        with: { name: nunit-real-integration-test-results, path: '${{ env.COVERLET_DIR }}' }
+        with:
+          name: nunit-real-integration-test-results
+          path: ${{ env.COVERLET_DIR }}
+
       - uses: actions/download-artifact@v8
-        with: { name: xunit-real-integration-test-results, path: '${{ env.COVERLET_DIR }}' }
+        with:
+          name: xunit-real-integration-test-results
+          path: ${{ env.COVERLET_DIR }}
+
       - uses: actions/download-artifact@v8
-        with: { name: tunit-integration-test-results, path: '${{ env.COVERLET_DIR }}' }
+        with:
+          name: tunit-integration-test-results
+          path: ${{ env.COVERLET_DIR }}
+
       - uses: actions/download-artifact@v8
-        with: { name: tunit-real-integration-test-results, path: '${{ env.COVERLET_DIR }}' }
+        with:
+          name: tunit-real-integration-test-results
+          path: ${{ env.COVERLET_DIR }}
+
       - uses: actions/download-artifact@v8
-        with: { name: xunit3-integration-test-results, path: '${{ env.COVERLET_DIR }}' }
+        with:
+          name: xunit3-integration-test-results
+          path: ${{ env.COVERLET_DIR }}
+
       - uses: actions/download-artifact@v8
-        with: { name: xunit3-real-integration-test-results, path: '${{ env.COVERLET_DIR }}' }
+        with:
+          name: xunit3-real-integration-test-results
+          path: ${{ env.COVERLET_DIR }}
+
       - name: List downloaded coverage files
         run: ls -la '${{ env.COVERLET_DIR }}' || true
+
       - name: Setup Java JDK for Codacy Code Coverage
         uses: actions/setup-java@v5.2.0
         with:
           distribution: oracle
           java-version: '21'
+
       - name: Codacy Code Coverage
         run: |
           bash <(curl -Ls https://coverage.codacy.com/get.sh) report -l CSharp \
@@ -323,12 +411,14 @@ jobs:
             -r "${{ env.COVERLET_DIR }}/${{ env.XUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}" \
             -r "${{ env.COVERLET_DIR }}/${{ env.XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME }}" \
             -r "${{ env.COVERLET_DIR }}/${{ env.TUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}"
+
       - name: ReportGenerator
         uses: danielpalme/ReportGenerator-GitHub-Action@5.5.9
         with:
           reports: '${{ env.COVERLET_DIR }}/opencover*.xml'
           targetdir: coveragereport
           reporttypes: HtmlInline;Cobertura
+
       - name: Upload coverage report artifact
         if: ${{ always() }}
         uses: actions/upload-artifact@v7
@@ -338,10 +428,13 @@ jobs:
 
   cleanup-artifacts:
     runs-on: ubuntu-latest
-    needs: [generate-report, publish-saucery-core]
+    needs:
+      - generate-report
+      - publish-saucery-core
     if: ${{ always() }}
     steps:
       - uses: actions/checkout@v6
+
       - uses: ./.github/actions/delete-run-artifact
         with:
           artifact-name: ${{ env.BUILD_ARTIFACTS }}
