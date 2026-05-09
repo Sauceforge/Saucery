@@ -30,7 +30,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Run-SauceryNuGetSync.ps1 = Run-SauceryNuGetSync.ps1
 		.github\workflows\saucery-nuget-pipeline.yml = .github\workflows\saucery-nuget-pipeline.yml
 		.github\workflows\saucery-nuget-sync-and-commit.yml = .github\workflows\saucery-nuget-sync-and-commit.yml
-		.github\workflows\sync-and-commit-pipeline.yml = .github\workflows\sync-and-commit-pipeline.yml
 		.github\workflows\tunit-pipeline-diagnostic.yml = .github\workflows\tunit-pipeline-diagnostic.yml
 		.github\workflows\tunit-pipeline-external.yml = .github\workflows\tunit-pipeline-external.yml
 		.github\workflows\tunit-pipeline.yml = .github\workflows\tunit-pipeline.yml
