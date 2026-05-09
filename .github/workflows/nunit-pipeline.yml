@@ -131,8 +131,8 @@ jobs:
     needs: [nunit-integration-tests, nunit-real-integration-tests]
     if: github.ref == 'refs/heads/master' && needs.nunit-integration-tests.result == 'success' && needs.nunit-real-integration-tests.result == 'success'
     outputs:
-      local_version: ${{ steps.publish.outputs.local_version }}
-      publish: ${{ steps.publish.outputs.publish }}
+      local_version: ${{ steps.publish.outputs.version }}
+      publish: ${{ steps.publish.outputs.should-publish }}
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-dotnet
