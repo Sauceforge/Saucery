@@ -8,6 +8,7 @@
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/0ba3cb69efe14366af8c84e485e80077)](https://app.codacy.com/gh/Sauceforge/Saucery/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![Created](https://img.shields.io/github/created-at/sauceforge/saucery)](https://github.com/Sauceforge/Saucery)
 ![Commits](https://img.shields.io/github/commit-activity/t/sauceforge/saucery)
+[![nuget](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Sauceforge/Saucery/master/badges/nuget-total-downloads.json&cacheSeconds=60)](https://www.nuget.org/profiles/fullcircle)
 
 ![GitHub Repo stars](https://img.shields.io/github/stars/Sauceforge/Saucery)
 [![GitHub Sponsors](https://img.shields.io/github/sponsors/Sauceforge)](https://github.com/sponsors/Sauceforge)
@@ -30,8 +31,7 @@ Saucery comes in multiple flavors supporting popular test frameworks. Targeting 
 | Saucery.TUnit ([TUnit](https://github.com/thomhurst/tunit)) | [![nuget](https://img.shields.io/nuget/v/Saucery.TUnit.svg)](https://www.nuget.org/packages/Saucery.TUnit/) [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery.TUnit)](https://www.nuget.org/packages/Saucery.TUnit/) |
 | Saucery.XUnit.v3 ([XUnit](https://github.com/xunit/xunit)) | [![nuget](https://img.shields.io/nuget/v/Saucery.XUnit.v3.svg)](https://www.nuget.org/packages/Saucery.XUnit.v3/) [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery.XUnit.v3)](https://www.nuget.org/packages/Saucery.XUnit.v3/) |
 | Saucery.NuGet | [![nuget](https://img.shields.io/nuget/v/Saucery.NuGet.svg)](https://www.nuget.org/packages/Saucery.NuGet/) [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery.NuGet)](https://www.nuget.org/packages/Saucery.NuGet/) |
-| Number of Saucery Packages | [![nuget](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Sauceforge/Saucery/master/badges/nuget-package-count.json&cacheSeconds=60)](https://www.nuget.org/profiles/fullcircle) |
-| Total | [![nuget](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Sauceforge/Saucery/master/badges/nuget-total-downloads.json&cacheSeconds=60)](https://www.nuget.org/profiles/fullcircle) |
+| Number of Saucery Packages | [![nuget](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Sauceforge/Saucery/master/badges/nuget-package-count.json&cacheSeconds=60)](https://www.nuget.org/profiles/fullcircle) 
 
 ### Sponsoring
 Saucery has been developed as an open-source project for over <!--YEARS-->11<!--ENDYEARS--> years. If you find it valuable for your projects and team work, please consider supporting me and becoming a [![](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/Sauceforge)
