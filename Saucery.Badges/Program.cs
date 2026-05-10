@@ -13,7 +13,7 @@ public static class Program {
             "Saucery.Core",
             "Saucery",
             "Saucery.XUnit",
-            "Saucery.TUnit",    
+            "Saucery.TUnit",
             "Saucery.XUnit.v3",
             "Saucery.NuGet"
         };
@@ -44,8 +44,16 @@ public static class Program {
 
         long total = 0;
 
+        Console.WriteLine("NuGet package download totals:");
+        Console.WriteLine();
+
         foreach(var p in packages) {
-            total += await GetTotalDownloadsAsync(http, searchBaseUrl, p);
+            var packageTotal = await GetTotalDownloadsAsync(http, searchBaseUrl, p);
+            total += packageTotal;
+
+            Console.WriteLine(
+                $"{p}: {packageTotal.ToString("N0", CultureInfo.InvariantCulture)} " +
+                $"({BadgeDownloadFormatter.FormatDownloadTotal(packageTotal)})");
         }
 
         Directory.CreateDirectory("badges");
@@ -76,8 +84,12 @@ public static class Program {
             JsonSerializer.Serialize(packageCountBadgeJson)
         );
 
+        Console.WriteLine();
         Console.WriteLine(
-            $"Wrote badges/nuget-total-downloads.json (total={total:N0}, badge={formattedTotal})");
+            $"Total: {total.ToString("N0", CultureInfo.InvariantCulture)} ({formattedTotal})");
+
+        Console.WriteLine(
+            $"Wrote badges/nuget-total-downloads.json (total={total.ToString("N0", CultureInfo.InvariantCulture)}, badge={formattedTotal})");
 
         Console.WriteLine(
             $"Wrote badges/nuget-package-count.json (count={packages.Length})");

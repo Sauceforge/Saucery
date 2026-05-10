@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NuGetDownloadsBadge.Console\Saucery.Badges.csproj" />
+    <ProjectReference Include="..\Saucery.Badges\Saucery.Badges.csproj" />
   </ItemGroup>
 
 </Project>
