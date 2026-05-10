@@ -13,7 +13,6 @@ env:
   CONFIG: Release
   NUPKG_DIR: out
   NUGET_SOURCE: https://api.nuget.org/v3/index.json
-  NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
   DOTNET_VERSION: 10.0.x
   PUBLISH_MODE: local-version-newer
   BUILD_MODE: solution
@@ -22,6 +21,10 @@ jobs:
   publish:
     name: build, pack & publish Saucery
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    environment: nuget-publish
 
     steps:
       - name: Checkout Code
@@ -40,6 +43,6 @@ jobs:
           configuration: ${{ env.CONFIG }}
           nupkg-dir: ${{ env.NUPKG_DIR }}
           nuget-source: ${{ env.NUGET_SOURCE }}
-          nuget-api-key: ${{ env.NUGET_API_KEY }}
+          nuget-api-key: ${{ secrets.NUGET_API_KEY }}
           publish-mode: ${{ env.PUBLISH_MODE }}
           build-mode: ${{ env.BUILD_MODE }}

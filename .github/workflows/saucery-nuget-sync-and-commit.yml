@@ -6,7 +6,7 @@ on:
     - cron: "0 0,6,12,18 * * *"
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: saucery-nuget-sync-and-commit
@@ -20,6 +20,8 @@ env:
 jobs:
   run-saucery-nuget-and-commit:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout
@@ -86,8 +88,6 @@ jobs:
 
       - name: Commit and push if there are changes
         shell: bash
-        env:
-          GH_PAT: ${{ secrets.ACTIONS_PUSH_PAT }}
         run: |
           set -euo pipefail
 
@@ -108,7 +108,7 @@ jobs:
           git commit -m "Automated NuGet package sync"
           git pull --rebase origin master
 
-          echo "Using PAT to push changes..."
-          git push "https://x-access-token:${GH_PAT}@github.com/${{ github.repository }}" HEAD:master
+          echo "Pushing changes with GITHUB_TOKEN..."
+          git push origin HEAD:master
 
-          echo "Changes committed and pushed to master via PAT."
+          echo "Changes committed and pushed to master."

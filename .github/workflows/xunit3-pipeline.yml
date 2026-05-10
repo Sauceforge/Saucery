@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 env:
   CONFIG: Release
@@ -27,9 +27,6 @@ env:
   UNIT_COVERAGE_FILENAME: cobertura.unit.xml
   XUNIT3_INTEGRATION_COVERAGE_FILENAME: cobertura.xunit3.integration.xml
   XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME: cobertura.xunit3.realdevice.integration.xml
-  SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
-  SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
-  CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
   WATCHED_GLOBS: |
     .github/workflows/xunit3-pipeline.yml
     .github/actions/**
@@ -56,6 +53,9 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    env:
+      SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+      SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
     needs: detect-changes
     if: needs.detect-changes.outputs.paths_changed == 'true'
     steps:
@@ -80,6 +80,9 @@ jobs:
 
   xunit3-integration-tests:
     runs-on: ubuntu-latest
+    env:
+      SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+      SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
     needs: build
     if: needs.build.result == 'success'
     steps:
@@ -103,6 +106,9 @@ jobs:
 
   xunit3-real-integration-tests:
     runs-on: ubuntu-latest
+    env:
+      SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+      SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
     needs: build
     if: needs.build.result == 'success'
     steps:
@@ -126,6 +132,10 @@ jobs:
 
   publish-saucery-xunit3:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    environment: nuget-publish
     needs: [xunit3-integration-tests, xunit3-real-integration-tests]
     if: github.ref == 'refs/heads/master' && needs.xunit3-integration-tests.result == 'success' && needs.xunit3-real-integration-tests.result == 'success'
     outputs:
@@ -149,6 +159,8 @@ jobs:
     needs: publish-saucery-xunit3
     if: ${{ needs.publish-saucery-xunit3.outputs.publish == 'true' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master') }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     concurrency:
       group: xunit3-${{ needs.publish-saucery-xunit3.outputs.local_version }}
       cancel-in-progress: false
@@ -156,7 +168,7 @@ jobs:
       - name: Bump version and push tag
         uses: mathieudutour/github-tag-action@v6.2
         with:
-          github_token: ${{ secrets.ACTIONS_PUSH_PAT }}
+          github_token: ${{ github.token }}
           tag_prefix: ""
           custom_tag: xunit3-${{ needs.publish-saucery-xunit3.outputs.local_version }}
 

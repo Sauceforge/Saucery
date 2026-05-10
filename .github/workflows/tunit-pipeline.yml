@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 env:
   CONFIG: Release
@@ -26,9 +26,6 @@ env:
   UNIT_COVERAGE_FILENAME: cobertura.unit.xml
   TUNIT_INTEGRATION_COVERAGE_FILENAME: cobertura.tunit.integration.xml
   TUNIT_RD_INTEGRATION_COVERAGE_FILENAME: cobertura.tunit.realdevice.integration.xml
-  SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
-  SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
-  CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
   WATCHED_GLOBS: |
     .github/workflows/tunit-pipeline.yml
     .github/actions/**
@@ -55,6 +52,9 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    env:
+      SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+      SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
     needs: detect-changes
     if: needs.detect-changes.outputs.paths_changed == 'true'
     steps:
@@ -86,6 +86,9 @@ jobs:
 
   tunit-integration-tests:
     runs-on: ubuntu-latest
+    env:
+      SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+      SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
     needs: build
     if: needs.build.result == 'success'
     steps:
@@ -114,6 +117,9 @@ jobs:
 
   tunit-real-integration-tests:
     runs-on: ubuntu-latest
+    env:
+      SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+      SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
     needs: build
     if: needs.build.result == 'success'
     steps:
@@ -142,6 +148,10 @@ jobs:
 
   publish-saucery-tunit:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    environment: nuget-publish
     needs: [tunit-integration-tests, tunit-real-integration-tests]
     if: github.ref == 'refs/heads/master' && needs.tunit-integration-tests.result == 'success' && needs.tunit-real-integration-tests.result == 'success'
     outputs:
@@ -165,6 +175,8 @@ jobs:
     needs: publish-saucery-tunit
     if: ${{ needs.publish-saucery-tunit.outputs.publish == 'true' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master') }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     concurrency:
       group: tunit-${{ needs.publish-saucery-tunit.outputs.local_version }}
       cancel-in-progress: false
@@ -172,7 +184,7 @@ jobs:
       - name: Bump version and push tag
         uses: mathieudutour/github-tag-action@v6.2
         with:
-          github_token: ${{ secrets.ACTIONS_PUSH_PAT }}
+          github_token: ${{ github.token }}
           tag_prefix: ""
           custom_tag: tunit-${{ needs.publish-saucery-tunit.outputs.local_version }}
 

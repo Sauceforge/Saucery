@@ -6,11 +6,13 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   update-total-downloads-badge:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v6
 
@@ -23,8 +25,6 @@ jobs:
 
       - name: Commit and push if there are changes
         shell: bash
-        env:
-          GH_PAT: ${{ secrets.ACTIONS_PUSH_PAT }}
         run: |
           set -euo pipefail
           git config user.name "agray"
@@ -44,7 +44,7 @@ jobs:
           git commit -m "Update Totals Badge"
           git pull --rebase origin master
 
-          echo "🔐 Using PAT to push changes..."
-          git push "https://x-access-token:${GH_PAT}@github.com/${{ github.repository }}" HEAD:master
+          echo "Pushing changes with GITHUB_TOKEN..."
+          git push origin HEAD:master
 
-          echo "🚀 Changes committed and pushed to master via PAT."
+          echo "Changes committed and pushed to master."

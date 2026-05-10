@@ -34,7 +34,7 @@ env:
     Saucery.NuGet.Tests/**
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   detect-changes:
@@ -198,6 +198,10 @@ jobs:
   publish-saucery-nuget:
     name: Publish Saucery.NuGet to NuGet
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    environment: nuget-publish
     needs: [build-and-test]
     if: github.ref == 'refs/heads/master' && needs.build-and-test.result == 'success'
     outputs:
@@ -228,6 +232,8 @@ jobs:
     needs: publish-saucery-nuget
     if: ${{ needs.publish-saucery-nuget.outputs.publish == 'true' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master') }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     concurrency:
       group: saucery-nuget-${{ needs.publish-saucery-nuget.outputs.local_version }}
       cancel-in-progress: false
@@ -235,7 +241,7 @@ jobs:
       - name: Bump version and push tag
         uses: mathieudutour/github-tag-action@v6.2
         with:
-          github_token: ${{ secrets.ACTIONS_PUSH_PAT }}
+          github_token: ${{ github.token }}
           tag_prefix: ""
           custom_tag: saucery-nuget-${{ needs.publish-saucery-nuget.outputs.local_version }}
 

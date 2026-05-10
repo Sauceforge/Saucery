@@ -23,8 +23,6 @@ env:
   SOLN_FILE: Saucery.sln
   EM_XUNIT3_PROJECT: ExternalMerlin.XUnit3/ExternalMerlin.XUnit3.csproj
   EM_RD_XUNIT3_PROJECT: ExternalMerlin.XUnit3.RealDevices/ExternalMerlin.XUnit3.RealDevices.csproj
-  SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
-  SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
   CONFIG: Release
   WATCHED_GLOBS: |
     .github/workflows/xunit3-pipeline-external.yml
@@ -33,7 +31,7 @@ env:
     ExternalMerlin.XUnit3.RealDevices/**
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   detect-changes:
@@ -59,6 +57,9 @@ jobs:
     needs: detect-changes
     if: needs.detect-changes.outputs.paths_changed == 'true'
     runs-on: ubuntu-latest
+    env:
+      SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+      SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
@@ -72,6 +73,9 @@ jobs:
     needs: detect-changes
     if: needs.detect-changes.outputs.paths_changed == 'true'
     runs-on: ubuntu-latest
+    env:
+      SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+      SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6

@@ -5,9 +5,14 @@ on:
     - cron: "0 0 1 6 *"   # 00:00 UTC every June 1
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   update-years:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v6
 
