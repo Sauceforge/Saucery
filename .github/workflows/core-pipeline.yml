@@ -44,7 +44,6 @@ env:
   TUNIT_INTEGRATION_COVERAGE_FILENAME: opencover.tunit.integration.xml
   TUNIT_RD_INTEGRATION_COVERAGE_FILENAME: opencover.tunit.realdevice.integration.xml
 
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -371,6 +370,8 @@ jobs:
       - tunit-integration-tests
       - tunit-real-integration-tests
     if: ${{ always() && needs.xunit-integration-tests.result == 'success' && needs.nunit-integration-tests.result == 'success' }}
+    env:
+      CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-dotnet
@@ -424,12 +425,14 @@ jobs:
         run: ls -la '${{ env.COVERLET_DIR }}' || true
 
       - name: Setup Java JDK for Codacy Code Coverage
+        if: ${{ env.CODACY_PROJECT_TOKEN != '' }}
         uses: actions/setup-java@v5.2.0
         with:
           distribution: oracle
           java-version: '21'
 
       - name: Codacy Code Coverage
+        if: ${{ env.CODACY_PROJECT_TOKEN != '' }}
         run: |
           bash <(curl -Ls https://coverage.codacy.com/get.sh) report -l CSharp \
             -r "${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }}" \
@@ -441,6 +444,12 @@ jobs:
             -r "${{ env.COVERLET_DIR }}/${{ env.XUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}" \
             -r "${{ env.COVERLET_DIR }}/${{ env.XUNIT3_RD_INTEGRATION_COVERAGE_FILENAME }}" \
             -r "${{ env.COVERLET_DIR }}/${{ env.TUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}"
+
+      - name: Skip Codacy Code Coverage because token is unavailable
+        if: ${{ env.CODACY_PROJECT_TOKEN == '' }}
+        run: |
+          echo "CODACY_PROJECT_TOKEN is not available. Skipping Codacy coverage upload."
+          echo "This is expected for forked pull requests or repos where the secret has not been configured."
 
       - name: ReportGenerator
         uses: danielpalme/ReportGenerator-GitHub-Action@5.5.9
