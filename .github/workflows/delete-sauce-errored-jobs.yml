@@ -27,6 +27,9 @@ jobs:
 
       - name: Run deletion script
         shell: pwsh
+        env:
+          SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+          SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
         run: |
           Set-ExecutionPolicy -Scope Process Bypass
           $from = (Get-Date).AddDays(-1).ToString("yyyy-MM-dd")
