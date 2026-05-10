@@ -11,14 +11,15 @@ env:
   COVERLET_DIR: ./TestResults
   M_TUNIT_PROJECT: Merlin.TUnit/Merlin.TUnit.csproj                                             # full path to xunit internal integration test project file
   M_RD_TUNIT_PROJECT: Merlin.TUnit.RealDevices/Merlin.TUnit.RealDevices.csproj                  # full path to xunit internal integration test project file
-  SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
-  SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
   CONFIG: Release
   APP_PACKAGE_PATH: 'published'                                                                 # set this to the path to your web app project, defaults to the repository root
   
 jobs:
   tunit-integration-tests:
     runs-on: ubuntu-latest
+    env:
+      SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+      SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
     
     steps:
     - name: Checkout Code
@@ -47,6 +48,9 @@ jobs:
 
   tunit-real-integration-tests:
     runs-on: ubuntu-latest
+    env:
+      SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+      SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
     steps:
     - name: Checkout Code
       uses: actions/checkout@v6

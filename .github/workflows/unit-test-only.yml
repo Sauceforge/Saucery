@@ -3,6 +3,9 @@ name: Unit Tests Only
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 env:
   PROJECT_NAME: Saucery
   SOLN_FILE: Saucery.sln
@@ -11,8 +14,6 @@ env:
   UT_PROJECT: Saucery.Core.Tests.XUnitv3/Saucery.Core.Tests.XUnitv3.csproj
   TT_PROJECT: Template.Tests/Template.Tests.csproj
 
-  SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
-  SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
 
   CONFIG: Release
   APP_PACKAGE_PATH: 'published'
@@ -23,6 +24,9 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+      SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
 
     steps:
     - name: Checkout Code
@@ -69,6 +73,8 @@ jobs:
 
   generate-report:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     needs: [build]
 
     steps:

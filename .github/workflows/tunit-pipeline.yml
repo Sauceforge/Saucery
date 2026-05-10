@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 env:
   CONFIG: Release
@@ -26,9 +26,10 @@ env:
   UNIT_COVERAGE_FILENAME: cobertura.unit.xml
   TUNIT_INTEGRATION_COVERAGE_FILENAME: cobertura.tunit.integration.xml
   TUNIT_RD_INTEGRATION_COVERAGE_FILENAME: cobertura.tunit.realdevice.integration.xml
-  SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
-  SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
-  CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
+  PACKAGE_PROJECT: Saucery.TUnit/Saucery.TUnit.csproj
+  PACKAGE_ID: Saucery.TUnit
+  NUGET_SOURCE: https://api.nuget.org/v3/index.json
+  NUGET_USER: Sauceforge
   WATCHED_GLOBS: |
     .github/workflows/tunit-pipeline.yml
     .github/actions/**
@@ -46,6 +47,7 @@ jobs:
       previous_sha: ${{ steps.detect.outputs.previous_sha }}
     steps:
       - uses: actions/checkout@v6
+
       - id: detect
         uses: ./.github/actions/detect-watched-paths
         with:
@@ -55,22 +57,31 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    env:
+      SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+      SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
     needs: detect-changes
     if: needs.detect-changes.outputs.paths_changed == 'true'
     steps:
       - uses: actions/checkout@v6
+
       - uses: ./.github/actions/setup-dotnet
+
       - name: Compile solution
         run: dotnet build -c ${{ env.CONFIG }}
+
       - uses: ./.github/actions/enable-test-report-upload
+
       - uses: ./.github/actions/run-xunit3-coverage
         with:
           project: ${{ env.UT_PROJECT }}
           configuration: ${{ env.CONFIG }}
           coverage-format: ${{ env.COVERAGE_FORMAT }}
           coverage-output: ${{ env.UNIT_COVERAGE_FILENAME }}
+
       - name: Run Template Tests
         run: dotnet run --project ${{ env.TT_PROJECT }} -- --treenode-filter '/*/*/*/*[Category=TUnit]'
+
       - name: Upload compiled artifacts
         uses: actions/upload-artifact@v7
         with:
@@ -78,6 +89,7 @@ jobs:
           path: |
             **/bin/${{ env.CONFIG }}/**/
             **/obj/
+
       - name: Publish Unit Test Results
         uses: actions/upload-artifact@v7
         with:
@@ -86,17 +98,24 @@ jobs:
 
   tunit-integration-tests:
     runs-on: ubuntu-latest
+    env:
+      SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+      SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
     needs: build
     if: needs.build.result == 'success'
     steps:
       - uses: actions/checkout@v6
+
       - uses: ./.github/actions/setup-dotnet
+
       - name: Download build artifacts
         uses: actions/download-artifact@v8
         with:
           name: ${{ env.BUILD_ARTIFACTS }}
           path: ${{ env.BUILD_ARTIFACTS }}
+
       - uses: ./.github/actions/enable-test-report-upload
+
       - uses: ./.github/actions/run-dotnet-dll-coverage
         with:
           search-root: ${{ github.workspace }}/${{ env.BUILD_ARTIFACTS }}
@@ -106,6 +125,7 @@ jobs:
           coverage-format: ${{ env.COVERAGE_FORMAT }}
           results-directory: ${{ env.COVERLET_DIR }}
           coverage-output: ${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.TUNIT_INTEGRATION_COVERAGE_FILENAME }}
+
       - name: Publish TUnit Integration Results
         uses: actions/upload-artifact@v7
         with:
@@ -114,17 +134,24 @@ jobs:
 
   tunit-real-integration-tests:
     runs-on: ubuntu-latest
+    env:
+      SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+      SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
     needs: build
     if: needs.build.result == 'success'
     steps:
       - uses: actions/checkout@v6
+
       - uses: ./.github/actions/setup-dotnet
+
       - name: Download build artifacts
         uses: actions/download-artifact@v8
         with:
           name: ${{ env.BUILD_ARTIFACTS }}
           path: ${{ env.BUILD_ARTIFACTS }}
+
       - uses: ./.github/actions/enable-test-report-upload
+
       - uses: ./.github/actions/run-dotnet-dll-coverage
         with:
           search-root: ${{ github.workspace }}/${{ env.BUILD_ARTIFACTS }}
@@ -134,6 +161,7 @@ jobs:
           coverage-format: ${{ env.COVERAGE_FORMAT }}
           results-directory: ${{ env.COVERLET_DIR }}
           coverage-output: ${{ github.workspace }}/${{ env.COVERLET_DIR }}/${{ env.TUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}
+
       - name: Publish TUnit Real Integration Results
         uses: actions/upload-artifact@v7
         with:
@@ -142,29 +170,36 @@ jobs:
 
   publish-saucery-tunit:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    environment: nuget-publish
     needs: [tunit-integration-tests, tunit-real-integration-tests]
     if: github.ref == 'refs/heads/master' && needs.tunit-integration-tests.result == 'success' && needs.tunit-real-integration-tests.result == 'success'
     outputs:
       local_version: ${{ steps.publish.outputs.version }}
-      publish: ${{ steps.publish.outputs.should-publish }}
+      publish: ${{ steps.publish.outputs.published }}
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-dotnet
+
       - id: publish
-        uses: ./.github/actions/publish-nuget-package
+        uses: ./.github/actions/publish-saucery-package
         with:
           project-path: Saucery.TUnit/Saucery.TUnit.csproj
           package-id: Saucery.TUnit
           configuration: ${{ env.CONFIG }}
           nupkg-dir: artifacts
-          nuget-api-key: ${{ secrets.NUGET_API_KEY }}
+          nuget-source: ${{ env.NUGET_SOURCE }}
+          nuget-user: ${{ env.NUGET_USER }}
           publish-mode: local-version-newer
-          build-mode: project
 
   tag:
     needs: publish-saucery-tunit
     if: ${{ needs.publish-saucery-tunit.outputs.publish == 'true' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master') }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     concurrency:
       group: tunit-${{ needs.publish-saucery-tunit.outputs.local_version }}
       cancel-in-progress: false
@@ -172,7 +207,7 @@ jobs:
       - name: Bump version and push tag
         uses: mathieudutour/github-tag-action@v6.2
         with:
-          github_token: ${{ secrets.ACTIONS_PUSH_PAT }}
+          github_token: ${{ github.token }}
           tag_prefix: ""
           custom_tag: tunit-${{ needs.publish-saucery-tunit.outputs.local_version }}
 
@@ -182,25 +217,31 @@ jobs:
     if: needs.tunit-integration-tests.result == 'success' && needs.tunit-real-integration-tests.result == 'success'
     steps:
       - uses: actions/checkout@v6
+
       - uses: ./.github/actions/setup-dotnet
+
       - uses: actions/download-artifact@v8
         with:
           name: unit-test-results
           path: ${{ env.COVERLET_DIR }}
+
       - uses: actions/download-artifact@v8
         with:
           name: tunit-integration-test-results
           path: ${{ env.COVERLET_DIR }}
+
       - uses: actions/download-artifact@v8
         with:
           name: tunit-real-integration-test-results
           path: ${{ env.COVERLET_DIR }}
+
       - name: ReportGenerator
         uses: danielpalme/ReportGenerator-GitHub-Action@5.5.9
         with:
           reports: '${{ env.COVERLET_DIR }}/${{ env.UNIT_COVERAGE_FILENAME }};${{ env.COVERLET_DIR }}/${{ env.TUNIT_INTEGRATION_COVERAGE_FILENAME }};${{ env.COVERLET_DIR }}/${{ env.TUNIT_RD_INTEGRATION_COVERAGE_FILENAME }}'
           targetdir: coveragereport
           reporttypes: HtmlInline;Cobertura
+
       - name: Upload coverage report artifact
         if: ${{ always() }}
         uses: actions/upload-artifact@v7
@@ -214,6 +255,7 @@ jobs:
     if: ${{ always() }}
     steps:
       - uses: actions/checkout@v6
+
       - uses: ./.github/actions/delete-run-artifact
         with:
           artifact-name: ${{ env.BUILD_ARTIFACTS }}

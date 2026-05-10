@@ -15,13 +15,15 @@ on:
 run-name: ${{ github.event.head_commit.message || github.event.inputs.message || 'Manual Run' }}
 
 permissions:
-  contents: write
+  contents: read
 
 env:
   PROJECT_NAME: Saucery
   SOLN_FILE: Saucery.sln
   COVERLET_DIR: ./TestResults
   CONFIG: Release
+  NUGET_SOURCE: https://api.nuget.org/v3/index.json
+  NUGET_USER: Sauceforge
   BUILD_ARTIFACTS: build-artifacts
   COVERAGE_FORMAT: cobertura
 
@@ -42,13 +44,13 @@ env:
   TUNIT_INTEGRATION_COVERAGE_FILENAME: opencover.tunit.integration.xml
   TUNIT_RD_INTEGRATION_COVERAGE_FILENAME: opencover.tunit.realdevice.integration.xml
 
-  SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
-  SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
-  CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+      SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-dotnet
@@ -87,6 +89,9 @@ jobs:
 
   xunit3-integration-tests:
     runs-on: ubuntu-latest
+    env:
+      SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+      SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
     needs: build
     steps:
       - uses: actions/checkout@v6
@@ -114,6 +119,9 @@ jobs:
 
   xunit3-real-integration-tests:
     runs-on: ubuntu-latest
+    env:
+      SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+      SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
     needs: build
     steps:
       - uses: actions/checkout@v6
@@ -141,6 +149,9 @@ jobs:
 
   xunit-integration-tests:
     runs-on: ubuntu-latest
+    env:
+      SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+      SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
     needs: build
     steps:
       - uses: actions/checkout@v6
@@ -166,6 +177,9 @@ jobs:
 
   nunit-integration-tests:
     runs-on: ubuntu-latest
+    env:
+      SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+      SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
     needs: build
     steps:
       - uses: actions/checkout@v6
@@ -191,6 +205,9 @@ jobs:
 
   nunit-real-integration-tests:
     runs-on: ubuntu-latest
+    env:
+      SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+      SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
     needs: build
     steps:
       - uses: actions/checkout@v6
@@ -216,6 +233,9 @@ jobs:
 
   xunit-real-integration-tests:
     runs-on: ubuntu-latest
+    env:
+      SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+      SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
     needs: build
     steps:
       - uses: actions/checkout@v6
@@ -241,6 +261,9 @@ jobs:
 
   tunit-integration-tests:
     runs-on: ubuntu-latest
+    env:
+      SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+      SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
     needs: build
     steps:
       - uses: actions/checkout@v6
@@ -271,6 +294,9 @@ jobs:
 
   tunit-real-integration-tests:
     runs-on: ubuntu-latest
+    env:
+      SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+      SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
     needs: build
     steps:
       - uses: actions/checkout@v6
@@ -302,6 +328,10 @@ jobs:
   publish-saucery-core:
     if: ${{ github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    environment: nuget-publish
     needs:
       - xunit-integration-tests
       - nunit-integration-tests
@@ -312,22 +342,22 @@ jobs:
       - tunit-integration-tests
       - tunit-real-integration-tests
     outputs:
-      local_version: ${{ steps.publish.outputs.local_version }}
-      publish: ${{ steps.publish.outputs.publish }}
+      local_version: ${{ steps.publish.outputs.version }}
+      publish: ${{ steps.publish.outputs.published }}
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-dotnet
 
       - id: publish
-        uses: ./.github/actions/publish-nuget-package
+        uses: ./.github/actions/publish-saucery-package
         with:
           project-path: Saucery.Core/Saucery.Core.csproj
           package-id: Saucery.Core
           configuration: ${{ env.CONFIG }}
           nupkg-dir: artifacts
-          nuget-api-key: ${{ secrets.NUGET_API_KEY }}
+          nuget-source: ${{ env.NUGET_SOURCE }}
+          nuget-user: ${{ env.NUGET_USER }}
           publish-mode: local-version-newer
-          build-mode: project
 
   generate-report:
     runs-on: ubuntu-latest

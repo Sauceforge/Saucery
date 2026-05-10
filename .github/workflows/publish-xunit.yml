@@ -13,15 +13,18 @@ env:
   CONFIG: Release
   NUPKG_DIR: out
   NUGET_SOURCE: https://api.nuget.org/v3/index.json
-  NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+  NUGET_USER: Sauceforge
   DOTNET_VERSION: 10.0.x
   PUBLISH_MODE: local-version-newer
-  BUILD_MODE: solution
 
 jobs:
   publish:
     name: build, pack & publish Saucery.XUnit
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    environment: nuget-publish
 
     steps:
       - name: Checkout Code
@@ -33,13 +36,20 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Build, pack and publish package
-        uses: ./.github/actions/publish-nuget-package
+        id: publish
+        uses: ./.github/actions/publish-saucery-package
         with:
           project-path: ${{ env.PROJECT_PATH }}
           package-id: ${{ env.PACKAGE_ID }}
           configuration: ${{ env.CONFIG }}
           nupkg-dir: ${{ env.NUPKG_DIR }}
           nuget-source: ${{ env.NUGET_SOURCE }}
-          nuget-api-key: ${{ env.NUGET_API_KEY }}
+          nuget-user: ${{ env.NUGET_USER }}
           publish-mode: ${{ env.PUBLISH_MODE }}
-          build-mode: ${{ env.BUILD_MODE }}
+
+      - name: Publish outcome
+        shell: pwsh
+        run: |
+          Write-Host "Package version: ${{ steps.publish.outputs.version }}"
+          Write-Host "Should publish:   ${{ steps.publish.outputs.should-publish }}"
+          Write-Host "Published:        ${{ steps.publish.outputs.published }}"

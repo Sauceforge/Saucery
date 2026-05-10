@@ -14,10 +14,12 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 env:
   CONFIG: Release
+  NUGET_SOURCE: https://api.nuget.org/v3/index.json
+  NUGET_USER: Sauceforge
   COVERLET_DIR: ./TestResults
   UT_PROJECT: Saucery.Core.Tests.XUnitv3/Saucery.Core.Tests.XUnitv3.csproj
   TT_PROJECT: Template.Tests/Template.Tests.csproj
@@ -27,9 +29,6 @@ env:
   UNIT_COVERAGE_FILENAME: opencover.unit.xml
   NUNIT_INTEGRATION_COVERAGE_FILENAME: opencover.nunit.integration.xml
   NUNIT_RD_INTEGRATION_COVERAGE_FILENAME: opencover.nunit.realdevice.integration.xml
-  SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
-  SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
-  CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
   WATCHED_GLOBS: |
     .github/workflows/nunit-pipeline.yml
     .github/actions/**
@@ -58,6 +57,9 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    env:
+      SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+      SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
     needs: detect-changes
     if: needs.detect-changes.outputs.paths_changed == 'true'
     steps:
@@ -82,6 +84,9 @@ jobs:
 
   nunit-integration-tests:
     runs-on: ubuntu-latest
+    env:
+      SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+      SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
     needs: build
     if: needs.build.result == 'success'
     steps:
@@ -105,6 +110,9 @@ jobs:
 
   nunit-real-integration-tests:
     runs-on: ubuntu-latest
+    env:
+      SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+      SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
     needs: build
     if: needs.build.result == 'success'
     steps:
@@ -128,29 +136,36 @@ jobs:
 
   publish-saucery:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    environment: nuget-publish
     needs: [nunit-integration-tests, nunit-real-integration-tests]
     if: github.ref == 'refs/heads/master' && needs.nunit-integration-tests.result == 'success' && needs.nunit-real-integration-tests.result == 'success'
     outputs:
       local_version: ${{ steps.publish.outputs.version }}
-      publish: ${{ steps.publish.outputs.should-publish }}
+      publish: ${{ steps.publish.outputs.published }}
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-dotnet
+
       - id: publish
-        uses: ./.github/actions/publish-nuget-package
+        uses: ./.github/actions/publish-saucery-package
         with:
           project-path: Saucery/Saucery.csproj
           package-id: Saucery
           configuration: ${{ env.CONFIG }}
           nupkg-dir: artifacts
-          nuget-api-key: ${{ secrets.NUGET_API_KEY }}
+          nuget-source: ${{ env.NUGET_SOURCE }}
+          nuget-user: ${{ env.NUGET_USER }}
           publish-mode: local-version-newer
-          build-mode: project
 
   tag:
     needs: publish-saucery
     if: ${{ needs.publish-saucery.outputs.publish == 'true' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master') }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     concurrency:
       group: nunit-${{ needs.publish-saucery.outputs.local_version }}
       cancel-in-progress: false
@@ -158,7 +173,7 @@ jobs:
       - name: Bump version and push tag
         uses: mathieudutour/github-tag-action@v6.2
         with:
-          github_token: ${{ secrets.ACTIONS_PUSH_PAT }}
+          github_token: ${{ github.token }}
           tag_prefix: ""
           custom_tag: nunit-${{ needs.publish-saucery.outputs.local_version }}
 
