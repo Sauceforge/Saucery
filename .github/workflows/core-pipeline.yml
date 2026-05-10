@@ -22,6 +22,8 @@ env:
   SOLN_FILE: Saucery.sln
   COVERLET_DIR: ./TestResults
   CONFIG: Release
+  NUGET_SOURCE: https://api.nuget.org/v3/index.json
+  NUGET_USER: Sauceforge
   BUILD_ARTIFACTS: build-artifacts
   COVERAGE_FORMAT: cobertura
 
@@ -340,22 +342,22 @@ jobs:
       - tunit-integration-tests
       - tunit-real-integration-tests
     outputs:
-      local_version: ${{ steps.publish.outputs.local_version }}
-      publish: ${{ steps.publish.outputs.publish }}
+      local_version: ${{ steps.publish.outputs.version }}
+      publish: ${{ steps.publish.outputs.published }}
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-dotnet
 
       - id: publish
-        uses: ./.github/actions/publish-nuget-package
+        uses: ./.github/actions/publish-saucery-package
         with:
           project-path: Saucery.Core/Saucery.Core.csproj
           package-id: Saucery.Core
           configuration: ${{ env.CONFIG }}
           nupkg-dir: artifacts
-          nuget-api-key: ${{ secrets.NUGET_API_KEY }}
+          nuget-source: ${{ env.NUGET_SOURCE }}
+          nuget-user: ${{ env.NUGET_USER }}
           publish-mode: local-version-newer
-          build-mode: project
 
   generate-report:
     runs-on: ubuntu-latest

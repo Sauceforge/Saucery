@@ -18,6 +18,8 @@ permissions:
 
 env:
   CONFIG: Release
+  NUGET_SOURCE: https://api.nuget.org/v3/index.json
+  NUGET_USER: Sauceforge
   COVERLET_DIR: ./TestResults
   UT_PROJECT: Saucery.Core.Tests.XUnitv3/Saucery.Core.Tests.XUnitv3.csproj
   TT_PROJECT: Template.Tests/Template.Tests.csproj
@@ -140,20 +142,21 @@ jobs:
     if: github.ref == 'refs/heads/master' && needs.xunit3-integration-tests.result == 'success' && needs.xunit3-real-integration-tests.result == 'success'
     outputs:
       local_version: ${{ steps.publish.outputs.version }}
-      publish: ${{ steps.publish.outputs.should-publish }}
+      publish: ${{ steps.publish.outputs.published }}
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-dotnet
+
       - id: publish
-        uses: ./.github/actions/publish-nuget-package
+        uses: ./.github/actions/publish-saucery-package
         with:
           project-path: Saucery.XUnit3/Saucery.XUnit3.csproj
-          package-id: Saucery.XUnit.v3
+          package-id: Saucery.XUnit3
           configuration: ${{ env.CONFIG }}
           nupkg-dir: artifacts
-          nuget-api-key: ${{ secrets.NUGET_API_KEY }}
+          nuget-source: ${{ env.NUGET_SOURCE }}
+          nuget-user: ${{ env.NUGET_USER }}
           publish-mode: local-version-newer
-          build-mode: project
 
   tag:
     needs: publish-saucery-xunit3

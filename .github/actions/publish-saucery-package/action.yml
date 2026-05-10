@@ -1,0 +1,183 @@
+name: Publish Saucery NuGet Package
+description: Pack and publish a Saucery NuGet package using NuGet Trusted Publishing.
+
+inputs:
+  project-path:
+    description: Path to the .csproj to pack.
+    required: true
+  package-id:
+    description: NuGet package ID to compare against the NuGet flat-container feed.
+    required: true
+  configuration:
+    description: Build configuration used by dotnet pack.
+    required: false
+    default: Release
+  nupkg-dir:
+    description: Directory where dotnet pack writes .nupkg files.
+    required: false
+    default: artifacts
+  nuget-source:
+    description: NuGet package source URL.
+    required: false
+    default: https://api.nuget.org/v3/index.json
+  nuget-user:
+    description: NuGet.org owner/user configured for Trusted Publishing.
+    required: true
+  publish-mode:
+    description: Publishing mode. Currently only local-version-newer is supported.
+    required: false
+    default: local-version-newer
+
+outputs:
+  version:
+    description: Local package version read from PackageVersion or Version.
+    value: ${{ steps.package.outputs.version }}
+  should-publish:
+    description: true when the local package version should be pushed to NuGet.
+    value: ${{ steps.package.outputs.should_publish }}
+  published:
+    description: true only after dotnet nuget push completes successfully.
+    value: ${{ steps.publish-result.outputs.published }}
+
+runs:
+  using: composite
+  steps:
+    - name: Validate publish mode
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = 'Stop'
+
+        if ('${{ inputs.publish-mode }}' -ne 'local-version-newer') {
+          throw "Unsupported publish-mode '${{ inputs.publish-mode }}'. This action currently supports only 'local-version-newer'."
+        }
+
+    - name: Pack package
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = 'Stop'
+
+        New-Item -ItemType Directory -Force -Path '${{ inputs.nupkg-dir }}' | Out-Null
+
+        dotnet pack '${{ inputs.project-path }}' `
+          --configuration '${{ inputs.configuration }}' `
+          --output '${{ inputs.nupkg-dir }}'
+
+    - name: Decide whether package should publish
+      id: package
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = 'Stop'
+
+        $projectPath = '${{ inputs.project-path }}'
+        $packageId = '${{ inputs.package-id }}'
+
+        [xml]$project = Get-Content $projectPath
+
+        $version = @($project.Project.PropertyGroup.PackageVersion |
+          Where-Object { -not [string]::IsNullOrWhiteSpace($_) } |
+          Select-Object -First 1)
+
+        if ([string]::IsNullOrWhiteSpace($version)) {
+          $version = @($project.Project.PropertyGroup.Version |
+            Where-Object { -not [string]::IsNullOrWhiteSpace($_) } |
+            Select-Object -First 1)
+        }
+
+        if ([string]::IsNullOrWhiteSpace($version)) {
+          throw "Could not determine package version from $projectPath. Add <PackageVersion> or <Version>."
+        }
+
+        $version = "$version".Trim()
+        "version=$version" >> $env:GITHUB_OUTPUT
+
+        $packageIdLower = $packageId.ToLowerInvariant()
+        $indexUrl = "https://api.nuget.org/v3-flatcontainer/$packageIdLower/index.json"
+        $latestNuGetVersion = $null
+
+        try {
+          $index = Invoke-RestMethod -Uri $indexUrl -Method Get
+          $versions = @($index.versions)
+
+          if ($versions.Count -gt 0) {
+            $latestNuGetVersion = $versions[-1]
+          }
+        }
+        catch {
+          $statusCode = $null
+
+          if ($_.Exception.Response) {
+            $statusCode = [int]$_.Exception.Response.StatusCode
+          }
+
+          if ($statusCode -eq 404) {
+            Write-Host "Package $packageId does not exist on NuGet yet. It will be published."
+          }
+          else {
+            throw
+          }
+        }
+
+        if ([string]::IsNullOrWhiteSpace($latestNuGetVersion)) {
+          "should_publish=true" >> $env:GITHUB_OUTPUT
+          Write-Host "Publishing $packageId $version because no remote package version exists."
+          exit 0
+        }
+
+        $localSemVer = [System.Management.Automation.SemanticVersion]::Parse($version)
+        $remoteSemVer = [System.Management.Automation.SemanticVersion]::Parse($latestNuGetVersion)
+
+        Write-Host "Local package version:  $localSemVer"
+        Write-Host "Latest NuGet version:   $remoteSemVer"
+
+        if ($localSemVer -gt $remoteSemVer) {
+          "should_publish=true" >> $env:GITHUB_OUTPUT
+          Write-Host "Publishing $packageId $version because local version is newer than NuGet."
+        }
+        else {
+          "should_publish=false" >> $env:GITHUB_OUTPUT
+          Write-Host "Skipping publish because $packageId $version is not newer than NuGet version $latestNuGetVersion."
+        }
+
+    - name: NuGet login
+      if: steps.package.outputs.should_publish == 'true'
+      id: nuget-login
+      uses: NuGet/login@v1
+      with:
+        user: ${{ inputs.nuget-user }}
+
+    - name: Push package
+      if: steps.package.outputs.should_publish == 'true'
+      id: push
+      shell: pwsh
+      env:
+        NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
+      run: |
+        $ErrorActionPreference = 'Stop'
+
+        $packages = Get-ChildItem -Path '${{ inputs.nupkg-dir }}' -Filter '*.nupkg' |
+          Where-Object { $_.Name -notlike '*.symbols.nupkg' }
+
+        if ($packages.Count -eq 0) {
+          throw "No .nupkg files found in '${{ inputs.nupkg-dir }}'."
+        }
+
+        foreach ($package in $packages) {
+          Write-Host "Publishing $($package.FullName)"
+          dotnet nuget push $package.FullName `
+            --api-key "$env:NUGET_API_KEY" `
+            --source '${{ inputs.nuget-source }}' `
+            --skip-duplicate
+
+        }
+
+    - name: Set publish result
+      if: ${{ always() }}
+      id: publish-result
+      shell: pwsh
+      run: |
+        if ('${{ steps.package.outputs.should_publish }}' -eq 'true' -and '${{ steps.push.outcome }}' -eq 'success') {
+          "published=true" >> $env:GITHUB_OUTPUT
+        }
+        else {
+          "published=false" >> $env:GITHUB_OUTPUT
+        }
