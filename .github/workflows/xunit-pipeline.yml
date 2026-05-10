@@ -19,7 +19,7 @@ permissions:
 env:
   CONFIG: Release
   NUGET_SOURCE: https://api.nuget.org/v3/index.json
-  NUGET_USER: Sauceforge
+  NUGET_USER: fullcircle
   COVERLET_DIR: ./TestResults
   UT_PROJECT: Saucery.Core.Tests.XUnitv3/Saucery.Core.Tests.XUnitv3.csproj
   TT_PROJECT: Template.Tests/Template.Tests.csproj

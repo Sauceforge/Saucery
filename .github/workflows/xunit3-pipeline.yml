@@ -19,7 +19,7 @@ permissions:
 env:
   CONFIG: Release
   NUGET_SOURCE: https://api.nuget.org/v3/index.json
-  NUGET_USER: Sauceforge
+  NUGET_USER: fullcircle
   COVERLET_DIR: ./TestResults
   UT_PROJECT: Saucery.Core.Tests.XUnitv3/Saucery.Core.Tests.XUnitv3.csproj
   TT_PROJECT: Template.Tests/Template.Tests.csproj
@@ -151,7 +151,7 @@ jobs:
         uses: ./.github/actions/publish-saucery-package
         with:
           project-path: Saucery.XUnit3/Saucery.XUnit3.csproj
-          package-id: Saucery.XUnit3
+          package-id: Saucery.XUnit.v3
           configuration: ${{ env.CONFIG }}
           nupkg-dir: artifacts
           nuget-source: ${{ env.NUGET_SOURCE }}

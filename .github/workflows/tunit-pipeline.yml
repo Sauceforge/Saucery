@@ -29,7 +29,7 @@ env:
   PACKAGE_PROJECT: Saucery.TUnit/Saucery.TUnit.csproj
   PACKAGE_ID: Saucery.TUnit
   NUGET_SOURCE: https://api.nuget.org/v3/index.json
-  NUGET_USER: Sauceforge
+  NUGET_USER: fullcircle
   WATCHED_GLOBS: |
     .github/workflows/tunit-pipeline.yml
     .github/actions/**
