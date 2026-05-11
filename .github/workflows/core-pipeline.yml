@@ -452,7 +452,7 @@ jobs:
           echo "This is expected for forked pull requests or repos where the secret has not been configured."
 
       - name: ReportGenerator
-        uses: danielpalme/ReportGenerator-GitHub-Action@5.5.9
+        uses: danielpalme/ReportGenerator-GitHub-Action@5.5.10
         with:
           reports: '${{ env.COVERLET_DIR }}/opencover*.xml'
           targetdir: coveragereport
