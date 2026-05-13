@@ -16,7 +16,7 @@
   <PropertyGroup>
     <IsPackable>true</IsPackable>
     <PackageId>Saucery.Playwright.NUnit</PackageId>
-    <PackageVersion>4.10.10</PackageVersion>
+    <PackageVersion>4.10.11</PackageVersion>
 
     <Title>Sorcery for SauceLabs and Playwright.NUnit</Title>
     <Description>Sorcery for SauceLabs - Unlocking SauceLabs capability</Description>
@@ -47,7 +47,7 @@
     <PackageReference Include="NUnit3TestAdapter" Version="6.2.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Playwright.NUnit" Version="1.59.0" />
     <PackageReference Include="NUnit" Version="4.6.0" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.204" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.300" PrivateAssets="All" />
 
     <None Include="Images\Saucery.NUnit.128x128.png" Pack="true" PackagePath="\" />
   </ItemGroup>
