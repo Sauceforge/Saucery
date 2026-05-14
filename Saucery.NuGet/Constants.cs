@@ -14,6 +14,11 @@ internal static class Constants {
         internal const string PackageReferenceElement = "PackageReference";
         internal const string IncludeAttribute = "Include";
         internal const string VersionAttribute = "Version";
+        internal const string SauceryNuGetExcludeElement = "SauceryNuGetExclude";
+    }
+
+    internal static class GlobalConfig {
+        internal const string FileName = "saucery.nuget.json";
     }
 
     internal static class Package {

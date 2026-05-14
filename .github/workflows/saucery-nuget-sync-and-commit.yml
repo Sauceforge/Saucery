@@ -15,7 +15,7 @@ concurrency:
 env:
   BUILD_CONFIGURATION: Release
   SOLUTION_FILE: Saucery.sln
-  SAUCERY_NUGET_VERSION: 1.0.9
+  SAUCERY_NUGET_VERSION: 1.0.10
 
 jobs:
   run-saucery-nuget-and-commit:

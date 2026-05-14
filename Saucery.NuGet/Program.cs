@@ -101,8 +101,13 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
     Console.WriteLine($"Bump own version: {(bumpOwnVersion ? $"yes ({versionSegment})" : "no")}");
     if(!string.IsNullOrWhiteSpace(syncWith))
         Console.WriteLine($"Sync with: {syncWith}");
-    if(excludePackages.Length > 0)
-        Console.WriteLine($"Excluded packages: {string.Join(", ", excludePackages)}");
+
+    //Load global config and merge with CLI exclusions.
+    var globalConfig = GlobalConfigReader.Read(solution.DirectoryName ?? string.Empty);
+    var mergedExcludePackages = MergeExclusions(excludePackages, globalConfig.ExcludePackages);
+
+    if(mergedExcludePackages.Count > 0)
+        Console.WriteLine($"Excluded packages: {string.Join(", ", mergedExcludePackages)}");
     if(excludeProjects.Length > 0)
         Console.WriteLine($"Excluded projects: {string.Join(", ", excludeProjects)}");
     Console.WriteLine();
@@ -172,7 +177,7 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
             bumpOwnVersion,
             versionSegment,
             syncWith,
-            excludePackages.Length > 0 ? excludePackages : null,
+            mergedExcludePackages.Count > 0 ? mergedExcludePackages : null,
             cancellationToken);
 
         allResults.Add(result);
@@ -223,3 +228,14 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
 });
 
 return await rootCommand.Parse(args).InvokeAsync();
+
+static IReadOnlyList<string> MergeExclusions(string[] cliExclusions, string[] configExclusions) {
+    if(cliExclusions.Length == 0 && configExclusions.Length == 0)
+        return [];
+
+    var merged = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+    foreach(var e in cliExclusions) merged.Add(e);
+    foreach(var e in configExclusions) merged.Add(e);
+
+    return [.. merged];
+}

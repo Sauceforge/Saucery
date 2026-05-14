@@ -26,7 +26,7 @@ dotnet tool install Saucery.NuGet
 - Supports dry-run mode to preview changes without modifying files
 - Optionally scans `csproj` files on disk that are not registered in the solution
 - Optionally excludes specific projects from being updated
-- Optionally excludes specific packages from processing
+- Optionally excludes specific packages from processing via CLI flag, a solution-level config file, or a per-project declaration
 
 ---
 
@@ -163,9 +163,9 @@ Useful when projects exist in the repository but have not been added to the solu
 
 ---
 
-## Exclude projects from updates
+## Exclude projects from processing
 
-Skip one or more projects entirely using `--exclude-packages`:
+Skip one or more projects entirely using `--exclude-projects`:
 
 ```bash
 saucery-nuget --solution MySolution.sln --exclude-projects Saucery.Core
@@ -182,16 +182,48 @@ The listed projects will be removed from the opted-in set before any processing 
 
 ---
 
-## Exclude projects from processing
+## Exclude packages from updates
 
-Skip one or more projects when resolving updates using `--exclude-projects`:
+There are three ways to exclude specific packages, and they all work together. The effective exclusion list for each project is the union of all three sources (case-insensitve, deduplicated).
+
+### 1 - CLI flag (runtime, one-off)
 
 ```bash
-saucery-nuget --solution MySolution.sln --exclude-projects Saucery.Core
-saucery-nuget --solution MySolution.sln --exclude-projects Saucery.Core Saucery.TUnit
+saucery-nuget --solution MySolution.sln --exclude-packages Selenium.WebDriver Selenium.Support
 ```
 
-The listed project names or paths will not be processed even if they are opted-in.
+### 2 - Global config file (persistent, applies to every project)
+
+Create a `saucery-nuget.json` file in the same directory as your `.sln`:
+
+```json
+{
+  "excludePackages": [
+    "Selenium.WebDriver",
+    "Selenium.Support"
+  ]
+}
+```
+
+- The file is read automatically on every run - no CLI flag needed.
+- If the file does not exist, the tool continues normally.
+- If the file contains invalid JSON, a warning is printed and global exclusions are skipped.
+
+### 3 - Per-project declaration (persistent, single project only)
+
+Add one `<SauceryNuGetExclude>` element per package to be exclude to the `.csproj`:
+
+```xml
+<PropertyGroup>
+  <SauceryNuGetOptIn>true</SauceryNuGetOptIn>
+  <SauceryNuGetExclude>Selenium.WebDriver</SauceryNuGetExclude>
+  <SauceryNuGetExclude>Selenium.Support</SauceryNuGetExclude>
+</PropertyGroup>
+```
+
+- Only effect the project that declares the element.
+- Case-insensitive, multiple elements are supported.
+- Can also be placed in an `<ItemGroup>` - any location in the `.csproj` is fine.
 
 ---
 
@@ -207,7 +239,7 @@ The listed project names or paths will not be processed even if they are opted-i
 | `--project <name\|path>` | `-p` | Limit processing to opted-in projects. |
 | `--sync-with <packageId>` | `-w` | Sync `<PackageVersion>` with dependency. |
 | `--scan-unregistered` |  | Include `.csproj` files not registered in the solution. |
-| `--exclude-packages <ids>` |  | Exclude one or more packages from updates. |
+| `--exclude-packages <ids>` |  | Exclude one or more packages from updates (CLI; merges with config file and per-project declarations). |
 | `--exclude-projects <names>` |  | Exclude one or more projects from processing. |
 
 ---
@@ -256,10 +288,12 @@ See our [dogfooding pipeline](https://github.com/Sauceforge/Saucery/blob/master/
 2. Optionally adds `.csproj` files found on disk that are not registered in the solution (`--scan-unregistered`)
 3. Filters to projects with `<SauceryNuGetOptIn>true</SauceryNuGetOptIn>`
 4. Removes any projects listed in `--exclude-projects`
-5. Finds all `PackageReference` entries, skipping any listed in `--exclude-packages`
-6. Resolves the next version using `NuGet.Versioning`
-7. Updates the `.csproj` file (preserving encoding and BOM)
-8. Optionally updates `<PackageVersion>`
+5. Reads `saucery.nuget.json` from the solution directory and merges its `excludePackages` with any `--exclude-packages` CLI values
+6. For each project, reads any `<SauceryNuGetExclude>` elements from the `.csproj` and merges them with the global exclusion list
+7. Finds all `PackageReference` entries, skipping any in the effective exclusion list
+8. Resolves the next version using `NuGet.Versioning`
+9. Updates the `.csproj` file (preserving encoding and BOM)
+10. Optionally updates `<PackageVersion>`
 
 ---
 

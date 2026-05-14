@@ -62,6 +62,9 @@ public sealed class CsprojUpdater(INuGetApiClient apiClient) {
         if(packageRefs is null || packageRefs.Count == 0)
             return new UpdateResult(projectPath, []);
 
+        var projectExclusions = ReadProjectExclusions(doc);
+        var effectiveExclusions = MergeExclusions(excludePackageIds, projectExclusions);
+
         var updates = new List<PackageUpdate>();
 
         foreach(XmlElement node in packageRefs.Cast<XmlElement>()) {
@@ -72,9 +75,9 @@ public sealed class CsprojUpdater(INuGetApiClient apiClient) {
             if(id.Equals(Constants.Package.OptInPackageId, StringComparison.OrdinalIgnoreCase))
                 continue;
 
-            // Skip if it's in the exclude list
-            if(excludePackageIds is not null && 
-                excludePackageIds.Any(e => string.Equals(e, id, StringComparison.OrdinalIgnoreCase)))
+            // Skip if it's in the exclude list (CLI + global config + per-project)
+            if(effectiveExclusions.Count > 0 &&
+               effectiveExclusions.Any(e => string.Equals(e, id, StringComparison.OrdinalIgnoreCase)))
                 continue;
 
             var available = await apiClient.GetAvailableVersionsAsync(id, ct).ConfigureAwait(false);
@@ -231,6 +234,30 @@ public sealed class CsprojUpdater(INuGetApiClient apiClient) {
         }
 
         return new UpdateResult(projectPath, updates, NewPackageVersion: newPackageVersion);
+    }
+
+    private static IReadOnlyList<string> ReadProjectExclusions(XmlDocument doc) {
+        var nodes = doc.SelectNodes($"//*[local-name()='{Constants.Xml.SauceryNuGetExcludeElement}']");
+        return nodes is null || nodes.Count == 0
+            ? []
+            : [.. nodes.Cast<XmlElement>()
+                .Select(e => e.InnerText?.Trim())
+                .Where(s => !string.IsNullOrWhiteSpace(s))];
+    }
+
+    private static IReadOnlyList<string> MergeExclusions(
+        IReadOnlyList<string>? cliExclusions, 
+        IReadOnlyList<string> projectExclusions) {
+        if((cliExclusions is null || cliExclusions.Count == 0) && projectExclusions.Count == 0)
+            return [];
+
+        var merged = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        if(cliExclusions is not null)
+            foreach(var e in cliExclusions) merged.Add(e);
+
+        foreach(var e in projectExclusions) merged.Add(e);
+
+        return [.. merged];
     }
 
     private static string NormalizeProjectReferencePath(string include) =>
