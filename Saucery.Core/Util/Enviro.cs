@@ -10,7 +10,7 @@ public static class Enviro {
     public static string? SauceApiKey => 
         GetStringVar(SauceryConstants.SAUCE_API_KEY);
 
-    internal static string BuildName
+    public static string BuildName
     {
         get
         {
