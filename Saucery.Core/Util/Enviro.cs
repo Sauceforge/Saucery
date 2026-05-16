@@ -10,8 +10,24 @@ public static class Enviro {
     public static string? SauceApiKey => 
         GetStringVar(SauceryConstants.SAUCE_API_KEY);
 
-    internal static string BuildName => 
-        $"Desktop_{GetStringVar(SauceryConstants.BUILD_NUMBER) ?? IdGenerator.Id}";
+    internal static string BuildName
+    {
+        get
+        {
+            var explicitBuildName = GetStringVar(SauceryConstants.SAUCERY_BUILD_NAME);
+
+            if(!string.IsNullOrWhiteSpace(explicitBuildName)) {
+                return explicitBuildName;
+            }
+
+            var framework = GetStringVar(SauceryConstants.SAUCERY_TEST_FRAMEWORK);
+            var buildNumber = GetStringVar(SauceryConstants.BUILD_NUMBER) ?? IdGenerator.Id;
+
+            return !string.IsNullOrWhiteSpace(framework) 
+                ? $"Desktop_{framework}_{buildNumber}" 
+                : $"Desktop_{buildNumber}";
+        }
+    }
 
     private static string? GetStringVar(string envVar) => 
         Environment.GetEnvironmentVariable(envVar);

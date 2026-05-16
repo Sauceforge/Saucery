@@ -60,6 +60,7 @@ jobs:
     env:
       SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
       SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
+      SAUCERY_TEST_FRAMEWORK: XUnit3
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
@@ -76,6 +77,7 @@ jobs:
     env:
       SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
       SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
+      SAUCERY_TEST_FRAMEWORK: XUnit3
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6

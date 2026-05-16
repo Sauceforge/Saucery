@@ -28,6 +28,9 @@ public static class SauceryConstants {
     internal const string ASSEMBLY_FILE_GUID_LINE = "[assembly: Guid";
     internal const string SOLUTION_FILE_PROJECT_LINE = "Project(";
 
+    public const string SAUCERY_BUILD_NAME = "SAUCERY_BUILD_NAME";
+    public const string SAUCERY_TEST_FRAMEWORK = "SAUCERY_TEST_FRAMEWORK";
+
     //TEST URL
     public const string SAUCELABS_HUB = "https://ondemand.us-west-1.saucelabs.com:443/wd/hub";
     

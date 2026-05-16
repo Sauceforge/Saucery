@@ -87,6 +87,7 @@ jobs:
     env:
       SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
       SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
+      SAUCERY_TEST_FRAMEWORK: XUnit
     needs: build
     if: needs.build.result == 'success'
     steps:
@@ -113,6 +114,7 @@ jobs:
     env:
       SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
       SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
+      SAUCERY_TEST_FRAMEWORK: XUnit
     needs: build
     if: needs.build.result == 'success'
     steps:
