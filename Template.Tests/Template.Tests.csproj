@@ -16,7 +16,7 @@
     <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" Version="2.2.3" />
 
     <!-- Template verifier + assertions -->
-    <PackageReference Include="Microsoft.TemplateEngine.Authoring.TemplateVerifier" Version="10.0.300" />
+    <PackageReference Include="Microsoft.TemplateEngine.Authoring.TemplateVerifier" Version="10.0.301" />
     <PackageReference Include="Shouldly" Version="4.3.0" />
   </ItemGroup>
 
