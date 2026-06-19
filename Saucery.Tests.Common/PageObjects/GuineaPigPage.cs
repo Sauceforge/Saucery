@@ -1,7 +1,6 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using Saucery.Core.PageObjects;
-using SeleniumExtras.PageObjects;
 
 namespace Saucery.Tests.Common.PageObjects;
 
@@ -9,7 +8,6 @@ public class GuineaPigPage : PageObjectBase {
     public GuineaPigPage(WebDriver driver, string urlRoot)
         : base(urlRoot + "test/guinea-pig", "GuineaPig", "I am a page title - Sauce Labs") {
         GetPage(driver);
-        PageFactory.InitElements(driver, this);
     }
 
     public GuineaPigPage ClickLink(WebDriver driver) {
