@@ -51,7 +51,7 @@ jobs:
       SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
       SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/setup-dotnet
 
       - name: Restore solution
@@ -94,7 +94,7 @@ jobs:
       SAUCERY_TEST_FRAMEWORK: XUnit3
     needs: build
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/setup-dotnet
 
       - name: Download build artifacts
@@ -125,7 +125,7 @@ jobs:
       SAUCERY_TEST_FRAMEWORK: XUnit3
     needs: build
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/setup-dotnet
 
       - name: Download build artifacts
@@ -156,7 +156,7 @@ jobs:
       SAUCERY_TEST_FRAMEWORK: XUnit
     needs: build
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/setup-dotnet
 
       - name: Download build artifacts
@@ -185,7 +185,7 @@ jobs:
       SAUCERY_TEST_FRAMEWORK: NUnit
     needs: build
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/setup-dotnet
 
       - name: Download build artifacts
@@ -214,7 +214,7 @@ jobs:
       SAUCERY_TEST_FRAMEWORK: NUnit
     needs: build
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/setup-dotnet
 
       - name: Download build artifacts
@@ -243,7 +243,7 @@ jobs:
       SAUCERY_TEST_FRAMEWORK: XUnit
     needs: build
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/setup-dotnet
 
       - name: Download build artifacts
@@ -272,7 +272,7 @@ jobs:
       SAUCERY_TEST_FRAMEWORK: TUnit
     needs: build
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/setup-dotnet
 
       - name: Download build artifacts
@@ -306,7 +306,7 @@ jobs:
       SAUCERY_TEST_FRAMEWORK: TUnit
     needs: build
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/setup-dotnet
 
       - name: Download build artifacts
@@ -352,7 +352,7 @@ jobs:
       local_version: ${{ steps.publish.outputs.version }}
       publish: ${{ steps.publish.outputs.published }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/setup-dotnet
 
       - id: publish
@@ -381,7 +381,7 @@ jobs:
     env:
       CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/setup-dotnet
 
       - uses: actions/download-artifact@v8
@@ -480,7 +480,7 @@ jobs:
       - publish-saucery-core
     if: ${{ always() }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: ./.github/actions/delete-run-artifact
         with:

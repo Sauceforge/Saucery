@@ -46,7 +46,7 @@ jobs:
       paths_changed: ${{ steps.detect.outputs.paths_changed }}
       previous_sha: ${{ steps.detect.outputs.previous_sha }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - id: detect
         uses: ./.github/actions/detect-watched-paths
@@ -63,7 +63,7 @@ jobs:
     needs: detect-changes
     if: needs.detect-changes.outputs.paths_changed == 'true'
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: ./.github/actions/setup-dotnet
 
@@ -105,7 +105,7 @@ jobs:
     needs: build
     if: needs.build.result == 'success'
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: ./.github/actions/setup-dotnet
 
@@ -142,7 +142,7 @@ jobs:
     needs: build
     if: needs.build.result == 'success'
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: ./.github/actions/setup-dotnet
 
@@ -182,7 +182,7 @@ jobs:
       local_version: ${{ steps.publish.outputs.version }}
       publish: ${{ steps.publish.outputs.published }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/setup-dotnet
 
       - id: publish
@@ -218,7 +218,7 @@ jobs:
     needs: [tunit-integration-tests, tunit-real-integration-tests]
     if: needs.tunit-integration-tests.result == 'success' && needs.tunit-real-integration-tests.result == 'success'
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: ./.github/actions/setup-dotnet
 
@@ -256,7 +256,7 @@ jobs:
     needs: [generate-report, publish-saucery-tunit]
     if: ${{ always() }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: ./.github/actions/delete-run-artifact
         with:

@@ -171,7 +171,7 @@ jobs:
     if: needs.detect-changes.outputs.paths_changed == 'true'
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Setup dotnet
         uses: actions/setup-dotnet@v5
@@ -220,7 +220,7 @@ jobs:
       published: ${{ steps.publish.outputs.published }}
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Setup dotnet
         uses: actions/setup-dotnet@v5
@@ -263,7 +263,7 @@ jobs:
     if: needs.build-and-test.result == 'success'
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Download unit-test results
         uses: actions/download-artifact@v8

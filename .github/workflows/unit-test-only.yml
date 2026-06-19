@@ -30,7 +30,7 @@ jobs:
 
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
 
     - name: Setup dotnet
       uses: actions/setup-dotnet@v5
@@ -79,7 +79,7 @@ jobs:
 
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
 
     - name: Download unit-test results
       uses: actions/download-artifact@v8
