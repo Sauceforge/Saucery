@@ -46,7 +46,7 @@ jobs:
       previous_sha: ${{ steps.detect.outputs.previous_sha }}
       paths_changed: ${{ steps.detect.outputs.paths_changed }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - id: detect
         uses: ./.github/actions/detect-watched-paths
         with:
@@ -64,7 +64,7 @@ jobs:
       SAUCERY_TEST_FRAMEWORK: XUnit
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - uses: ./.github/actions/setup-dotnet
       - name: Compile solution
         run: dotnet build -c ${{ env.CONFIG }}
@@ -81,7 +81,7 @@ jobs:
       SAUCERY_TEST_FRAMEWORK: XUnit
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - uses: ./.github/actions/setup-dotnet
       - name: Compile solution
         run: dotnet build -c ${{ env.CONFIG }}
