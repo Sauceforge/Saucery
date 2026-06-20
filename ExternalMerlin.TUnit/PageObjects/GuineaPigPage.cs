@@ -1,16 +1,12 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using Saucery.Core.PageObjects;
-using SeleniumExtras.PageObjects;
 
 namespace ExternalMerlin.TUnit.PageObjects;
 
 public class GuineaPigPage : PageObjectBase {
     public GuineaPigPage(WebDriver driver, string urlRoot)
-        : base(urlRoot + "test/guinea-pig", "GuineaPig", "I am a page title - Sauce Labs") {
-        GetPage(driver);
-        PageFactory.InitElements(driver, this);
-    }
+        : base(urlRoot + "test/guinea-pig", "GuineaPig", "I am a page title - Sauce Labs") => GetPage(driver);
 
     public GuineaPigPage ClickLink(WebDriver driver) {
         //Could also use a "Selectors" class here.
@@ -21,9 +17,9 @@ public class GuineaPigPage : PageObjectBase {
         return this;
     }
 
-    public IWebElement GetField(WebDriver driver, string fieldId) => driver.FindElement(By.Id(fieldId));
+    public static IWebElement GetField(WebDriver driver, string fieldId) => driver.FindElement(By.Id(fieldId));
 
-    public string GetUserAgent(WebDriver driver) =>
+    public static string GetUserAgent(WebDriver driver) =>
         //Could also use a "Selectors" class here.
         driver.FindElement(By.Id("useragent")).Text;
 
