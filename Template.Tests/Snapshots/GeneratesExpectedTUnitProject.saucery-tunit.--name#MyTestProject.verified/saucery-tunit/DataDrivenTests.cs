@@ -14,7 +14,7 @@ public class DataDrivenTests : SauceryTBase {
 
         guineaPigPage.TypeField(SauceryDriver(), "comments", data.ToString());
 
-        var commentField = guineaPigPage.GetField(SauceryDriver(), "comments");
+        var commentField = GuineaPigPage.GetField(SauceryDriver(), "comments");
         await Assert.That(commentField).IsNotNull();
 
         var commentText = commentField.GetDomProperty("value");
