@@ -6,27 +6,34 @@ namespace ExternalMerlin.XUnit3.RealDevices.PageObjects;
 
 public class GuineaPigPage : PageObjectBase {
     public GuineaPigPage(WebDriver driver, string urlRoot)
-        : base(urlRoot + "test/guinea-pig", "GuineaPig", "I am a page title - Sauce Labs") => GetPage(driver);
+        : base(urlRoot + "test/guinea-pig", "GuineaPig", "I am a page title - Sauce Labs") {
+        GetPage(driver);
+    }
 
     public GuineaPigPage ClickLink(WebDriver driver) {
-        //Could also use a "Selectors" class here.
         var link = driver.FindElement(By.Id("i am a link"));
         link.Click();
+
         var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
         wait.Until(d => d.Url.Contains("guinea-pig2"));
+
         return this;
     }
 
-    public static IWebElement GetField(WebDriver driver, string fieldId) => driver.FindElement(By.Id(fieldId));
+    public IWebElement GetField(WebDriver driver, string fieldId) {
+        return driver.FindElement(By.Id(fieldId));
+    }
 
-    public static string GetUserAgent(WebDriver driver) =>
-        //Could also use a "Selectors" class here.
-        driver.FindElement(By.Id("useragent")).Text;
+    public string GetUserAgent(WebDriver driver) {
+        return driver.FindElement(By.Id("useragent")).Text;
+    }
 
     public GuineaPigPage TypeField(WebDriver driver, string fieldId, string data) {
         var element = GetField(driver, fieldId);
+
         element.Clear();
         element.SendKeys(data);
+
         return this;
     }
 }
