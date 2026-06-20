@@ -238,24 +238,30 @@ public sealed class CsprojUpdater(INuGetApiClient apiClient) {
 
     private static IReadOnlyList<string> ReadProjectExclusions(XmlDocument doc) {
         var nodes = doc.SelectNodes($"//*[local-name()='{Constants.Xml.SauceryNuGetExcludeElement}']");
-        return nodes is null || nodes.Count == 0
-            ? []
-            : [.. nodes.Cast<XmlElement>()
-                .Select(e => e.InnerText?.Trim())
-                .Where(s => !string.IsNullOrWhiteSpace(s))];
+
+        if(nodes is null || nodes.Count == 0) {
+            return [];
+        }
+
+        return [.. nodes
+            .Cast<XmlElement>()
+            .Select(e => e.InnerText.Trim())
+            .Where(s => !string.IsNullOrWhiteSpace(s))];
     }
 
     private static IReadOnlyList<string> MergeExclusions(
         IReadOnlyList<string>? cliExclusions, 
-        IReadOnlyList<string> projectExclusions) {
-        if((cliExclusions is null || cliExclusions.Count == 0) && projectExclusions.Count == 0)
+        IReadOnlyList<string>? projectExclusions) {
+        if((cliExclusions is null || cliExclusions.Count == 0) && 
+           (projectExclusions is null || projectExclusions.Count == 0))
             return [];
 
         var merged = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         if(cliExclusions is not null)
             foreach(var e in cliExclusions) merged.Add(e);
 
-        foreach(var e in projectExclusions) merged.Add(e);
+        if(projectExclusions is not null)
+            foreach(var e in projectExclusions) merged.Add(e);
 
         return [.. merged];
     }
