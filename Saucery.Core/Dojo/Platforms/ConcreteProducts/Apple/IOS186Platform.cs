@@ -4,6 +4,6 @@ using Saucery.Core.Util;
 
 namespace Saucery.Core.Dojo.Platforms.ConcreteProducts.Apple;
 
-public sealed class IOS186Platform(SupportedPlatform sp) : PlatformBase(sp, SauceryConstants.PLATFORM_IOS, [])
+public sealed class IOS186Platform(SupportedPlatform sp) : PlatformBase(sp, SauceryConstants.PLATFORM_IOS, [], null!, null!, true)
 {
 }

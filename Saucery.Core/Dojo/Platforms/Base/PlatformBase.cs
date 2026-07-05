@@ -15,6 +15,7 @@ public abstract class PlatformBase
     public List<string>? Selenium4BrowserNames { get; set; }
     public List<string>? ScreenResolutions { get; set; }
     public List<string>? BrowsersWithLatestVersion { get; set; }
+    public bool IsArmRequired { get; set; }
 
     public List<BrowserBase> Browsers { get; set; }
 
@@ -23,7 +24,8 @@ public abstract class PlatformBase
         string platformNameForOption, 
         List<string> selenium4BrowserNames,
         List<string> browsersWithLatestVersion = null!,
-        List<string> screenResolutions = null!)
+        List<string> screenResolutions = null!,
+        bool isArmRequired = false)
     {
         Name = sp.Os!;
         AutomationBackend = sp.automation_backend!;
@@ -45,5 +47,6 @@ public abstract class PlatformBase
         Selenium4BrowserNames = selenium4BrowserNames;
         BrowsersWithLatestVersion = browsersWithLatestVersion;
         ScreenResolutions = screenResolutions;
+        IsArmRequired = isArmRequired;
     }
 }
