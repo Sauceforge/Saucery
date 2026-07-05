@@ -3,7 +3,10 @@ using Saucery.Core.RestAPI;
 
 namespace Saucery.Core.Dojo.Browsers.ConcreteProducts.Google;
 
-internal class AndroidBrowser(SupportedPlatform sp, string platformNameForOption) : BrowserBase(sp, null!, platformNameForOption)
+internal class AndroidBrowser(
+    SupportedPlatform sp, 
+    string platformNameForOption,
+    bool isArmRequired = false) : BrowserBase(sp, null!, platformNameForOption, isArmRequired)
 {
     public override BrowserVersion? FindVersion(SupportedPlatform sp) => 
         BrowserVersions

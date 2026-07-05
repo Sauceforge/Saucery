@@ -10,23 +10,27 @@ namespace Saucery.Core.Dojo.Browsers;
 
 public static class BrowserFactory
 {
-    public static BrowserBase? CreateBrowser(SupportedPlatform sp, List<string> screenResolutions) => sp.IsAndroidPlatform()
-            ? new AndroidBrowserCreator(sp).Create(SauceryConstants.ANDROID, null!)
-            : sp.IsIOSPlatform()
-            ? new IOSBrowserCreator(sp).Create(SauceryConstants.PLATFORM_IOS, null!)
-            : sp.Os switch
-            {
-                SauceryConstants.PLATFORM_LINUX => new LinuxBrowserCreator(sp).Create(SauceryConstants.PLATFORM_LINUX, screenResolutions),
-                SauceryConstants.PLATFORM_WINDOWS_11 => new Windows11BrowserCreator(sp).Create(SauceryConstants.PLATFORM_WINDOWS_11, screenResolutions),
-                SauceryConstants.PLATFORM_WINDOWS_10 => new Windows10BrowserCreator(sp).Create(SauceryConstants.PLATFORM_WINDOWS_10, screenResolutions),
-                SauceryConstants.PLATFORM_WINDOWS_81 => new Windows81BrowserCreator(sp).Create("Windows 8.1", screenResolutions),
-                SauceryConstants.PLATFORM_WINDOWS_8 => new Windows8BrowserCreator(sp).Create("Windows 8", screenResolutions),
-                SauceryConstants.PLATFORM_MAC_26 => new Mac26BrowserCreator(sp).Create("macOS 26", screenResolutions),
-                SauceryConstants.PLATFORM_MAC_15 => new Mac15BrowserCreator(sp).Create("macOS 15", screenResolutions),
-                SauceryConstants.PLATFORM_MAC_14 => new Mac14BrowserCreator(sp).Create("macOS 14", screenResolutions),
-                SauceryConstants.PLATFORM_MAC_13 => new Mac13BrowserCreator(sp).Create("macOS 13", screenResolutions),
-                SauceryConstants.PLATFORM_MAC_12 => new Mac12BrowserCreator(sp).Create("macOS 12", screenResolutions),
-                SauceryConstants.PLATFORM_MAC_11 => new Mac11BrowserCreator(sp).Create("macOS 11.00", screenResolutions),
-                _ => null,
-            };
+    public static BrowserBase? CreateBrowser(
+        SupportedPlatform sp, 
+        List<string> screenResolutions,
+        bool isArmRequired = false)
+            => sp.IsAndroidPlatform()
+                ? new AndroidBrowserCreator(sp).Create(SauceryConstants.ANDROID, null!, isArmRequired)
+                : sp.IsIOSPlatform()
+                    ? new IOSBrowserCreator(sp).Create(SauceryConstants.PLATFORM_IOS, null!, isArmRequired)
+                    : sp.Os switch
+                    {
+                        SauceryConstants.PLATFORM_LINUX => new LinuxBrowserCreator(sp).Create(SauceryConstants.PLATFORM_LINUX, screenResolutions, isArmRequired),
+                        SauceryConstants.PLATFORM_WINDOWS_11 => new Windows11BrowserCreator(sp).Create(SauceryConstants.PLATFORM_WINDOWS_11, screenResolutions, isArmRequired),
+                        SauceryConstants.PLATFORM_WINDOWS_10 => new Windows10BrowserCreator(sp).Create(SauceryConstants.PLATFORM_WINDOWS_10, screenResolutions, isArmRequired),
+                        SauceryConstants.PLATFORM_WINDOWS_81 => new Windows81BrowserCreator(sp).Create("Windows 8.1", screenResolutions, isArmRequired),
+                        SauceryConstants.PLATFORM_WINDOWS_8 => new Windows8BrowserCreator(sp).Create("Windows 8", screenResolutions, isArmRequired),
+                        SauceryConstants.PLATFORM_MAC_26 => new Mac26BrowserCreator(sp).Create("macOS 26", screenResolutions, isArmRequired),
+                        SauceryConstants.PLATFORM_MAC_15 => new Mac15BrowserCreator(sp).Create("macOS 15", screenResolutions, isArmRequired),
+                        SauceryConstants.PLATFORM_MAC_14 => new Mac14BrowserCreator(sp).Create("macOS 14", screenResolutions, isArmRequired),
+                        SauceryConstants.PLATFORM_MAC_13 => new Mac13BrowserCreator(sp).Create("macOS 13", screenResolutions, isArmRequired),
+                        SauceryConstants.PLATFORM_MAC_12 => new Mac12BrowserCreator(sp).Create("macOS 12", screenResolutions, isArmRequired),
+                        SauceryConstants.PLATFORM_MAC_11 => new Mac11BrowserCreator(sp).Create("macOS 11.00", screenResolutions, isArmRequired),
+                        _ => null,
+                    };
 }

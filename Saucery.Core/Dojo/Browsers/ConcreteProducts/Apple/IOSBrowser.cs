@@ -3,7 +3,11 @@ using Saucery.Core.RestAPI;
 
 namespace Saucery.Core.Dojo.Browsers.ConcreteProducts.Apple;
 
-internal class IOSBrowser(SupportedPlatform sp, List<string> screenResolutions, string platformNameForOption) : BrowserBase(sp, screenResolutions, platformNameForOption)
+internal class IOSBrowser(
+    SupportedPlatform sp, 
+    List<string> screenResolutions, 
+    string platformNameForOption,
+    bool isArmRequired = false) : BrowserBase(sp, screenResolutions, platformNameForOption, isArmRequired)
 {
     public override BrowserVersion? FindVersion(SupportedPlatform sp) =>
         BrowserVersions
