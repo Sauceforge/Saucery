@@ -5,9 +5,9 @@ using Saucery.Core.Util;
 namespace Saucery.Core.Dojo.Platforms.ConcreteProducts.PC;
 
 //Sequoia
-public sealed class Mac15Platform(SupportedPlatform sp) 
+public sealed class Mac26Platform(SupportedPlatform sp) 
     : PlatformBase(sp, 
-                   "macOS 15", 
+                   "macOS 26", 
                    [SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_FIREFOX, SauceryConstants.BROWSER_EDGE, SauceryConstants.BROWSER_SAFARI],
                    [SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_FIREFOX, SauceryConstants.BROWSER_EDGE, SauceryConstants.BROWSER_SAFARI],
                    [SauceryConstants.SCREENRES_1024_768,

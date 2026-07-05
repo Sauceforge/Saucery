@@ -14,11 +14,13 @@ public class PlatformTypes {
             typeof(Windows10Platform),
             typeof(Windows81Platform),
             typeof(Windows8Platform),
+            typeof(Mac26Platform),
             typeof(Mac15Platform),
             typeof(Mac14Platform),
             typeof(Mac13Platform),
             typeof(Mac12Platform),
             typeof(Mac11Platform),
+            //typeof(IOS27Platform),
             typeof(IOS261Platform),
             typeof(IOS186Platform),
             typeof(IOS18Platform),
@@ -36,6 +38,7 @@ public class PlatformTypes {
             typeof(IOS144Platform),
             typeof(IOS143Platform),
             typeof(IOS14Platform),
+            typeof(Android17Platform),
             typeof(Android16Platform),
             typeof(Android15Platform),
             typeof(Android14Platform),
@@ -55,6 +58,7 @@ public class PlatformTypes {
     public static IEnumerable<object[]> SupportedRealDeviceTypes =>
         Select(
         [
+            typeof(IOS27Platform),
             typeof(IOS26Platform),
             typeof(IOS18Platform),
             typeof(IOS17Platform),
@@ -81,6 +85,7 @@ public class PlatformTypes {
             typeof(Windows10Platform),
             typeof(Windows81Platform),
             typeof(Windows8Platform),
+            typeof(Mac26Platform),
             typeof(Mac15Platform),
             typeof(Mac14Platform),
             typeof(Mac13Platform),

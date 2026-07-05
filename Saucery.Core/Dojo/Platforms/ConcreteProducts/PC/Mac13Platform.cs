@@ -9,7 +9,7 @@ public sealed class Mac13Platform(SupportedPlatform sp)
     : PlatformBase(sp, 
                    "macOS 13", 
                    [SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_FIREFOX, SauceryConstants.BROWSER_EDGE, SauceryConstants.BROWSER_SAFARI],
-                   [SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_FIREFOX, SauceryConstants.BROWSER_EDGE],
+                   [SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_FIREFOX, SauceryConstants.BROWSER_EDGE, SauceryConstants.BROWSER_SAFARI],
                    [SauceryConstants.SCREENRES_1024_768,
                     SauceryConstants.SCREENRES_1152_864,
                     SauceryConstants.SCREENRES_1280_960,

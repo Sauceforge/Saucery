@@ -8,8 +8,8 @@ namespace Saucery.Core.Dojo.Platforms.ConcreteProducts.PC;
 public sealed class Mac14Platform(SupportedPlatform sp) 
     : PlatformBase(sp, 
                    "macOS 14", 
-                   [SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_FIREFOX, SauceryConstants.BROWSER_SAFARI],
-                   [SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_FIREFOX, SauceryConstants.BROWSER_SAFARI],
+                   [SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_FIREFOX, SauceryConstants.BROWSER_EDGE, SauceryConstants.BROWSER_SAFARI],
+                   [SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_FIREFOX, SauceryConstants.BROWSER_EDGE, SauceryConstants.BROWSER_SAFARI],
                    [SauceryConstants.SCREENRES_1024_768,
                     SauceryConstants.SCREENRES_1152_864,
                     SauceryConstants.SCREENRES_1280_960,

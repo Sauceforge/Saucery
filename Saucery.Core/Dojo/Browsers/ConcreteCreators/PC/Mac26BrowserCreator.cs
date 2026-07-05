@@ -5,7 +5,7 @@ using Saucery.Core.Util;
 
 namespace Saucery.Core.Dojo.Browsers.ConcreteCreators.PC;
 
-internal class Mac14BrowserCreator(SupportedPlatform sp) : BrowserCreator(sp)
+internal class Mac26BrowserCreator(SupportedPlatform sp) : BrowserCreator(sp)
 {
     public override BrowserBase? Create(string platformNameForOption, List<string> screenResolutions) => Platform.api_name switch
     {
