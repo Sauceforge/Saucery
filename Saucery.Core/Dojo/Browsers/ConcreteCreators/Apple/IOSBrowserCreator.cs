@@ -9,5 +9,5 @@ internal class IOSBrowserCreator(SupportedPlatform sp) : BrowserCreator(sp) {
         string platformNameForOption,
         List<string> screenResolutions,
         bool isArmRequired = false) =>
-        new IOSBrowser(Platform, screenResolutions, platformNameForOption);
+        new IOSBrowser(Platform, screenResolutions, platformNameForOption, isArmRequired);
 }
