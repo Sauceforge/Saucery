@@ -1,5 +1,6 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
+using Saucery.Core.Dojo;
 using Saucery.Core.OnDemand;
 using Saucery.Core.Util;
 
@@ -23,6 +24,12 @@ internal abstract class BaseOptions(string testName) {
     protected void AddSauceLabsOptions(string? nativeApp) {
         if(!string.IsNullOrEmpty(nativeApp)) {
             SauceOptions[SauceryConstants.SAUCE_NATIVE_APP_CAPABILITY] = nativeApp;
+        }
+    }
+
+    protected void AddArmRequiredOption(BrowserVersion browserVersion) {
+        if(browserVersion.IsArmRequired) {
+            SauceOptions[SauceryConstants.ARM_REQUIRED_CAPABILITY] = true;
         }
     }
 
