@@ -34,10 +34,13 @@ public class BrowserVersion {
 
     public List<string> ScreenResolutions { get; set; }
 
+    public bool IsArmRequired { get; set; }
+
     public BrowserVersion(SupportedPlatform sp, BrowserBase b) {
         Os = sp.Os!;
         PlatformNameForOption = b.PlatformNameForOption;
         ScreenResolutions = b.ScreenResolutions;
+        IsArmRequired = b.IsArmRequired;
         BrowserName = sp.api_name!;
         Name = sp.latest_stable_version != string.Empty
             ? sp.latest_stable_version
@@ -66,6 +69,7 @@ public class BrowserVersion {
         SupportedBackendVersions = supportedBackendVersions!;
         DeprecatedBackendVersions = deprecatedBackendVersions!;
         ScreenResolutions = b.ScreenResolutions;
+        IsArmRequired = b.IsArmRequired;
     }
 
     public BrowserVersion(SaucePlatform platform) {
@@ -82,6 +86,7 @@ public class BrowserVersion {
         ScreenResolution = string.Empty;
         PlatformType = platform.IsAnAndroidDevice() ? PlatformType.Android : PlatformType.Apple;
         ScreenResolutions = [];
+        IsArmRequired = false;
     }
 
     /// <summary>
@@ -102,6 +107,7 @@ public class BrowserVersion {
         ScreenResolution = other.ScreenResolution;
         PlatformType = other.PlatformType;
         ScreenResolutions = other.ScreenResolutions != null ? [..other.ScreenResolutions] : [];
+        IsArmRequired = other.IsArmRequired;
     }
 
     /// <summary>

@@ -36,13 +36,13 @@ public static class DojoExtensions
             platform = PlatformFactory.CreatePlatform(sp);
             if (platform != null)
             {
-                platform.Browsers.AddBrowser(sp, platform.ScreenResolutions!);
+                platform.Browsers.AddBrowser(sp, platform.ScreenResolutions!, platform.IsArmRequired);
                 platforms.Add(platform);
             }
         }
         else
         {
-            platform.Browsers.AddBrowser(sp, platform.ScreenResolutions!);
+            platform.Browsers.AddBrowser(sp, platform.ScreenResolutions!, platform.IsArmRequired);
         }
     }
 
@@ -63,12 +63,16 @@ public static class DojoExtensions
             : desktopPlatforms.FirstOrDefault(dp => dp.Name.Equals(sp.Os, StringComparison.Ordinal));
     }
 
-    private static void AddBrowser(this List<BrowserBase> browsers, SupportedPlatform sp, List<string> screenResolutions)
+    private static void AddBrowser(
+        this List<BrowserBase> browsers, 
+        SupportedPlatform sp, 
+        List<string> screenResolutions,
+        bool isArmRequired)
     {
         var browser = browsers.FindBrowser(sp);
         if (browser == null)
         {
-            browser = BrowserFactory.CreateBrowser(sp, screenResolutions);
+            browser = BrowserFactory.CreateBrowser(sp, screenResolutions, isArmRequired);
             browser?.AddVersion(browsers, sp, false);
         }
         else
@@ -110,6 +114,7 @@ public static class DojoExtensions
             SauceryConstants.PLATFORM_WINDOWS_10 => platforms.GetPlatform<Windows10Platform>().FirstOrDefault(),
             SauceryConstants.PLATFORM_WINDOWS_81 => platforms.GetPlatform<Windows81Platform>().FirstOrDefault(),
             SauceryConstants.PLATFORM_WINDOWS_8 => platforms.GetPlatform<Windows8Platform>().FirstOrDefault(),
+            SauceryConstants.PLATFORM_MAC_26 => platforms.GetPlatform<Mac26Platform>().FirstOrDefault(),
             SauceryConstants.PLATFORM_MAC_15 => platforms.GetPlatform<Mac15Platform>().FirstOrDefault(),
             SauceryConstants.PLATFORM_MAC_14 => platforms.GetPlatform<Mac14Platform>().FirstOrDefault(),
             SauceryConstants.PLATFORM_MAC_13 => platforms.GetPlatform<Mac13Platform>().FirstOrDefault(),

@@ -17,6 +17,7 @@ public sealed class Mac15Platform(SupportedPlatform sp)
                     SauceryConstants.SCREENRES_1440_900,
                     SauceryConstants.SCREENRES_1600_1200,
                     SauceryConstants.SCREENRES_1920_1440,
-                    SauceryConstants.SCREENRES_2048_1536])
+                    SauceryConstants.SCREENRES_2048_1536],
+                   true)
 {
 }

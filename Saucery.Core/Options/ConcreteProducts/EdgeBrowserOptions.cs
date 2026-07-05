@@ -23,6 +23,8 @@ internal class EdgeBrowserOptions : BaseOptions {
             SauceOptions.Add(SauceryConstants.SCREEN_RESOLUTION_CAPABILITY, browserVersion.ScreenResolution);
         }
 
+        AddArmRequiredOption(browserVersion);
+
         o.AddAdditionalOption(SauceryConstants.SAUCE_OPTIONS_CAPABILITY, SauceOptions);
         Opts = o;
     }

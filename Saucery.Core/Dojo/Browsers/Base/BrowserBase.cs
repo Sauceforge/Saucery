@@ -22,11 +22,13 @@ public abstract class BrowserBase
 
     internal List<BrowserVersion> BrowserVersions { get; set; }
 
+    public bool IsArmRequired { get; set; }
 
     protected BrowserBase(
         SupportedPlatform sp, 
         List<string> screenResolutions, 
-        string platformNameForOption)
+        string platformNameForOption,
+        bool isArmRequired = false)
     {
         Os = sp.Os!;
         PlatformNameForOption = platformNameForOption;
@@ -34,6 +36,7 @@ public abstract class BrowserBase
         Name = sp.api_name!;
         DeviceName = sp.long_name!;
         ScreenResolutions = screenResolutions;
+        IsArmRequired = isArmRequired;
 
         if(sp.automation_backend == null) {
             PlatformVersion = sp.OsVersion?.Split(".")[0];

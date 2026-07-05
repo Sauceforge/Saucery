@@ -29,6 +29,9 @@ internal class EmulatedIOSOptions : BaseOptions {
         {
             SauceOptions.Add(SauceryConstants.SAUCE_DEVICE_ORIENTATION_CAPABILITY, browserVersion.DeviceOrientation);
         }
+
+        AddArmRequiredOption(browserVersion);
+
         options.AddAdditionalAppiumOption(SauceryConstants.SAUCE_OPTIONS_CAPABILITY, SauceOptions);
         Opts = options;
     }

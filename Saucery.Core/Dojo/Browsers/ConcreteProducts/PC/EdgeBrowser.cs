@@ -4,7 +4,11 @@ using Saucery.Core.Util;
 
 namespace Saucery.Core.Dojo.Browsers.ConcreteProducts.PC;
 
-internal class EdgeBrowser(SupportedPlatform sp, List<string> screenResolutions, string platformNameForOption) : BrowserBase(sp, screenResolutions, platformNameForOption), IVersion
+internal class EdgeBrowser(
+    SupportedPlatform sp, 
+    List<string> screenResolutions, 
+    string platformNameForOption, 
+    bool isArmRequired = false) : BrowserBase(sp, screenResolutions, platformNameForOption, isArmRequired), IVersion
 {
     public override BrowserVersion? FindVersion(SupportedPlatform sp) => 
         BrowserVersions

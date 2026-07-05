@@ -59,6 +59,7 @@ public static class SauceryConstants {
     internal const string SAUCE_NATIVE_APP_CAPABILITY = "app";
     internal const string SAUCE_VUOP_CAPABILITY = "videoUploadOnPass";
     internal const string SAUCE_OPTIONS_CAPABILITY = "sauce:options";
+    internal const string ARM_REQUIRED_CAPABILITY = "armRequired";
 
     //SAUCE ENVIRONMENT VARIABLES
     public static readonly string SAUCE_USER_NAME = "SAUCE_USER_NAME";
