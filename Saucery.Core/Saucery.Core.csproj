@@ -12,7 +12,7 @@
 	<PropertyGroup>
 		<IsPackable>true</IsPackable>
 		<PackageId>Saucery.Core</PackageId>
-	  <PackageVersion>4.10.14</PackageVersion>
+	  <PackageVersion>4.10.15</PackageVersion>
 	  <Authors>Andrew Gray</Authors>
 	  <Company>SauceForge</Company>
 	  <Copyright>Copyright Andrew Gray 2014</Copyright>
@@ -32,8 +32,8 @@
 		<PackageReference Include="Appium.WebDriver" Version="8.3.1" />
 		<PackageReference Include="Castle.Core" Version="5.2.1" />
 		<PackageReference Include="RestSharp" Version="114.0.0" />
-		<PackageReference Include="Selenium.Support" Version="4.45.0" />
-		<PackageReference Include="Selenium.WebDriver" Version="4.45.0" />
+		<PackageReference Include="Selenium.Support" Version="4.46.0" />
+		<PackageReference Include="Selenium.WebDriver" Version="4.46.0" />
 		<PackageReference Include="Shouldly" Version="4.3.0" />
 		<None Include="Images\Saucery.Core.128x128.png" Pack="true" PackagePath="/" />
 	</ItemGroup>
