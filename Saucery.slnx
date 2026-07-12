@@ -1,4 +1,4 @@
-﻿<Solution>
+<Solution>
   <Folder Name="/Core/">
     <Project Path="Saucery.Core/Saucery.Core.csproj" />
   </Folder>
@@ -145,12 +145,14 @@
 
   <Folder Name="/Tools/">
     <Project Path="PackageManager.Console/PackageManager.Console.csproj" />
-    <Project Path="Saucery.NuGet/Saucery.NuGet.csproj" />
-    <Project Path="Saucery.NuGet.Tests/Saucery.NuGet.Tests.csproj" />
   </Folder>
 
   <Folder Name="/Tools/Badges/">
     <Project Path="Saucery.Badges/Saucery.Badges.csproj" />
     <Project Path="Saucery.Badges.Tests/Saucery.Badges.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Tools/NuGet/">
+    <Project Path="Saucery.NuGet.Tests/Saucery.NuGet.Tests.csproj" />
+    <Project Path="Saucery.NuGet/Saucery.NuGet.csproj" />
   </Folder>
 </Solution>
