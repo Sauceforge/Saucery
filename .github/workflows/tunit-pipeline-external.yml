@@ -22,7 +22,7 @@ on:
 
 env:
   PROJECT_NAME: Saucery
-  SOLN_FILE: Saucery.sln
+  SOLN_FILE: Saucery.slnx
   EM_TUNIT_PROJECT: ExternalMerlin.TUnit/ExternalMerlin.TUnit.csproj
   EM_RD_TUNIT_PROJECT: ExternalMerlin.TUnit.RealDevices/ExternalMerlin.TUnit.RealDevices.csproj
   CONFIG: Release

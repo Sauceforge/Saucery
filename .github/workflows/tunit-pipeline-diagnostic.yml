@@ -5,7 +5,7 @@ on:
 
 env:
   PROJECT_NAME: Saucery
-  SOLN_FILE: Saucery.sln                                                                        # full path to your solution file
+  SOLN_FILE: Saucery.slnx                                                                       # full path to your solution file
   TUNIT_INT_DIR: Merlin.TUnit
   TUNIT_RD_INT_DIR: Merlin.TUnit.RealDevices
   COVERLET_DIR: ./TestResults

@@ -16,7 +16,7 @@ on:
   workflow_dispatch:
 
 env:
-  SOLN_FILE: Saucery.sln
+  SOLN_FILE: Saucery.slnx
   CONFIG: Release
 
   PROJECT_PATH: Saucery.NuGet/Saucery.NuGet.csproj

@@ -1,0 +1,156 @@
+﻿<Solution>
+  <Folder Name="/Core/">
+    <Project Path="Saucery.Core/Saucery.Core.csproj" />
+  </Folder>
+
+  <Folder Name="/Solution Items/">
+    <File Path=".github/workflows/core-pipeline.yml" />
+    <File Path="Delete-AllErroredSauceJobs.ps1" />
+    <File Path=".github/workflows/delete-sauce-errored-jobs.yml" />
+    <File Path=".github/dependabot.yml" />
+    <File Path=".github/workflows/json-yaml-validate.yml" />
+    <File Path="badges/nuget-package-count.json" />
+    <File Path=".github/workflows/nuget-total-downloads-badge.yml" />
+    <File Path="badges/nuget-total-downloads.json" />
+    <File Path=".github/workflows/nunit-pipeline-external.yml" />
+    <File Path=".github/workflows/nunit-pipeline.yml" />
+    <File Path=".github/workflows/pipeline.yml" />
+    <File Path=".github/workflows/publish-core.yml" />
+    <File Path=".github/workflows/publish-nunit.yml" />
+    <File Path=".github/workflows/publish-saucery-nuget.yml" />
+    <File Path=".github/workflows/publish-tunit.yml" />
+    <File Path=".github/workflows/publish-xunit.yml" />
+    <File Path=".github/workflows/publish-xunit3.yml" />
+    <File Path="README.md" />
+    <File Path="Run-SauceryNuGetSync.ps1" />
+    <File Path=".github/workflows/saucery-nuget-pipeline.yml" />
+    <File Path=".github/workflows/saucery-nuget-sync-and-commit.yml" />
+    <File Path=".github/workflows/tunit-pipeline-diagnostic.yml" />
+    <File Path=".github/workflows/tunit-pipeline-external.yml" />
+    <File Path=".github/workflows/tunit-pipeline.yml" />
+    <File Path=".github/workflows/unit-test-only.yml" />
+    <File Path=".github/workflows/xunit-pipeline-external.yml" />
+    <File Path=".github/workflows/xunit-pipeline.yml" />
+    <File Path=".github/workflows/xunit3-pipeline-external.yml" />
+    <File Path=".github/workflows/xunit3-pipeline.yml" />
+  </Folder>
+
+  <Folder Name="/Testing/">
+  </Folder>
+
+  <Folder Name="/FrontEnd/">
+    <Project Path="Saucery/Saucery.csproj" />
+    <Project Path="Saucery.XUnit/Saucery.XUnit.csproj" />
+    <Project Path="Saucery.Playwright.NUnit/Saucery.Playwright.NUnit.csproj" />
+    <Project Path="Saucery.TUnit/Saucery.TUnit.csproj" />
+    <Project Path="Saucery.XUnit3/Saucery.XUnit3.csproj" />
+  </Folder>
+
+  <Folder Name="/Testing/NUnit/">
+    <Project Path="ExternalMerlin.NUnit/ExternalMerlin.NUnit.csproj" />
+    <Project Path="Merlin.NUnit/Merlin.NUnit.csproj" />
+    <Project Path="Merlin.Playwright.NUnit/Merlin.Playwright.NUnit.csproj" />
+    <Project Path="Merlin.NUnit.RealDevices/Merlin.NUnit.RealDevices.csproj" />
+    <Project Path="ExternalMerlin.NUnit.RealDevices/ExternalMerlin.NUnit.RealDevices.csproj" />
+  </Folder>
+
+  <Folder Name="/Testing/Core/">
+    <Project Path="Saucery.Core.Tests/Saucery.Core.Tests.csproj" />
+    <Project Path="Template.Tests/Template.Tests.csproj" />
+    <Project Path="Saucery.Core.Tests.XUnitv3/Saucery.Core.Tests.XUnitv3.csproj" />
+  </Folder>
+
+  <Folder Name="/Testing/XUnit/">
+    <Project Path="Merlin.XUnit/Merlin.XUnit.csproj" />
+    <Project Path="ExternalMerlin.XUnit/ExternalMerlin.XUnit.csproj" />
+    <Project Path="Merlin.XUnit.RealDevices/Merlin.XUnit.RealDevices.csproj" />
+    <Project Path="ExternalMerlin.XUnit.RealDevices/ExternalMerlin.XUnit.RealDevices.csproj" />
+  </Folder>
+
+  <Folder Name="/Testing/Common/">
+    <Project Path="Saucery.Tests.Common/Saucery.Tests.Common.csproj" />
+  </Folder>
+
+  <Folder Name="/Testing/TUnit/">
+    <Project Path="Merlin.TUnit/Merlin.TUnit.csproj" />
+    <Project Path="Merlin.TUnit.RealDevices/Merlin.TUnit.RealDevices.csproj" />
+    <Project Path="ExternalMerlin.TUnit/ExternalMerlin.TUnit.csproj" />
+    <Project Path="ExternalMerlin.TUnit.RealDevices/ExternalMerlin.TUnit.RealDevices.csproj" />
+  </Folder>
+
+  <Folder Name="/Benchmark/">
+    <Project Path="Saucery.Benchmark/Saucery.Benchmark.csproj" />
+  </Folder>
+
+  <Folder Name="/Templates/">
+  </Folder>
+
+  <Folder Name="/Testing/XUnit3/">
+    <Project Path="Merlin.XUnit3/Merlin.XUnit3.csproj" />
+    <Project Path="Merlin.XUnit3.RealDevices/Merlin.XUnit3.RealDevices.csproj" />
+    <Project Path="ExternalMerlin.XUnit3/ExternalMerlin.XUnit3.csproj" />
+    <Project Path="ExternalMerlin.XUnit3.RealDevices/ExternalMerlin.XUnit3.RealDevices.csproj" />
+  </Folder>
+
+  <Folder Name="/Templates/NUnit/">
+    <File Path="Templates/NUnit/MyTestProject.csproj" />
+    <File Path="Templates/NUnit/NuGetIntegrationTests.cs" />
+    <File Path="Templates/NUnit/RequestedPlatformData.cs" />
+    <File Path="Templates/NUnit/.template.config/template.json" />
+  </Folder>
+
+  <Folder Name="/Templates/NUnit/PageObjects/">
+    <File Path="Templates/NUnit/PageObjects/GuineaPigPage.cs" />
+  </Folder>
+
+  <Folder Name="/Templates/XUnit/">
+    <File Path="Templates/XUnit/ClickLinkTests.cs" />
+    <File Path="Templates/XUnit/DataDrivenTests.cs" />
+    <File Path="Templates/XUnit/MyTestProject.csproj" />
+    <File Path="Templates/XUnit/RequestedPlatformData.cs" />
+    <File Path="Templates/XUnit/.template.config/template.json" />
+    <File Path="Templates/XUnit/Usings.cs" />
+  </Folder>
+
+  <Folder Name="/Templates/XUnit/PageObjects/">
+    <File Path="Templates/XUnit/PageObjects/GuineaPigPage.cs" />
+  </Folder>
+
+  <Folder Name="/Templates/TUnit/">
+    <File Path="Templates/TUnit/ClickLinkTests.cs" />
+    <File Path="Templates/TUnit/DataDrivenTests.cs" />
+    <File Path="Templates/TUnit/MyParallelLimit.cs" />
+    <File Path="Templates/TUnit/MyTestProject.csproj" />
+    <File Path="Templates/TUnit/RequestedPlatformData.cs" />
+    <File Path="Templates/TUnit/.template.config/template.json" />
+  </Folder>
+
+  <Folder Name="/Templates/TUnit/PageObjects/">
+    <File Path="Templates/TUnit/PageObjects/GuineaPigPage.cs" />
+  </Folder>
+
+  <Folder Name="/Templates/XUnit3/">
+    <File Path="Templates/XUnit3/ClickLinkTests.cs" />
+    <File Path="Templates/XUnit3/DataDrivenTests.cs" />
+    <File Path="Templates/XUnit3/MyTestProject.csproj" />
+    <File Path="Templates/XUnit3/RequestedPlatformData.cs" />
+    <File Path="Templates/XUnit3/.template.config/template.json" />
+    <File Path="Templates/XUnit3/Usings.cs" />
+    <File Path="Templates/XUnit3/xunit.runner.json" />
+  </Folder>
+
+  <Folder Name="/Templates/XUnit3/PageObjects/">
+    <File Path="Templates/XUnit3/PageObjects/GuineaPigPage.cs" />
+  </Folder>
+
+  <Folder Name="/Tools/">
+    <Project Path="PackageManager.Console/PackageManager.Console.csproj" />
+    <Project Path="Saucery.NuGet/Saucery.NuGet.csproj" />
+    <Project Path="Saucery.NuGet.Tests/Saucery.NuGet.Tests.csproj" />
+  </Folder>
+
+  <Folder Name="/Tools/Badges/">
+    <Project Path="Saucery.Badges/Saucery.Badges.csproj" />
+    <Project Path="Saucery.Badges.Tests/Saucery.Badges.Tests.csproj" />
+  </Folder>
+</Solution>

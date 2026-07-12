@@ -14,7 +14,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-$SolutionFile = Join-Path $PSScriptRoot "Saucery.sln"
+$SolutionFile = Join-Path $PSScriptRoot "Saucery.slnx"
 
 $dotnetTools = Join-Path ([System.Environment]::GetFolderPath("UserProfile")) ".dotnet\tools"
 if ($env:PATH -notlike "*$dotnetTools*") {

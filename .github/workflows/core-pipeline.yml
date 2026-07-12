@@ -19,7 +19,7 @@ permissions:
 
 env:
   PROJECT_NAME: Saucery
-  SOLN_FILE: Saucery.sln
+  SOLN_FILE: Saucery.slnx
   COVERLET_DIR: ./TestResults
   CONFIG: Release
   NUGET_SOURCE: https://api.nuget.org/v3/index.json
