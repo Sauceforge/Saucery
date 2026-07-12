@@ -8,7 +8,7 @@ var solutionOption = new Option<FileInfo>(
     Constants.Cli.SolutionOption,
     [Constants.Cli.SolutionAlias]) {
     Required = true,
-    Description = "Path to the.sln to process."
+    Description = "Path to the .sln or .slnx file to process."
 };
 
 var includePrereleaseOption = new Option<bool>(
@@ -49,7 +49,7 @@ var syncWithOption = new Option<string?>(
 
 var scanUnregisteredOption = new Option<bool>(
     Constants.Cli.ScanUnregisteredOption) {
-    Description = "Optional: Include .csproj files found on disk but not registered as Project(...) entries in the solution.",
+    Description = "Optional: Include .csproj files found on disk but not registered in the solution.",
     DefaultValueFactory = _ => false
 };
 

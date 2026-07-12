@@ -4,171 +4,413 @@ using System.Xml;
 namespace Saucery.NuGet.Pipeline;
 
 public static class SolutionScanner {
-    private static readonly Regex ProjectLineRegex =
-        new(@"Project\(""\{[^}]+\}""\)\s*=\s*""[^""]+""\s*,\s*""([^""]+\.csproj)""",
-            RegexOptions.IgnoreCase |
-            RegexOptions.Compiled);
+    private static readonly Regex ProjectLineRegex = new(
+        @"Project\(""\{[^}]+\}""\)\s*=\s*""[^""]+""\s*,\s*""([^""]+\.csproj)""",
+        RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-    public static IReadOnlyList<string> GetProjectPaths(string solutionPath)
-    {
-        var solutionDir = Path.GetDirectoryName(Path.GetFullPath(solutionPath))
-            ?? throw new ArgumentException($"Cannot determine directory of solution: {solutionPath}");
+    public static IReadOnlyList<string> GetProjectPaths(string solutionPath) {
+        ArgumentException.ThrowIfNullOrWhiteSpace(solutionPath);
 
-        var paths = new List<string>();
+        var fullSolutionPath = Path.GetFullPath(solutionPath);
 
-        foreach(var line in File.ReadLines(solutionPath))
-        {
-            var match = ProjectLineRegex.Match(line);
-            if(!match.Success)
-                continue;
-
-            var relativePath = match.Groups[1].Value.Replace('\\', Path.DirectorySeparatorChar);
-            var fullPath = Path.GetFullPath(Path.Combine(solutionDir, relativePath));
-
-            if(File.Exists(fullPath))
-                paths.Add(fullPath);
+        if(!File.Exists(fullSolutionPath)) {
+            throw new FileNotFoundException(
+                $"Solution file was not found: {fullSolutionPath}",
+                fullSolutionPath);
         }
 
-        return paths;
+        var solutionDirectory = Path.GetDirectoryName(fullSolutionPath)
+            ?? throw new ArgumentException(
+                $"Cannot determine directory of solution: {solutionPath}",
+                nameof(solutionPath));
+
+        var extension = Path.GetExtension(fullSolutionPath);
+
+        return extension.ToLowerInvariant() switch {
+            ".sln" => GetProjectPathsFromSln(
+                fullSolutionPath,
+                solutionDirectory),
+
+            ".slnx" => GetProjectPathsFromSlnx(
+                fullSolutionPath,
+                solutionDirectory),
+
+            _ => throw new NotSupportedException(
+                $"Unsupported solution file extension '{extension}'. " +
+                "Supported extensions are '.sln' and '.slnx'.")
+        };
     }
 
     public static IReadOnlyList<string> FilterOptedIn(
         IEnumerable<string> projectPaths,
-        Func<string, bool> isOptedIn) 
-        => [.. projectPaths.Where(isOptedIn)];
+        Func<string, bool> isOptedIn) {
+        ArgumentNullException.ThrowIfNull(projectPaths);
+        ArgumentNullException.ThrowIfNull(isOptedIn);
+
+        return
+        [
+            .. projectPaths.Where(isOptedIn)
+        ];
+    }
 
     /// <summary>
-    /// Filter an existing list of opted-in project paths down to those requested by the user via
-    /// the --project / -p option. Matching supports:
-    /// - project file name without extension (e.g. Saucery.Core)
-    /// - project file name with extension (e.g. Saucery.Core.csproj)
-    /// - absolute path to the project file
+    /// Filters an existing list of opted-in project paths down to those requested
+    /// by the user via the --project / -p option.
     /// </summary>
+    /// <remarks>
+    /// Matching supports:
+    /// <list type="bullet">
+    /// <item>Project file name without extension, for example Saucery.Core.</item>
+    /// <item>Project file name with extension, for example Saucery.Core.csproj.</item>
+    /// <item>Absolute path to the project file.</item>
+    /// </list>
+    /// </remarks>
     public static List<string> FilterByRequestedProjects(
         IEnumerable<string> optedInProjectPaths,
-        IEnumerable<string> requestedFilters)
-    {
-        var optedList = optedInProjectPaths.ToList();
-        var filters = requestedFilters?.Select(f => f?.Trim()).Where(s => !string.IsNullOrEmpty(s)).ToList() ?? [];
-        if(filters.Count == 0)
-            return optedList;
+        IEnumerable<string>? requestedFilters) {
+        ArgumentNullException.ThrowIfNull(optedInProjectPaths);
 
-        var matched = optedList.Where(pp => filters.Any(req =>
-            string.Equals(Path.GetFileNameWithoutExtension(pp), req, StringComparison.OrdinalIgnoreCase) ||
-            string.Equals(Path.GetFileName(pp), req, StringComparison.OrdinalIgnoreCase) ||
-            (Path.IsPathRooted(req) && string.Equals(Path.GetFullPath(req), Path.GetFullPath(pp), StringComparison.OrdinalIgnoreCase))
-        )).ToList();
+        var optedInProjects = optedInProjectPaths.ToList();
+        var filters = NormalizeFilters(requestedFilters);
 
-        return matched;
+        if(filters.Count == 0) {
+            return optedInProjects;
+        }
+
+        return
+        [
+            .. optedInProjects.Where(
+                projectPath => filters.Any(
+                    filter => ProjectMatchesFilter(projectPath, filter)))
+        ];
     }
 
     /// <summary>
-    /// Remove projects from the list that match any of the supplied exclude filters via
-    /// the --exclude-projects option. Matching supports:
-    /// - project file name without extension (e.g. Saucery.Core)
-    /// - project file name with extension (e.g. Saucery.Core.csproj)
-    /// - absolute path to the project file
+    /// Removes projects from the list that match any of the supplied
+    /// --exclude-projects filters.
     /// </summary>
-    /// <param name="projectPaths"></param>
-    /// <param name="excludedFilters"></param>
-    /// <returns></returns>
+    /// <remarks>
+    /// Matching supports:
+    /// <list type="bullet">
+    /// <item>Project file name without extension, for example Saucery.Core.</item>
+    /// <item>Project file name with extension, for example Saucery.Core.csproj.</item>
+    /// <item>Absolute path to the project file.</item>
+    /// </list>
+    /// </remarks>
     public static List<string> FilterExcludedProjects(
         IEnumerable<string> projectPaths,
-        IEnumerable<string> excludedFilters)
-    {
-        var projectList = projectPaths.ToList();
-        var filters = excludedFilters?.Select(f => f?.Trim()).Where(s => !string.IsNullOrEmpty(s)).ToList() ?? [];
+        IEnumerable<string>? excludedFilters) {
+        ArgumentNullException.ThrowIfNull(projectPaths);
 
-        return filters.Count == 0
-            ? projectList
-            : [.. projectList.Where(pp => !filters.Any(req =>
-            string.Equals(Path.GetFileNameWithoutExtension(pp), req, StringComparison.OrdinalIgnoreCase) ||
-            string.Equals(Path.GetFileName(pp), req, StringComparison.OrdinalIgnoreCase) ||
-            (Path.IsPathRooted(req) && string.Equals(Path.GetFullPath(req), Path.GetFullPath(pp), StringComparison.OrdinalIgnoreCase))))];
+        var projects = projectPaths.ToList();
+        var filters = NormalizeFilters(excludedFilters);
+
+        if(filters.Count == 0) {
+            return projects;
+        }
+
+        return
+        [
+            .. projects.Where(
+                projectPath => !filters.Any(
+                    filter => ProjectMatchesFilter(projectPath, filter)))
+        ];
     }
 
     /// <summary>
-    /// Topologically sort the supplied project paths so that projects referenced by others
-    /// appear before dependents. If a cycle is detected, the original ordering is returned.
+    /// Topologically sorts the supplied project paths so that projects referenced
+    /// by other projects appear before their dependants.
     /// </summary>
-    public static List<string> TopologicallySortProjects(IEnumerable<string> projectPaths)
-    {
-        var fullPaths = projectPaths.Select(Path.GetFullPath).ToList();
-        var set = fullPaths.ToHashSet(StringComparer.OrdinalIgnoreCase);
+    /// <remarks>
+    /// If a dependency cycle is detected, the original ordering is returned.
+    /// Invalid or unreadable project files are ignored while constructing the
+    /// dependency graph.
+    /// </remarks>
+    public static List<string> TopologicallySortProjects(
+        IEnumerable<string> projectPaths) {
+        ArgumentNullException.ThrowIfNull(projectPaths);
 
-        // build adjacency: referenced -> dependents
-        var dependents = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
-        var indegree = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        var fullPaths = projectPaths
+            .Select(Path.GetFullPath)
+            .ToList();
 
-        foreach(var p in fullPaths) {
-            dependents[p] = [];
-            indegree[p] = 0;
+        var projectSet = fullPaths.ToHashSet(
+            StringComparer.OrdinalIgnoreCase);
+
+        var dependants = new Dictionary<string, List<string>>(
+            StringComparer.OrdinalIgnoreCase);
+
+        var indegree = new Dictionary<string, int>(
+            StringComparer.OrdinalIgnoreCase);
+
+        foreach(var projectPath in fullPaths) {
+            dependants[projectPath] = [];
+            indegree[projectPath] = 0;
         }
 
-        foreach(var p in fullPaths) {
-            try {
-                var doc = new XmlDocument();
-                doc.Load(p);
-                var projectRefs = doc.SelectNodes("//*[local-name()='ProjectReference' and @Include]");
-                if(projectRefs is null) continue;
+        foreach(var projectPath in fullPaths) {
+            AddProjectReferenceEdges(
+                projectPath,
+                projectSet,
+                dependants,
+                indegree);
+        }
 
-                foreach(XmlElement projRef in projectRefs.Cast<XmlElement>()) {
-                    var include = projRef.GetAttribute("Include");
-                    if(string.IsNullOrWhiteSpace(include)) continue;
-                    var resolved = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(p) ?? string.Empty, include.Replace('/', Path.DirectorySeparatorChar)));
-                    if(set.Contains(resolved)) {
-                        // edge: resolved -> p (resolved must come before p)
-                        dependents[resolved].Add(p);
-                        indegree[p] = indegree.GetValueOrDefault(p) + 1;
-                    }
+        var queue = new Queue<string>(
+            indegree
+                .Where(entry => entry.Value == 0)
+                .Select(entry => entry.Key));
+
+        var result = new List<string>(fullPaths.Count);
+
+        while(queue.Count > 0) {
+            var projectPath = queue.Dequeue();
+
+            result.Add(projectPath);
+
+            foreach(var dependant in dependants[projectPath]) {
+                indegree[dependant]--;
+
+                if(indegree[dependant] == 0) {
+                    queue.Enqueue(dependant);
                 }
             }
-            catch {
-                // ignore parse errors and continue
-            }
         }
 
-        // Kahn's algorithm
-        var q = new Queue<string>(indegree.Where(kv => kv.Value == 0).Select(kv => kv.Key));
-        var result = new List<string>();
-
-        while(q.Count > 0) {
-            var n = q.Dequeue();
-            result.Add(n);
-            foreach(var d in dependents[n]) {
-                indegree[d] = indegree[d] - 1;
-                if(indegree[d] == 0) q.Enqueue(d);
-            }
-        }
-
-        if(result.Count != fullPaths.Count)
-            return fullPaths; // cycle detected or parse issues - fall back
-
-        return result;
+        return result.Count == fullPaths.Count
+            ? result
+            : fullPaths;
     }
 
-    public static IReadOnlyList<string> FindOrphanedCsprojs(string solutionPath) {
-        var solutionDir = Path.GetDirectoryName(Path.GetFullPath(solutionPath))
-            ?? throw new ArgumentException($"Cannot determine directory of solution: {solutionPath}");
-        
-        var registeredPaths  = GetProjectPaths(solutionPath)
+    public static IReadOnlyList<string> FindOrphanedCsprojs(
+        string solutionPath) {
+        ArgumentException.ThrowIfNullOrWhiteSpace(solutionPath);
+
+        var fullSolutionPath = Path.GetFullPath(solutionPath);
+
+        if(!File.Exists(fullSolutionPath)) {
+            throw new FileNotFoundException(
+                $"Solution file was not found: {fullSolutionPath}",
+                fullSolutionPath);
+        }
+
+        var solutionDirectory = Path.GetDirectoryName(fullSolutionPath)
+            ?? throw new ArgumentException(
+                $"Cannot determine directory of solution: {solutionPath}",
+                nameof(solutionPath));
+
+        var registeredPaths = GetProjectPaths(fullSolutionPath)
             .Select(Path.GetFullPath)
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-        var orphans = new List<string>();
+        var orphanedProjects = new List<string>();
 
-        foreach(var file in Directory.EnumerateFiles(solutionDir, "*.csproj", SearchOption.AllDirectories)) {
-            var fullPath = Path.GetFullPath(file);
-            var segments = fullPath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        foreach(var projectPath in Directory.EnumerateFiles(
+                     solutionDirectory,
+                     "*.csproj",
+                     SearchOption.AllDirectories)) {
+            var fullProjectPath = Path.GetFullPath(projectPath);
 
-            if(segments.Any(s => s.Equals("bin", StringComparison.OrdinalIgnoreCase) ||
-                                 s.Equals("obj", StringComparison.OrdinalIgnoreCase)))
+            if(IsBuildOutputPath(
+                    fullProjectPath,
+                    solutionDirectory)) {
                 continue;
+            }
 
-            if(!registeredPaths.Contains(fullPath))
-                orphans.Add(fullPath);
+            if(!registeredPaths.Contains(fullProjectPath)) {
+                orphanedProjects.Add(fullProjectPath);
+            }
         }
-        
-        return orphans;
+
+        return orphanedProjects;
+    }
+
+    private static IReadOnlyList<string> GetProjectPathsFromSln(
+        string solutionPath,
+        string solutionDirectory) {
+        var projectPaths = new List<string>();
+
+        foreach(var line in File.ReadLines(solutionPath)) {
+            var match = ProjectLineRegex.Match(line);
+
+            if(!match.Success) {
+                continue;
+            }
+
+            AddProjectPath(
+                projectPaths,
+                solutionDirectory,
+                match.Groups[1].Value);
+        }
+
+        return projectPaths;
+    }
+
+    private static IReadOnlyList<string> GetProjectPathsFromSlnx(
+        string solutionPath,
+        string solutionDirectory) {
+        var document = new XmlDocument {
+            PreserveWhitespace = true
+        };
+
+        document.Load(solutionPath);
+
+        var projectNodes = document.SelectNodes(
+            "//*[local-name()='Project' and @Path]");
+
+        if(projectNodes is null) {
+            return [];
+        }
+
+        var projectPaths = new List<string>();
+
+        foreach(var projectElement in projectNodes
+                     .OfType<XmlElement>()) {
+            var relativePath = projectElement.GetAttribute("Path");
+
+            if(string.IsNullOrWhiteSpace(relativePath)) {
+                continue;
+            }
+
+            AddProjectPath(
+                projectPaths,
+                solutionDirectory,
+                relativePath);
+        }
+
+        return projectPaths;
+    }
+
+    private static void AddProjectPath(
+        ICollection<string> projectPaths,
+        string solutionDirectory,
+        string projectPath) {
+        if(!projectPath.EndsWith(
+                ".csproj",
+                StringComparison.OrdinalIgnoreCase)) {
+            return;
+        }
+
+        var normalizedPath = NormalizeDirectorySeparators(projectPath);
+
+        var fullPath = Path.GetFullPath(
+            Path.Combine(solutionDirectory, normalizedPath));
+
+        if(File.Exists(fullPath)) {
+            projectPaths.Add(fullPath);
+        }
+    }
+
+    private static void AddProjectReferenceEdges(
+        string projectPath,
+        IReadOnlySet<string> projectSet,
+        IDictionary<string, List<string>> dependants,
+        IDictionary<string, int> indegree) {
+        try {
+            var document = new XmlDocument();
+
+            document.Load(projectPath);
+
+            var projectReferenceNodes = document.SelectNodes(
+                "//*[local-name()='ProjectReference' and @Include]");
+
+            if(projectReferenceNodes is null) {
+                return;
+            }
+
+            var projectDirectory = Path.GetDirectoryName(projectPath)
+                ?? string.Empty;
+
+            foreach(var projectReference in projectReferenceNodes
+                         .OfType<XmlElement>()) {
+                var include = projectReference.GetAttribute("Include");
+
+                if(string.IsNullOrWhiteSpace(include)) {
+                    continue;
+                }
+
+                var referencedProjectPath = Path.GetFullPath(
+                    Path.Combine(
+                        projectDirectory,
+                        NormalizeDirectorySeparators(include)));
+
+                if(!projectSet.Contains(referencedProjectPath)) {
+                    continue;
+                }
+
+                dependants[referencedProjectPath].Add(projectPath);
+                indegree[projectPath]++;
+            }
+        } catch(IOException) {
+            // Ignore unreadable project files and preserve the remaining graph.
+        } catch(UnauthorizedAccessException) {
+            // Ignore inaccessible project files and preserve the remaining graph.
+        } catch(XmlException) {
+            // Ignore malformed project files and preserve the remaining graph.
+        }
+    }
+
+    private static List<string> NormalizeFilters(
+        IEnumerable<string>? filters) {
+        return filters?
+            .Select(filter => filter?.Trim())
+            .Where(filter => !string.IsNullOrWhiteSpace(filter))
+            .Select(filter => filter!)
+            .ToList()
+            ?? [];
+    }
+
+    private static bool ProjectMatchesFilter(
+        string projectPath,
+        string filter) {
+        if(string.Equals(
+                Path.GetFileNameWithoutExtension(projectPath),
+                filter,
+                StringComparison.OrdinalIgnoreCase)) {
+            return true;
+        }
+
+        if(string.Equals(
+                Path.GetFileName(projectPath),
+                filter,
+                StringComparison.OrdinalIgnoreCase)) {
+            return true;
+        }
+
+        if(!Path.IsPathRooted(filter)) {
+            return false;
+        }
+
+        return string.Equals(
+            Path.GetFullPath(projectPath),
+            Path.GetFullPath(filter),
+            StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool IsBuildOutputPath(
+        string projectPath,
+        string solutionDirectory) {
+        var relativePath = Path.GetRelativePath(
+            solutionDirectory,
+            projectPath);
+
+        var segments = relativePath.Split(
+            [Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar],
+            StringSplitOptions.RemoveEmptyEntries);
+
+        return segments.Any(
+            segment =>
+                segment.Equals(
+                    "bin",
+                    StringComparison.OrdinalIgnoreCase)
+                || segment.Equals(
+                    "obj",
+                    StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static string NormalizeDirectorySeparators(string path) {
+        return path
+            .Replace('\\', Path.DirectorySeparatorChar)
+            .Replace('/', Path.DirectorySeparatorChar);
     }
 }
