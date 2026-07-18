@@ -12,7 +12,7 @@
   <PropertyGroup>
     <IsPackable>true</IsPackable>
     <PackageId>Saucery.NuGet</PackageId>
-    <PackageVersion>1.0.13</PackageVersion>
+    <PackageVersion>1.0.14</PackageVersion>
     <Authors>Andrew Gray</Authors>
     <Company>SauceForge</Company>
     <Copyright>Copyright (c) Andrew Gray 2024</Copyright>
@@ -29,7 +29,7 @@
 
   <ItemGroup>
     <PackageReference Include="NuGet.Versioning" Version="7.6.0" />
-    <PackageReference Include="System.CommandLine" Version="2.0.9" />
+    <PackageReference Include="System.CommandLine" Version="2.0.10" />
   </ItemGroup>
 
   <ItemGroup>
