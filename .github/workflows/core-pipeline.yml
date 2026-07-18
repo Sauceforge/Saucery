@@ -434,7 +434,7 @@ jobs:
 
       - name: Setup Java JDK for Codacy Code Coverage
         if: ${{ env.CODACY_PROJECT_TOKEN != '' }}
-        uses: actions/setup-java@v5.5.0
+        uses: actions/setup-java@v5.6.0
         with:
           distribution: oracle
           java-version: '21'
