@@ -1403,6 +1403,116 @@ public class SolutionScannerTests {
                 '/');
     }
 
+    [Fact]
+    public void FindDirectoryPackagesProps_FindsFileInSolutionRoot() {
+        var tempDirectory = CreateTempRoot();
+
+        try {
+            var solutionPath = CreateSlnx(tempDirectory);
+
+            var propsPath = Path.Combine(
+                tempDirectory,
+                "Directory.Packages.props");
+            File.WriteAllText(propsPath, "<Project />");
+
+            var result = SolutionScanner.FindDirectoryPackagesProps(solutionPath);
+
+            Assert.Single(result);
+            Assert.Equal(Path.GetFullPath(propsPath), result[0]);
+        } finally {
+            DeleteDirectory(tempDirectory);
+        }
+    }
+
+    [Fact]
+    public void FindDirectoryPackagesProps_FindsFilesRecursively() {
+        var tempDirectory = CreateTempRoot();
+
+        try {
+            var solutionPath = CreateSlnx(tempDirectory);
+
+            var rootPropsPath = Path.Combine(
+                tempDirectory,
+                "Directory.Packages.props");
+
+            var subDirectory = Path.Combine(tempDirectory, "src");
+            Directory.CreateDirectory(subDirectory);
+
+            var subPropsPath = Path.Combine(subDirectory, "Directory.Packages.props");
+
+            File.WriteAllText(rootPropsPath, "<Project />");
+            File.WriteAllText(subPropsPath, "<Project />");
+
+            var result = SolutionScanner.FindDirectoryPackagesProps(solutionPath);
+
+            Assert.Equal(2, result.Count);
+            Assert.Contains(Path.GetFullPath(rootPropsPath), result);
+            Assert.Contains(Path.GetFullPath(subPropsPath), result);
+        } finally { 
+            DeleteDirectory(tempDirectory); 
+        }
+    }
+
+    [Fact]
+    public void FindDirectoryPackagesProps_ReturnsEmpty_WhenFilesExist() {
+        var tempDirectory = CreateTempRoot();
+
+        try {
+            var solutionPath = CreateSlnx(tempDirectory);
+
+            var result = SolutionScanner.FindDirectoryPackagesProps(solutionPath);
+
+            Assert.Empty(result);
+        } finally { 
+            DeleteDirectory(tempDirectory); 
+        }
+    }
+
+    [Fact]
+    public void FindDirectoryPackagesProps_SkipsFilesUnderBinAndObj() {
+        var tempDirectory = CreateTempRoot();
+
+        try {
+            var solutionPath = CreateSlnx(tempDirectory);
+
+            var binDirectory = Path.Combine(tempDirectory, "SomeProject", "bin", "Debug");
+            var objDirectory = Path.Combine(tempDirectory, "SomeProject", "obj");
+
+            Directory.CreateDirectory(binDirectory);
+            Directory.CreateDirectory(objDirectory);
+
+            File.WriteAllText(
+                Path.Combine(binDirectory, "Directory.Packages.props"),
+                "<Project />");
+
+            File.WriteAllText(
+                Path.Combine(objDirectory, "Directory.Packages.props"),
+                "<Project />");
+
+            var result = SolutionScanner.FindDirectoryPackagesProps(solutionPath);
+
+            Assert.Empty(result);
+        } finally {
+            DeleteDirectory(tempDirectory);
+        }
+    }
+
+    [Fact]
+    public void FindDirectoryPackagesProps_ThrowsWhenSolutionDoesNotExist() {
+        var tempDirectory = CreateTempRoot();
+
+        try {
+            var solutionPath = Path.Combine(tempDirectory, "Missing.slnx");
+
+            var exception = Assert.Throws<FileNotFoundException>(
+                () => SolutionScanner.FindDirectoryPackagesProps(solutionPath));
+
+            Assert.Equal(Path.GetFullPath(solutionPath), exception.FileName);
+        } finally { 
+            DeleteDirectory(tempDirectory); 
+        }
+    }
+
     private static void DeleteDirectory(string directory) {
         if(Directory.Exists(directory)) {
             Directory.Delete(

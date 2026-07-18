@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using Saucery.NuGet;
+using System.Text.RegularExpressions;
 using System.Xml;
 
 namespace Saucery.NuGet.Pipeline;
@@ -180,6 +181,40 @@ public static class SolutionScanner {
         return result.Count == fullPaths.Count
             ? result
             : fullPaths;
+    }
+
+    public static IReadOnlyList<string> FindDirectoryPackagesProps(string solutionPath) {
+        ArgumentException.ThrowIfNullOrWhiteSpace(solutionPath);
+
+        var fullSolutionPath = Path.GetFullPath(solutionPath);
+        
+        if(!File.Exists(fullSolutionPath)) {
+            throw new FileNotFoundException(
+                $"Solution file was not found: {fullSolutionPath}",
+                fullSolutionPath);
+        }
+
+        var solutionDirectory = Path.GetDirectoryName(fullSolutionPath)
+            ?? throw new ArgumentException(
+                $"Cannot determine directory of solution: {solutionPath}",
+                nameof(solutionPath));
+        
+        var results = new List<string>();
+        
+        foreach(var filePath in Directory.EnumerateFiles(
+                     solutionDirectory,
+                     Constants.Files.DirectoryPackagesProps,
+                     SearchOption.AllDirectories)) {
+            var fullPath = Path.GetFullPath(filePath);
+
+            if(IsBuildOutputPath(fullPath, solutionDirectory)) {
+                continue;
+            }
+
+            results.Add(fullPath);
+        }
+
+        return results;
     }
 
     public static IReadOnlyList<string> FindOrphanedCsprojs(

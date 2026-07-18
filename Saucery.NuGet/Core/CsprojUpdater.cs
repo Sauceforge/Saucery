@@ -45,6 +45,7 @@ public sealed class CsprojUpdater(INuGetApiClient apiClient) {
         VersionSegment versionSegment = VersionSegment.Patch,
         string? syncWithPackageId = null,
         IReadOnlyList<string>? excludePackageIds = null,
+        IReadOnlyDictionary<string, string>? externalResolvedVersions = null,
         CancellationToken ct = default) {
         var (rawText, encodingFactory) = ReadPreservingEncoding(projectPath);
 
@@ -59,7 +60,7 @@ public sealed class CsprojUpdater(INuGetApiClient apiClient) {
         var packageRefs = doc.SelectNodes(
             $"//*[local-name()='{Constants.Xml.PackageReferenceElement}' and @{Constants.Xml.IncludeAttribute} and @{Constants.Xml.VersionAttribute}]");
 
-        if(packageRefs is null || packageRefs.Count == 0)
+        if((packageRefs is null || packageRefs.Count == 0) && string.IsNullOrWhiteSpace(syncWithPackageId))
             return new UpdateResult(projectPath, []);
 
         var projectExclusions = ReadProjectExclusions(doc);
@@ -67,7 +68,7 @@ public sealed class CsprojUpdater(INuGetApiClient apiClient) {
 
         var updates = new List<PackageUpdate>();
 
-        foreach(XmlElement node in packageRefs.Cast<XmlElement>()) {
+        foreach(XmlElement node in packageRefs?.Cast<XmlElement>() ?? []) {
             var id = node.GetAttribute(Constants.Xml.IncludeAttribute);
             var currentVersion = node.GetAttribute(Constants.Xml.VersionAttribute);
 
@@ -170,6 +171,12 @@ public sealed class CsprojUpdater(INuGetApiClient apiClient) {
                         }
                     }
                 }
+            }
+
+            // 3) If still not found, check external resolved versions (e.g. Directory.Packages.props
+            // in a CPM solution where PackageReference elements carry no Version attribute)
+            if(depVersion is null && externalResolvedVersions is not null) {
+                externalResolvedVersions.TryGetValue(syncWithPackageId, out depVersion);
             }
 
             if(!string.IsNullOrWhiteSpace(depVersion)) {

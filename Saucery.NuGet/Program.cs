@@ -163,9 +163,66 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
     }
 
     using var apiClient = new NuGetApiClient();
-    var updater = new CsprojUpdater(apiClient);
-
+    
     var allResults = new List<UpdateResult>();
+
+    // ---- Directory.Packages.props (CPM) pipeline - runs first so resolved versions
+    //      are available for --sync-with in the csproj pipeline below ----
+    var propsFiles = SolutionScanner.FindDirectoryPackagesProps(solution.FullName);
+    var propsResults = new List<UpdateResult>();
+
+    if(propsFiles.Count > 0) {
+        Console.WriteLine($"Found {propsFiles.Count} Directory.Packages.props file(s) to process.");
+        Console.WriteLine();
+        
+        var propsUpdater = new DirectoryPackagePropsUpdater(apiClient);
+
+        foreach(var propsPath in propsFiles) {
+            var relativePropsPath = Path.GetRelativePath(
+                solution.DirectoryName ?? string.Empty, 
+                propsPath);
+
+            Console.WriteLine($"Processing {relativePropsPath}");
+
+            var propsResult = await propsUpdater.UpdateAsync(
+                propsPath,
+                includePrerelease,
+                dryRun,
+                mergedExcludePackages.Count > 0 ? mergedExcludePackages : null,
+                cancellationToken);
+
+            propsResults.Add(propsResult);
+            allResults.Add(propsResult);
+            
+            if(!propsResult.Success) {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"  ERROR: {propsResult.Error}");
+                Console.ResetColor();
+                continue;
+            }
+
+            if(propsResult.Updates.Count == 0) {
+                Console.WriteLine("  No updates available.");
+                continue;
+            }
+
+            foreach(var update in propsResult.Updates) {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"  {update.PackageId}: {update.FromVersion} -> {update.ToVersion}{(dryRun ? " (dry run)" : "")}");
+                Console.ResetColor();
+            }
+        }
+
+        Console.WriteLine();
+    }
+
+    // Build a dictionary of resolved package versions from all props files so the csproj
+    // pipeline can resolve --sync-with against external (CPM managed) package versions.
+    // In dry-run mode the files are unchanged, so proposed update versions take precedence.
+    var resolvedVersionsFromProps = BuildResolvedVersionsFromProps(propsFiles, propsResults);
+
+    // ---- csproj pipeline ----
+    var updater = new CsprojUpdater(apiClient);
 
     foreach(var projectPath in optedInProjects) {
         Console.WriteLine($"Processing {Path.GetFileName(projectPath)}");
@@ -178,6 +235,7 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
             versionSegment,
             syncWith,
             mergedExcludePackages.Count > 0 ? mergedExcludePackages : null,
+            resolvedVersionsFromProps.Count > 0 ? resolvedVersionsFromProps : null,
             cancellationToken);
 
         allResults.Add(result);
@@ -211,6 +269,42 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
         }
     }
 
+    // CPM + --bump-own-version: if the props pipeline found updates, bump <PackageVersion>
+    // in any opted-in project that wasn't already bumped by the csproj pipeline.
+    // In a pure CPM solution, csproj files carry no versioned PackageReferences so the
+    // csproj pipeline alone would never trigger the bump.
+    var totalPropsUpdates = propsResults.Sum(r => r.Updates.Count);
+    if(bumpOwnVersion && totalPropsUpdates > 0) {
+        foreach(var projectPath in optedInProjects) {
+            var csprojResult = allResults.FirstOrDefault(
+                r => string.Equals(r.ProjectPath, projectPath, StringComparison.OrdinalIgnoreCase));
+
+            if(csprojResult?.NewPackageVersion is not null) {
+                continue; // already bumped by csproj pipeline
+            }
+
+            var currentVersion = PackageVersionBumper.ReadPackageVersion(projectPath);
+            if(currentVersion is null) {
+                continue; // no <PackageVersion> to bump
+            }
+
+            var bumped = PackageVersionBumper.Bump(projectPath, versionSegment, dryRun);
+            if(bumped is null) {
+                continue;
+            }
+
+            Console.WriteLine($"Processing {Path.GetFileName(projectPath)} (PackageVersion bump from CPM updates)");
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"  PackageVersion bumped: {currentVersion} -> {bumped}{(dryRun ? " (dry run)" : "")}");
+            Console.ResetColor();
+
+            allResults.Add(new UpdateResult(
+                projectPath, 
+                [new PackageUpdate(projectPath, "PackageVersion", currentVersion, bumped)],
+                NewPackageVersion: bumped));
+        }
+    }   
+
     Console.WriteLine();
 
     var totalUpdates = allResults.Sum(r => r.Updates.Count);
@@ -238,4 +332,30 @@ static IReadOnlyList<string> MergeExclusions(string[] cliExclusions, string[] co
     foreach(var e in configExclusions) merged.Add(e);
 
     return [.. merged];
+}
+
+static IReadOnlyDictionary<string, string> BuildResolvedVersionsFromProps(
+    IReadOnlyList<string> propsFiles,
+    IReadOnlyList<UpdateResult> propsResults) {
+    if (propsFiles.Count == 0) {
+        return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+    }
+
+    var resolved = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+    // Seed with current (or already written) versions from each props file.
+    foreach(var propsPath in propsFiles) {
+        foreach(var (id, version) in DirectoryPackagePropsUpdater.ReadAllPackageVersions(propsPath)) {
+            resolved[id] = version;
+        }
+    }
+
+    // Override with proposed update versions - correctly handles dry-run where files are unchanged.
+    foreach(var result in propsResults) {
+        foreach(var update in result.Updates) {
+            resolved[update.PackageId] = update.ToVersion;
+        }
+    } 
+    
+    return resolved;
 }

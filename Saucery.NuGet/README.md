@@ -1,6 +1,6 @@
 # Saucery.NuGet
 
-> A .NET global tool that bumps every PackageReference in opted-in `.csproj` files to the next available version on NuGet.org.
+> A .NET global tool that bumps every `PackageReference` in opted-in `.csproj` files - and every `PackageVersion` entry in `Directory.Packages.props` (Central Package Management) files - to the next available version on NuGet.org.
 
 ## Installation
 
@@ -20,13 +20,14 @@ dotnet tool install Saucery.NuGet
 ## Features
 
 - Scans a solution for projects that opt-in to updates
-- For each opted-in project, inspects PackageReference entries and determines the next available NuGet version
+- For each opted-in project, inspects `PackageReference` entries and determines the next available NuGet version
+- Automatically updates all `Directory.Packages.props` files found under the solution root (Central Package Management)
 - Optionally includes prerelease versions when resolving the next version
 - Optionally increments the project's own `<PackageVersion>` when updates are applied
 - Supports dry-run mode to preview changes without modifying files
 - Optionally scans `csproj` files on disk that are not registered in the solution
 - Optionally excludes specific projects from being updated
-- Optionally excludes specific packages from processing via CLI flag, a solution-level config file, or a per-project declaration
+- Optionally excludes specific packages from processing via CLI flag, a solution-level config file, or a per-project/per-file declaration
 
 ---
 
@@ -163,6 +164,37 @@ Useful when projects exist in the repository but have not been added to the solu
 
 ---
 
+## Central Package Management (Directory.Packages.props)
+
+If your repository uses [.NET Central Package Management](https://learn.microsoft.com/en-us/nuget/consume-packages/central-package-management), Saucery.NuGet will automatically discover and update all `Directory.Packages.props` files found anywhere under the solution root directory.
+
+### How it differs from `.csproj` processing
+
+| Behavior | `.csproj` | `Directory.Packages.props` |
+|---|---|---|
+| Opt-in required | Yes - `<SauceryNuGetOptIn>true</SauceryNuGetOptIn>` | No - file presence is automatic opt-in |
+| Element updated | `<PackageReference Include="..." Version="..." />` | `<PackageVersion Include="..." Version="..." />` |
+| `--bump-own-version` | Supported - bumps `<PackageVersion>` in the same csproj | Supported - bumps `<PackageVersion>` in opted-in csproj files when props updates are found |
+| `--sync-with` | Supported - resolves dependency via PackageReference or ProjectReference | Supported - resolves external versions directly from the props file |
+| `--exclude-packages` | Supported | Supported |
+| Per-file `<SauceryNuGetExclude>` | Supported | Supported |
+
+### Excluding packages in Directory.Packages.props file
+
+Add `<SauceryNuGetExclude>` elements anywhere in the file - the same syntax used in `.csproj` files:
+
+```xml
+<Project>
+  <ItemGroup>
+    <SauceryNuGetExclude>Selenium.WebDriver</SauceryNuGetExclude>
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.2" />
+    <PackageVersion Include="Selenium.WebDriver" Version="4.0.0" />
+  </ItemGroup>
+</Project>
+```
+
+---
+
 ## Exclude projects from processing
 
 Skip one or more projects entirely using `--exclude-projects`:
@@ -284,6 +316,8 @@ See our [dogfooding pipeline](https://github.com/Sauceforge/Saucery/blob/master/
 
 ## How it works
 
+### `.csproj` pipeline
+
 1. Parses the `.sln` file to discover all `.csproj` files
 2. Optionally adds `.csproj` files found on disk that are not registered in the solution (`--scan-unregistered`)
 3. Filters to projects with `<SauceryNuGetOptIn>true</SauceryNuGetOptIn>`
@@ -294,6 +328,15 @@ See our [dogfooding pipeline](https://github.com/Sauceforge/Saucery/blob/master/
 8. Resolves the next version using `NuGet.Versioning`
 9. Updates the `.csproj` file (preserving encoding and BOM)
 10. Optionally updates `<PackageVersion>`
+
+### `Directory.Packages.props` pipeline
+
+1. Recursively enumerates all `Directory.Packages.props` files udner the solution root (skipping `bin`/`obj`)
+2. Applies the global `--exclude-packages` exclusion list (CLI + `saucery.nuget.json`)
+3. For each file, reads any `<SauceryNuGetExclude>` elements and merges them with the global exclusion list
+4. files all `<PackageVersion>` entries, skipping any in the effective exclusion list
+5. Resolves the next version using `NuGet.Versioning`
+6. Updates the file (preserving encoding and BOM)
 
 ---
 

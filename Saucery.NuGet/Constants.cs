@@ -12,9 +12,14 @@ internal static class Constants {
 
     internal static class Xml {
         internal const string PackageReferenceElement = "PackageReference";
+        internal const string PackageVersionElement = "PackageVersion";
         internal const string IncludeAttribute = "Include";
         internal const string VersionAttribute = "Version";
         internal const string SauceryNuGetExcludeElement = "SauceryNuGetExclude";
+    }
+
+    internal static class Files {
+        internal const string DirectoryPackagesProps = "Directory.Packages.props";
     }
 
     internal static class GlobalConfig {
