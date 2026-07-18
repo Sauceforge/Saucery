@@ -6,10 +6,6 @@ namespace Saucery.NuGet.Core;
 
 public sealed class CsprojUpdater(INuGetApiClient apiClient) {
     public static bool IsOptedIn(string projectPath) {
-        var projectFileName = Path.GetFileNameWithoutExtension(projectPath);
-        if(projectFileName != null && projectFileName.Equals("Saucery.NuGet.Tests", StringComparison.OrdinalIgnoreCase))
-            return false;
-
         const string optInPropertyName = "SauceryNuGetOptIn";
 
         try {
@@ -23,15 +19,17 @@ public sealed class CsprojUpdater(INuGetApiClient apiClient) {
 
                     if(string.Equals(value, "true", StringComparison.OrdinalIgnoreCase) ||
                        string.Equals(value, "yes", StringComparison.OrdinalIgnoreCase) ||
-                       string.Equals(value, "1", StringComparison.OrdinalIgnoreCase))
+                       string.Equals(value, "1", StringComparison.OrdinalIgnoreCase)) {
                         return true;
+                    }
                 }
             }
         } catch(Exception) {
             var text = File.ReadAllText(projectPath);
 
-            if(text.Contains($"<{optInPropertyName}>true</{optInPropertyName}>", StringComparison.OrdinalIgnoreCase))
+            if(text.Contains($"<{optInPropertyName}>true</{optInPropertyName}>", StringComparison.OrdinalIgnoreCase)) {
                 return true;
+            }
         }
 
         return false;

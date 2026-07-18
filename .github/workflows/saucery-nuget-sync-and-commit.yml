@@ -83,7 +83,9 @@ jobs:
           run_saucery_nuget --project "Saucery.XUnit" --sync-with "Saucery.Core"
           run_saucery_nuget --project "Saucery" --sync-with "Saucery.Core"
           run_saucery_nuget --project "Saucery.Playwright.NUnit" --sync-with "Saucery.Core"
+          # Process other test projects
           run_saucery_nuget --exclude-projects "Saucery.Core" "Saucery.TUnit" "Saucery.XUnit3" "Saucery.XUnit" "Saucery" "Saucery.Playwright.NUnit"
+          # Template projects
           run_saucery_nuget --scan-unregistered
 
       - name: Commit and push if there are changes
