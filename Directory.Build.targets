@@ -1,0 +1,10 @@
+<Project>
+  <!--
+    Existing projects still contain Version metadata on PackageReference items.
+    This file is imported after project evaluation and clears that metadata so
+    NuGet Central Package Management resolves versions from Directory.Packages.props.
+  -->
+  <ItemGroup>
+    <PackageReference Update="@(PackageReference)" Version="" />
+  </ItemGroup>
+</Project>
