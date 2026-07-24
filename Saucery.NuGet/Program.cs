@@ -1,4 +1,5 @@
 ﻿using System.CommandLine;
+using System.Xml;
 using Saucery.NuGet;
 using Saucery.NuGet.Core;
 using Saucery.NuGet.Models;
@@ -269,12 +270,16 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
         }
     }
 
-    // CPM + --bump-own-version: if the props pipeline found updates, bump <PackageVersion>
-    // in any opted-in project that wasn't already bumped by the csproj pipeline.
+    // CPM + --bump-own-version: if the props pipeline found updates for packages that a
+    // project actually references, bump that project's <PackageVersion>.
     // In a pure CPM solution, csproj files carry no versioned PackageReferences so the
     // csproj pipeline alone would never trigger the bump.
-    var totalPropsUpdates = propsResults.Sum(r => r.Updates.Count);
-    if(bumpOwnVersion && totalPropsUpdates > 0) {
+    var updatedPackageIds = propsResults
+        .SelectMany(r => r.Updates)
+        .Select(u => u.PackageId)
+        .ToHashSet(StringComparer.OrdinalIgnoreCase);
+    
+    if(bumpOwnVersion && updatedPackageIds.Count > 0) {
         foreach(var projectPath in optedInProjects) {
             var csprojResult = allResults.FirstOrDefault(
                 r => string.Equals(r.ProjectPath, projectPath, StringComparison.OrdinalIgnoreCase));
@@ -286,6 +291,10 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
             var currentVersion = PackageVersionBumper.ReadPackageVersion(projectPath);
             if(currentVersion is null) {
                 continue; // no <PackageVersion> to bump
+            }
+
+            if(!ProjectReferencesAnyUpdatedPackage(projectPath, updatedPackageIds)) {
+                continue; // none of this project's dependencies were updated
             }
 
             var bumped = PackageVersionBumper.Bump(projectPath, versionSegment, dryRun);
@@ -322,6 +331,24 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
 });
 
 return await rootCommand.Parse(args).InvokeAsync();
+
+static bool ProjectReferencesAnyUpdatedPackage(
+    string projectPath,
+    IReadOnlySet<string> updatedPackageIds) {
+    try {
+        var doc = new XmlDocument();
+        doc.LoadXml(projectPath);
+        var refs = doc.SelectNodes("//*[local-name()='PackageReference' and @Include]");
+        if(refs is null) return false;
+        foreach(XmlElement node in refs.Cast<XmlElement>()) {
+            if(updatedPackageIds.Contains(node.GetAttribute("Include")))
+                return true;
+        }
+        return false;
+    } catch {
+        return false;
+    }
+}
 
 static IReadOnlyList<string> MergeExclusions(string[] cliExclusions, string[] configExclusions) {
     if(cliExclusions.Length == 0 && configExclusions.Length == 0)

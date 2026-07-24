@@ -13,7 +13,7 @@
   <PropertyGroup>
     <IsPackable>true</IsPackable>
     <PackageId>Saucery.NuGet</PackageId>
-    <PackageVersion>1.0.15</PackageVersion>
+    <PackageVersion>1.0.16</PackageVersion>
     <Authors>Andrew Gray</Authors>
     <Company>SauceForge</Company>
     <Copyright>Copyright (c) Andrew Gray 2024</Copyright>
