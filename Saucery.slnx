@@ -33,6 +33,7 @@
     <File Path=".github/workflows/xunit-pipeline.yml" />
     <File Path=".github/workflows/xunit3-pipeline-external.yml" />
     <File Path=".github/workflows/xunit3-pipeline.yml" />
+    <File Path="UpdateSauceryNuGet.ps1" />
   </Folder>
 
   <Folder Name="/Testing/">
