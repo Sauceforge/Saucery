@@ -1,0 +1,6 @@
+<Project>
+  <!-- Templates must remain self contained; opt out of Central Package Management -->
+  <PropertyGroup>
+    <ManagementPackageVersionsCentrally>false</ManagementPackageVersionsCentrally>
+  </PropertyGroup>
+</Project>
