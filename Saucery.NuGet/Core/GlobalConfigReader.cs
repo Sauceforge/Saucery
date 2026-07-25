@@ -9,8 +9,9 @@ public static class GlobalConfigReader {
     };
 
     public static GlobalConfig Read(string solutionDirectory) {
-        if(string.IsNullOrEmpty(solutionDirectory))
+        if(string.IsNullOrEmpty(solutionDirectory)) {
             return new GlobalConfig();
+        }
 
         var configPath = Path.Combine(solutionDirectory, Constants.GlobalConfig.FileName);
 

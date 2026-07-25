@@ -100,17 +100,22 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
     Console.WriteLine($"Prerelease: {(includePrerelease ? "included" : "stable only")}");
     Console.WriteLine($"Dry run: {dryRun}");
     Console.WriteLine($"Bump own version: {(bumpOwnVersion ? $"yes ({versionSegment})" : "no")}");
-    if(!string.IsNullOrWhiteSpace(syncWith))
+    if(!string.IsNullOrWhiteSpace(syncWith)) {
         Console.WriteLine($"Sync with: {syncWith}");
+    }
 
     //Load global config and merge with CLI exclusions.
     var globalConfig = GlobalConfigReader.Read(solution.DirectoryName ?? string.Empty);
     var mergedExcludePackages = MergeExclusions(excludePackages, globalConfig.ExcludePackages);
 
-    if(mergedExcludePackages.Count > 0)
+    if(mergedExcludePackages.Count > 0) {
         Console.WriteLine($"Excluded packages: {string.Join(", ", mergedExcludePackages)}");
-    if(excludeProjects.Length > 0)
+    }
+
+    if(excludeProjects.Length > 0) {
         Console.WriteLine($"Excluded projects: {string.Join(", ", excludeProjects)}");
+    }
+
     Console.WriteLine();
 
     var allProjects = SolutionScanner.GetProjectPaths(solution.FullName);
@@ -324,8 +329,9 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
     else
         Console.WriteLine($"Done. {totalUpdates} updates applied across {optedInProjects.Count} projects with {errorCount} error(s).");
 
-    if(errorCount > 0)
+    if(errorCount > 0) {
         Environment.Exit(1);
+    }
 
     await Task.CompletedTask;
 });
@@ -339,11 +345,16 @@ static bool ProjectReferencesAnyUpdatedPackage(
         var doc = new XmlDocument();
         doc.LoadXml(projectPath);
         var refs = doc.SelectNodes("//*[local-name()='PackageReference' and @Include]");
-        if(refs is null) return false;
-        foreach(XmlElement node in refs.Cast<XmlElement>()) {
-            if(updatedPackageIds.Contains(node.GetAttribute("Include")))
-                return true;
+        if(refs is null) { 
+            return false; 
         }
+
+        foreach(XmlElement node in refs.Cast<XmlElement>()) {
+            if(updatedPackageIds.Contains(node.GetAttribute("Include"))) {
+                return true;
+            }
+        }
+
         return false;
     } catch {
         return false;
@@ -351,19 +362,23 @@ static bool ProjectReferencesAnyUpdatedPackage(
 }
 
 static IReadOnlyList<string> MergeExclusions(string[] cliExclusions, string[] configExclusions) {
-    if(cliExclusions.Length == 0 && configExclusions.Length == 0)
+    if(cliExclusions.Length == 0 && configExclusions.Length == 0) {
         return [];
+    }
 
     var merged = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-    foreach(var e in cliExclusions) merged.Add(e);
-    foreach(var e in configExclusions) merged.Add(e);
+    foreach(var e in cliExclusions) { 
+        merged.Add(e); 
+    }
+
+    foreach(var e in configExclusions) { 
+        merged.Add(e); 
+    }
 
     return [.. merged];
 }
 
-static IReadOnlyDictionary<string, string> BuildResolvedVersionsFromProps(
-    IReadOnlyList<string> propsFiles,
-    IReadOnlyList<UpdateResult> propsResults) {
+static IReadOnlyDictionary<string, string> BuildResolvedVersionsFromProps(IReadOnlyList<string> propsFiles, IReadOnlyList<UpdateResult> propsResults) {
     if (propsFiles.Count == 0) {
         return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
     }

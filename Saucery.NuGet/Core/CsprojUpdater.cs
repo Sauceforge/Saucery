@@ -58,8 +58,9 @@ public sealed class CsprojUpdater(INuGetApiClient apiClient) {
         var packageRefs = doc.SelectNodes(
             $"//*[local-name()='{Constants.Xml.PackageReferenceElement}' and @{Constants.Xml.IncludeAttribute} and @{Constants.Xml.VersionAttribute}]");
 
-        if((packageRefs is null || packageRefs.Count == 0) && string.IsNullOrWhiteSpace(syncWithPackageId))
+        if((packageRefs is null || packageRefs.Count == 0) && string.IsNullOrWhiteSpace(syncWithPackageId)) {
             return new UpdateResult(projectPath, []);
+        }
 
         var projectExclusions = ReadProjectExclusions(doc);
         var effectiveExclusions = MergeExclusions(excludePackageIds, projectExclusions);
@@ -71,24 +72,28 @@ public sealed class CsprojUpdater(INuGetApiClient apiClient) {
             var currentVersion = node.GetAttribute(Constants.Xml.VersionAttribute);
 
             // Skip if it's the opt-in marker itself
-            if(id.Equals(Constants.Package.OptInPackageId, StringComparison.OrdinalIgnoreCase))
+            if(id.Equals(Constants.Package.OptInPackageId, StringComparison.OrdinalIgnoreCase)) {
                 continue;
+            }
 
             // Skip if it's in the exclude list (CLI + global config + per-project)
             if(effectiveExclusions.Count > 0 &&
-               effectiveExclusions.Any(e => string.Equals(e, id, StringComparison.OrdinalIgnoreCase)))
+               effectiveExclusions.Any(e => string.Equals(e, id, StringComparison.OrdinalIgnoreCase))) {
                 continue;
+            }
 
             var available = await apiClient.GetAvailableVersionsAsync(id, ct).ConfigureAwait(false);
             var next = VersionResolver.FindNextVersion(currentVersion, available, includePrerelease);
 
-            if(next is null || next == currentVersion)
+            if(next is null || next == currentVersion) {
                 continue;
+            }
 
             updates.Add(new PackageUpdate(projectPath, id, currentVersion, next));
 
-            if(!dryRun)
+            if(!dryRun) {
                 node.SetAttribute(Constants.Xml.VersionAttribute, next);
+            }
         }
 
         // Build a lookup of proposed new versions for packages updated during this run
@@ -128,8 +133,9 @@ public sealed class CsprojUpdater(INuGetApiClient apiClient) {
                 if(projectRefs is not null) {
                     foreach(XmlElement projRef in projectRefs.Cast<XmlElement>()) {
                         var include = projRef.GetAttribute("Include");
-                        if(string.IsNullOrWhiteSpace(include))
+                        if(string.IsNullOrWhiteSpace(include)) {
                             continue;
+                        }
 
                         var normalizedInclude = NormalizeProjectReferencePath(include);
                         var fileNameNoExt = Path.GetFileNameWithoutExtension(normalizedInclude);
@@ -145,8 +151,9 @@ public sealed class CsprojUpdater(INuGetApiClient apiClient) {
                                 // Prefer reading PackageVersion from the referenced project's file
                                 // (it may have been updated earlier in the run)
                                 depVersion = PackageVersionBumper.ReadPackageVersion(resolved);
-                                if(!string.IsNullOrWhiteSpace(depVersion))
+                                if(!string.IsNullOrWhiteSpace(depVersion)) {
                                     break;
+                                }
 
                                 // As a fallback, try to read <PackageId> from referenced project and continue searching
                                 try {
@@ -158,8 +165,9 @@ public sealed class CsprojUpdater(INuGetApiClient apiClient) {
                                         var pkgId = pkgIdNode.InnerText?.Trim();
                                         if(string.Equals(pkgId, syncWithPackageId, StringComparison.OrdinalIgnoreCase)) {
                                             depVersion = PackageVersionBumper.ReadPackageVersion(resolved);
-                                            if(!string.IsNullOrWhiteSpace(depVersion))
+                                            if(!string.IsNullOrWhiteSpace(depVersion)) {
                                                 break;
+                                            }
                                         }
                                     }
                                 } catch {
@@ -207,12 +215,7 @@ public sealed class CsprojUpdater(INuGetApiClient apiClient) {
                     }
 
                     // Record the PackageVersion sync as an update so result.Updates.Count reflects it
-                    updates.Add(new PackageUpdate(
-                        projectPath,
-                        "PackageVersion",
-                        currentPackageVersion ?? string.Empty,
-                        depVersion));
-
+                    updates.Add(new PackageUpdate(projectPath, "PackageVersion", currentPackageVersion ?? string.Empty, depVersion));
                     newPackageVersion = depVersion;
                 }
             }
@@ -257,34 +260,40 @@ public sealed class CsprojUpdater(INuGetApiClient apiClient) {
     private static IReadOnlyList<string> MergeExclusions(
         IReadOnlyList<string>? cliExclusions, 
         IReadOnlyList<string>? projectExclusions) {
-        if((cliExclusions is null || cliExclusions.Count == 0) && 
-           (projectExclusions is null || projectExclusions.Count == 0))
+        if((cliExclusions is null || cliExclusions.Count == 0) &&
+           (projectExclusions is null || projectExclusions.Count == 0)) {
             return [];
+        }
 
         var merged = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        if(cliExclusions is not null)
+        if(cliExclusions is not null) {
             foreach(var e in cliExclusions) merged.Add(e);
+        }
 
-        if(projectExclusions is not null)
+        if(projectExclusions is not null) {
             foreach(var e in projectExclusions) merged.Add(e);
+        }
 
         return [.. merged];
     }
 
-    private static string NormalizeProjectReferencePath(string include) =>
-        include.Replace('\\', '/');
+    private static string NormalizeProjectReferencePath(string include) 
+        => include.Replace('\\', '/');
 
     private static (string Text, Func<Encoding> EncodingFactory) ReadPreservingEncoding(string path) {
         var bytes = File.ReadAllBytes(path);
 
-        if(bytes.Length >= 3 && bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF)
+        if(bytes.Length >= 3 && bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF) {
             return (new UTF8Encoding(true).GetString(bytes, 3, bytes.Length - 3), () => new UTF8Encoding(true));
+        }
 
-        if(bytes.Length >= 2 && bytes[0] == 0xFF && bytes[1] == 0xFE)
+        if(bytes.Length >= 2 && bytes[0] == 0xFF && bytes[1] == 0xFE) {
             return (new UnicodeEncoding(false, true).GetString(bytes, 2, bytes.Length - 2), () => new UnicodeEncoding(false, true));
+        }
 
-        if(bytes.Length >= 2 && bytes[0] == 0xFE && bytes[1] == 0xFF)
+        if(bytes.Length >= 2 && bytes[0] == 0xFE && bytes[1] == 0xFF) {
             return (new UnicodeEncoding(true, true).GetString(bytes, 2, bytes.Length - 2), () => new UnicodeEncoding(true, true));
+        }
 
         return (new UTF8Encoding(false).GetString(bytes), () => new UTF8Encoding(false));
     }
@@ -303,6 +312,7 @@ public sealed class CsprojUpdater(INuGetApiClient apiClient) {
         });
 
         doc.Save(xw);
+
         return sw.ToString();
     }
 }

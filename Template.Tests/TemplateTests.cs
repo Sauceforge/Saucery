@@ -134,8 +134,9 @@ public class TemplateTests {
     }
 
     private static void CleanupOutputDir(string? dir) {
-        if (string.IsNullOrEmpty(dir))
+        if(string.IsNullOrEmpty(dir)) {
             return;
+        }
 
         try {
             if (Directory.Exists(dir)) {
