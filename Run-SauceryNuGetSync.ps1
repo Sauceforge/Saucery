@@ -28,15 +28,15 @@ if (-not (Test-Path $sauceryNuGet)) {
 }
 
 function Invoke-SauceryNuGet([string[]]$passArgs) {
-	Write-Host "=========================================================="
-	Write-Host "Running saucery-nuget"
-	Write-Host "Args: $passArgs"
-	Write-Host "=========================================================="
+	Write-Information "=========================================================="
+	Write-Information "Running saucery-nuget"
+	Write-Information "Args: $passArgs"
+	Write-Information "=========================================================="
 
 	$allArgs = @("--solution", $SolutionFile) + $passArgs
 	if ($DryRun) { $allArgs += "--dry-run" }
 
-	Write-Host "Executing: $sauceryNuGet $allArgs"
+	Write-Information "Executing: $sauceryNuGet $allArgs"
 
 	& $sauceryNuGet @allArgs
 	if ($LASTEXITCODE -ne 0) { throw "saucery-nuget failed." }

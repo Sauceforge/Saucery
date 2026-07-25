@@ -20,7 +20,7 @@ $version = ([xml](Get-Content $ProjectFile)).SelectSingleNode("//PackageVersion"
 #    Where-Object { $_ } |
 #	Select-Object -First 1
 	
-Write-Host "Installing Saucery.NuGet $version"
+Write-Information "Installing Saucery.NuGet $version"
 
 dotnet tool uninstall --global Saucery.NuGet 2>$null
 
@@ -28,4 +28,4 @@ dotnet tool install --global Saucery.NuGet --add-source $NupkgOutDir --version $
 if ($LASTEXITCODE -ne 0) { throw "dotnet tool install failed." }
 
 Remove-Item -Recurse -Force $NupkgOutDir
-Write-Host "Done. saucery-nuget $version installed."
+Write-Information "Done. saucery-nuget $version installed."

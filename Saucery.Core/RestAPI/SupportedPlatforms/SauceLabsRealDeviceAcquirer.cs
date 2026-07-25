@@ -24,8 +24,7 @@ public class SauceLabsRealDeviceAcquirer : RestBase {
         return supportedPlatforms;
     }
 
-    public virtual async Task<RealDeviceJobs?> AcquireRealDeviceJobs(CancellationToken ct = default)
-    {
+    public virtual async Task<RealDeviceJobs?> AcquireRealDeviceJobs(CancellationToken ct = default) {
         var json = await GetJsonResponseAsync(SauceryConstants.RD_JOBS_REQUEST, ct).ConfigureAwait(false);
         var realDeviceJobs = JsonSerializer.Deserialize<RealDeviceJobs>(json!, JsonOptions);
 

@@ -2,8 +2,7 @@
 
 namespace Saucery.Core.Dojo.Browsers.Base;
 
-public abstract class BrowserBase
-{
+public abstract class BrowserBase {
     public string Os { get; set; }
 
     public string PlatformNameForOption { get; set; }
@@ -25,11 +24,21 @@ public abstract class BrowserBase
     public bool IsArmRequired { get; set; }
 
     protected BrowserBase(
-        SupportedPlatform sp, 
-        List<string> screenResolutions, 
+        SupportedPlatform sp,
+        List<string> screenResolutions,
+        string platformNameForOption)
+        : this(
+            sp,
+            screenResolutions,
+            platformNameForOption,
+            false) {
+    }
+
+    protected BrowserBase(
+        SupportedPlatform sp,
+        List<string> screenResolutions,
         string platformNameForOption,
-        bool isArmRequired = false)
-    {
+        bool isArmRequired) {
         Os = sp.Os!;
         PlatformNameForOption = platformNameForOption;
         AutomationBackend = sp.automation_backend!;
@@ -40,19 +49,15 @@ public abstract class BrowserBase
 
         if(sp.automation_backend == null) {
             PlatformVersion = sp.OsVersion?.Split(".")[0];
-        }
-        else {
-            if(sp.IsMobilePlatform()) {
-                PlatformVersion = sp.short_version;
-                RecommendedAppiumVersion = sp.recommended_backend_version;
-            }
-            //ScreenResolutions = screenResolutions; --might need to move back here
+        } else if(sp.IsMobilePlatform()) {
+            PlatformVersion = sp.short_version;
+            RecommendedAppiumVersion = sp.recommended_backend_version;
         }
 
         BrowserVersions = [];
     }
 
     public abstract BrowserVersion? FindVersion(SupportedPlatform sp);
-    
+
     public abstract bool IsSupportedVersion(SupportedPlatform sp);
 }

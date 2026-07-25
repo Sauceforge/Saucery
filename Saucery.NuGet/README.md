@@ -49,9 +49,9 @@ dotnet tool install Saucery.NuGet
 
 ---
 
-# Project Package Management
+## Project Package Management
 
-## Opting a project in
+### Opting a project in
 
 Only projects that explicitly opt in are scanned and updated.
 
@@ -63,7 +63,7 @@ Add the following property to the `.csproj` file:
 </PropertyGroup>
 ```
 
-### Important
+#### Important
 
 - Opt-in is property-based, not package-based.
 - You do not add a `PackageReference` to `Saucery.NuGet`.
@@ -90,7 +90,7 @@ Saucery.NuGet will inspect the `PackageReference`, determine the next available 
 
 ---
 
-# Central Package Management
+## Central Package Management
 
 Saucery.NuGet supports NuGet's Central Package Management model using `Directory.Packages.props`.
 
@@ -133,7 +133,7 @@ It does not jump directly to `2.0.0`.
 
 ---
 
-## Automatic discovery
+### Automatic discovery
 
 `Directory.Packages.props` files do not require `SauceryNuGetOptIn`.
 
@@ -178,7 +178,7 @@ MyRepository/src/Infrastructure/Directory.Packages.props
 
 ---
 
-## How Central Package Management differs from `.csproj` processing
+### How Central Package Management differs from `.csproj` processing
 
 | Behaviour | `.csproj` | `Directory.Packages.props` |
 |---|---|---|
@@ -191,7 +191,7 @@ MyRepository/src/Infrastructure/Directory.Packages.props
 
 ---
 
-## Central Package Management exclusions
+### Central Package Management exclusions
 
 Packages in a `Directory.Packages.props` file can be excluded using `SauceryNuGetExcludePackage`.
 
@@ -235,9 +235,9 @@ The exclusion declarations can appear anywhere in the file.
 
 ---
 
-# Usage
+## Usage
 
-## Preview changes without writing
+### Preview changes without writing
 
 Always start with a dry run when introducing Saucery.NuGet to an existing repository:
 
@@ -249,7 +249,7 @@ The proposed changes are printed without modifying any files.
 
 ---
 
-## Apply dependency updates
+### Apply dependency updates
 
 ```bash
 saucery-nuget --solution MySolution.sln
@@ -262,7 +262,7 @@ This processes:
 
 ---
 
-## Include prerelease versions
+### Include prerelease versions
 
 ```bash
 saucery-nuget \
@@ -274,7 +274,7 @@ Without `--include-prerelease`, prerelease packages are not considered when dete
 
 ---
 
-# Bump the project's own `PackageVersion`
+## Bump the project's own `PackageVersion`
 
 When a dependency changes, Saucery.NuGet can automatically increment the project's own `PackageVersion`.
 
@@ -330,7 +330,7 @@ If no relevant dependencies change, the project's own `PackageVersion` is left u
 
 ---
 
-# Process specific opted-in projects
+## Process specific opted-in projects
 
 When multiple projects are opted in, processing can be limited using `--project`, or its alias `-p`.
 
@@ -364,7 +364,7 @@ If no opted-in project matches the supplied value, Saucery.NuGet exits with a no
 
 ---
 
-# Synchronise `PackageVersion` with a dependency
+## Synchronise `PackageVersion` with a dependency
 
 An opted-in project's `PackageVersion` can be synchronised with a dependency using `--sync-with`, or its alias `-w`.
 
@@ -390,7 +390,7 @@ Saucery.TUnit     1.8.0
 - a centrally managed `PackageVersion`;
 - a `ProjectReference` to another project.
 
-## Behaviour
+### Behaviour
 
 Saucery.NuGet:
 
@@ -402,7 +402,7 @@ Saucery.NuGet:
 
 `--sync-with` must be used with `--project`.
 
-### Examples
+#### Examples
 
 Synchronise with a NuGet dependency:
 
@@ -434,7 +434,7 @@ saucery-nuget \
 
 ---
 
-# Scan unregistered projects
+## Scan unregistered projects
 
 By default, project discovery is based on projects registered in the solution.
 
@@ -460,7 +460,7 @@ This option affects `.csproj` discovery.
 
 ---
 
-# Exclude projects from processing
+## Exclude projects from processing
 
 One or more projects can be skipped entirely using `--exclude-projects`.
 
@@ -488,7 +488,7 @@ Excluded projects are removed from the opted-in project set before processing be
 
 ---
 
-# Exclude packages from updates
+## Exclude packages from updates
 
 There are three ways to exclude packages.
 
@@ -498,7 +498,7 @@ Matching is case-insensitive and duplicate values are ignored.
 
 ---
 
-## 1. Command-line exclusions
+### 1. Command-line exclusions
 
 For one-off exclusions:
 
@@ -512,7 +512,7 @@ Command-line exclusions also apply when processing `Directory.Packages.props`.
 
 ---
 
-## 2. Solution-level configuration
+### 2. Solution-level configuration
 
 Create:
 
@@ -548,9 +548,9 @@ These exclusions apply to both:
 
 ---
 
-## 3. Per-project or per-file exclusions
+### 3. Per-project or per-file exclusions
 
-### In a `.csproj`
+#### In a `.csproj`
 
 ```xml
 <Project Sdk="Microsoft.NET.Sdk">
@@ -576,7 +576,7 @@ These exclusions apply to both:
 
 These exclusions affect only that project.
 
-### In `Directory.Packages.props`
+#### In `Directory.Packages.props`
 
 ```xml
 <Project>
@@ -599,7 +599,7 @@ These exclusions affect only that `Directory.Packages.props` file.
 
 ---
 
-# All options
+## All options
 
 | Option | Alias | Description |
 |---|---|---|
@@ -616,7 +616,7 @@ These exclusions affect only that `Directory.Packages.props` file.
 
 ---
 
-# What "next version" means
+## What "next version" means
 
 Saucery.NuGet deliberately updates dependencies incrementally.
 
@@ -656,7 +656,7 @@ This allows each dependency upgrade to be independently validated by your build 
 
 ---
 
-# Example repository using Central Package Management
+## Example repository using Central Package Management
 
 Given:
 
@@ -732,7 +732,7 @@ Remove `--dry-run` to write the updates.
 
 ---
 
-# CI / Pipeline integration
+## CI / Pipeline integration
 
 Typical GitHub Actions usage:
 
@@ -757,9 +757,9 @@ https://github.com/Sauceforge/Saucery/blob/master/.github/workflows/saucery-nuge
 
 ---
 
-# How it works
+## How it works
 
-## `.csproj` pipeline
+### `.csproj` pipeline
 
 1. Parses the solution to discover `.csproj` files.
 2. Optionally discovers unregistered `.csproj` files when `--scan-unregistered` is used.
@@ -781,7 +781,7 @@ https://github.com/Sauceforge/Saucery/blob/master/.github/workflows/saucery-nuge
 
 ---
 
-## `Directory.Packages.props` pipeline
+### `Directory.Packages.props` pipeline
 
 1. Recursively discovers every `Directory.Packages.props` file beneath the solution root.
 2. Skips `bin` and `obj` directories.
@@ -799,7 +799,7 @@ No explicit opt-in property is required for `Directory.Packages.props`.
 
 ---
 
-# Contributing
+## Contributing
 
 Contributions are welcome.
 
@@ -814,7 +814,7 @@ https://github.com/Sauceforge/Saucery
 
 ---
 
-# License
+## License
 
 Copyright © 2024 Andrew Gray.
 

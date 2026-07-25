@@ -3,10 +3,9 @@ using Saucery.Core.RestAPI;
 
 namespace Saucery.Core.Dojo.Platforms.Base;
 
-public abstract class PlatformBase
-{
+public abstract class PlatformBase {
     public string Name { get; set; }
-    public string PlatformNameForOption {get; set; }
+    public string PlatformNameForOption { get; set; }
     public string AutomationBackend { get; set; }
     public string RecommendedAppiumVersion { get; set; }
     public List<string> SupportedBackendVersions { get; set; }
@@ -16,17 +15,20 @@ public abstract class PlatformBase
     public List<string>? ScreenResolutions { get; set; }
     public List<string>? BrowsersWithLatestVersion { get; set; }
     public bool IsArmRequired { get; set; }
-
     public List<BrowserBase> Browsers { get; set; }
+    protected PlatformBase(SupportedPlatform sp, string platformNameForOption, List<string> selenium4BrowserNames)
+        : this(sp, platformNameForOption, selenium4BrowserNames, null!, null!, false) {
+    }
 
-    protected PlatformBase(
-        SupportedPlatform sp, 
-        string platformNameForOption, 
-        List<string> selenium4BrowserNames,
-        List<string> browsersWithLatestVersion = null!,
-        List<string> screenResolutions = null!,
-        bool isArmRequired = false)
-    {
+    protected PlatformBase(SupportedPlatform sp, string platformNameForOption, List<string> selenium4BrowserNames, List<string> browsersWithLatestVersion)
+        : this(sp, platformNameForOption, selenium4BrowserNames, browsersWithLatestVersion, null!, false) {
+    }
+
+    protected PlatformBase(SupportedPlatform sp, string platformNameForOption, List<string> selenium4BrowserNames, List<string> browsersWithLatestVersion, List<string> screenResolutions)
+        : this(sp, platformNameForOption, selenium4BrowserNames, browsersWithLatestVersion, screenResolutions, false) {
+    }
+
+    protected PlatformBase(SupportedPlatform sp, string platformNameForOption, List<string> selenium4BrowserNames, List<string> browsersWithLatestVersion, List<string> screenResolutions, bool isArmRequired) {
         Name = sp.Os!;
         AutomationBackend = sp.automation_backend!;
         RecommendedAppiumVersion = sp.recommended_backend_version!;
@@ -35,13 +37,10 @@ public abstract class PlatformBase
 
         if(sp.automation_backend == null) {
             PlatformVersion = sp.OsVersion?.Split(".")[0];
+        } else if(sp.IsMobilePlatform()) {
+            PlatformVersion = sp.short_version;
         }
-        else {
-            if(sp.IsMobilePlatform()) {
-                PlatformVersion = sp.short_version;
-            }
-        }
-        
+
         Browsers = [];
         PlatformNameForOption = platformNameForOption;
         Selenium4BrowserNames = selenium4BrowserNames;

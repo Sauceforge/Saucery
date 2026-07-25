@@ -42,7 +42,7 @@ if ($IncludeFailed) { $analyticsStatuses += "failed" }
 
 function Write-Log {
   param([string]$Message = "")
-  Write-Host $Message
+  Write-Information $Message
 }
 
 function Invoke-SauceWeb {

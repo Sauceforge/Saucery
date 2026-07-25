@@ -15,7 +15,7 @@ $dllPath = "$($scriptPath)\..\lib\net6.0\$($coreName).dll"
 #[System.Reflection.Assembly]::LoadFrom($nugetPath)
 #[System.Reflection.Assembly]::LoadFrom($xmlPath)
 
-Write-Host "Checking $($coreName) Activation..."
+Write-Information "Checking $($coreName) Activation..."
 $validatorClass = "$($coreName).Activation.ActivationValidator"
 $validator = New-Object $validatorClass
 $validator.CheckActivation()

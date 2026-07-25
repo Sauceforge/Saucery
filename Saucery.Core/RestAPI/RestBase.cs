@@ -9,22 +9,23 @@ public abstract class RestBase {
     internal static readonly string UserName = Enviro.SauceUserName!;
     internal static readonly string AccessKey = Enviro.SauceApiKey!;
     internal RestClient? Client;
+
     private readonly RestAPILimitsChecker? _limitChecker = new();
-    internal static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        PropertyNameCaseInsensitive = true
-    };
+
+    internal static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
 
     // Async replacement for JSON retrieval
-    protected async Task<string?> GetJsonResponseAsync(string requestProforma, CancellationToken ct = default)
-    {
+    protected Task<string?> GetJsonResponseAsync(string requestProforma) 
+        => GetJsonResponseAsync(requestProforma, CancellationToken.None);
+
+    protected async Task<string?> GetJsonResponseAsync(string requestProforma, CancellationToken ct) {
         var request = BuildRequest(requestProforma, Method.Get);
         var response = await GetResponseAsync(request, ct).ConfigureAwait(false);
+
         return response?.Content;
     }
 
-    protected static RestRequest BuildRequest(string request, Method method)
-    {
+    protected static RestRequest BuildRequest(string request, Method method) {
         request = string.Format(request, UserName);
 
         RestRequest restRequest = new(request, method);
@@ -34,44 +35,61 @@ public abstract class RestBase {
         return restRequest;
     }
 
-    protected async Task EnsureExecutionAsync(RestRequest request, CancellationToken ct = default)
-    {
-        var response = await Client!.ExecuteAsync(request, ct).ConfigureAwait(false);
+    protected Task EnsureExecutionAsync(RestRequest request) 
+        => EnsureExecutionAsync(request, CancellationToken.None);
+
+    protected async Task EnsureExecutionAsync(RestRequest request, CancellationToken ct) {
+        var response = await Client!
+            .ExecuteAsync(request, ct)
+            .ConfigureAwait(false);
+
         _limitChecker?.Update(response);
 
-        while (_limitChecker!.IsLimitExceeded())
-        {
+        while(_limitChecker!.IsLimitExceeded()) {
             var delay = _limitChecker.GetReset();
+
             await Task.Delay(delay, ct).ConfigureAwait(false);
-            response = await Client!.ExecuteAsync(request, ct).ConfigureAwait(false);
+
+            response = await Client!
+                .ExecuteAsync(request, ct)
+                .ConfigureAwait(false);
+
             _limitChecker.Update(response);
         }
     }
 
-    private async Task<RestResponse> GetResponseAsync(RestRequest request, CancellationToken ct = default)
-    {
-        var response = await Client!.ExecuteAsync(request, ct).ConfigureAwait(false);
-        if (response.StatusCode == HttpStatusCode.OK)
-        {
+    private async Task<RestResponse> GetResponseAsync(RestRequest request, CancellationToken ct) {
+        var response = await Client!
+            .ExecuteAsync(request, ct)
+            .ConfigureAwait(false);
+
+        if(response.StatusCode == HttpStatusCode.OK) {
             return response;
         }
 
         _limitChecker!.Update(response);
 
-        while (_limitChecker.IsLimitExceeded())
-        {
-            Console.WriteLine(SauceryConstants.RESTAPI_LIMIT_EXCEEDED_MSG);
+        while(_limitChecker.IsLimitExceeded()) {
+            Console.WriteLine(
+                SauceryConstants.RESTAPI_LIMIT_EXCEEDED_MSG);
+
             var delay = _limitChecker.GetReset();
+
             await Task.Delay(delay, ct).ConfigureAwait(false);
-            response = await Client!.ExecuteAsync(request, ct).ConfigureAwait(false);
+
+            response = await Client!
+                .ExecuteAsync(request, ct)
+                .ConfigureAwait(false);
+
             _limitChecker.Update(response);
         }
 
         return response;
     }
 }
+
 /*
-* Copyright Andrew Gray, SauceForge
-* Date: 29th July 2014
-* 
-*/
+ * Copyright Andrew Gray, SauceForge
+ * Date: 29th July 2014
+ *
+ */

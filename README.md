@@ -1,15 +1,16 @@
-﻿<h1 align="center">
-<img src="/Saucery.Core/Images/Saucery.Core.png" alt="Saucery" width="200"/><br/>Saucery
-</h1>
+﻿<p align="center">
+  <img src="/Saucery.Core/Images/Saucery.Core.png" alt="Saucery" width="200">
+</p>
 
 <div align="center">
 <b>Automated testing made more awesome</b><br/>
+
+# Saucery
 
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/0ba3cb69efe14366af8c84e485e80077)](https://app.codacy.com/gh/Sauceforge/Saucery/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![Created](https://img.shields.io/github/created-at/sauceforge/saucery)](https://github.com/Sauceforge/Saucery)
 ![Commits](https://img.shields.io/github/commit-activity/t/sauceforge/saucery)
 [![nuget](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Sauceforge/Saucery/master/badges/nuget-total-downloads.json&cacheSeconds=60)](https://www.nuget.org/profiles/fullcircle)
-
 ![GitHub Repo stars](https://img.shields.io/github/stars/Sauceforge/Saucery)
 [![GitHub Sponsors](https://img.shields.io/github/sponsors/Sauceforge)](https://github.com/sponsors/Sauceforge)
 ![GitHub last commit (master)](https://img.shields.io/github/last-commit/Sauceforge/Saucery/master)
@@ -31,19 +32,24 @@ Saucery comes in multiple flavors supporting popular test frameworks. Targeting 
 | Saucery.TUnit ([TUnit](https://github.com/thomhurst/tunit)) | [![nuget](https://img.shields.io/nuget/v/Saucery.TUnit.svg)](https://www.nuget.org/packages/Saucery.TUnit/) [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery.TUnit)](https://www.nuget.org/packages/Saucery.TUnit/) |
 | Saucery.XUnit.v3 ([XUnit](https://github.com/xunit/xunit)) | [![nuget](https://img.shields.io/nuget/v/Saucery.XUnit.v3.svg)](https://www.nuget.org/packages/Saucery.XUnit.v3/) [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery.XUnit.v3)](https://www.nuget.org/packages/Saucery.XUnit.v3/) |
 | Saucery.NuGet | [![nuget](https://img.shields.io/nuget/v/Saucery.NuGet.svg)](https://www.nuget.org/packages/Saucery.NuGet/) [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery.NuGet)](https://www.nuget.org/packages/Saucery.NuGet/) |
-| Number of Saucery Packages | [![nuget](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Sauceforge/Saucery/master/badges/nuget-package-count.json&cacheSeconds=60)](https://www.nuget.org/profiles/fullcircle) 
+| Number of Saucery Packages | [![nuget](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Sauceforge/Saucery/master/badges/nuget-package-count.json&cacheSeconds=60)](https://www.nuget.org/profiles/fullcircle) |
 
 ### Sponsoring
+
 Saucery has been developed as an open-source project for over <!--YEARS-->12<!--ENDYEARS--> years. If you find it valuable for your projects and team work, please consider supporting me and becoming a [![](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/Sauceforge)
 
 ### Buy me a coffee
+
 Alternatively, you can buy me a coffee to say thanks! [![](https://img.shields.io/static/v1?label=Buy%20me%20a&message=coffee&logo=buy%20me%20a%20coffee&color=%23FFDD00)](https://buymeacoffee.com/andrewgray)
 
 ### Dog food Status
+
 We test Saucery itself on SauceLabs! [![Build Status](https://app.saucelabs.com/buildstatus/saucefauge?saucy)](https://app.saucelabs.com/buildstatus/saucefauge?saucy)
 
 ### Initial Setup
+
 These steps apply to all flavors:
+
 1. You'll need a SauceLabs account. You can get a free trial account [here](https://saucelabs.com/sign-up).
 2. If you want to run your tests locally you need to set 2 environment variables, SAUCE_USER_NAME and SAUCE_API_KEY.
 3. To run your test suite from your GitHub Actions pipeline you need to set two secrets SAUCE_USER_NAME and SAUCE_API_KEY. Instructions on how to set Github Secrets are [here](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository).
@@ -55,6 +61,7 @@ These steps apply to all flavors:
 #### 🏁 Quick Start
 
 #### Using the Project Template (Recommended)
+
 ```bash
 cd Templates
 dotnet new install .\NUnit
@@ -68,6 +75,7 @@ dotnet new saucery-nunit -n "MyTestProject"
 #### 🏁 Quick Start
 
 #### Using the Project Template (Recommended)
+
 ```bash
 cd Templates
 dotnet new install .\XUnit
@@ -81,6 +89,7 @@ dotnet new saucery-xunit -n "MyTestProject"
 #### 🏁 Quick Start
 
 #### Using the Project Template (Recommended)
+
 ```bash
 cd Templates
 dotnet new install .\TUnit
@@ -94,6 +103,7 @@ dotnet new saucery-tunit -n "MyTestProject"
 #### 🏁 Quick Start
 
 #### Using the Project Template (Recommended)
+
 ```bash
 cd Templates
 dotnet new install .\XUnit3
@@ -125,6 +135,7 @@ We use it ourselves to manage our own packages, and we hope you find it useful t
 ### Trends
 
 [Nuget downloads](https://nugettrends.com/packages?months=24&ids=Saucery&ids=Saucery.XUnit&ids=Saucery.TUnit&ids=Saucery.Core&ids=Saucery.XUnit.v3&ids=Saucery.NuGet)
+
 [GitHub stars](https://star-history.com/#sauceforge/Saucery)
 
 ## Contact
