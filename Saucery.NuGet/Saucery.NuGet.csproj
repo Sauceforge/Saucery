@@ -13,12 +13,12 @@
   <PropertyGroup>
     <IsPackable>true</IsPackable>
     <PackageId>Saucery.NuGet</PackageId>
-    <PackageVersion>1.0.16</PackageVersion>
+    <PackageVersion>1.0.17</PackageVersion>
     <Authors>Andrew Gray</Authors>
     <Company>SauceForge</Company>
     <Copyright>Copyright (c) Andrew Gray 2024</Copyright>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Description>Bumps every PackageReference in opted-in .csproj files to the next available version on NuGet.org.</Description>
+    <Description>Bumps NuGet package versions to the next available release for opted-in projects, supporting both Central Package Management (CPM) and traditional PackageReference versions in .csproj files.</Description>
     <PackageIcon>Saucery.NuGet.128x128.png</PackageIcon>
     <PackageTags>nuget versions update upgrade cpm csproj tool</PackageTags>
     

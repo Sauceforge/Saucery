@@ -44,6 +44,7 @@ public sealed class CsprojUpdater(INuGetApiClient apiClient) {
         string? syncWithPackageId = null,
         IReadOnlyList<string>? excludePackageIds = null,
         IReadOnlyDictionary<string, string>? externalResolvedVersions = null,
+        int? versionsBehindLatest = null,
         CancellationToken ct = default) {
         var (rawText, encodingFactory) = ReadPreservingEncoding(projectPath);
 
@@ -83,7 +84,7 @@ public sealed class CsprojUpdater(INuGetApiClient apiClient) {
             }
 
             var available = await apiClient.GetAvailableVersionsAsync(id, ct).ConfigureAwait(false);
-            var next = VersionResolver.FindNextVersion(currentVersion, available, includePrerelease);
+            var next = VersionResolver.FindNextVersion(currentVersion, available, includePrerelease, versionsBehindLatest);
 
             if(next is null || next == currentVersion) {
                 continue;

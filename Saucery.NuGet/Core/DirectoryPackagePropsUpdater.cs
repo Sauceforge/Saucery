@@ -9,6 +9,7 @@ public sealed class DirectoryPackagePropsUpdater(INuGetApiClient apiClient) {
         string filePath, bool includePrerelease = false,
         bool dryRun = false,
         IReadOnlyList<string>? excludePackageIds = null,
+        int? versionsBehindLatest = null,
         CancellationToken ct = default) {
 
         var (rawText, encodingFactory) = ReadPreservingEncoding(filePath);
@@ -44,7 +45,7 @@ public sealed class DirectoryPackagePropsUpdater(INuGetApiClient apiClient) {
             }
 
             var available = await apiClient.GetAvailableVersionsAsync(id, ct).ConfigureAwait(false);
-            var next = VersionResolver.FindNextVersion(currentVersion, available, includePrerelease);
+            var next = VersionResolver.FindNextVersion(currentVersion, available, includePrerelease, versionsBehindLatest);
 
             if(next is null || next == currentVersion) {
                 continue;

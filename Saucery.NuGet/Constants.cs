@@ -44,5 +44,6 @@ internal static class Constants {
         internal const string ScanUnregisteredOption = "--scan-unregistered";
         internal const string ExcludePackagesOption = "--exclude-packages";
         internal const string ExcludeProjectsOption = "--exclude-projects";
+        internal const string VersionsBehindOption = "--versions-behind";
     }
 }

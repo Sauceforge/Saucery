@@ -66,6 +66,12 @@ var excludeProjectsOption = new Option<string[]>(
     AllowMultipleArgumentsPerToken = true
 };
 
+var versionsBehindOption = new Option<int?>(
+    Constants.Cli.VersionsBehindOption) {
+    Description = "Optional: only upgrade a package up to N versions before the latest. If the current version is already at or beyond that point, the package is skipped.",
+    DefaultValueFactory = _ => null
+};
+
 var rootCommand = new RootCommand("Bumps each PackageReference in opted-in projects to its next available NuGet version.")
 {
     solutionOption,
@@ -77,7 +83,8 @@ var rootCommand = new RootCommand("Bumps each PackageReference in opted-in proje
     syncWithOption,
     scanUnregisteredOption,
     excludePackagesOption,
-    excludeProjectsOption
+    excludeProjectsOption,
+    versionsBehindOption
 };
 
 rootCommand.SetAction(async (parseResult, cancellationToken) => {
@@ -90,6 +97,7 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
     var scanUnregistered = parseResult.GetValue(scanUnregisteredOption);
     var excludePackages = parseResult.GetValue(excludePackagesOption) ?? [];
     var excludeProjects = parseResult.GetValue(excludeProjectsOption) ?? [];
+    var versionsBehind = parseResult.GetValue(versionsBehindOption);
 
     if(solution is null || !solution.Exists) {
         Console.Error.WriteLine($"Error: Solution file not found: {solution?.FullName ?? "(null)"}.");
@@ -102,6 +110,10 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
     Console.WriteLine($"Bump own version: {(bumpOwnVersion ? $"yes ({versionSegment})" : "no")}");
     if(!string.IsNullOrWhiteSpace(syncWith)) {
         Console.WriteLine($"Sync with: {syncWith}");
+    }
+
+    if(versionsBehind.HasValue) {
+        Console.WriteLine($"Versions behind: {versionsBehind.Value} (ceiling = latest - {versionsBehind.Value})");
     }
 
     //Load global config and merge with CLI exclusions.
@@ -195,6 +207,7 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
                 includePrerelease,
                 dryRun,
                 mergedExcludePackages.Count > 0 ? mergedExcludePackages : null,
+                versionsBehind,
                 cancellationToken);
 
             propsResults.Add(propsResult);
@@ -242,6 +255,7 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
             syncWith,
             mergedExcludePackages.Count > 0 ? mergedExcludePackages : null,
             resolvedVersionsFromProps.Count > 0 ? resolvedVersionsFromProps : null,
+            versionsBehind,
             cancellationToken);
 
         allResults.Add(result);

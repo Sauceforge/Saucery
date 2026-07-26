@@ -39,6 +39,7 @@ dotnet tool install Saucery.NuGet
   - a solution-level configuration file
   - per-project declarations
   - per-`Directory.Packages.props` declarations
+- Optionally limits upgrades to a ceiling N versions before the latest, leaving packages that are already at or beyond that ceiling unchanged
 
 ---
 
@@ -599,6 +600,69 @@ These exclusions affect only that `Directory.Packages.props` file.
 
 ---
 
+## Limit upgrades to N versions before the latest
+
+By default, Saucery.NuGet can step a package all the way to the latest version over successive runs.
+
+`--versions-behind <N>` caps that progression. A package is only upgraded up to the version that sites `N` positions before the latest in the sorted list of available versions. If the current version is already at or beyond that ceiling, the package is left unchanged.
+
+```bash
+saucery-nuget \
+  --solution MySolution.sln \
+  --versions-behind 2
+```
+
+### Example
+
+Given the following available versions:
+
+```text
+1.0.0 (current)
+1.0.1
+1.0.2
+1.0.3 (latest)
+```
+
+With `--versions-behind 2`, the ceiling is `1.0.1` (2 positions before `1.0.3`).
+
+| Run | Current | Result |
+|-----|---------|--------|
+| 1 | `1.0.0` | Updated to `1.0.1` |
+| 2 | `1.0.1` | At ceiling - skipped |
+
+### Non-contiguous versions
+
+The ceiling is determined by position in the sorted versions list, not by arithmetic difference.
+Gap size between version numbers does not matter.
+
+Given:
+
+```text
+1.5     (current)
+1.6.28
+1.6.49
+1.6.99
+1.7     (latest)
+```
+
+With `--versions-behind 2`, the ceiling is `1.6.49` (index 2 = 4 - 2)
+
+| Run | Current | Result |
+|-----|---------|--------|
+| 1 | `1.5` | Updated to `1.6.28` |
+| 2 | `1.6.28` | Updated to `1.6.49` |
+| 3 | `1.6.49` | At ceiling - skipped |
+
+### Packages already beyond the ceiling
+
+If the current version is already ahead of the ceiling, the package is silently skipped. No downgrade is performed.
+
+### Using `--versions-behind 0`
+
+A value of `0` sets the ceiling at the latest version, which is equivalent to running without the option.
+
+---
+
 ## All options
 
 | Option | Alias | Description |
@@ -613,6 +677,7 @@ These exclusions affect only that `Directory.Packages.props` file.
 | `--scan-unregistered` | | Include `.csproj` files not registered in the solution. |
 | `--exclude-packages <packages>` | | Exclude one or more packages from updates. |
 | `--exclude-projects <projects>` | | Exclude one or more projects from project processing. |
+| `--versions-behind <N>` | | Only upgrade up to the version N positions before the latest. Packages at or beyond that ceiling are skipped. |
 
 ---
 
@@ -776,8 +841,9 @@ https://github.com/Sauceforge/Saucery/blob/master/.github/workflows/saucery-nuge
 8. Finds `PackageReference` entries.
 9. Skips packages in the effective exclusion list.
 10. Resolves the next available version using `NuGet.Versioning`.
-11. Updates the `.csproj` while preserving its encoding and BOM.
-12. Optionally updates the project's own `PackageVersion`.
+11. Applied the `--versions-behind` ceiling when specified, skipping packages already at or beyond it.
+12. Updates the `.csproj` while preserving its encoding and BOM.
+13. Optionally updates the project's own `PackageVersion`.
 
 ---
 
@@ -793,7 +859,8 @@ https://github.com/Sauceforge/Saucery/blob/master/.github/workflows/saucery-nuge
 6. Finds every `PackageVersion` entry.
 7. Skips packages in the effective exclusion list.
 8. Resolves the next available version using `NuGet.Versioning`.
-9. Updates the `Directory.Packages.props` file while preserving its encoding and BOM.
+9. Applies the `--versions-behind` ceiling when specified, skipping packages already at or beyond it.
+10. Updates the `Directory.Packages.props` file while preserving its encoding and BOM.
 
 No explicit opt-in property is required for `Directory.Packages.props`.
 
