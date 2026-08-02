@@ -50,6 +50,6 @@ jobs:
       - name: Publish outcome
         shell: pwsh
         run: |
-          Write-Host "Package version: ${{ steps.publish.outputs.version }}"
-          Write-Host "Should publish:   ${{ steps.publish.outputs.should-publish }}"
-          Write-Host "Published:        ${{ steps.publish.outputs.published }}"
+          Write-Information "Package version: ${{ steps.publish.outputs.version }}"
+          Write-Information "Should publish:   ${{ steps.publish.outputs.should-publish }}"
+          Write-Information "Published:        ${{ steps.publish.outputs.published }}"

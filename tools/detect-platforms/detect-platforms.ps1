@@ -52,7 +52,7 @@ function Resolve-RepoRoot {
 
 $RepoRoot = Resolve-RepoRoot $RepoRoot
 
-Write-Host "Repo root: $RepoRoot"
+Write-Information "Repo root: $RepoRoot"
 
 function Backup-File {
     param([string]$Path)
@@ -60,7 +60,7 @@ function Backup-File {
     if (Test-Path -LiteralPath $Path) {
         $bak = "$Path.bak"
         Copy-Item -LiteralPath $Path -Destination $bak -Force
-        Write-Host "Backed up $Path to $bak"
+        Write-Information "Backed up $Path to $bak"
     }
 }
 
@@ -77,7 +77,7 @@ function Write-File {
     )
 
     Set-Content -LiteralPath $Path -Value $Text -Force
-    Write-Host "Wrote $Path"
+    Write-Information "Wrote $Path"
 }
 
 $productDirs = @(
@@ -98,8 +98,8 @@ foreach ($dir in $productDirs) {
 }
 
 if ($androidFiles.Count -eq 0) {
-    Write-Host "No Android platform implementation files found under:"
-    $productDirs | ForEach-Object { Write-Host "  $_" }
+    Write-Information "No Android platform implementation files found under:"
+    $productDirs | ForEach-Object { Write-Information "  $_" }
     exit 0
 }
 
@@ -112,7 +112,7 @@ $versions = $androidFiles |
     Where-Object { $null -ne $_ } |
     Sort-Object -Unique
 
-Write-Host "Discovered Android major versions: $($versions -join ', ')"
+Write-Information "Discovered Android major versions: $($versions -join ', ')"
 
 $factoryFile = Join-Path $RepoRoot 'Saucery.Core\Dojo\Platforms\AndroidPlatformFactory.cs'
 $dojoFile = Join-Path $RepoRoot 'Saucery.Core\Dojo\DojoExtensions.cs'
@@ -275,7 +275,7 @@ function Ensure-LineInTestTypes {
 }
 
 foreach ($version in $versions) {
-    Write-Host "Processing Android $version..."
+    Write-Information "Processing Android $version..."
 
     if (Test-Path -LiteralPath $factoryFile) {
         $text = Read-File $factoryFile
@@ -315,4 +315,4 @@ foreach ($version in $versions) {
     }
 }
 
-Write-Host "Done."
+Write-Information "Done."
