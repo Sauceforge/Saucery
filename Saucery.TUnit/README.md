@@ -7,10 +7,10 @@ Saucery targets all real and emulated [platforms](https://saucelabs.com/products
 The template below includes example tests.
 
 ## Sponsoring
-Saucery has been developed as an open-source project for over <!--YEARS-->12<!--ENDYEARS--> years. If you find it valuable for your projects and team work, please consider supporting me and becoming a  [![](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/Sauceforge)
+Saucery has been developed as an open-source project for over <!--YEARS-->12<!--ENDYEARS--> years. If you find it valuable for your projects and team work, please consider supporting me and becoming a  [![Become a Sponsor](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/Sauceforge)
 
 ### Buy me a coffee
-Alternatively, you can buy me a coffee to say thanks!  [![](https://img.shields.io/static/v1?label=Buy%20me%20a&message=coffee&logo=buy%20me%20a%20coffee&color=%23FFDD00)](https://buymeacoffee.com/andrewgray)
+Alternatively, you can buy me a coffee to say thanks! [![Buy me a coffee](https://img.shields.io/static/v1?label=Buy%20me%20a&message=coffee&logo=buy%20me%20a%20coffee&color=%23FFDD00)](https://buymeacoffee.com/andrewgray)
 
 ## Initial Setup
 
@@ -18,7 +18,7 @@ Alternatively, you can buy me a coffee to say thanks!  [![](https://img.shields.
 1. If you want to run your tests locally you need to set 2 environment variables, SAUCE_USER_NAME and SAUCE_API_KEY
 1. To run your test suite from your GitHub Actions pipeline you need to set two secrets SAUCE_USER_NAME and SAUCE_API_KEY. Instructions on how to set Github Secrets are [here](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository).
 
-## TUnit 
+## TUnit
 
 #### 🏁 Quick Start
 

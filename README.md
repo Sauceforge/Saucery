@@ -36,11 +36,11 @@ Saucery comes in multiple flavors supporting popular test frameworks. Targeting 
 
 ### Sponsoring
 
-Saucery has been developed as an open-source project for over <!--YEARS-->12<!--ENDYEARS--> years. If you find it valuable for your projects and team work, please consider supporting me and becoming a [![](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/Sauceforge)
+Saucery has been developed as an open-source project for over <!--YEARS-->12<!--ENDYEARS--> years. If you find it valuable for your projects and team work, please consider supporting me and becoming a [![Become a Sponsor](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/Sauceforge)
 
 ### Buy me a coffee
 
-Alternatively, you can buy me a coffee to say thanks! [![](https://img.shields.io/static/v1?label=Buy%20me%20a&message=coffee&logo=buy%20me%20a%20coffee&color=%23FFDD00)](https://buymeacoffee.com/andrewgray)
+Alternatively, you can buy me a coffee to say thanks! [![Buy me a coffee](https://img.shields.io/static/v1?label=Buy%20me%20a&message=coffee&logo=buy%20me%20a%20coffee&color=%23FFDD00)](https://buymeacoffee.com/andrewgray)
 
 ### Dog food Status
 
@@ -140,5 +140,5 @@ We use it ourselves to manage our own packages, and we hope you find it useful t
 
 ## Contact
 
-Author: Andrew Gray  
+Author: Andrew Gray
 [LinkedIn](https://www.linkedin.com/in/andrewpaulgray/)
