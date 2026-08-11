@@ -21,6 +21,7 @@
     <File Path=".github/workflows/publish-tunit.yml" />
     <File Path=".github/workflows/publish-xunit.yml" />
     <File Path=".github/workflows/publish-xunit3.yml" />
+    <File Path="Directory.Packages.props" />
     <File Path="README.md" />
     <File Path="Run-SauceryNuGetSync.ps1" />
     <File Path=".github/workflows/saucery-nuget-pipeline.yml" />
@@ -40,32 +41,32 @@
   </Folder>
 
   <Folder Name="/FrontEnd/">
-    <Project Path="Saucery/Saucery.csproj" />
-    <Project Path="Saucery.XUnit/Saucery.XUnit.csproj" />
     <Project Path="Saucery.Playwright.NUnit/Saucery.Playwright.NUnit.csproj" />
     <Project Path="Saucery.TUnit/Saucery.TUnit.csproj" />
+    <Project Path="Saucery.XUnit/Saucery.XUnit.csproj" />
     <Project Path="Saucery.XUnit3/Saucery.XUnit3.csproj" />
+    <Project Path="Saucery/Saucery.csproj" />
   </Folder>
 
   <Folder Name="/Testing/NUnit/">
+    <Project Path="ExternalMerlin.NUnit.RealDevices/ExternalMerlin.NUnit.RealDevices.csproj" />
     <Project Path="ExternalMerlin.NUnit/ExternalMerlin.NUnit.csproj" />
+    <Project Path="Merlin.NUnit.RealDevices/Merlin.NUnit.RealDevices.csproj" />
     <Project Path="Merlin.NUnit/Merlin.NUnit.csproj" />
     <Project Path="Merlin.Playwright.NUnit/Merlin.Playwright.NUnit.csproj" />
-    <Project Path="Merlin.NUnit.RealDevices/Merlin.NUnit.RealDevices.csproj" />
-    <Project Path="ExternalMerlin.NUnit.RealDevices/ExternalMerlin.NUnit.RealDevices.csproj" />
   </Folder>
 
   <Folder Name="/Testing/Core/">
+    <Project Path="Saucery.Core.Tests.XUnitv3/Saucery.Core.Tests.XUnitv3.csproj" />
     <Project Path="Saucery.Core.Tests/Saucery.Core.Tests.csproj" />
     <Project Path="Template.Tests/Template.Tests.csproj" />
-    <Project Path="Saucery.Core.Tests.XUnitv3/Saucery.Core.Tests.XUnitv3.csproj" />
   </Folder>
 
   <Folder Name="/Testing/XUnit/">
-    <Project Path="Merlin.XUnit/Merlin.XUnit.csproj" />
+    <Project Path="ExternalMerlin.XUnit.RealDevices/ExternalMerlin.XUnit.RealDevices.csproj" />
     <Project Path="ExternalMerlin.XUnit/ExternalMerlin.XUnit.csproj" />
     <Project Path="Merlin.XUnit.RealDevices/Merlin.XUnit.RealDevices.csproj" />
-    <Project Path="ExternalMerlin.XUnit.RealDevices/ExternalMerlin.XUnit.RealDevices.csproj" />
+    <Project Path="Merlin.XUnit/Merlin.XUnit.csproj" />
   </Folder>
 
   <Folder Name="/Testing/Common/">
@@ -73,10 +74,10 @@
   </Folder>
 
   <Folder Name="/Testing/TUnit/">
-    <Project Path="Merlin.TUnit/Merlin.TUnit.csproj" />
-    <Project Path="Merlin.TUnit.RealDevices/Merlin.TUnit.RealDevices.csproj" />
-    <Project Path="ExternalMerlin.TUnit/ExternalMerlin.TUnit.csproj" />
     <Project Path="ExternalMerlin.TUnit.RealDevices/ExternalMerlin.TUnit.RealDevices.csproj" />
+    <Project Path="ExternalMerlin.TUnit/ExternalMerlin.TUnit.csproj" />
+    <Project Path="Merlin.TUnit.RealDevices/Merlin.TUnit.RealDevices.csproj" />
+    <Project Path="Merlin.TUnit/Merlin.TUnit.csproj" />
   </Folder>
 
   <Folder Name="/Benchmark/">
@@ -87,10 +88,10 @@
   </Folder>
 
   <Folder Name="/Testing/XUnit3/">
-    <Project Path="Merlin.XUnit3/Merlin.XUnit3.csproj" />
-    <Project Path="Merlin.XUnit3.RealDevices/Merlin.XUnit3.RealDevices.csproj" />
-    <Project Path="ExternalMerlin.XUnit3/ExternalMerlin.XUnit3.csproj" />
     <Project Path="ExternalMerlin.XUnit3.RealDevices/ExternalMerlin.XUnit3.RealDevices.csproj" />
+    <Project Path="ExternalMerlin.XUnit3/ExternalMerlin.XUnit3.csproj" />
+    <Project Path="Merlin.XUnit3.RealDevices/Merlin.XUnit3.RealDevices.csproj" />
+    <Project Path="Merlin.XUnit3/Merlin.XUnit3.csproj" />
   </Folder>
 
   <Folder Name="/Templates/NUnit/">
@@ -149,8 +150,8 @@
   </Folder>
 
   <Folder Name="/Tools/Badges/">
-    <Project Path="Saucery.Badges/Saucery.Badges.csproj" />
     <Project Path="Saucery.Badges.Tests/Saucery.Badges.Tests.csproj" />
+    <Project Path="Saucery.Badges/Saucery.Badges.csproj" />
   </Folder>
   <Folder Name="/Tools/NuGet/">
     <Project Path="Saucery.NuGet.Tests/Saucery.NuGet.Tests.csproj" />

@@ -1,5 +1,4 @@
 ﻿using System.CommandLine;
-using System.Xml;
 using Saucery.NuGet;
 using Saucery.NuGet.Core;
 using Saucery.NuGet.Models;
@@ -312,7 +311,7 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
                 continue; // no <PackageVersion> to bump
             }
 
-            if(!ProjectReferencesAnyUpdatedPackage(projectPath, updatedPackageIds)) {
+            if(!ProjectReferenceInspector.ReferencesAnyUpdatedPackage(projectPath, updatedPackageIds)) {
                 continue; // none of this project's dependencies were updated
             }
 
@@ -351,29 +350,6 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
 });
 
 return await rootCommand.Parse(args).InvokeAsync();
-
-static bool ProjectReferencesAnyUpdatedPackage(
-    string projectPath,
-    IReadOnlySet<string> updatedPackageIds) {
-    try {
-        var doc = new XmlDocument();
-        doc.LoadXml(projectPath);
-        var refs = doc.SelectNodes("//*[local-name()='PackageReference' and @Include]");
-        if(refs is null) { 
-            return false; 
-        }
-
-        foreach(XmlElement node in refs.Cast<XmlElement>()) {
-            if(updatedPackageIds.Contains(node.GetAttribute("Include"))) {
-                return true;
-            }
-        }
-
-        return false;
-    } catch {
-        return false;
-    }
-}
 
 static IReadOnlyList<string> MergeExclusions(string[] cliExclusions, string[] configExclusions) {
     if(cliExclusions.Length == 0 && configExclusions.Length == 0) {
