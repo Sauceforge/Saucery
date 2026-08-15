@@ -15,7 +15,7 @@
     <IsPackable>true</IsPackable>
 
     <PackageId>Saucery.XUnit.v3</PackageId>
-    <PackageVersion>3.2.2</PackageVersion>
+    <PackageVersion>4.0.0</PackageVersion>
 
     <Title>Sorcery for SauceLabs and XUnit.v3</Title>
     <Description>Sorcery for SauceLabs - Unlocking SauceLabs capability</Description>
