@@ -1,3 +1,3 @@
-//global using Xunit;
+using Xunit.v3;
 
-[assembly: CollectionBehavior(MaxParallelThreads = 5)]
+[assembly: Parallelization(MaxThreads = 5)]
