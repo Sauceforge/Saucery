@@ -33,7 +33,7 @@
     <PackageVersion Include="Selenium.WebDriver" Version="4.47.0" />
     <PackageVersion Include="Shouldly" Version="4.3.0" />
     <PackageVersion Include="System.CommandLine" Version="2.0.11" />
-    <PackageVersion Include="TUnit" Version="1.65.51" />
+    <PackageVersion Include="TUnit" Version="1.65.63" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.0" />
     <PackageVersion Include="xunit.v3.mtp-v2" Version="4.0.0" />
