@@ -10,7 +10,8 @@ on:
     branches: [master, 'releases/**', 'feat/**', 'feature/**', 'fix/**', 'test/**', 'bug/**']
   workflow_dispatch:
   schedule:
-    - cron: "0 0 1 * *"
+    - cron: "0 1,7,13,19 * * *"
+    
 
 run-name: ${{ github.event.head_commit.message || github.event.inputs.message || 'Manual Run' }}
 
@@ -26,6 +27,11 @@ env:
   NUGET_USER: fullcircle
   BUILD_ARTIFACTS: build-artifacts
   COVERAGE_FORMAT: cobertura
+  WATCHED_GLOBS: |
+    .github/workflows/core-pipeline.yml
+    .github/actions/**
+    Saucery.Core/**
+    Saucery.Core.Tests/**
 
   UT_PROJECT: Saucery.Core.Tests.XUnitv3/Saucery.Core.Tests.XUnitv3.csproj
   TT_PROJECT: Template.Tests/Template.Tests.csproj
@@ -45,11 +51,30 @@ env:
   TUNIT_RD_INTEGRATION_COVERAGE_FILENAME: opencover.tunit.realdevice.integration.xml
 
 jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    permissions: { actions: read, contents: read }
+    outputs:
+      changed: ${{ steps.detect.outputs.changed }}
+      paths_changed: ${{ steps.detect.outputs.paths_changed }}
+      previous_sha: ${{ steps.detect.outputs.previous_sha }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - id: detect
+        uses: ./.github/actions/detect-watched-paths
+        with:
+          workflow-id: .github/workflows/core-pipeline.yml
+          watched-globs: ${{ env.WATCHED_GLOBS }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
   build:
     runs-on: ubuntu-latest
     env:
       SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
       SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
+    needs: detect-changes
+    if: needs.detect-changes.outputs.paths_changed == 'true'
     steps:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/setup-dotnet
