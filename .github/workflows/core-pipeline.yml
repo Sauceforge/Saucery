@@ -10,7 +10,7 @@ on:
     branches: [master, 'releases/**', 'feat/**', 'feature/**', 'fix/**', 'test/**', 'bug/**']
   workflow_dispatch:
   schedule:
-    - cron: "0 1,7,13,19 * * *"
+    - cron: "0 2,8,14,20 * * *"
     
 
 run-name: ${{ github.event.head_commit.message || github.event.inputs.message || 'Manual Run' }}
