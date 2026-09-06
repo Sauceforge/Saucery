@@ -21,6 +21,7 @@ public class PlatformTypes {
             typeof(Mac12Platform),
             typeof(Mac11Platform),
             //typeof(IOS27Platform),
+            typeof(IOS265Platform),
             typeof(IOS261Platform),
             typeof(IOS186Platform),
             typeof(IOS18Platform),
