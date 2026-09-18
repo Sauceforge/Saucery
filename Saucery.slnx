@@ -21,6 +21,7 @@
     <File Path=".github/workflows/publish-tunit.yml" />
     <File Path=".github/workflows/publish-xunit.yml" />
     <File Path=".github/workflows/publish-xunit3.yml" />
+    <File Path="Directory.Build.props" />
     <File Path="Directory.Packages.props" />
     <File Path="README.md" />
     <File Path="Run-SauceryNuGetSync.ps1" />

@@ -3,6 +3,19 @@
 namespace Saucery.NuGet.Core;
 
 public static class VersionResolver {
+    /// <summary>
+    /// Parses a per-package <c>VersionsBehind</c> attribute values into an override for the
+    /// CLI-level <c>--versions-behind</c> ceiling. Returns <c>null</c> to mean "no-override - 
+    /// fall back to the CLI global". A blank value, a non-integer, or a negative number all
+    /// return <c>null</c> (ignored). <c>"0"</c> returns <c>0</c> - a real override placing the
+    /// ceiling at the latest version.
+    /// </summary>
+    public static int? ParsePerPackageVersionsBehind(string? attributeValue) 
+        => string.IsNullOrWhiteSpace(attributeValue) ? null
+            : int.TryParse(attributeValue.Trim(), out var n) && n >= 0
+                ? n
+                : null;
+
     public static string? FindNextVersion(
         string currentVersion, 
         IReadOnlyList<string> availableVersions, 

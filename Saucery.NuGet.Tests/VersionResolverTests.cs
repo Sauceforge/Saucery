@@ -130,4 +130,25 @@ public class VersionResolverTests {
         var result = VersionResolver.FindNextVersion("1.0.0", versions, versionsBehindLatest: 5);
         Assert.Null(result);
     }
+
+    // --- per-package VersionsBehind attribute parsing ---
+
+    [Theory]
+    [InlineData("2", 2)]
+    [InlineData("0", 0)]
+    [InlineData("  3  ", 3)]
+    public void ParsePerPackageVersionsBehind_ReturnsValue_ForValidNonNegativeInteger(string input, int expected) {
+        Assert.Equal(expected, VersionResolver.ParsePerPackageVersionsBehind(input));
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    [InlineData("abc")]
+    [InlineData("1.5")]
+    [InlineData("-1")]
+    public void ParsePerPackageVersionsBehind_ReturnsNull_ForInvalidInput(string? input) {
+        Assert.Null(VersionResolver.ParsePerPackageVersionsBehind(input));
+    }
 }

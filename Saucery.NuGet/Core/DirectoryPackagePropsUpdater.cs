@@ -10,6 +10,7 @@ public sealed class DirectoryPackagePropsUpdater(INuGetApiClient apiClient) {
         bool dryRun = false,
         IReadOnlyList<string>? excludePackageIds = null,
         int? versionsBehindLatest = null,
+        IReadOnlyDictionary<string, int>? perPackageVersionsBehind = null,
         CancellationToken ct = default) {
 
         var (rawText, encodingFactory) = ReadPreservingEncoding(filePath);
@@ -44,8 +45,15 @@ public sealed class DirectoryPackagePropsUpdater(INuGetApiClient apiClient) {
                 continue;
             }
 
+            // A per-package override (declared as a VersionBehind attribute on the package's
+            // <PackageReference> in a csproj) takes precedence over the CLI-level ceiling.
+            var effectiveVersionsBehind =
+                perPackageVersionsBehind is not null && perPackageVersionsBehind.TryGetValue(id, out var overrideN)
+                    ? overrideN
+                    : versionsBehindLatest;
+
             var available = await apiClient.GetAvailableVersionsAsync(id, ct).ConfigureAwait(false);
-            var next = VersionResolver.FindNextVersion(currentVersion, available, includePrerelease, versionsBehindLatest);
+            var next = VersionResolver.FindNextVersion(currentVersion, available, includePrerelease, effectiveVersionsBehind);
 
             if(next is null || next == currentVersion) {
                 continue;

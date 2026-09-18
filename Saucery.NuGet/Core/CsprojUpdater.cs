@@ -35,6 +35,52 @@ public sealed class CsprojUpdater(INuGetApiClient apiClient) {
         return false;
     }
 
+    /// <summary>
+    /// Scans the given project files for per-package versions-behind overrides declared as a
+    /// <c>VersionsBehind</c> attribute on a <c>&lt;PackageReference&gt;</c> element, and returns a
+    /// case-insensitive package-id -> N map. This is used for Central Package Management, where the
+    /// version lives in <c>Directory.Packages.props</c> but the intent is authored next to the 
+    /// <c>PAckageReference</c> in the csproj (which carries no <c>Version</c> under CPM).
+    /// When the same package declares different values across projects, the most conservative 
+    /// (largest N, i.e. furthest behind the latest) wins.
+    /// </summary>
+    public static IReadOnlyDictionary<string, int> CollectVersionsBehindOverrides(IEnumerable<string> projectPaths) { 
+        var map = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+
+        foreach(var projectPath in projectPaths) {
+            XmlDocument doc;
+            try {
+                doc = new XmlDocument();
+                doc.Load(projectPath);
+            } catch {
+                continue; // Skip unreadable/malformed projects; other pipelines report their errors.
+            }
+
+            var nodes = doc.SelectNodes(
+                $"//*[local-name()='{Constants.Xml.PackageReferenceElement}' and @{Constants.Xml.IncludeAttribute} and @{Constants.Xml.VersionsBehindAttribute}]");
+
+            if(nodes is null) {
+                continue;
+            }
+
+            foreach(XmlElement node in nodes.Cast<XmlElement>()) {
+                var id = node.GetAttribute(Constants.Xml.IncludeAttribute);
+                var parsed = VersionResolver.ParsePerPackageVersionsBehind(
+                    node.GetAttribute(Constants.Xml.VersionsBehindAttribute));
+
+                if(string.IsNullOrWhiteSpace(id) || parsed is null) {
+                    continue;
+                }
+
+                if(!map.TryGetValue(id, out var existing) || parsed.Value > existing) {
+                    map[id] = parsed.Value;
+                }
+            }
+        }
+
+        return map;
+    }
+
     public async Task<UpdateResult> UpdateAsync(
         string projectPath,
         bool includePrerelease = false,
@@ -83,8 +129,13 @@ public sealed class CsprojUpdater(INuGetApiClient apiClient) {
                 continue;
             }
 
+            // A per-package VersionsBehind attribute overrides the CLI-level ceiling for the package.
+            var perPackageVersionsBehind = VersionResolver.ParsePerPackageVersionsBehind(
+                node.GetAttribute(Constants.Xml.VersionsBehindAttribute));
+            var effectiveVersionsBehind = perPackageVersionsBehind ?? versionsBehindLatest;
+
             var available = await apiClient.GetAvailableVersionsAsync(id, ct).ConfigureAwait(false);
-            var next = VersionResolver.FindNextVersion(currentVersion, available, includePrerelease, versionsBehindLatest);
+            var next = VersionResolver.FindNextVersion(currentVersion, available, includePrerelease, effectiveVersionsBehind);
 
             if(next is null || next == currentVersion) {
                 continue;

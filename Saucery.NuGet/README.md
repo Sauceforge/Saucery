@@ -661,6 +661,57 @@ If the current version is already ahead of the ceiling, the package is silently 
 
 A value of `0` sets the ceiling at the latest version, which is equivalent to running without the option.
 
+### Per-package override with the `VersionsBehind` attribute
+
+`--versions-behind` applies the same ceiling to every package. To cap an individual
+package differently, and a `VersionsBehind` attribute to its `<PackageReference>` element
+in the `.csproj`:
+
+```xml
+<PackageReference Include="Selenium.WebDriver" Version="4.10.0" VersionsBehind="2" />
+```
+
+The attribute always lives next to the `PackageReference` in the csproj, in **both** 
+version styles:
+
+- **Version on the `PackageReference` (no central management):** the ceiling is applied to
+  that reference directly.
+- **Central Package Management (`ManagePackageVersionsCentrally`):** the `PackageReference`  
+  carries no `Version` (it lives in `Directory.Packages.props`). You still author
+  `VersionsBehind` on  the csproj `PackageReference`, and Saucery.NuGet applies it to the
+  matching centralized `PackageVersion` when it bumps the props file:
+
+```xml
+<!-- MyProject.csproj -->
+<PackageReference Include="Serilog" VersionsBehind="2" />
+```
+```xml
+<!-- Directory.Packages.props (bumped subject to the override above) -->
+<PackageVersion Include="Serilog" Version="2.10.0" />
+```
+
+The per-package value takes precedence over the `--versions-behind` CLI value for that
+package only. Every other package continues to use the CLI value (or no ceiling if the
+flag is omitted). The precedence is:
+
+```text
+VersionsBehind attribute  >  --versions-behind CLI value  >  no ceiling
+```
+
+Notes:
+
+- The value has the same meaning as the CLI flag, including `VersionsBehind="0"`, which
+  places the ceiling at the latest version. This is useful to opt a single package out of
+  a global cap (e.g. run with `--versions-behind 2` but let one package track the latest).
+- A blank, non-integer, or negative value is ignored and the package falls back to the CLI 
+  value.
+- The attribute name is case-insensitive: write it exactly as `VersionsBehind`
+- Under Central Package Management, if the same pacakge is referenced from multiple
+  projects with different `VersionsBehind` values, the most conservative one (the largest
+  N - furthest behind the latest) is applied to the shared centralized version.
+- It is a plain MSBuild metadata attribute that NuGet restore ignores, so it has no effect
+  on your build. Saucery.NuGet leaves the attribute in place after updating a version.
+
 ---
 
 ## All options
@@ -841,7 +892,7 @@ https://github.com/Sauceforge/Saucery/blob/master/.github/workflows/saucery-nuge
 8. Finds `PackageReference` entries.
 9. Skips packages in the effective exclusion list.
 10. Resolves the next available version using `NuGet.Versioning`.
-11. Applied the `--versions-behind` ceiling when specified, skipping packages already at or beyond it.
+11. Applies the versions-behind ceiling, using a package's own `VersionsBehind` attribute when present and otherwise the `--versions-behind` CLI value, skipping packages already at or beyond the ceiling.
 12. Updates the `.csproj` while preserving its encoding and BOM.
 13. Optionally updates the project's own `PackageVersion`.
 
@@ -859,7 +910,7 @@ https://github.com/Sauceforge/Saucery/blob/master/.github/workflows/saucery-nuge
 6. Finds every `PackageVersion` entry.
 7. Skips packages in the effective exclusion list.
 8. Resolves the next available version using `NuGet.Versioning`.
-9. Applies the `--versions-behind` ceiling when specified, skipping packages already at or beyond it.
+9. Applies the versions-behind ceiling, using the `VersionsBehind` attribute declared on the matching `<PackageReference>` in a csproj when present and otherwise the `--versions-behind` CLI value, skipping packages already at or beyond the ceiling.
 10. Updates the `Directory.Packages.props` file while preserving its encoding and BOM.
 
 No explicit opt-in property is required for `Directory.Packages.props`.

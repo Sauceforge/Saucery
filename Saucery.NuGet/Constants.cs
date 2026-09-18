@@ -16,6 +16,7 @@ internal static class Constants {
         internal const string IncludeAttribute = "Include";
         internal const string VersionAttribute = "Version";
         internal const string SauceryNuGetExcludeElement = "SauceryNuGetExclude";
+        internal const string VersionsBehindAttribute = "VersionsBehind";
     }
 
     internal static class Files {

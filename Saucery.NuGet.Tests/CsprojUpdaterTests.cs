@@ -402,6 +402,119 @@ public class CsprojUpdaterTests {
         }
     }
 
+    [Fact]
+    public async Task UpdateAsync_PerPackageVersionsBehind_CapsThatPackage_WhileSiblingAdvances() {
+        var ct = new CancellationToken();
+        var path = WriteTempCsproj("""
+            <?xml version="1.0" encoding="utf-8"?>
+            <Project Sdk="Microsoft.NET.Sdk">
+              <ItemGroup>
+                <PackageReference Include="Saucery.NuGet" Version="1.0.0" />
+                <PackageReference Include="Newtonsoft.Json" Version="13.0.0" VersionsBehind="1" />
+                <PackageReference Include="Serilog" Version="2.10.0" />
+              </ItemGroup>
+            </Project>
+            """);
+
+        try {
+            var apiClient = new StubNuGetApiClient(new Dictionary<string, string[]> {
+                ["Newtonsoft.Json"] = ["13.0.0", "14.0.0"],
+                ["Serilog"] = ["2.10.0", "2.11.0"]
+            });
+
+            var updater = new CsprojUpdater(apiClient);
+            //No CLI ceiling (versionBehindLatest defaults to null).
+            var result = await updater.UpdateAsync(path, ct: ct);
+
+            Assert.True(result.Success);
+            // Newtonsoft.Json is one behind latest (14.0.0); VersionsBehind="1" puts the
+            // ceiling at 13.0.0, so it is already at the ceiling and is skipped. Only Serilog updates.
+            Assert.Single(result.Updates);
+            Assert.Equal("Serilog", result.Updates[0].PackageId);
+
+            var written = await File.ReadAllTextAsync(path, ct);
+            // Newtonsoft.Json unchanged, and the attribute is preserved.
+            Assert.Contains("Include=\"Newtonsoft.Json\" Version=\"13.0.0\" VersionsBehind=\"1\"", written);
+            // Serilog has no attribute and no CLI ceiling -> advances one step.
+            Assert.Contains("Include=\"Serilog\" Version=\"2.11.0\"", written);
+        } finally {
+            File.Delete(path);
+        }
+    }
+
+    [Fact]
+    public async Task UpdateAsync_PerPackageVersionsBehindZero_OverridesGlobalCli_AndUpdates() {
+        var ct = new CancellationToken();
+        var path = WriteTempCsproj("""
+            <?xml version="1.0" encoding="utf-8"?>
+            <Project Sdk="Microsoft.NET.Sdk">
+              <ItemGroup>
+                <PackageReference Include="Saucery.NuGet" Version="1.0.0" />
+                <PackageReference Include="Newtonsoft.Json" Version="12.0.0" VersionsBehind="0" />
+              </ItemGroup>
+            </Project>
+            """);
+
+        try {
+            var apiClient = new StubNuGetApiClient(new Dictionary<string, string[]> {
+                ["Newtonsoft.Json"] = ["12.0.0", "13.0.0"]
+            });
+
+            var updater = new CsprojUpdater(apiClient);
+            //A global ceiling of 2 alone would skip this package (ceiling index < 0),
+            // but the per-package VersionsBehind="0" overrides it and allows the update.
+            var result = await updater.UpdateAsync(path, versionsBehindLatest: 2, ct: ct);
+            
+            Assert.True(result.Success);
+            Assert.Single(result.Updates);
+            Assert.Equal("Newtonsoft.Json", result.Updates[0].PackageId);
+            Assert.Equal("13.0.0", result.Updates[0].ToVersion);
+
+            var written = await File.ReadAllTextAsync(path, ct);
+            Assert.Contains("Include=\"Newtonsoft.Json\" Version=\"13.0.0\" VersionsBehind=\"0\"", written);
+        } finally {
+            File.Delete(path);
+        }
+    }
+
+    [Fact]
+    public void CollectVersionsBehindOverrides_ReadsAttributes_AndMostConservativeWins() {
+        // CPM-style references (no Version attribute), plus one with a Version attribute.
+        var projectA = WriteTempCsproj("""
+            <?xml version="1.0" encoding="utf-8"?>
+            <Project Sdk="Microsoft.NET.Sdk">
+              <ItemGroup>
+                <PackageReference Include="Newtonsoft.Json" VersionsBehind="1" />
+                <PackageReference Include="Serilog" VersionsBehind="3" />
+                <PackageReference Include="NoOverridePackage" />
+              </ItemGroup>
+            </Project>
+            """);
+        var projectB = WriteTempCsproj("""
+            <?xml version="1.0" encoding="utf-8"?>
+            <Project Sdk="Microsoft.NET.Sdk">
+              <ItemGroup>
+                <PackageReference Include="Newtonsoft.Json" VersionsBehind="2" />
+                <PackageReference Include="Bogus" Version="34.0.0" VersionsBehind="0" />
+                <PackageReference Include="Invalid" VersionsBehind="abc" />
+              </ItemGroup>
+            </Project>
+            """);
+
+        try {
+            var map = CsprojUpdater.CollectVersionsBehindOverrides([projectA, projectB]);
+
+            Assert.Equal(2, map["Newtonsoft.Json"]); // most conservative (largest N) across projects
+            Assert.Equal(3, map["Serilog"]);
+            Assert.Equal(0, map["Bogus"]);
+            Assert.False(map.ContainsKey("NoOverridePackage")); // no attribute
+            Assert.False(map.ContainsKey("Invalid"));           // invalid value ignored
+        } finally {
+            File.Delete(projectA);
+            File.Delete(projectB);
+        }
+    }
+
     private static string WriteTempCsproj(string content) {
         var path = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid():N}.csproj");
         File.WriteAllText(path, content);

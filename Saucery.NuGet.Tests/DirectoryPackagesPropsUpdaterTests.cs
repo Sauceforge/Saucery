@@ -260,6 +260,65 @@ public class DirectoryPackagesPropsUpdaterTests {
         Assert.Empty(result);
     }
 
+    [Fact]
+    public async Task UpdateAsync_PerPackageVersionsBehindMap_OverridesGlobalCli() {
+        var ct = new CancellationToken();
+        var path = WriteTempPropsFile(SimplePropsContent); // Newtonsoft.Json 12.0.0, Serilog 2.10.0
+
+        try {
+            var apiClient = new StubNuGetApiClient(new Dictionary<string, string[]> {
+                ["Newtonsoft.Json"] = ["12.0.0", "13.0.0"],
+                ["Serilog"] = ["2.10.0", "2.11.0"]
+            });
+
+            var updater = new DirectoryPackagePropsUpdater(apiClient);
+            // Global ceiling of 2 alone would skip both packages (ceiling index < 0),
+            // but the per-package override map (from a csproj;s VersionBehind attribute)
+            // sets Newtonsoft.Json to 0, allowing it to update while Serilog stays capped .
+            var overrides = new Dictionary<string, int> { ["Newtonsoft.Json"] = 0 };
+            var result = await updater.UpdateAsync(
+                path, versionsBehindLatest: 2, perPackageVersionsBehind: overrides, ct: ct);
+            
+            Assert.True(result.Success);
+            Assert.Single(result.Updates);
+            Assert.Equal("Newtonsoft.Json", result.Updates[0].PackageId);
+            Assert.Equal("13.0.0", result.Updates[0].ToVersion);
+
+            var written = await File.ReadAllTextAsync(path, ct);
+            Assert.Contains("Include=\"Newtonsoft.Json\" Version=\"13.0.0\"", written);
+            Assert.Contains("Include=\"Serilog\" Version=\"2.10.0\"", written); // capped by global ceiling -> unchanged
+        } finally {
+            File.Delete(path);
+        }
+    }
+
+    [Fact]
+    public async Task UpdateAsync_PerPackageVersionsBehindMap_IsCaseInsensitiveOnPackageId() {
+        var ct = new CancellationToken();
+        var path = WriteTempPropsFile(SimplePropsContent);
+        
+        try {
+            var apiClient = new StubNuGetApiClient(new Dictionary<string, string[]> {
+                ["Newtonsoft.Json"] = ["12.0.0", "13.0.0", "14.0.0"],
+                ["Serilog"] = ["2.10.0"]
+            });
+
+            var updater = new DirectoryPackagePropsUpdater(apiClient);
+            //Map key differs in case from the PackageVersion Include; lookup must still match
+            var overrides = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase) { 
+                ["newtonsoft.json"] = 2 
+            };
+            var result = await updater.UpdateAsync(
+                path, perPackageVersionsBehind: overrides, ct: ct);
+
+            Assert.True(result.Success);
+            // Newtonsoft.Json (latest 14.0.0) capped 2 behind -> ceiling 12.0.0 == current -> skipped.
+            Assert.Empty(result.Updates);
+        } finally {
+            File.Delete(path);
+        }
+    }
+
     private static string WriteTempPropsFile(string content) {
         var path = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid():N}.props");
         File.WriteAllText(path, content);

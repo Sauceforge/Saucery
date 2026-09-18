@@ -141,6 +141,15 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
         }
     }
 
+    // Collect per-package versions-behind overrides declared as VersionsBehind attributes on
+    // <PackageReference> elements. These apply in both modes: directly for versioned csproj
+    // references, and (via this map) for Central Package Management, where the version is
+    // centralised in Directory.Packages.props but the attribute is authored in the csproj.
+    var perPackageVersionsBehind = CsprojUpdater.CollectVersionsBehindOverrides(allProjects);
+    if(perPackageVersionsBehind.Count > 0) {
+        Console.WriteLine($"Per-package versions-behind overrides: {string.Join(", ", perPackageVersionsBehind.Select(kv => $"{kv.Key} => {kv.Value}"))}");
+    }
+
     var optedInProjects = SolutionScanner.FilterOptedIn(allProjects, CsprojUpdater.IsOptedIn).ToList();
     Console.WriteLine($"{optedInProjects.Count} project(s) remain after applying --exclude-projects.");
     Console.WriteLine();
@@ -207,6 +216,7 @@ rootCommand.SetAction(async (parseResult, cancellationToken) => {
                 dryRun,
                 mergedExcludePackages.Count > 0 ? mergedExcludePackages : null,
                 versionsBehind,
+                perPackageVersionsBehind.Count > 0 ? perPackageVersionsBehind : null,
                 cancellationToken);
 
             propsResults.Add(propsResult);
