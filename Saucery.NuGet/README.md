@@ -664,7 +664,7 @@ A value of `0` sets the ceiling at the latest version, which is equivalent to ru
 ### Per-package override with the `VersionsBehind` attribute
 
 `--versions-behind` applies the same ceiling to every package. To cap an individual
-package differently, and a `VersionsBehind` attribute to its `<PackageReference>` element
+package differently, add a `VersionsBehind` attribute to its `<PackageReference>` element
 in the `.csproj`:
 
 ```xml
