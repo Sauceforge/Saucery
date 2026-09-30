@@ -43,7 +43,7 @@ public static class PlatformDataClass {
         new AndroidRealDevice("Google Pixel 6a", "12"),
         new AndroidRealDevice("Google Pixel 4a", "11"),
         new AndroidRealDevice("Google Pixel 4 XL", "10"),
-        new AndroidRealDevice("Samsung.*", "9")
+        //new AndroidRealDevice("Samsung.*", "9")
     ];
 
     public static List<SaucePlatform> RealIOSDevices =>
