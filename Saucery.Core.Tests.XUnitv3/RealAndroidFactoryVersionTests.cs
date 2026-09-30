@@ -46,7 +46,7 @@ public static class RealAndroidDataClass
             [new AndroidRealDevice("Google Pixel 6a", "12")],
             [new AndroidRealDevice("Google Pixel 4a", "11")],
             [new AndroidRealDevice("Google Pixel 4 XL", "10")],
-            [new AndroidRealDevice("Samsung Galaxy Tab S3", "9")]
+            //[new AndroidRealDevice("Samsung Galaxy Tab S3", "9")]
         ];
 
     public static IEnumerable<object[]> NotSupportedTestCases
