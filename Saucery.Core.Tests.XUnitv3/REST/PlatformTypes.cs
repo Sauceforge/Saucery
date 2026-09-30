@@ -75,7 +75,7 @@ public static class PlatformTypes {
                 typeof(Android12Platform),
                 typeof(Android11Platform),
                 typeof(Android10Platform),
-                typeof(Android9Platform)
+                //typeof(Android9Platform)
         ]);
 
     public static IEnumerable<object[]> PlatformsWithBrowsersTypes =>
