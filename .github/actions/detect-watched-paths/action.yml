@@ -1,4 +1,5 @@
 name: Detect watched path changes since last completed run
+
 inputs:
   workflow-id:
     required: true
@@ -6,6 +7,7 @@ inputs:
     required: true
   github-token:
     required: true
+
 outputs:
   changed:
     value: ${{ steps.decide.outputs.changed }}
@@ -13,8 +15,10 @@ outputs:
     value: ${{ steps.decide.outputs.paths_changed }}
   previous_sha:
     value: ${{ steps.decide.outputs.previous_sha }}
+
 runs:
   using: composite
+
   steps:
     - name: Resolve previous run and watched path changes
       id: decide
@@ -26,42 +30,67 @@ runs:
         github-token: ${{ inputs.github-token }}
         script: |
           const { owner, repo } = context.repo;
-          const branch = context.ref.replace('refs/heads/', '');
-          const workflow_id = process.env.WORKFLOW_ID;
 
-          const runs = await github.rest.actions.listWorkflowRuns({
+          const branch = context.ref.replace('refs/heads/', '');
+          const workflowId = process.env.WORKFLOW_ID;
+          const currentRunId = context.runId;
+          const currentSha = context.sha;
+
+          core.info(`Event:          ${context.eventName}`);
+          core.info(`Branch:         ${branch}`);
+          core.info(`Current run ID: ${currentRunId}`);
+          core.info(`Current SHA:    ${currentSha}`);
+
+          /*
+           * Get enough completed runs that we can explicitly exclude the
+           * current workflow run.
+           *
+           * This matters for workflow re-runs. A re-run keeps the same
+           * run_id and SHA, so asking only for "the latest completed run"
+           * can produce the wrong baseline.
+           */
+          const runsResponse = await github.rest.actions.listWorkflowRuns({
             owner,
             repo,
-            workflow_id,
+            workflow_id: workflowId,
             branch,
             status: 'completed',
-            per_page: 1
+            per_page: 20
           });
 
-          const prevSha = runs.data.workflow_runs[0]?.head_sha || '';
-          const curSha = context.sha;
+          const previousRun = runsResponse.data.workflow_runs.find(
+            run => run.id !== currentRunId
+          );
 
-          core.info(`Event:       ${context.eventName}`);
-          core.info(`Branch:      ${branch}`);
-          core.info(`Current SHA: ${curSha}`);
-          core.info(`Prev SHA:    ${prevSha || '<none>'}`);
+          const previousSha = previousRun?.head_sha || '';
 
-          let changed = 'true';
-          let pathsChanged = 'true';
+          core.info(
+            `Previous run ID: ${previousRun?.id ?? '<none>'}`
+          );
+          core.info(
+            `Previous SHA:    ${previousSha || '<none>'}`
+          );
 
           const watchedGlobs = (process.env.WATCHED_GLOBS || '')
             .split(/[\n,]+/g)
             .map(x => x.trim())
             .filter(Boolean);
 
-          core.info(`WATCHED_GLOBS: [${watchedGlobs.join(', ')}]`);
+          core.info(
+            `WATCHED_GLOBS: [${watchedGlobs.join(', ')}]`
+          );
 
           function globToRegexSource(pattern) {
             let out = '';
+
             for (let i = 0; i < pattern.length; i++) {
               const ch = pattern[i];
+
               if (ch === '*') {
-                const nextIsStar = i + 1 < pattern.length && pattern[i + 1] === '*';
+                const nextIsStar =
+                  i + 1 < pattern.length &&
+                  pattern[i + 1] === '*';
+
                 if (nextIsStar) {
                   out += '.*';
                   i++;
@@ -76,28 +105,139 @@ runs:
                 out += ch;
               }
             }
+
             return out;
           }
 
           function matchesGlob(path, pattern) {
-            return new RegExp('^' + globToRegexSource(pattern) + '$').test(path);
+            return new RegExp(
+              '^' + globToRegexSource(pattern) + '$'
+            ).test(path);
           }
 
-          if (!prevSha) {
-            core.info('No previous completed run for this workflow+branch. Treating as changed.');
-          } else if (prevSha === curSha) {
+          /*
+           * changed means that HEAD differs from the previous completed
+           * workflow run.
+           *
+           * pathsChanged means at least one changed file matched a watched
+           * path.
+           */
+          let changed = 'false';
+          let pathsChanged = 'false';
+
+          if (!previousSha) {
+            /*
+             * There genuinely is no previous completed run.
+             *
+             * On the first ever run we need to build, because there is no
+             * baseline against which we can prove nothing relevant changed.
+             */
+            core.info(
+              'No previous completed run exists for this workflow and branch.'
+            );
+            core.info(
+              'Treating this as the first run, so watched paths are considered changed.'
+            );
+
+            changed = 'true';
+            pathsChanged = 'true';
+          } else if (previousSha === currentSha) {
+            /*
+             * This is especially important for a re-run.
+             *
+             * Nothing has changed in Git between the previous baseline and
+             * this SHA.
+             */
+            core.info(
+              'Previous SHA is identical to current SHA.'
+            );
+            core.info(
+              'No new commits exist, so paths_changed=false.'
+            );
+
             changed = 'false';
             pathsChanged = 'false';
-            core.info('No new commits since last completed run on this branch.');
           } else {
-            const comparison = await github.rest.repos.compareCommits({ owner, repo, base: prevSha, head: curSha });
-            const changedPaths = (comparison.data.files || []).map(f => f.filename);
-            core.info('Changed files since last run:');
-            changedPaths.length ? changedPaths.forEach(p => core.info(` - ${p}`)) : core.info(' (none reported)');
-            pathsChanged = watchedGlobs.length === 0 || changedPaths.some(path => watchedGlobs.some(pattern => matchesGlob(path, pattern))) ? 'true' : 'false';
-            core.info(pathsChanged === 'true' ? 'Detected changes in watched paths.' : 'No changes in watched paths.');
+            changed = 'true';
+
+            core.info(
+              `Comparing ${previousSha}...${currentSha}`
+            );
+
+            const comparison =
+              await github.rest.repos.compareCommits({
+                owner,
+                repo,
+                base: previousSha,
+                head: currentSha
+              });
+
+            const changedPaths = (
+              comparison.data.files || []
+            ).map(file => file.filename);
+
+            core.info('Changed files since previous completed run:');
+
+            if (changedPaths.length === 0) {
+              core.info(' (none reported)');
+            } else {
+              for (const path of changedPaths) {
+                core.info(` - ${path}`);
+              }
+            }
+
+            const matchingPaths = [];
+
+            for (const path of changedPaths) {
+              for (const pattern of watchedGlobs) {
+                if (matchesGlob(path, pattern)) {
+                  matchingPaths.push({
+                    path,
+                    pattern
+                  });
+                }
+              }
+            }
+
+            if (watchedGlobs.length === 0) {
+              core.info(
+                'No watched globs were supplied, so paths_changed=true.'
+              );
+
+              pathsChanged = 'true';
+            } else if (matchingPaths.length > 0) {
+              core.info('Matched watched paths:');
+
+              for (const match of matchingPaths) {
+                core.info(
+                  ` - ${match.path} matched ${match.pattern}`
+                );
+              }
+
+              pathsChanged = 'true';
+            } else {
+              core.info(
+                'No changed files matched any watched path.'
+              );
+
+              pathsChanged = 'false';
+            }
           }
 
-          core.setOutput('changed', changed);
-          core.setOutput('paths_changed', pathsChanged);
-          core.setOutput('previous_sha', prevSha);
+          core.info(`changed=${changed}`);
+          core.info(`paths_changed=${pathsChanged}`);
+
+          core.setOutput(
+            'changed',
+            changed
+          );
+
+          core.setOutput(
+            'paths_changed',
+            pathsChanged
+          );
+
+          core.setOutput(
+            'previous_sha',
+            previousSha
+          );
