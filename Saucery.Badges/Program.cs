@@ -20,79 +20,130 @@ public static class Program {
 
         using var http = new HttpClient();
 
-        http.DefaultRequestHeaders.UserAgent.ParseAdd("nuget-downloads-badge-bot/1.0");
+        http.DefaultRequestHeaders.UserAgent.ParseAdd(
+            "nuget-downloads-badge-bot/1.0");
 
         var index = await http.GetFromJsonAsync<JsonElement>(
             "https://api.nuget.org/v3/index.json");
 
-        var resources = index.GetProperty("resources").EnumerateArray();
+        var searchBaseUrls = index
+            .GetProperty("resources")
+            .EnumerateArray()
+            .Where(r => {
+                var type = r.GetProperty("@type").GetString() ?? "";
 
-        string? searchBaseUrl = null;
+                return type.Equals(
+                    "SearchQueryService",
+                    StringComparison.OrdinalIgnoreCase);
+            })
+            .Select(r => r.GetProperty("@id").GetString())
+            .Where(url => !string.IsNullOrWhiteSpace(url))
+            .Select(url => url!)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToArray();
 
-        foreach(var r in resources) {
-            var type = r.GetProperty("@type").GetString() ?? "";
-
-            if(type.StartsWith("SearchQueryService", StringComparison.OrdinalIgnoreCase)) {
-                searchBaseUrl = r.GetProperty("@id").GetString();
-                break;
-            }
+        if(searchBaseUrls.Length == 0) {
+            throw new Exception(
+                "Could not find any SearchQueryService endpoints in NuGet service index.");
         }
 
-        if(string.IsNullOrWhiteSpace(searchBaseUrl)) {
-            throw new Exception("Could not find SearchQueryService in NuGet service index.");
+        Console.WriteLine("NuGet SearchQueryService endpoints:");
+
+        foreach(var searchBaseUrl in searchBaseUrls) {
+            Console.WriteLine($"  {searchBaseUrl}");
         }
+
+        Console.WriteLine();
 
         long total = 0;
 
         Console.WriteLine("NuGet package download totals:");
         Console.WriteLine();
 
-        foreach(var p in packages) {
-            var packageTotal = await GetTotalDownloadsAsync(http, searchBaseUrl, p);
+        foreach(var package in packages) {
+            var results = new List<(string Endpoint, long Downloads)>();
+
+            foreach(var searchBaseUrl in searchBaseUrls) {
+                try {
+                    var downloads = await GetTotalDownloadsAsync(
+                        http,
+                        searchBaseUrl,
+                        package);
+
+                    results.Add((searchBaseUrl, downloads));
+                } catch(Exception ex) {
+                    Console.WriteLine(
+                        $"WARNING: Failed to query {searchBaseUrl} for {package}: {ex.Message}");
+                }
+            }
+
+            if(results.Count == 0) {
+                throw new Exception(
+                    $"All NuGet SearchQueryService endpoints failed for package {package}.");
+            }
+
+            var bestResult = results.MaxBy(r => r.Downloads);
+
+            var packageTotal = bestResult.Downloads;
+
             total += packageTotal;
 
             Console.WriteLine(
-                $"{p}: {packageTotal.ToString("N0", CultureInfo.InvariantCulture)} " +
+                $"{package}: {packageTotal.ToString("N0", CultureInfo.InvariantCulture)} " +
                 $"({BadgeDownloadFormatter.FormatDownloadTotal(packageTotal)})");
+
+            foreach(var result in results) {
+                Console.WriteLine(
+                    $"  {result.Endpoint}: " +
+                    $"{result.Downloads.ToString("N0", CultureInfo.InvariantCulture)}");
+            }
+
+            Console.WriteLine(
+                $"  Selected: {bestResult.Endpoint}");
+
+            Console.WriteLine();
         }
 
         Directory.CreateDirectory("badges");
 
-        var formattedTotal = BadgeDownloadFormatter.FormatDownloadTotal(total);
+        var formattedTotal =
+            BadgeDownloadFormatter.FormatDownloadTotal(total);
 
         var badgeJson = new {
             schemaVersion = 1,
             label = "downloads",
             message = formattedTotal,
-            color = "brightgreen",
+            color = "brightgreen"
         };
 
         await File.WriteAllTextAsync(
             "badges/nuget-total-downloads.json",
-            JsonSerializer.Serialize(badgeJson)
-        );
+            JsonSerializer.Serialize(badgeJson));
 
         var packageCountBadgeJson = new {
             schemaVersion = 1,
             label = "Saucery packages",
-            message = packages.Length.ToString(CultureInfo.InvariantCulture),
-            color = "blue",
+            message = packages.Length.ToString(
+                CultureInfo.InvariantCulture),
+            color = "blue"
         };
 
         await File.WriteAllTextAsync(
             "badges/nuget-package-count.json",
-            JsonSerializer.Serialize(packageCountBadgeJson)
-        );
-
-        Console.WriteLine();
-        Console.WriteLine(
-            $"Total: {total.ToString("N0", CultureInfo.InvariantCulture)} ({formattedTotal})");
+            JsonSerializer.Serialize(packageCountBadgeJson));
 
         Console.WriteLine(
-            $"Wrote badges/nuget-total-downloads.json (total={total.ToString("N0", CultureInfo.InvariantCulture)}, badge={formattedTotal})");
+            $"Total: {total.ToString("N0", CultureInfo.InvariantCulture)} " +
+            $"({formattedTotal})");
 
         Console.WriteLine(
-            $"Wrote badges/nuget-package-count.json (count={packages.Length})");
+            $"Wrote badges/nuget-total-downloads.json " +
+            $"(total={total.ToString("N0", CultureInfo.InvariantCulture)}, " +
+            $"badge={formattedTotal})");
+
+        Console.WriteLine(
+            $"Wrote badges/nuget-package-count.json " +
+            $"(count={packages.Length})");
     }
 
     private static async Task<long> GetTotalDownloadsAsync(
@@ -100,35 +151,51 @@ public static class Program {
         string searchBaseUrl,
         string packageId) {
         var url =
-            $"{searchBaseUrl}?q=packageid:{Uri.EscapeDataString(packageId)}&take=20&prerelease=true&semVerLevel=2.0.0";
+            $"{searchBaseUrl}" +
+            $"?q=packageid:{Uri.EscapeDataString(packageId)}" +
+            $"&take=20" +
+            $"&prerelease=true" +
+            $"&semVerLevel=2.0.0";
 
         var json = await http.GetFromJsonAsync<JsonElement>(url);
 
         foreach(var item in json.GetProperty("data").EnumerateArray()) {
             var id = item.GetProperty("id").GetString();
 
-            if(string.Equals(id, packageId, StringComparison.OrdinalIgnoreCase)) {
-                if(item.TryGetProperty("totalDownloads", out var td)
-                    && td.ValueKind == JsonValueKind.Number) {
-                    return td.GetInt64();
-                }
+            if(!string.Equals(
+                    id,
+                    packageId,
+                    StringComparison.OrdinalIgnoreCase)) {
+                continue;
+            }
 
-                long sum = 0;
+            if(item.TryGetProperty(
+                    "totalDownloads",
+                    out var totalDownloads) &&
+                totalDownloads.ValueKind == JsonValueKind.Number) {
+                return totalDownloads.GetInt64();
+            }
 
-                if(item.TryGetProperty("versions", out var versions)
-                    && versions.ValueKind == JsonValueKind.Array) {
-                    foreach(var v in versions.EnumerateArray()) {
-                        if(v.TryGetProperty("downloads", out var d)
-                            && d.ValueKind == JsonValueKind.Number) {
-                            sum += d.GetInt64();
-                        }
+            long sum = 0;
+
+            if(item.TryGetProperty(
+                    "versions",
+                    out var versions) &&
+                versions.ValueKind == JsonValueKind.Array) {
+                foreach(var version in versions.EnumerateArray()) {
+                    if(version.TryGetProperty(
+                            "downloads",
+                            out var downloads) &&
+                        downloads.ValueKind == JsonValueKind.Number) {
+                        sum += downloads.GetInt64();
                     }
                 }
-
-                return sum;
             }
+
+            return sum;
         }
 
-        return 0;
+        throw new Exception(
+            $"NuGet SearchQueryService returned no result for package '{packageId}'.");
     }
 }
