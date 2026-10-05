@@ -6,25 +6,13 @@ namespace Saucery.Badges;
 
 public static class Program {
     public static async Task Main() {
-        var packages = new[]
-        {
-            "Saucery2",
-            "Saucery3",
-            "Saucery.Core",
-            "Saucery",
-            "Saucery.XUnit",
-            "Saucery.TUnit",
-            "Saucery.XUnit.v3",
-            "Saucery.NuGet"
-        };
-
         using var http = new HttpClient();
 
-        http.DefaultRequestHeaders.UserAgent.ParseAdd(
-            "nuget-downloads-badge-bot/1.0");
+        http.DefaultRequestHeaders
+            .UserAgent
+            .ParseAdd("nuget-downloads-badge-bot/1.0");
 
-        var index = await http.GetFromJsonAsync<JsonElement>(
-            "https://api.nuget.org/v3/index.json");
+        var index = await http.GetFromJsonAsync<JsonElement>("https://api.nuget.org/v3/index.json");
 
         var searchBaseUrls = index
             .GetProperty("resources")
@@ -32,9 +20,7 @@ public static class Program {
             .Where(r => {
                 var type = r.GetProperty("@type").GetString() ?? "";
 
-                return type.Equals(
-                    "SearchQueryService",
-                    StringComparison.OrdinalIgnoreCase);
+                return type.Equals("SearchQueryService", StringComparison.OrdinalIgnoreCase);
             })
             .Select(r => r.GetProperty("@id").GetString())
             .Where(url => !string.IsNullOrWhiteSpace(url))
@@ -43,8 +29,7 @@ public static class Program {
             .ToArray();
 
         if(searchBaseUrls.Length == 0) {
-            throw new Exception(
-                "Could not find any SearchQueryService endpoints in NuGet service index.");
+            throw new Exception("Could not find any SearchQueryService endpoints in NuGet service index.");
         }
 
         Console.WriteLine("NuGet SearchQueryService endpoints:");
@@ -60,7 +45,7 @@ public static class Program {
         Console.WriteLine("NuGet package download totals:");
         Console.WriteLine();
 
-        foreach(var package in packages) {
+        foreach(var package in Packages.Values) {
             var results = new List<(string Endpoint, long Downloads)>();
 
             foreach(var searchBaseUrl in searchBaseUrls) {
@@ -78,19 +63,16 @@ public static class Program {
             }
 
             if(results.Count == 0) {
-                throw new Exception(
-                    $"All NuGet SearchQueryService endpoints failed for package {package}.");
+                throw new Exception($"All NuGet SearchQueryService endpoints failed for package {package}.");
             }
 
-            var bestResult = results.MaxBy(r => r.Downloads);
+            var (Endpoint, Downloads) = results.MaxBy(r => r.Downloads);
 
-            var packageTotal = bestResult.Downloads;
-
-            total += packageTotal;
+            total += Downloads;
 
             Console.WriteLine(
-                $"{package}: {packageTotal.ToString("N0", CultureInfo.InvariantCulture)} " +
-                $"({BadgeDownloadFormatter.FormatDownloadTotal(packageTotal)})");
+                $"{package}: {Downloads.ToString("N0", CultureInfo.InvariantCulture)} " +
+                $"({BadgeDownloadFormatter.FormatDownloadTotal(Downloads)})");
 
             foreach(var result in results) {
                 Console.WriteLine(
@@ -98,16 +80,13 @@ public static class Program {
                     $"{result.Downloads.ToString("N0", CultureInfo.InvariantCulture)}");
             }
 
-            Console.WriteLine(
-                $"  Selected: {bestResult.Endpoint}");
-
+            Console.WriteLine($"  Selected: {Endpoint}");
             Console.WriteLine();
         }
 
         Directory.CreateDirectory("badges");
 
-        var formattedTotal =
-            BadgeDownloadFormatter.FormatDownloadTotal(total);
+        var formattedTotal = BadgeDownloadFormatter.FormatDownloadTotal(total);
 
         var badgeJson = new {
             schemaVersion = 1,
@@ -123,8 +102,7 @@ public static class Program {
         var packageCountBadgeJson = new {
             schemaVersion = 1,
             label = "Saucery packages",
-            message = packages.Length.ToString(
-                CultureInfo.InvariantCulture),
+            message = Packages.Values.Length.ToString(CultureInfo.InvariantCulture),
             color = "blue"
         };
 
@@ -143,7 +121,7 @@ public static class Program {
 
         Console.WriteLine(
             $"Wrote badges/nuget-package-count.json " +
-            $"(count={packages.Length})");
+            $"(count={Packages.Values.Length})");
     }
 
     private static async Task<long> GetTotalDownloadsAsync(
@@ -162,31 +140,22 @@ public static class Program {
         foreach(var item in json.GetProperty("data").EnumerateArray()) {
             var id = item.GetProperty("id").GetString();
 
-            if(!string.Equals(
-                    id,
-                    packageId,
-                    StringComparison.OrdinalIgnoreCase)) {
+            if(!string.Equals(id, packageId, StringComparison.OrdinalIgnoreCase)) {
                 continue;
             }
 
-            if(item.TryGetProperty(
-                    "totalDownloads",
-                    out var totalDownloads) &&
-                totalDownloads.ValueKind == JsonValueKind.Number) {
+            if(item.TryGetProperty("totalDownloads", out var totalDownloads) &&
+               totalDownloads.ValueKind == JsonValueKind.Number) {
                 return totalDownloads.GetInt64();
             }
 
             long sum = 0;
 
-            if(item.TryGetProperty(
-                    "versions",
-                    out var versions) &&
-                versions.ValueKind == JsonValueKind.Array) {
+            if(item.TryGetProperty("versions", out var versions) &&
+               versions.ValueKind == JsonValueKind.Array) {
                 foreach(var version in versions.EnumerateArray()) {
-                    if(version.TryGetProperty(
-                            "downloads",
-                            out var downloads) &&
-                        downloads.ValueKind == JsonValueKind.Number) {
+                    if(version.TryGetProperty("downloads", out var downloads) &&
+                       downloads.ValueKind == JsonValueKind.Number) {
                         sum += downloads.GetInt64();
                     }
                 }
@@ -195,7 +164,6 @@ public static class Program {
             return sum;
         }
 
-        throw new Exception(
-            $"NuGet SearchQueryService returned no result for package '{packageId}'.");
+        throw new Exception($"NuGet SearchQueryService returned no result for package '{packageId}'.");
     }
 }
