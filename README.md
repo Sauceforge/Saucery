@@ -130,7 +130,7 @@ Yes, Saucery supports Real Devices!
 
 <img src="/Saucery.NuGet/Images/Saucery.NuGet.png" alt="Saucery.NuGet" width="100"/>
 
-A global .NET tool for managing NuGet package upgrades from NuGet.org and managing version relationships across multiple packages.
+A global .NET tool for managing NuGet package upgrades from [NuGet](https://nuget.org) and managing version relationships across multiple packages.
 
 We use it ourselves to manage our own packages, and we hope you find it useful too!
 
