@@ -79,7 +79,7 @@ jobs:
 
           run_saucery_nuget --project "Saucery.Core" --bump-own-version
           run_saucery_nuget --project "Saucery.TUnit" --sync-with "TUnit"
-          run_saucery_nuget --project "Saucery.XUnit3" --sync-with "xunit.v3.mtp-v2"
+          run_saucery_nuget --project "Saucery.XUnit3" --sync-with "xunit.v3"
           run_saucery_nuget --project "Saucery.XUnit" --sync-with "Saucery.Core"
           run_saucery_nuget --project "Saucery" --sync-with "NUnit"
           run_saucery_nuget --project "Saucery.Playwright.NUnit" --sync-with "Saucery.Core"
