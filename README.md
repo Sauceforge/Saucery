@@ -136,7 +136,7 @@ We use it ourselves to manage our own packages, and we hope you find it useful t
 
 ### Trends
 
-[Nuget downloads](https://nugettrends.com/packages?months=24&ids=Saucery&ids=Saucery.XUnit&ids=Saucery.TUnit&ids=Saucery.Core&ids=Saucery.XUnit.v3&ids=Saucery.NuGet)
+[Nuget downloads](https://nugettrends.com/packages?months=24&ids=Saucery2&ids=Saucery3&ids=Saucery&ids=Saucery.XUnit&ids=Saucery.TUnit&ids=Saucery.Core&ids=Saucery.XUnit.v3&ids=Saucery.NuGet)
 
 [GitHub stars](https://star-history.com/#sauceforge/Saucery)
 
