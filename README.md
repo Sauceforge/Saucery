@@ -26,6 +26,8 @@ Saucery comes in multiple flavors supporting popular test frameworks. Targeting 
 
 | Package | Badges |
 | --- | --- |
+| Saucery2 (DEPRECATED) | [![nuget](https://img.shields.io/nuget/v/Saucery2.svg)](https://www.nuget.org/packages/Saucery2/) [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery2)](https://www.nuget.org/stats/packages/Saucery2?groupby=Version) |
+| Saucery3 (DEPRECATED) | [![nuget](https://img.shields.io/nuget/v/Saucery3.svg)](https://www.nuget.org/packages/Saucery3/) [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery3)](https://www.nuget.org/stats/packages/Saucery3?groupby=Version) |
 | Saucery.Core ([SauceLabs](https://app.saucelabs.com/platform-configurator)) | [![nuget](https://img.shields.io/nuget/v/Saucery.Core.svg)](https://www.nuget.org/packages/Saucery.Core/) [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery.Core)](https://www.nuget.org/stats/packages/Saucery.Core?groupby=Version) |
 | Saucery ([NUnit](https://github.com/nunit/nunit)) | [![nuget](https://img.shields.io/nuget/v/Saucery.svg)](https://www.nuget.org/packages/Saucery/) [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery)](https://www.nuget.org/stats/packages/Saucery?groupby=Version) |
 | Saucery.XUnit ([XUnit](https://github.com/xunit/xunit)) | [![nuget](https://img.shields.io/nuget/v/Saucery.XUnit.svg)](https://www.nuget.org/packages/Saucery.XUnit/) [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery.XUnit)](https://www.nuget.org/stats/packages/Saucery.XUnit?groupby=Version) |
