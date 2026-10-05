@@ -10,7 +10,7 @@
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/0ba3cb69efe14366af8c84e485e80077)](https://app.codacy.com/gh/Sauceforge/Saucery/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![Created](https://img.shields.io/github/created-at/sauceforge/saucery)](https://github.com/Sauceforge/Saucery)
 ![Commits](https://img.shields.io/github/commit-activity/t/sauceforge/saucery)
-[![nuget](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Sauceforge/Saucery/master/badges/nuget-total-downloads.json&cacheSeconds=60)](https://www.nuget.org/profiles/fullcircle)
+[![NuGet](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Sauceforge/Saucery/master/badges/nuget-total-downloads.json&cacheSeconds=60)](https://www.nuget.org/profiles/fullcircle)
 ![GitHub Repo stars](https://img.shields.io/github/stars/Sauceforge/Saucery)
 [![GitHub Sponsors](https://img.shields.io/github/sponsors/Sauceforge)](https://github.com/sponsors/Sauceforge)
 ![GitHub last commit (master)](https://img.shields.io/github/last-commit/Sauceforge/Saucery/master)
