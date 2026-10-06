@@ -44,7 +44,7 @@ function Invoke-SauceryNuGet([string[]]$passArgs) {
 
 Invoke-SauceryNuGet @("--project", "Saucery.Core", "--bump-own-version")
 Invoke-SauceryNuGet @("--project", "Saucery.TUnit", "--sync-with", "TUnit")
-Invoke-SauceryNuGet @("--project", "Saucery.XUnit3", "--sync-with", "xunit.v3.mtp-v2")
+Invoke-SauceryNuGet @("--project", "Saucery.XUnit3", "--sync-with", "xunit.v3")
 Invoke-SauceryNuGet @("--project", "Saucery.XUnit", "--sync-with", "Saucery.Core")
 Invoke-SauceryNuGet @("--project", "Saucery", "--sync-with", "NUnit")
 Invoke-SauceryNuGet @("--project", "Saucery.Playwright.NUnit", "--sync-with", "Saucery.Core")
