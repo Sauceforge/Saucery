@@ -1,13 +1,12 @@
 ﻿using System.Globalization;
 using System.Net;
-using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
 namespace Saucery.Badges;
 
 public static class Program {
-    private const string StateFile = "badges/nuget-download-state.json";
+    private const string ProfileName = "fullcircle";
 
     public static async Task Main() {
         using var http = new HttpClient {
@@ -18,111 +17,45 @@ public static class Program {
             .UserAgent
             .ParseAdd("Saucery-NuGet-Downloads-Badge/1.0");
 
-        var previousState = await LoadPreviousStateAsync();
+        http.DefaultRequestHeaders.CacheControl =
+            new System.Net.Http.Headers.CacheControlHeaderValue {
+                NoCache = true,
+                NoStore = true
+            };
 
-        var searchBaseUrls = await GetSearchEndpointsAsync(http);
+        http.DefaultRequestHeaders.Pragma.ParseAdd("no-cache");
 
-        Console.WriteLine("NuGet SearchQueryService endpoints:");
-        foreach(var endpoint in searchBaseUrls) {
-            Console.WriteLine($"  {endpoint}");
-        }
-
-        Console.WriteLine();
-
-        var newState = new Dictionary<string, long>(
-            StringComparer.OrdinalIgnoreCase);
+        var packageDownloads =
+            await GetProfilePackageDownloadsAsync(
+                http,
+                ProfileName);
 
         long total = 0;
 
+        Console.WriteLine(
+            $"NuGet profile: https://www.nuget.org/profiles/{ProfileName}");
+
+        Console.WriteLine();
+        Console.WriteLine("NuGet package download totals:");
+        Console.WriteLine();
+
         foreach(var package in Packages.Values) {
-            Console.WriteLine($"Package: {package}");
-
-            var candidates = new List<DownloadCandidate>();
-
-            foreach(var endpoint in searchBaseUrls) {
-                try {
-                    var downloads = await GetSearchApiDownloadsAsync(
-                        http,
-                        endpoint,
-                        package);
-
-                    candidates.Add(new DownloadCandidate(
-                        $"SearchQueryService: {endpoint}",
-                        downloads));
-
-                    Console.WriteLine(
-                        $"  Search API: {downloads.ToString("N0", CultureInfo.InvariantCulture)}");
-                } catch(Exception ex) {
-                    Console.WriteLine(
-                        $"  WARNING Search API failed: {endpoint}");
-                    Console.WriteLine(
-                        $"    {ex.Message}");
-                }
-            }
-
-            try {
-                var galleryDownloads =
-                    await GetGalleryDownloadsAsync(http, package);
-
-                candidates.Add(new DownloadCandidate(
-                    "nuget.org package page",
-                    galleryDownloads));
-
-                Console.WriteLine(
-                    $"  Gallery page: {galleryDownloads.ToString("N0", CultureInfo.InvariantCulture)}");
-            } catch(Exception ex) {
-                Console.WriteLine(
-                    $"  WARNING Gallery page failed: {ex.Message}");
-            }
-
-            if(previousState.TryGetValue(
+            if(!packageDownloads.TryGetValue(
                    package,
-                   out var previousDownloads)) {
-                candidates.Add(new DownloadCandidate(
-                    "previous committed state",
-                    previousDownloads));
-
-                Console.WriteLine(
-                    $"  Previous state: {previousDownloads.ToString("N0", CultureInfo.InvariantCulture)}");
-            }
-
-            if(candidates.Count == 0) {
+                   out var downloads)) {
                 throw new Exception(
-                    $"Could not obtain any download count for package '{package}'.");
+                    $"Package '{package}' was not found on NuGet profile '{ProfileName}'.");
             }
 
-            var selected = candidates
-                .OrderByDescending(c => c.Downloads)
-                .First();
-
-            if(candidates
-               .Select(c => c.Downloads)
-               .Distinct()
-               .Count() > 1) {
-                Console.WriteLine("  WARNING: NuGet sources disagree:");
-
-                foreach(var candidate in candidates
-                            .OrderByDescending(c => c.Downloads)) {
-                    Console.WriteLine(
-                        $"    {candidate.Source}: " +
-                        $"{candidate.Downloads.ToString("N0", CultureInfo.InvariantCulture)}");
-                }
-            }
+            total += downloads;
 
             Console.WriteLine(
-                $"  SELECTED: " +
-                $"{selected.Downloads.ToString("N0", CultureInfo.InvariantCulture)} " +
-                $"from {selected.Source}");
-
-            Console.WriteLine();
-
-            newState[package] = selected.Downloads;
-            total += selected.Downloads;
+                $"{package}: " +
+                $"{downloads.ToString("N0", CultureInfo.InvariantCulture)} " +
+                $"({BadgeDownloadFormatter.FormatDownloadTotal(downloads)})");
         }
 
         Directory.CreateDirectory("badges");
-
-        await SaveStateAsync(newState);
 
         var formattedTotal =
             BadgeDownloadFormatter.FormatDownloadTotal(total);
@@ -150,128 +83,29 @@ public static class Program {
             "badges/nuget-package-count.json",
             JsonSerializer.Serialize(packageCountBadgeJson));
 
-        Console.WriteLine(
-            $"TOTAL: {total.ToString("N0", CultureInfo.InvariantCulture)}");
+        Console.WriteLine();
 
         Console.WriteLine(
-            $"BADGE: {formattedTotal}");
+            $"Total: {total.ToString("N0", CultureInfo.InvariantCulture)} " +
+            $"({formattedTotal})");
+
+        Console.WriteLine(
+            $"Wrote badges/nuget-total-downloads.json " +
+            $"(total={total.ToString("N0", CultureInfo.InvariantCulture)}, " +
+            $"badge={formattedTotal})");
+
+        Console.WriteLine(
+            $"Wrote badges/nuget-package-count.json " +
+            $"(count={Packages.Values.Length})");
     }
 
-    private static async Task<string[]> GetSearchEndpointsAsync(
-        HttpClient http) {
-        var index =
-            await http.GetFromJsonAsync<JsonElement>(
-                "https://api.nuget.org/v3/index.json");
-
-        return [.. index
-            .GetProperty("resources")
-            .EnumerateArray()
-            .Where(r => {
-                var type =
-                    r.GetProperty("@type").GetString() ?? "";
-
-                return type.StartsWith(
-                    "SearchQueryService",
-                    StringComparison.OrdinalIgnoreCase);
-            })
-            .Select(r =>
-                r.GetProperty("@id").GetString())
-            .Where(url =>
-                !string.IsNullOrWhiteSpace(url))
-            .Select(url => url!)
-            .Distinct(StringComparer.OrdinalIgnoreCase)];
-    }
-
-    private static async Task<long> GetSearchApiDownloadsAsync(
-        HttpClient http,
-        string searchBaseUrl,
-        string packageId) {
-        var separator =
-            searchBaseUrl.Contains('?')
-                ? "&"
-                : "?";
-
+    private static async Task<Dictionary<string, long>>
+        GetProfilePackageDownloadsAsync(
+            HttpClient http,
+            string profileName) {
         var url =
-            $"{searchBaseUrl}" +
-            $"{separator}" +
-            $"q=packageid:{Uri.EscapeDataString(packageId)}" +
-            $"&take=20" +
-            $"&prerelease=true" +
-            $"&semVerLevel=2.0.0" +
-            $"&_={DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}";
-
-        using var request = new HttpRequestMessage(
-            HttpMethod.Get,
-            url);
-
-        request.Headers.CacheControl =
-            new System.Net.Http.Headers.CacheControlHeaderValue {
-                NoCache = true,
-                NoStore = true
-            };
-
-        using var response =
-            await http.SendAsync(request);
-
-        response.EnsureSuccessStatusCode();
-
-        var json =
-            await response.Content
-                .ReadFromJsonAsync<JsonElement>();
-
-        foreach(var item in json
-                    .GetProperty("data")
-                    .EnumerateArray()) {
-            var id =
-                item.GetProperty("id").GetString();
-
-            if(!string.Equals(
-                   id,
-                   packageId,
-                   StringComparison.OrdinalIgnoreCase)) {
-                continue;
-            }
-
-            if(item.TryGetProperty(
-                   "totalDownloads",
-                   out var totalDownloads) &&
-               totalDownloads.ValueKind ==
-               JsonValueKind.Number) {
-                return totalDownloads.GetInt64();
-            }
-
-            if(item.TryGetProperty(
-                   "versions",
-                   out var versions) &&
-               versions.ValueKind ==
-               JsonValueKind.Array) {
-                long sum = 0;
-
-                foreach(var version in versions
-                            .EnumerateArray()) {
-                    if(version.TryGetProperty(
-                           "downloads",
-                           out var downloads) &&
-                       downloads.ValueKind ==
-                       JsonValueKind.Number) {
-                        sum += downloads.GetInt64();
-                    }
-                }
-
-                return sum;
-            }
-        }
-
-        throw new Exception(
-            $"SearchQueryService returned no package '{packageId}'.");
-    }
-
-    private static async Task<long> GetGalleryDownloadsAsync(
-        HttpClient http,
-        string packageId) {
-        var url =
-            $"https://www.nuget.org/packages/" +
-            $"{Uri.EscapeDataString(packageId)}" +
+            $"https://www.nuget.org/profiles/" +
+            $"{Uri.EscapeDataString(profileName)}" +
             $"?nocache={DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}";
 
         using var request =
@@ -295,104 +129,91 @@ public static class Program {
         var html =
             await response.Content.ReadAsStringAsync();
 
-        /*
-         * NuGet's package page contains a Downloads section
-         * with the total package download count.
-         *
-         * We deliberately support several representations so
-         * this survives minor HTML formatting changes.
-         */
+        var results =
+            new Dictionary<string, long>(
+                StringComparer.OrdinalIgnoreCase);
 
-        var patterns = new[] {
-            @"(?is)Total\s*</[^>]+>\s*<[^>]+>\s*([\d,]+)",
-            @"(?is)Total\s+([\d,]+)",
-            @"(?is)([\d,]+)\s+total\s+downloads",
-            @"""totalDownloads""\s*:\s*(\d+)"
-        };
-
-        foreach(var pattern in patterns) {
-            var matches =
-                Regex.Matches(
+        foreach(var package in Packages.Values) {
+            var downloads =
+                ParsePackageDownloads(
                     html,
-                    pattern,
-                    RegexOptions.IgnoreCase |
-                    RegexOptions.CultureInvariant);
+                    package);
 
-            foreach(Match match in matches) {
-                var raw =
-                    WebUtility.HtmlDecode(
-                        match.Groups[1].Value);
-
-                raw = raw.Replace(
-                    ",",
-                    "",
-                    StringComparison.Ordinal);
-
-                if(long.TryParse(
-                       raw,
-                       NumberStyles.Integer,
-                       CultureInfo.InvariantCulture,
-                       out var value) &&
-                   value >= 0) {
-                    return value;
-                }
-            }
+            results[package] = downloads;
         }
 
-        throw new Exception(
-            $"Could not locate total download count on NuGet gallery page for '{packageId}'.");
+        return results;
     }
 
-    private static async Task<
-        Dictionary<string, long>>
-        LoadPreviousStateAsync() {
-        if(!File.Exists(StateFile)) {
-            return new Dictionary<string, long>(
-                StringComparer.OrdinalIgnoreCase);
+    private static long ParsePackageDownloads(
+        string html,
+        string packageId) {
+        /*
+         * Each package on a NuGet profile page contains a link to:
+         *
+         *     /packages/{packageId}
+         *
+         * followed within the same package card by text such as:
+         *
+         *     297,526 total downloads
+         *
+         * We deliberately anchor the match to the exact package URL,
+         * rather than simply searching for download numbers.
+         */
+        var encodedPackageId =
+            Regex.Escape(packageId);
+
+        var pattern =
+            $"""
+            href\s*=\s*
+            ["']
+            /packages/
+            {encodedPackageId}
+            /?
+            ["']
+            (?:
+                (?!href\s*=\s*["']/packages/). 
+            )*?
+            (?<downloads>\d[\d,]*)
+            \s+
+            total\s+downloads
+            """;
+
+        var match =
+            Regex.Match(
+                html,
+                pattern,
+                RegexOptions.IgnoreCase |
+                RegexOptions.Singleline |
+                RegexOptions.IgnorePatternWhitespace |
+                RegexOptions.CultureInvariant);
+
+        if(!match.Success) {
+            throw new Exception(
+                $"Could not find the exact download total for package " +
+                $"'{packageId}' on the NuGet profile page.");
         }
 
-        try {
-            var json =
-                await File.ReadAllTextAsync(
-                    StateFile);
+        var raw =
+            WebUtility.HtmlDecode(
+                match.Groups["downloads"].Value);
 
-            var state =
-                JsonSerializer.Deserialize<
-                    Dictionary<string, long>>(json);
+        raw = raw.Replace(
+            ",",
+            "",
+            StringComparison.Ordinal);
 
-            return state ??
-                   new Dictionary<string, long>(
-                       StringComparer.OrdinalIgnoreCase);
-        } catch(Exception ex) {
-            Console.WriteLine(
-                $"WARNING: Could not read previous state: {ex.Message}");
-
-            return new Dictionary<string, long>(
-                StringComparer.OrdinalIgnoreCase);
+        if(!long.TryParse(
+               raw,
+               NumberStyles.None,
+               CultureInfo.InvariantCulture,
+               out var downloads)) {
+            throw new Exception(
+                $"NuGet returned an invalid download count " +
+                $"'{match.Groups["downloads"].Value}' " +
+                $"for package '{packageId}'.");
         }
+
+        return downloads;
     }
-
-    private static async Task SaveStateAsync(
-        Dictionary<string, long> state) {
-        var ordered =
-            state
-                .OrderBy(
-                    kvp => kvp.Key,
-                    StringComparer.OrdinalIgnoreCase)
-                .ToDictionary(
-                    kvp => kvp.Key,
-                    kvp => kvp.Value,
-                    StringComparer.OrdinalIgnoreCase);
-
-        JsonSerializerOptions options = new() { WriteIndented = true };
-        var json = JsonSerializer.Serialize(ordered, options);
-
-        await File.WriteAllTextAsync(
-            StateFile,
-            json);
-    }
-
-    private sealed record DownloadCandidate(
-        string Source,
-        long Downloads);
 }
