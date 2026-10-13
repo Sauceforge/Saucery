@@ -12,13 +12,13 @@
     <PackageVersion Include="coverlet.msbuild" Version="10.1.0" />
     <PackageVersion Include="DotNetSeleniumExtras.PageObjects.Core" Version="4.48.0" />
     <PackageVersion Include="Meziantou.Xunit.ParallelTestFramework" Version="2.3.0" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.10.1" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
     <PackageVersion Include="Microsoft.Playwright.NUnit" Version="1.63.0" />
-    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.401" />
-    <PackageVersion Include="Microsoft.TemplateEngine.Authoring.TemplateVerifier" Version="10.0.401" />
+    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.402" />
+    <PackageVersion Include="Microsoft.TemplateEngine.Authoring.TemplateVerifier" Version="10.0.402" />
     <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.12.0" />
     <PackageVersion Include="Microsoft.Testing.Extensions.TrxReport" Version="2.5.1" />
-    <PackageVersion Include="Microsoft.Web.Xdt" Version="3.2.12" />
+    <PackageVersion Include="Microsoft.Web.Xdt" Version="3.2.13" />
     <PackageVersion Include="NuGet.Versioning" Version="7.9.0" />
     <PackageVersion Include="NUnit" Version="5.0.0" />
     <PackageVersion Include="NUnit.Analyzers" Version="4.15.0" />
@@ -32,8 +32,8 @@
     <PackageVersion Include="Selenium.Support" Version="4.51.0" />
     <PackageVersion Include="Selenium.WebDriver" Version="4.51.0" />
     <PackageVersion Include="Shouldly" Version="4.3.0" />
-    <PackageVersion Include="System.CommandLine" Version="2.0.12" />
-    <PackageVersion Include="TUnit" Version="1.74.0" />
+    <PackageVersion Include="System.CommandLine" Version="2.0.13" />
+    <PackageVersion Include="TUnit" Version="1.75.0" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.1" />
     <PackageVersion Include="xunit.v3" Version="4.0.2" />
