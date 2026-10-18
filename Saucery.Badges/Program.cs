@@ -73,7 +73,7 @@ public static class Program {
 
         var packageCountBadgeJson = new {
             schemaVersion = 1,
-            label = "Active Saucery packages",
+            label = "Saucery packages",
             message = Packages.Values.Length.ToString(
                 CultureInfo.InvariantCulture),
             color = "blue"

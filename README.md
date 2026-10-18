@@ -34,7 +34,7 @@ Saucery comes in multiple flavors supporting popular test frameworks. Targeting 
 | Saucery.TUnit ([TUnit](https://github.com/thomhurst/tunit)) | [![nuget](https://img.shields.io/nuget/v/Saucery.TUnit.svg)](https://www.nuget.org/packages/Saucery.TUnit/) [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery.TUnit)](https://www.nuget.org/stats/packages/Saucery.TUnit?groupby=Version) |
 | Saucery.XUnit.v3 ([XUnit](https://github.com/xunit/xunit)) | [![nuget](https://img.shields.io/nuget/v/Saucery.XUnit.v3.svg)](https://www.nuget.org/packages/Saucery.XUnit.v3/) [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery.XUnit.v3)](https://www.nuget.org/stats/packages/Saucery.XUnit.v3?groupby=Version) |
 | Saucery.NuGet | [![nuget](https://img.shields.io/nuget/v/Saucery.NuGet.svg)](https://www.nuget.org/packages/Saucery.NuGet/) [![NuGet Downloads](https://img.shields.io/nuget/dt/Saucery.NuGet)](https://www.nuget.org/stats/packages/Saucery.NuGet?groupby=Version) |
-| Number of Active Saucery Packages | [![nuget](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Sauceforge/Saucery/master/badges/nuget-package-count.json&cacheSeconds=60)](https://www.nuget.org/profiles/fullcircle) |
+| Number of Saucery Packages | [![nuget](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Sauceforge/Saucery/master/badges/nuget-package-count.json&cacheSeconds=60)](https://www.nuget.org/profiles/fullcircle) |
 
 ### Sponsoring
 
