@@ -53,6 +53,6 @@ public static class PlatformDataClass {
         new IOSRealDevice("iPhone 14 Pro Max", "16"),
         new IOSRealDevice("iPhone 13 Pro Max", "15"),
         new IOSRealDevice("iPhone 12 Pro Max", "14"),
-        new IOSRealDevice("iPhone.*", "13"),
+        //new IOSRealDevice("iPhone.*", "13"),
     ];
 }

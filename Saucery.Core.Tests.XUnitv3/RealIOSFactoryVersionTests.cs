@@ -41,5 +41,5 @@ public class RealIOSDataClass
     public static IEnumerable<object?[]> NotSupportedTestCases =>
         [[new IOSRealDevice("NonExistent", "11")]];
 
-    private static readonly string[] sourceArray = ["13", "14", "15", "16", "17", "18", "26"];
+    private static readonly string[] sourceArray = ["14", "15", "16", "17", "18", "26", "27"];
 }
