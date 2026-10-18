@@ -231,6 +231,7 @@ public static class SauceryConstants {
     public static readonly string DEVICE_ORIENTATION_PORTRAIT = "portrait";
     public static readonly string DEVICE_ORIENTATION_LANDSCAPE = "landscape";
 }
+
 /*
 * Copyright Andrew Gray, SauceForge
 * Date: 12th July 2014
