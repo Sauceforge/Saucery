@@ -40,7 +40,7 @@ public class SauceryBase : PageTest
         _browserVersion = browserVersion;
 
     [SetUp]
-    public async void Setup()
+    public async Task Setup()
     {
         _testName = BrowserVersion.GenerateTestName(_browserVersion!, TestContext.CurrentContext.Test.Name);
 
@@ -59,7 +59,7 @@ public class SauceryBase : PageTest
     }
 
     [TearDown]
-    public async void Cleanup()
+    public async Task Cleanup()
     {
         try
         {

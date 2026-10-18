@@ -19,7 +19,7 @@ public class GuineaPigTests : SauceryTBase {
     }
 
     [Test]
-    [MethodDataSource(nameof(AllCombinations), Arguments = [new int[] { 4, 5 }])]
+    [MethodDataSource(nameof(AllCombinations), Arguments = [new[] { 4, 5 }])]
     public async Task DataDrivenTest(BrowserVersion requestedPlatform, int data) {
         await InitialiseDriver(requestedPlatform);
 
