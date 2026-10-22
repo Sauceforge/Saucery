@@ -25,7 +25,7 @@
     <PackageVersion Include="NUnit3TestAdapter" Version="6.3.1" />
     <PackageVersion Include="RestSharp" Version="114.1.0" />
     <PackageVersion Include="Saucery" Version="5.0.0" />
-    <PackageVersion Include="Saucery.Core" Version="4.10.25" />
+    <PackageVersion Include="Saucery.Core" Version="4.10.26" />
     <PackageVersion Include="Saucery.TUnit" Version="1.76.0" />
     <PackageVersion Include="Saucery.XUnit" Version="4.10.26" />
     <PackageVersion Include="Saucery.XUnit.v3" Version="4.0.2" />
