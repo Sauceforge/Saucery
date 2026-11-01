@@ -68,7 +68,6 @@ public class PlatformTypes {
             typeof(IOS16Platform),
             typeof(IOS15Platform),
             typeof(IOS14Platform),
-            typeof(IOS13Platform),
             typeof(Android17Platform),
             typeof(Android16Platform),
             typeof(Android15Platform),
@@ -76,8 +75,7 @@ public class PlatformTypes {
             typeof(Android13Platform),
             typeof(Android12Platform),
             typeof(Android11Platform),
-            typeof(Android10Platform),
-            typeof(Android9Platform)
+            typeof(Android10Platform)
         ]);
 
     public static IEnumerable<object[]> PlatformsWithBrowsersTypes =>

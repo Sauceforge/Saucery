@@ -17,7 +17,7 @@ public class SauceryTestDataEmulatedTests() : SauceryTestData {
         SetPlatforms(PlatformDataClass.DesktopPlatforms, _fixture.PlatformConfigurator);
 
         Items.ShouldNotBeNull();
-        Items.Count().ShouldBe(34); // Due to platform expansion.
+        Items.Count().ShouldBe(35); // Due to platform expansion.
     }
 
     [Test]

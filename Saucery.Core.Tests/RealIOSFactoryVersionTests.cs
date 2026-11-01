@@ -35,7 +35,7 @@ public class RealIOSFactoryVersionTests() {
 
 public class RealIOSDataClass {
     public static IEnumerable<object?[]> SupportedTestCases =>
-        new[] { "13", "14", "15", "16", "17", "18", "26" }
+        new[] { "14", "15", "16", "17", "18", "26", "27" }
             .Select(v => new object?[] { new IOSRealDevice("iPhone.*", v) });
 
     public static IEnumerable<object?[]> NotSupportedTestCases

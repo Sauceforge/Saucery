@@ -14,7 +14,6 @@ internal class ChromiumOSBrowserCreator(SupportedPlatform sp) : BrowserCreator(s
         Platform.api_name switch
         {
             SauceryConstants.BROWSER_CHROME => new ChromeBrowser(Platform, screenResolutions, platformNameForOption, isArmRequired),
-            SauceryConstants.BROWSER_FIREFOX => new FirefoxBrowser(Platform, screenResolutions, platformNameForOption, isArmRequired),
             _ => null,
         };
 }

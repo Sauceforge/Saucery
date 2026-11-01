@@ -7,8 +7,8 @@ namespace Saucery.Core.Dojo.Platforms.ConcreteProducts.ChromiumOS;
 public sealed class ChromiumOSPlatform(SupportedPlatform sp) 
     : PlatformBase(sp,
                    SauceryConstants.PLATFORM_CHROMIUM_OS,
-                   [SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_FIREFOX],
-                   [SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_FIREFOX],
+                   [SauceryConstants.BROWSER_CHROME],
+                   [SauceryConstants.BROWSER_CHROME],
                    [SauceryConstants.SCREENRES_800_600,
                     SauceryConstants.SCREENRES_1024_768,
                     SauceryConstants.SCREENRES_1152_864,
