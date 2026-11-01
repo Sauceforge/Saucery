@@ -115,18 +115,21 @@ internal sealed class RepositoryValidator
             ["run", "--project", relativeXunitV3Project, "--configuration", "Release"],
             context.Root);
 
+        // Test output is authoritative. Do not trust the process exit code alone:
+        // Microsoft.Testing.Platform/dotnet run can produce a failed-test summary even
+        // when the outer process exits successfully.
+        if(ContainsFailedTestResult(tests.CombinedOutput))
+        {
+            messages.Add($"Run {relativeXunitV3Project}: FAIL");
+            messages.Add("  The xUnit.v3 output contains one or more genuine failed tests. Test-output failure always overrides the process exit code and any Sauce infrastructure classification.");
+            messages.Add(tests.CombinedOutput);
+            return new(false, messages, Array.Empty<CoverageDiscrepancy>());
+        }
+
         if(tests.ExitCode == 0)
         {
             messages.Add($"Run {relativeXunitV3Project}: PASS");
             return new(true, messages, Array.Empty<CoverageDiscrepancy>());
-        }
-
-        if(ContainsGenuineAssertionFailure(tests.CombinedOutput))
-        {
-            messages.Add($"Run {relativeXunitV3Project}: FAIL");
-            messages.Add("  Genuine xUnit.v3 assertion failures were detected. They always fail remediation validation, even when Sauce infrastructure failures are present in the same run.");
-            messages.Add(tests.CombinedOutput);
-            return new(false, messages, Array.Empty<CoverageDiscrepancy>());
         }
 
         if(IsExternalSauceInfrastructureFailure(tests.CombinedOutput))
@@ -142,11 +145,12 @@ internal sealed class RepositoryValidator
         return new(false, messages, Array.Empty<CoverageDiscrepancy>());
     }
 
-    private static bool ContainsGenuineAssertionFailure(string output)
+    private static bool ContainsFailedTestResult(string output)
     {
         if(string.IsNullOrWhiteSpace(output))
             return false;
 
+        // Direct assertion failures.
         if(output.Contains("Shouldly.ShouldAssertException", StringComparison.Ordinal))
             return true;
 
@@ -163,8 +167,24 @@ internal sealed class RepositoryValidator
         if(xunitAssertion)
             return true;
 
-        // xUnit/MTP can wrap assertion failures in XunitException. Require assertion-shaped
-        // output so fixture-constructor failures are not misclassified as assertions.
+        // Microsoft.Testing.Platform summary.
+        if(output.Contains("Test run summary: Failed!", StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        // MTP summary can be rendered as "failed: 2". Treat any non-zero failure
+        // count as authoritative regardless of the outer dotnet process exit code.
+        if(Regex.IsMatch(
+            output,
+            @"(?im)^\s*failed:\s*[1-9]\d*\s*$"))
+            return true;
+
+        // Individual test failure lines emitted by xUnit.v3/MTP.
+        if(Regex.IsMatch(
+            output,
+            @"(?im)^\s*failed\s+Saucery\.Core\.Tests\.XUnitv3\."))
+            return true;
+
+        // Generic assertion-shaped XunitException, while avoiding fixture-only failures.
         return output.Contains("XunitException", StringComparison.Ordinal) &&
                (output.Contains("should be", StringComparison.OrdinalIgnoreCase) ||
                 output.Contains("but was", StringComparison.OrdinalIgnoreCase) ||
@@ -192,13 +212,10 @@ internal sealed class RepositoryValidator
             (output.Contains("Class fixture type", StringComparison.Ordinal) &&
              output.Contains("threw in its constructor", StringComparison.Ordinal));
 
-        var genuineAssertionFailure =
-            output.Contains("Shouldly.ShouldAssertException", StringComparison.Ordinal) ||
-            output.Contains("Assert.Equal() Failure", StringComparison.Ordinal) ||
-            output.Contains("Assert.True() Failure", StringComparison.Ordinal) ||
-            output.Contains("Assert.False() Failure", StringComparison.Ordinal);
-
-        return sauceAcquirer && externalFailure && fixtureSetupFailure && !genuineAssertionFailure;
+        return sauceAcquirer &&
+               externalFailure &&
+               fixtureSetupFailure &&
+               !ContainsFailedTestResult(output);
     }
 
     private static bool Equivalent(CoverageDiscrepancy a, CoverageDiscrepancy b) =>

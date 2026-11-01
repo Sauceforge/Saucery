@@ -140,3 +140,18 @@ Count assertions are adjusted only for the inventory that actually feeds them:
 - Android removals adjust `AndroidPlatformsTest` only.
 
 This prevents an iOS/Android remediation from incorrectly decrementing the desktop-backed `AllPlatformsTest` count.
+
+
+## Test result authority
+
+The xUnit.v3 test output is authoritative over the outer process exit code.
+
+Validation fails immediately if output contains any of:
+
+- `Shouldly.ShouldAssertException`
+- xUnit assertion failure markers
+- `Test run summary: Failed!`
+- a non-zero `failed: N` Microsoft.Testing.Platform summary
+- an individual `failed Saucery.Core.Tests.XUnitv3...` result
+
+Only after confirming that the output contains no failed tests may an exit code of zero be treated as PASS. This prevents a successful `dotnet run` process code from masking failed xUnit.v3 tests.
