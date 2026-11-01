@@ -206,7 +206,6 @@ public static class DojoExtensions
             "iOS 27.0" => platforms.GetPlatform<IOS27Platform>().FirstOrDefault(),
             "iOS 26.5" => platforms.GetPlatform<IOS265Platform>().FirstOrDefault(),
             "iOS 26.1" => platforms.GetPlatform<IOS261Platform>().FirstOrDefault(),
-            "iOS 26.0" => platforms.GetPlatform<IOS26Platform>().FirstOrDefault(),
             "iOS 18.6" => platforms.GetPlatform<IOS186Platform>().FirstOrDefault(),
             "iOS 18.0" => platforms.GetPlatform<IOS18Platform>().FirstOrDefault(),
             "iOS 17.5" => platforms.GetPlatform<IOS175Platform>().FirstOrDefault(),
