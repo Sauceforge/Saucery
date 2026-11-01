@@ -236,3 +236,10 @@ It resolves the exact `*Platform` type deterministically from family/version, lo
 For example, `Windows8PlatformCreator` is located by class declaration even when its file is named `Windows8BPlatformCreator.cs`.
 
 Windows obsolete remediation requires a matching BrowserFactory `*BrowserCreator` registration. Shared-family exact mobile versions such as `iOS 26.0 -> IOS26Platform` remain declaration-only cleanup.
+
+
+## Effective obsolete version identity
+
+Obsolete remediation now normalizes the target version from `CoverageDiscrepancy.Version` when present, otherwise from `DisplayName` (`Windows 8`, `Windows 8.1`, `iOS 26.0`, etc.). The normalized version is reused for exact product type resolution, Windows platform constants, BrowserFactory registration matching, declaration removal, and obsolete test-row matching.
+
+Shared-family exact mobile versions are detected from the actual class surface rather than depending on `PlatformRequirementKind`; for example, `iOS 26.0` is declaration-only when `IOS260Platform` is absent but `IOS26Platform` exists.

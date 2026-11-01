@@ -361,9 +361,52 @@ internal static class MissingSynthesizer
 
 internal static class ObsoletePlatformIdentity
 {
+    public static string EffectiveVersion(CoverageDiscrepancy target)
+    {
+        if(!string.IsNullOrWhiteSpace(target.Version))
+            return target.Version!;
+
+        var displayName = target.DisplayName ?? string.Empty;
+
+        if(target.Family.Equals("Windows", StringComparison.OrdinalIgnoreCase))
+        {
+            var match = Regex.Match(
+                displayName,
+                @"\bWindows\s+(?<version>\d+(?:\.\d+)?)\b",
+                RegexOptions.IgnoreCase);
+
+            if(match.Success)
+                return match.Groups["version"].Value;
+        }
+
+        if(target.Family.Equals("iOS", StringComparison.OrdinalIgnoreCase))
+        {
+            var match = Regex.Match(
+                displayName,
+                @"\biOS\s+(?<version>\d+(?:\.\d+|\.x)?)\b",
+                RegexOptions.IgnoreCase);
+
+            if(match.Success)
+                return match.Groups["version"].Value;
+        }
+
+        if(target.Family.Equals("Android", StringComparison.OrdinalIgnoreCase))
+        {
+            var match = Regex.Match(
+                displayName,
+                @"\bAndroid\s+(?<version>\d+(?:\.\d+|\.x)?)\b",
+                RegexOptions.IgnoreCase);
+
+            if(match.Success)
+                return match.Groups["version"].Value;
+        }
+
+        return string.Empty;
+    }
+
     public static string? Exact(CoverageDiscrepancy target)
     {
-        var version = target.Version ?? string.Empty;
+        var version = EffectiveVersion(target);
 
         if(target.Family.Equals("Windows", StringComparison.OrdinalIgnoreCase))
         {
@@ -383,10 +426,13 @@ internal static class ObsoleteDeclarationResolver
         RepositoryContext context,
         CoverageDiscrepancy target)
     {
-        if(target.Kind != PlatformRequirementKind.MobileExactVersion)
+        if(!target.Family.Equals("iOS", StringComparison.OrdinalIgnoreCase) &&
+           !target.Family.Equals("Android", StringComparison.OrdinalIgnoreCase))
+        {
             return false;
+        }
 
-        var version = target.Version ?? string.Empty;
+        var version = ObsoletePlatformIdentity.EffectiveVersion(target);
         if(!Regex.IsMatch(version, @"^\d+\.\d+$"))
             return false;
 
@@ -394,54 +440,23 @@ internal static class ObsoleteDeclarationResolver
         if(string.IsNullOrWhiteSpace(major))
             return false;
 
-        var expectedSharedType = target.Family.Equals("iOS", StringComparison.OrdinalIgnoreCase)
-            ? $"IOS{major}Platform"
-            : target.Family.Equals("Android", StringComparison.OrdinalIgnoreCase)
-                ? $"Android{major}Platform"
-                : null;
-
-        if(expectedSharedType is null)
-            return false;
-
-        foreach(var relative in new[]
-        {
-            "Saucery.Core/Dojo/Browsers/BrowserFactory.cs",
-            "Saucery.Core/Dojo/DojoExtensions.cs"
-        })
-        {
-            var path = context.PathFromRoot(relative);
-            if(!File.Exists(path))
-                continue;
-
-            foreach(var line in File.ReadLines(path))
-            {
-                if(!Regex.IsMatch(
-                    line,
-                    $@"[""'](?:{Regex.Escape(target.Family)}\s+)?{Regex.Escape(version)}[""']",
-                    RegexOptions.IgnoreCase))
-                {
-                    continue;
-                }
-
-                if(Regex.IsMatch(
-                    line,
-                    $@"\b{Regex.Escape(expectedSharedType)}\b"))
-                {
-                    return true;
-                }
-            }
-        }
-
-        // Fallback: exact type does not exist but the major-family type does.
-        var digits = Regex.Replace(version, @"\D", "");
         var prefix = target.Family.Equals("iOS", StringComparison.OrdinalIgnoreCase)
             ? "IOS"
             : "Android";
 
-        var exactType = $"{prefix}{digits}Platform";
+        var expectedSharedType = $"{prefix}{major}Platform";
+        var exactDigits = Regex.Replace(version, @"\D", "");
+        var exactType = $"{prefix}{exactDigits}Platform";
 
-        return !HasClass(context, "/ConcreteProducts/", exactType) &&
-               HasClass(context, "/ConcreteProducts/", expectedSharedType);
+        // If an exact-version product exists, this is not declaration-only.
+        if(HasClass(context, "/ConcreteProducts/", exactType))
+            return false;
+
+        // A shared major-family product means the exact version is only a registration/declaration.
+        if(HasClass(context, "/ConcreteProducts/", expectedSharedType))
+            return true;
+
+        return false;
     }
 
     private static bool HasClass(
@@ -533,7 +548,7 @@ internal static class ObsoleteTargetResolver
 
     private static string? ExactProductType(CoverageDiscrepancy target)
     {
-        var version = target.Version ?? string.Empty;
+        var version = ObsoletePlatformIdentity.EffectiveVersion(target);
         var major = Regex.Match(version, @"^\d+").Value;
         var digits = Regex.Replace(version, @"\D", "");
 
@@ -614,7 +629,7 @@ internal static class ObsoleteTargetResolver
             return true;
         }
 
-        var version = target.Version ?? string.Empty;
+        var version = ObsoletePlatformIdentity.EffectiveVersion(target);
         return !string.IsNullOrWhiteSpace(version) &&
                Regex.IsMatch(
                    line,
@@ -787,7 +802,7 @@ internal static class ObsoleteSynthesizer
            ContainsExactIdentifier(line, identity))
             return true;
 
-        var version = target.Version ?? string.Empty;
+        var version = ObsoletePlatformIdentity.EffectiveVersion(target);
 
         if(target.Family.Equals("iOS", StringComparison.OrdinalIgnoreCase))
         {
@@ -998,7 +1013,7 @@ internal static class ObsoleteSynthesizer
            ContainsExactIdentifier(line, platformIdentity))
             return true;
 
-        var version = target.Version ?? string.Empty;
+        var version = ObsoletePlatformIdentity.EffectiveVersion(target);
         var major = Regex.Match(version, @"^\d+").Value;
 
         if(target.Family.Equals("iOS", StringComparison.OrdinalIgnoreCase) &&
