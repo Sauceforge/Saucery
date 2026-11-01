@@ -71,24 +71,16 @@ When a platform remediation is inferred from an existing analogue, equivalent te
 Obsolete remediation removes matching registrations first and never line-edits owned platform/creator class declarations. Product/creator files are deleted only when no surviving source or test project references their declared symbols. Shared platform slices, such as an exact simulator version whose major real-device family is still supported, remain intact.
 
 
-## Obsolete-removal safety
+## Obsolete platform remediation
 
-Production-code removal is scoped to registration files structurally associated with the obsolete platform. The remediator does not scan or line-edit unrelated platform product/creator classes.
+Obsolete remediation is intentionally minimal.
 
-Only `PLATFORM_*` identity constants found in structural registrations are considered platform-owned. Shared browser, screen-resolution, timeout, and capability constants are never inferred as owned by a platform merely because its product class references them.
+For an `ObsoleteCandidate`, the remediator:
 
+1. resolves the matching repository platform prototype;
+2. deletes the matching `ConcreteProducts` implementation file;
+3. deletes the matching `ConcreteCreators` / `PlatformCreator` implementation file when one exists;
+4. runs normal build/validation;
+5. rolls the transaction back if the solution no longer compiles.
 
-## Multi-pass obsolete removal
-
-Each reporter rerun is authoritative. If an obsolete platform has multiple surviving declarations, the next synthesis pass consumes the **fresh evidence file and source line from the newly generated report**, rather than retrying the stale declaration from the previous pass.
-
-If the original product/creator prototype has already been deleted, the remediator can still remove the next exact reporter-evidenced registration after syntax-validating the resulting file.
-
-
-## Evidence-driven obsolete cleanup
-
-When a complete platform prototype no longer exists, obsolete remediation falls back to the latest reporter evidence plus a narrowly derived platform identity (`Windows81`, `PLATFORM_WINDOWS_81`, `IOS13`, `iOS 13`, and equivalent forms).
-
-Only syntax-safe residual registration/constant/switch/test-data lines are removed. Class and namespace declarations are never line-deleted by the fallback.
-
-With `--allow-obsolete-removal`, a reporter-evidenced obsolete candidate can be auto-fixed even when no complete product prototype remains.
+It does not remove constants, factory registrations, browser mappings, test data, switch arms, or any other references. Compilation is the safety gate.

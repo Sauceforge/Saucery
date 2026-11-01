@@ -5,7 +5,7 @@ namespace Saucery.CoverageGapRemediator;
 
 internal static class Program
 {
-    internal const string Build = "coverage-remediator-v15-residual-evidence-cleanup";
+    internal const string Build = "coverage-remediator-v18-delete-product-and-creator-only";
 
     public static async Task<int> Main(string[] args)
     {
