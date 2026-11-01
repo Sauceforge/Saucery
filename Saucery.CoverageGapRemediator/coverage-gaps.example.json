@@ -1,0 +1,22 @@
+{
+  "missing": [
+    {
+      "family": "ChromiumOS",
+      "kind": "DesktopPlatform",
+      "version": "",
+      "displayName": "ChromiumOS",
+      "sauceConfigurationCount": 2,
+      "representativeDevices": ["Google Chrome"]
+    }
+  ],
+  "obsoleteCandidates": [
+    {
+      "family": "iOS",
+      "kind": "MobileMajorWildcard",
+      "version": "13.x",
+      "displayName": "iOS 13.x",
+      "evidenceFile": "Dojo/DojoExtensions.cs",
+      "evidence": "\"iOS 13\" => platforms.GetPlatform<IOS13Platform>().FirstOrDefault()"
+    }
+  ]
+}

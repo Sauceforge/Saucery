@@ -12,6 +12,7 @@
     <PackageVersion Include="coverlet.msbuild" Version="10.1.0" />
     <PackageVersion Include="DotNetSeleniumExtras.PageObjects.Core" Version="4.48.0" />
     <PackageVersion Include="Meziantou.Xunit.ParallelTestFramework" Version="2.3.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="5.9.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
     <PackageVersion Include="Microsoft.Playwright.NUnit" Version="1.64.1" />
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.403" />
