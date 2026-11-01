@@ -13,8 +13,6 @@ public static class DesktopPlatformFactory {
         SauceryConstants.PLATFORM_CHROMIUM_OS => new ChromiumOSPlatformCreator(sp).Create(),
         SauceryConstants.PLATFORM_WINDOWS_11 => new Windows11PlatformCreator(sp).Create(),
         SauceryConstants.PLATFORM_WINDOWS_10 => new Windows10PlatformCreator(sp).Create(),
-        SauceryConstants.PLATFORM_WINDOWS_81 => new Windows81PlatformCreator(sp).Create(),
-        SauceryConstants.PLATFORM_WINDOWS_8 => new Windows8PlatformCreator(sp).Create(),
         SauceryConstants.PLATFORM_MAC_26 => new Mac26PlatformCreator(sp).Create(),
         SauceryConstants.PLATFORM_MAC_15 => new Mac15PlatformCreator(sp).Create(),
         SauceryConstants.PLATFORM_MAC_14 => new Mac14PlatformCreator(sp).Create(),

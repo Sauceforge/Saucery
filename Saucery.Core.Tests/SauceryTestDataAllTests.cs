@@ -1,4 +1,4 @@
-﻿using Saucery.Core.DataSources;
+using Saucery.Core.DataSources;
 using Saucery.Core.Tests.DataProviders;
 using Saucery.Core.Tests.Fixtures;
 using Shouldly;
@@ -16,6 +16,6 @@ public class SauceryTestDataAllTests() : SauceryTestData {
         SetPlatforms(PlatformDataClass.DesktopPlatforms, _fixture.PlatformConfigurator);
 
         Items.ShouldNotBeNull();
-        Items.Count().ShouldBe(35); // Due to platform expansion.
+        Items.Count().ShouldBe(32); // Due to platform expansion.
     }
 }
