@@ -200,3 +200,8 @@ The resolver follows the repository's actual wiring:
 7. Repair matching test data and validate the final solution/xUnit.v3 suite.
 
 Exact mobile versions that share a major-family implementation remain declaration-only removals.
+
+
+## Shared obsolete platform identity
+
+Exact platform identity resolution is shared by obsolete discovery and synthesis through `ObsoletePlatformIdentity.Exact`. This prevents resolver code from depending on a private synthesizer method.

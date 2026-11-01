@@ -359,6 +359,24 @@ internal static class MissingSynthesizer
     private static string Major(string version) => Regex.Match(version, @"^\d+").Value;
 }
 
+internal static class ObsoletePlatformIdentity
+{
+    public static string? Exact(CoverageDiscrepancy target)
+    {
+        var version = target.Version ?? string.Empty;
+
+        if(target.Family.Equals("Windows", StringComparison.OrdinalIgnoreCase))
+        {
+            var digits = Regex.Replace(version, @"\D", "");
+            return string.IsNullOrWhiteSpace(digits)
+                ? null
+                : $"SauceryConstants.PLATFORM_WINDOWS_{digits}";
+        }
+
+        return null;
+    }
+}
+
 internal static class ObsoleteDeclarationResolver
 {
     public static bool IsDeclarationOnlyExactVersion(
@@ -654,7 +672,7 @@ internal static class ObsoleteTargetResolver
         if(string.IsNullOrWhiteSpace(line))
             return false;
 
-        var identity = ExactPlatformIdentity(target);
+        var identity = ObsoletePlatformIdentity.Exact(target);
         if(!string.IsNullOrWhiteSpace(identity) &&
            Regex.IsMatch(
                line,
@@ -834,7 +852,7 @@ internal static class ObsoleteSynthesizer
         if(string.IsNullOrWhiteSpace(line))
             return false;
 
-        var identity = ExactPlatformIdentity(target);
+        var identity = ObsoletePlatformIdentity.Exact(target);
         if(!string.IsNullOrWhiteSpace(identity) &&
            ContainsExactIdentifier(line, identity))
             return true;
@@ -943,7 +961,7 @@ internal static class ObsoleteSynthesizer
         CoverageDiscrepancy target,
         IReadOnlyList<string> deletedTypes)
     {
-        var platformIdentity = ExactPlatformIdentity(target);
+        var platformIdentity = ObsoletePlatformIdentity.Exact(target);
 
         foreach(var testRoot in context.TestRoots)
         {
@@ -1033,20 +1051,6 @@ internal static class ObsoleteSynthesizer
             $@"(?<![A-Za-z0-9_]){Regex.Escape(oldIdentifier)}(?![A-Za-z0-9_])",
             newIdentifier);
 
-    private static string? ExactPlatformIdentity(CoverageDiscrepancy target)
-    {
-        var version = target.Version ?? string.Empty;
-
-        if(target.Family.Equals("Windows", StringComparison.OrdinalIgnoreCase))
-        {
-            var digits = Regex.Replace(version, @"\D", "");
-            return string.IsNullOrWhiteSpace(digits)
-                ? null
-                : $"SauceryConstants.PLATFORM_WINDOWS_{digits}";
-        }
-
-        return null;
-    }
 
     private static bool IsExactObsoleteTestRow(
         string line,
