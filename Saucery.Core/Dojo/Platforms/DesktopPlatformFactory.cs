@@ -1,5 +1,6 @@
-﻿using Saucery.Core.Dojo.Platforms.Base;
+using Saucery.Core.Dojo.Platforms.Base;
 using Saucery.Core.Dojo.Platforms.ConcreteCreators.Linux;
+using Saucery.Core.Dojo.Platforms.ConcreteCreators.ChromiumOS;
 using Saucery.Core.Dojo.Platforms.ConcreteCreators.PC;
 using Saucery.Core.RestAPI;
 using Saucery.Core.Util;
@@ -9,6 +10,7 @@ namespace Saucery.Core.Dojo.Platforms;
 public static class DesktopPlatformFactory {
     public static PlatformBase? CreatePlatform(SupportedPlatform sp) => sp.Os switch {
         SauceryConstants.PLATFORM_LINUX => new LinuxPlatformCreator(sp).Create(),
+        SauceryConstants.PLATFORM_CHROMIUM_OS => new ChromiumOSPlatformCreator(sp).Create(),
         SauceryConstants.PLATFORM_WINDOWS_11 => new Windows11PlatformCreator(sp).Create(),
         SauceryConstants.PLATFORM_WINDOWS_10 => new Windows10PlatformCreator(sp).Create(),
         SauceryConstants.PLATFORM_WINDOWS_81 => new Windows81PlatformCreator(sp).Create(),

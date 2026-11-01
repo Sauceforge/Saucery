@@ -54,3 +54,13 @@ Obsolete-candidate deletion remains opt-in because the reporter deliberately cal
 
 
 Validation builds both Core projects and verifies the discrepancy with CoverageGapReporter. Runtime test failures caused by the live Sauce Labs acquisition hook are reported as inconclusive rather than as remediation failures.
+
+
+## Multiple test suites
+
+The remediator discovers every top-level `Saucery.Core.Tests*` project and treats it as a first-class test surface. This includes both:
+
+- `Saucery.Core.Tests` (TUnit)
+- `Saucery.Core.Tests,XUnit3` (xUnit.v3)
+
+When a platform remediation is inferred from an existing analogue, equivalent test registrations/data are transformed in every discovered test suite. Validation builds and runs every discovered test project.

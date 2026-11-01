@@ -23,16 +23,20 @@ internal sealed class RepositoryValidator
             return new(false, messages, Array.Empty<CoverageDiscrepancy>());
         }
 
-        var testBuild = await ProcessRunner.RunAsync(
-            "dotnet",
-            ["build", Path.Combine("Saucery.Core.Tests", "Saucery.Core.Tests.csproj"), "-c", "Release"],
-            context.Root);
-
-        messages.Add($"Build Saucery.Core.Tests: {(testBuild.ExitCode == 0 ? "PASS" : "FAIL")}");
-        if(testBuild.ExitCode != 0)
+        foreach(var testProject in context.TestProjects)
         {
-            messages.Add(testBuild.CombinedOutput);
-            return new(false, messages, Array.Empty<CoverageDiscrepancy>());
+            var relativeProject = context.Relative(testProject);
+            var testBuild = await ProcessRunner.RunAsync(
+                "dotnet",
+                ["build", relativeProject, "-c", "Release"],
+                context.Root);
+
+            messages.Add($"Build {relativeProject}: {(testBuild.ExitCode == 0 ? "PASS" : "FAIL")}");
+            if(testBuild.ExitCode != 0)
+            {
+                messages.Add(testBuild.CombinedOutput);
+                return new(false, messages, Array.Empty<CoverageDiscrepancy>());
+            }
         }
 
         if(options.VerifyWithReporter && File.Exists(context.ReporterProject))
@@ -76,28 +80,34 @@ internal sealed class RepositoryValidator
             messages.Add("Coverage reporter verification: SKIPPED");
         }
 
-        var tests = await ProcessRunner.RunAsync(
-            "dotnet",
-            ["run", "--project", Path.Combine("Saucery.Core.Tests", "Saucery.Core.Tests.csproj"), "--configuration", "Release"],
-            context.Root);
-
-        if(tests.ExitCode == 0)
+        foreach(var testProject in context.TestProjects)
         {
-            messages.Add("Run Saucery.Core.Tests (Microsoft.Testing.Platform): PASS");
-            return new(true, messages, Array.Empty<CoverageDiscrepancy>());
+            var relativeProject = context.Relative(testProject);
+            var tests = await ProcessRunner.RunAsync(
+                "dotnet",
+                ["run", "--project", relativeProject, "--configuration", "Release"],
+                context.Root);
+
+            if(tests.ExitCode == 0)
+            {
+                messages.Add($"Run {relativeProject}: PASS");
+                continue;
+            }
+
+            if(IsExternalSauceInfrastructureFailure(tests.CombinedOutput))
+            {
+                messages.Add($"Run {relativeProject}: INCONCLUSIVE");
+                messages.Add("  The test process reached the live Sauce Labs platform acquisition hook and failed before test execution because the external API response could not be deserialized.");
+                messages.Add("  This is treated as an external integration failure, not as a remediation failure. All Core/test projects built successfully and the coverage reporter verified the targeted discrepancy is gone.");
+                continue;
+            }
+
+            messages.Add($"Run {relativeProject}: FAIL");
+            messages.Add(tests.CombinedOutput);
+            return new(false, messages, Array.Empty<CoverageDiscrepancy>());
         }
 
-        if(IsExternalSauceInfrastructureFailure(tests.CombinedOutput))
-        {
-            messages.Add("Run Saucery.Core.Tests (Microsoft.Testing.Platform): INCONCLUSIVE");
-            messages.Add("  The test process reached the live Sauce Labs platform acquisition hook and failed before test execution because the external API response could not be deserialized.");
-            messages.Add("  This is treated as an external integration failure, not as a remediation failure. Core and test projects built successfully and the coverage reporter verified the targeted discrepancy is gone.");
-            return new(true, messages, Array.Empty<CoverageDiscrepancy>());
-        }
-
-        messages.Add("Run Saucery.Core.Tests (Microsoft.Testing.Platform): FAIL");
-        messages.Add(tests.CombinedOutput);
-        return new(false, messages, Array.Empty<CoverageDiscrepancy>());
+        return new(true, messages, Array.Empty<CoverageDiscrepancy>());
     }
 
     private static bool IsExternalSauceInfrastructureFailure(string output)

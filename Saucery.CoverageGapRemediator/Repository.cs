@@ -35,7 +35,21 @@ internal sealed class RepositoryContext(string root)
     public string Root { get; } = root;
     public string Core => Path.Combine(Root, "Saucery.Core");
     public string Tests => Path.Combine(Root, "Saucery.Core.Tests");
+    public string XUnit3Tests => Path.Combine(Root, "Saucery.Core.Tests,XUnit3");
     public string ReporterProject => Path.Combine(Root, "Saucery.CoverageGapReporter", "Saucery.CoverageGapReporter.csproj");
+
+    public IReadOnlyList<string> TestRoots =>
+        Directory.EnumerateDirectories(Root, "Saucery.Core.Tests*", SearchOption.TopDirectoryOnly)
+            .Where(path => Directory.EnumerateFiles(path, "*.csproj", SearchOption.TopDirectoryOnly).Any())
+            .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+
+    public IReadOnlyList<string> TestProjects =>
+        TestRoots
+            .SelectMany(path => Directory.EnumerateFiles(path, "*.csproj", SearchOption.TopDirectoryOnly))
+            .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+
     public string PathFromRoot(string relative) => Path.GetFullPath(Path.Combine(Root, relative.Replace('/', Path.DirectorySeparatorChar)));
     public string Relative(string path) => Path.GetRelativePath(Root, path).Replace('\\', '/');
 }

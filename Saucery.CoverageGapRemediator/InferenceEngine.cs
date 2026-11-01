@@ -336,7 +336,7 @@ internal static class ObsoleteSynthesizer
 
     private static bool IsRemovableFile(string file) =>
         file.StartsWith("Saucery.Core/Dojo/", StringComparison.OrdinalIgnoreCase) ||
-        file.StartsWith("Saucery.Core.Tests/", StringComparison.OrdinalIgnoreCase);
+        file.StartsWith("Saucery.Core.Tests", StringComparison.OrdinalIgnoreCase);
 
     private static bool LineBelongsToTarget(string line, CoverageDiscrepancy target)
     {

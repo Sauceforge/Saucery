@@ -1,4 +1,4 @@
-﻿namespace Saucery.Core.Util;
+namespace Saucery.Core.Util;
 
 public static class SauceryConstants {
     //ACTIVATION DETAILS
@@ -183,6 +183,7 @@ public static class SauceryConstants {
     public const string PLATFORM_MAC_11 = "Mac 11";
     public const string PLATFORM_IOS = "iOS";
     public const string PLATFORM_LINUX = "Linux";
+    public const string PLATFORM_CHROMIUM_OS = "ChromiumOS";
 
     //BROWSERS
     public const string BROWSER_CHROME = "chrome";

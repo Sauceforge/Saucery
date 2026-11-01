@@ -1,4 +1,4 @@
-﻿using Saucery.Core.OnDemand;
+using Saucery.Core.OnDemand;
 using Saucery.Core.OnDemand.Base;
 using Saucery.Core.Util;
 
@@ -10,6 +10,7 @@ public static class PlatformDataClass {
         new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "123"),
         new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_CHROME, "124", SauceryConstants.SCREENRES_2560_1600),
         new DesktopPlatform(SauceryConstants.PLATFORM_LINUX, SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_VERSION_LATEST),
+        new DesktopPlatform(SauceryConstants.PLATFORM_CHROMIUM_OS, SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_VERSION_LATEST),
         new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "100->119", SauceryConstants.SCREENRES_2560_1600),
         new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_VERSION_LATEST, SauceryConstants.SCREENRES_2560_1600),
         new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_81, SauceryConstants.BROWSER_CHROME, "100", SauceryConstants.SCREENRES_800_600),
@@ -43,7 +44,6 @@ public static class PlatformDataClass {
         new AndroidRealDevice("Google Pixel 6a", "12"),
         new AndroidRealDevice("Google Pixel 4a", "11"),
         new AndroidRealDevice("Google Pixel 4 XL", "10"),
-        new AndroidRealDevice("Samsung.*", "9")
     ];
 
     public static List<SaucePlatform> RealIOSDevices =>
@@ -53,6 +53,5 @@ public static class PlatformDataClass {
         new IOSRealDevice("iPhone 14 Pro Max", "16"),
         new IOSRealDevice("iPhone 13 Pro Max", "15"),
         new IOSRealDevice("iPhone 12 Pro Max", "14"),
-        new IOSRealDevice("iPhone.*", "13"),
     ];
 }

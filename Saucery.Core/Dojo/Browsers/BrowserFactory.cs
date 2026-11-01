@@ -1,7 +1,8 @@
-﻿using Saucery.Core.Dojo.Browsers.Base;
+using Saucery.Core.Dojo.Browsers.Base;
 using Saucery.Core.Dojo.Browsers.ConcreteCreators.Apple;
 using Saucery.Core.Dojo.Browsers.ConcreteCreators.Google;
 using Saucery.Core.Dojo.Browsers.ConcreteCreators.Linux;
+using Saucery.Core.Dojo.Browsers.ConcreteCreators.ChromiumOS;
 using Saucery.Core.Dojo.Browsers.ConcreteCreators.PC;
 using Saucery.Core.RestAPI;
 using Saucery.Core.Util;
@@ -19,6 +20,7 @@ public static class BrowserFactory {
                 ? new IOSBrowserCreator(sp).Create(SauceryConstants.PLATFORM_IOS, null!, isArmRequired)
                 : sp.Os switch {
                     SauceryConstants.PLATFORM_LINUX => new LinuxBrowserCreator(sp).Create(SauceryConstants.PLATFORM_LINUX, screenResolutions, isArmRequired),
+                    SauceryConstants.PLATFORM_CHROMIUM_OS => new ChromiumOSBrowserCreator(sp).Create(SauceryConstants.PLATFORM_CHROMIUM_OS, screenResolutions, isArmRequired),
                     SauceryConstants.PLATFORM_WINDOWS_11 => new Windows11BrowserCreator(sp).Create(SauceryConstants.PLATFORM_WINDOWS_11, screenResolutions, isArmRequired),
                     SauceryConstants.PLATFORM_WINDOWS_10 => new Windows10BrowserCreator(sp).Create(SauceryConstants.PLATFORM_WINDOWS_10, screenResolutions, isArmRequired),
                     SauceryConstants.PLATFORM_WINDOWS_81 => new Windows81BrowserCreator(sp).Create("Windows 8.1", screenResolutions, isArmRequired),

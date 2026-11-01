@@ -1,6 +1,7 @@
-﻿using Saucery.Core.Dojo.Platforms.ConcreteProducts.Apple;
+using Saucery.Core.Dojo.Platforms.ConcreteProducts.Apple;
 using Saucery.Core.Dojo.Platforms.ConcreteProducts.Google;
 using Saucery.Core.Dojo.Platforms.ConcreteProducts.Linux;
+using Saucery.Core.Dojo.Platforms.ConcreteProducts.ChromiumOS;
 using Saucery.Core.Dojo.Platforms.ConcreteProducts.PC;
 
 namespace Saucery.Core.Tests.REST.Data;
@@ -10,6 +11,7 @@ public class PlatformTypes {
         Select(
         [
             typeof(LinuxPlatform),
+            typeof(ChromiumOSPlatform),
             typeof(Windows11Platform),
             typeof(Windows10Platform),
             typeof(Windows81Platform),
@@ -66,7 +68,6 @@ public class PlatformTypes {
             typeof(IOS16Platform),
             typeof(IOS15Platform),
             typeof(IOS14Platform),
-            typeof(IOS13Platform),
             typeof(Android17Platform),
             typeof(Android16Platform),
             typeof(Android15Platform),
@@ -74,8 +75,7 @@ public class PlatformTypes {
             typeof(Android13Platform),
             typeof(Android12Platform),
             typeof(Android11Platform),
-            typeof(Android10Platform),
-            typeof(Android9Platform)
+            typeof(Android10Platform)
         ]);
 
     public static IEnumerable<object[]> PlatformsWithBrowsersTypes =>
