@@ -257,3 +257,10 @@ The invariant is now:
 - a plan-only PR caused by obsolete candidates silently falling back to `ManualReview` is no longer possible.
 
 `ManualReview` remains available only for non-obsolete inference paths.
+
+
+## Idempotent obsolete cleanup
+
+Obsolete remediation now supports partially-remediated repositories. Exact `*Platform`, `*PlatformCreator`, and `*BrowserCreator` type identities are still resolved deterministically, but their class files are optional. If a prior run already deleted one of those files, the remediator continues by removing any remaining exact implementation files, stale `BrowserFactory.cs` / `DojoExtensions.cs` declarations, direct type references, and matching test data.
+
+Already-absent implementation files never cause `ManualReview` or block cleanup. Obsolete candidates remain AutoFix-or-fail.

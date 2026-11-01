@@ -5,7 +5,7 @@ namespace Saucery.CoverageGapRemediator;
 
 internal static class Program
 {
-    internal const string Build = "coverage-remediator-v36-obsolete-autofix-or-fail";
+    internal const string Build = "coverage-remediator-v37-idempotent-obsolete-cleanup";
 
     public static async Task<int> Main(string[] args)
     {

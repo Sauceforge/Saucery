@@ -115,10 +115,12 @@ internal sealed class GenericRemediationEngine
 
             var changes = new List<FileChange>
             {
-                new(obsolete.ProductFile, "Delete", $"Delete exact obsolete ConcreteProduct {obsolete.ProductType}."),
                 new("Saucery.Core/Dojo/Browsers/BrowserFactory.cs", "Remove exact declaration", $"Remove exact {d.DisplayName} browser declaration when present."),
                 new("Saucery.Core/Dojo/DojoExtensions.cs", "Remove exact declaration", $"Remove exact {d.DisplayName} Dojo declaration when present.")
             };
+
+            if(obsolete.ProductFile is not null)
+                changes.Add(new(obsolete.ProductFile, "Delete", $"Delete exact obsolete ConcreteProduct {obsolete.ProductType}."));
 
             if(obsolete.CreatorFile is not null)
                 changes.Add(new(obsolete.CreatorFile, "Delete", $"Delete exact obsolete PlatformCreator {obsolete.CreatorType}."));
@@ -126,10 +128,24 @@ internal sealed class GenericRemediationEngine
             if(obsolete.BrowserCreatorFile is not null)
                 changes.Add(new(obsolete.BrowserCreatorFile, "Delete", $"Delete exact obsolete BrowserCreator {obsolete.BrowserCreatorType}."));
 
+            var remainingImplementation = new[]
+            {
+                obsolete.ProductFile is null ? null : obsolete.ProductType,
+                obsolete.CreatorFile is null ? null : obsolete.CreatorType,
+                obsolete.BrowserCreatorFile is null ? null : obsolete.BrowserCreatorType
+            }
+                .Where(type => !string.IsNullOrWhiteSpace(type))
+                .Select(type => type!)
+                .ToArray();
+
+            var implementationSummary = remainingImplementation.Length == 0
+                ? "No implementation class files remain to delete"
+                : $"Delete remaining implementation classes: {string.Join(", ", remainingImplementation)}";
+
             return new(d, RemediationDisposition.AutoFix, "exact-obsolete-type-removal",
-                $"Delete {obsolete.ProductType}{(obsolete.CreatorType is null ? string.Empty : $" and {obsolete.CreatorType}")}{(obsolete.BrowserCreatorType is null ? string.Empty : $" and {obsolete.BrowserCreatorType}")}, remove exact BrowserFactory/DojoExtensions declarations, repair tests, then validate.",
+                $"{implementationSummary}; remove exact BrowserFactory/DojoExtensions declarations, repair tests, then validate.",
                 changes,
-                ["Obsolete removal never uses nearest-version inference or fuzzy repository-wide text matching."]);
+                ["Obsolete cleanup is idempotent: already-removed implementation files do not block removal of remaining declarations or references."]);
         }
 
         PlatformPrototype analogue;
@@ -492,8 +508,8 @@ internal static class ObsoleteDeclarationResolver
 
 internal sealed record ObsoleteTarget(
     string ProductType,
-    string ProductFile,
-    string? CreatorType,
+    string? ProductFile,
+    string CreatorType,
     string? CreatorFile,
     string? BrowserCreatorType,
     string? BrowserCreatorFile);
@@ -508,8 +524,8 @@ internal static class ObsoleteTargetResolver
         {
             return new(
                 string.Empty,
-                string.Empty,
                 null,
+                string.Empty,
                 null,
                 null,
                 null);
@@ -523,7 +539,7 @@ internal static class ObsoleteTargetResolver
             context,
             "/ConcreteProducts/",
             productType,
-            required: true)!;
+            required: false);
 
         var creatorType = productType.EndsWith("Platform", StringComparison.Ordinal)
             ? productType[..^"Platform".Length] + "PlatformCreator"
@@ -534,7 +550,7 @@ internal static class ObsoleteTargetResolver
             context,
             "/ConcreteCreators/",
             creatorType,
-            required: true)!;
+            required: false);
 
         var browserCreatorType = FindBrowserCreatorTypeFromRegistration(
             context,
@@ -546,14 +562,9 @@ internal static class ObsoleteTargetResolver
         {
             browserCreatorFile = FindExactClassFile(
                 context,
-                "/BrowserCreators/",
+                "/Browsers/ConcreteCreators/",
                 browserCreatorType,
-                required: true);
-        }
-        else if(target.Family.Equals("Windows", StringComparison.OrdinalIgnoreCase))
-        {
-            throw new InvalidDataException(
-                $"No BrowserCreator registration was found in BrowserFactory.cs for obsolete platform {target.DisplayName}. Refusing partial remediation.");
+                required: false);
         }
 
         return new(
@@ -712,19 +723,34 @@ internal static class ObsoleteSynthesizer
 
         var obsolete = ObsoleteTargetResolver.Resolve(context, target);
 
-        Console.WriteLine($"    Deleting obsolete ConcreteProduct: {obsolete.ProductFile}");
-        changes.Delete(obsolete.ProductFile);
+        if(obsolete.ProductFile is not null)
+        {
+            Console.WriteLine($"    Deleting obsolete ConcreteProduct: {obsolete.ProductFile}");
+            changes.Delete(obsolete.ProductFile);
+        }
+        else
+        {
+            Console.WriteLine($"    ConcreteProduct already absent: {obsolete.ProductType}");
+        }
 
         if(obsolete.CreatorFile is not null)
         {
             Console.WriteLine($"    Deleting obsolete PlatformCreator: {obsolete.CreatorFile}");
             changes.Delete(obsolete.CreatorFile);
         }
+        else
+        {
+            Console.WriteLine($"    PlatformCreator already absent: {obsolete.CreatorType}");
+        }
 
         if(!string.IsNullOrWhiteSpace(obsolete.BrowserCreatorFile))
         {
             Console.WriteLine($"    Deleting obsolete BrowserCreator: {obsolete.BrowserCreatorFile}");
             changes.Delete(obsolete.BrowserCreatorFile);
+        }
+        else if(!string.IsNullOrWhiteSpace(obsolete.BrowserCreatorType))
+        {
+            Console.WriteLine($"    BrowserCreator already absent: {obsolete.BrowserCreatorType}");
         }
 
         var deletedTypes = new[]
