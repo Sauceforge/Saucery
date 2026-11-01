@@ -183,3 +183,20 @@ For a whole obsolete platform family, remediation deletes the complete dedicated
 It then removes the exact corresponding declarations from `BrowserFactory.cs` and `DojoExtensions.cs`, repairs matching test data/usages, builds the solution, and runs the xUnit.v3 validation suite.
 
 Exact-version declarations that share a major-family implementation (for example `iOS 26.0` sharing `IOS26Platform`) do not delete the shared family classes.
+
+
+## Repository-graph obsolete discovery
+
+Obsolete whole-platform removal no longer guesses implementation class names from version strings.
+
+The resolver follows the repository's actual wiring:
+
+1. Find the exact obsolete registration in `BrowserFactory.cs`.
+2. Read the concrete `*BrowserCreator` type referenced by that registration.
+3. Find the exact obsolete mapping in `DojoExtensions.cs` and read the concrete `*Platform` type.
+4. Resolve the corresponding `*PlatformCreator` through the platform factory wiring.
+5. Delete the discovered `*Platform`, `*PlatformCreator`, and `*BrowserCreator` class files.
+6. Remove the exact BrowserFactory and DojoExtensions registrations.
+7. Repair matching test data and validate the final solution/xUnit.v3 suite.
+
+Exact mobile versions that share a major-family implementation remain declaration-only removals.
