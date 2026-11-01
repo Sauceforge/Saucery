@@ -333,10 +333,13 @@ internal static class ObsoleteSynthesizer
             .Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x!).Distinct(StringComparer.Ordinal).ToArray();
         var constants = DiscoverPrototypeConstants(context, prototype);
 
-        foreach(var relative in EnumerateEditableSourceFiles(context))
+        foreach(var relative in EnumerateRemovalCandidates(context, prototype, target))
         {
             if(ownedFiles.Contains(relative)) continue;
-            var original = File.ReadAllText(context.PathFromRoot(relative));
+            var path = context.PathFromRoot(relative);
+            if(!File.Exists(path)) continue;
+
+            var original = File.ReadAllText(path);
             var edited = RemoveTargetReferences(original, relative, target, symbols, constants);
             if(edited != original) changes.Write(relative, edited);
         }
@@ -349,28 +352,68 @@ internal static class ObsoleteSynthesizer
         RemoveUnusedConstants(context, changes, constants);
     }
 
-    private static IEnumerable<string> EnumerateEditableSourceFiles(RepositoryContext context)
+    private static IEnumerable<string> EnumerateRemovalCandidates(
+        RepositoryContext context,
+        PlatformPrototype prototype,
+        CoverageDiscrepancy target)
+    {
+        var files = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        // Production edits are restricted to files the repository model already identified
+        // as registrations for this exact prototype. Never scan unrelated platform classes.
+        foreach(var registration in prototype.Registrations)
+            files.Add(registration.File);
+
+        if(!string.IsNullOrWhiteSpace(target.EvidenceFile))
+            files.Add(target.EvidenceFile);
+
+        // Tests are data-driven and may not reference the platform product type directly,
+        // so scan all recognized test projects for matching family/version test data.
+        foreach(var root in context.TestRoots.Where(Directory.Exists))
+            foreach(var file in Directory.EnumerateFiles(root, "*.cs", SearchOption.AllDirectories))
+                files.Add(context.Relative(file));
+
+        return files;
+    }
+
+    private static IEnumerable<string> EnumerateAllSourceFiles(RepositoryContext context)
     {
         var roots = new[] { context.Core }.Concat(context.TestRoots);
         return roots.Where(Directory.Exists)
             .SelectMany(root => Directory.EnumerateFiles(root, "*.cs", SearchOption.AllDirectories))
-            .Select(context.Relative).Distinct(StringComparer.OrdinalIgnoreCase);
+            .Select(context.Relative)
+            .Distinct(StringComparer.OrdinalIgnoreCase);
     }
 
-    private static IReadOnlyList<string> DiscoverPrototypeConstants(RepositoryContext context, PlatformPrototype prototype)
+    private static IReadOnlyList<string> DiscoverPrototypeConstants(
+        RepositoryContext context,
+        PlatformPrototype prototype)
     {
         var result = new HashSet<string>(StringComparer.Ordinal);
-        foreach(var relative in new[] { prototype.ProductFile, prototype.CreatorFile, prototype.BrowserCreatorFile }.Where(x => !string.IsNullOrWhiteSpace(x)))
+        var structuralSymbols = new[]
         {
-            var path = context.PathFromRoot(relative!);
-            if(!File.Exists(path)) continue;
-            var text = File.ReadAllText(path);
-            foreach(Match match in Regex.Matches(text, @"SauceryConstants\.(?<name>[A-Z][A-Z0-9_]*)")) result.Add(match.Groups["name"].Value);
+            prototype.ProductType,
+            prototype.CreatorType,
+            prototype.BrowserCreatorType
         }
-        var structuralSymbols = new[] { prototype.ProductType, prototype.CreatorType, prototype.BrowserCreatorType }
-            .Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x!).ToArray();
-        foreach(var registration in prototype.Registrations.Where(r => structuralSymbols.Any(symbol => r.Line.Contains(symbol, StringComparison.Ordinal))))
-            foreach(Match match in Regex.Matches(registration.Line, @"SauceryConstants\.(?<name>[A-Z][A-Z0-9_]*)")) result.Add(match.Groups["name"].Value);
+        .Where(x => !string.IsNullOrWhiteSpace(x))
+        .Select(x => x!)
+        .ToArray();
+
+        foreach(var registration in prototype.Registrations)
+        {
+            if(!structuralSymbols.Any(symbol =>
+                   registration.Line.Contains(symbol, StringComparison.Ordinal)))
+                continue;
+
+            foreach(Match match in Regex.Matches(
+                        registration.Line,
+                        @"SauceryConstants\.(?<name>PLATFORM_[A-Z0-9_]+)"))
+            {
+                result.Add(match.Groups["name"].Value);
+            }
+        }
+
         return result.ToArray();
     }
 
@@ -487,7 +530,7 @@ internal static class ObsoleteSynthesizer
 
     private static bool HasExternalReferences(RepositoryContext context, IReadOnlySet<string> ownedFiles, IReadOnlyList<string> symbols)
     {
-        foreach(var relative in EnumerateEditableSourceFiles(context))
+        foreach(var relative in EnumerateAllSourceFiles(context))
         {
             if(ownedFiles.Contains(relative)) continue;
             var text = File.ReadAllText(context.PathFromRoot(relative));
@@ -516,7 +559,7 @@ internal static class ObsoleteSynthesizer
 
     private static bool IsConstantReferencedElsewhere(RepositoryContext context, string constantsFile, string constant)
     {
-        foreach(var relative in EnumerateEditableSourceFiles(context))
+        foreach(var relative in EnumerateAllSourceFiles(context))
         {
             if(relative.Equals(constantsFile, StringComparison.OrdinalIgnoreCase)) continue;
             var text = File.ReadAllText(context.PathFromRoot(relative));

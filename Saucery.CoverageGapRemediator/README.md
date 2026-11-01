@@ -69,3 +69,10 @@ When a platform remediation is inferred from an existing analogue, equivalent te
 ## Obsolete removal safety
 
 Obsolete remediation removes matching registrations first and never line-edits owned platform/creator class declarations. Product/creator files are deleted only when no surviving source or test project references their declared symbols. Shared platform slices, such as an exact simulator version whose major real-device family is still supported, remain intact.
+
+
+## Obsolete-removal safety
+
+Production-code removal is scoped to registration files structurally associated with the obsolete platform. The remediator does not scan or line-edit unrelated platform product/creator classes.
+
+Only `PLATFORM_*` identity constants found in structural registrations are considered platform-owned. Shared browser, screen-resolution, timeout, and capability constants are never inferred as owned by a platform merely because its product class references them.
