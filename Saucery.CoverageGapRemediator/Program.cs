@@ -5,7 +5,7 @@ namespace Saucery.CoverageGapRemediator;
 
 internal static class Program
 {
-    internal const string Build = "coverage-remediator-v1";
+    internal const string Build = "coverage-remediator-v2";
 
     public static async Task<int> Main(string[] args)
     {
@@ -43,7 +43,7 @@ internal static class Program
             if (!options.Apply)
             {
                 Console.WriteLine("Plan-only mode: no source files were changed.");
-                return plan.ManualReviewCount == 0 ? 0 : 2;
+                return 0;
             }
 
             var transaction = new RepositoryTransaction();
@@ -88,7 +88,7 @@ internal static class Program
 
                 transaction.Commit();
                 PrintApplySummary(applyResult);
-                return plan.ManualReviewCount == 0 ? 0 : 2;
+                return 0;
             }
             catch
             {

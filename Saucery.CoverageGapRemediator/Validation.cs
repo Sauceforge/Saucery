@@ -48,12 +48,18 @@ internal sealed class RepositoryValidator
             return new ValidationResult(true, messages);
         }
 
+        var reportPath = Path.Combine(context.Root, "saucery-functional-platform-coverage-gaps.txt");
         var reporter = await ProcessRunner.RunAsync(
             "dotnet",
             [
                 "run",
                 "--project", Path.Combine("Saucery.CoverageGapReporter", "Saucery.CoverageGapReporter.csproj"),
-                "-c", "Release"
+                "--configuration", "Release",
+                "--",
+                "--repo-root", context.Root,
+                "--output", reportPath,
+                "--region", "us-west-1",
+                "--include-real", "true"
             ],
             context.Root);
 
@@ -64,7 +70,6 @@ internal sealed class RepositoryValidator
             return new ValidationResult(false, messages);
         }
 
-        var reportPath = Path.Combine(context.Root, "saucery-functional-platform-coverage-gaps.txt");
         if (!File.Exists(reportPath))
         {
             messages.Add("Reporter completed but the expected report file was not produced.");
