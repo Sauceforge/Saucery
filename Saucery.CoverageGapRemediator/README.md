@@ -155,3 +155,31 @@ Validation fails immediately if output contains any of:
 - an individual `failed Saucery.Core.Tests.XUnitv3...` result
 
 Only after confirming that the output contains no failed tests may an exit code of zero be treated as PASS. This prevents a successful `dotnet run` process code from masking failed xUnit.v3 tests.
+
+
+## Internally consistent obsolete remediation
+
+Obsolete remediation now updates the complete platform declaration surface:
+
+- deletes the exact obsolete `ConcreteProduct` when the whole platform family is obsolete;
+- deletes the matching `PlatformCreator`;
+- removes exact obsolete declarations from `Saucery.Core/Dojo/Browsers/BrowserFactory.cs`;
+- removes exact obsolete declarations from `Saucery.Core/Dojo/DojoExtensions.cs`;
+- repairs matching data/usages in both Core test suites;
+- preserves generic `PlatformExpansionTests` cardinality by retargeting generic fixtures instead of deleting them;
+- validates the resulting solution and xUnit.v3 suite.
+
+Exact mobile versions that share a major-family implementation are handled specially. For example, an obsolete `iOS 26.0` declaration does not delete a shared `IOS26Platform` used for `iOS 26.x`; only the exact `26.0` declaration/test data is removed.
+
+
+## Complete obsolete implementation slice
+
+For a whole obsolete platform family, remediation deletes the complete dedicated implementation slice when those classes exist:
+
+- `*Platform`
+- `*PlatformCreator`
+- `*BrowserCreator`
+
+It then removes the exact corresponding declarations from `BrowserFactory.cs` and `DojoExtensions.cs`, repairs matching test data/usages, builds the solution, and runs the xUnit.v3 validation suite.
+
+Exact-version declarations that share a major-family implementation (for example `iOS 26.0` sharing `IOS26Platform`) do not delete the shared family classes.

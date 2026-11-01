@@ -75,24 +75,40 @@ internal sealed class GenericRemediationEngine
         {
             try
             {
+                if(ObsoleteDeclarationResolver.IsDeclarationOnlyExactVersion(context, d))
+                {
+                    return new(d, RemediationDisposition.AutoFix, "exact-obsolete-declaration-removal",
+                        $"Remove only the exact {d.DisplayName} declarations from BrowserFactory/DojoExtensions and matching unit-test data. Shared major-family product/creator implementations are preserved.",
+                        [
+                            new("Saucery.Core/Dojo/Browsers/BrowserFactory.cs", "Remove exact declaration", $"Remove exact {d.DisplayName} browser declaration when present."),
+                            new("Saucery.Core/Dojo/DojoExtensions.cs", "Remove exact declaration", $"Remove exact {d.DisplayName} Dojo declaration when present.")
+                        ],
+                        ["Exact-version cleanup never deletes a shared major-family ConcreteProduct or PlatformCreator."]);
+                }
+
                 var obsolete = ObsoleteTargetResolver.Resolve(context, d);
                 var changes = new List<FileChange>
                 {
-                    new(obsolete.ProductFile, "Delete", $"Delete exact obsolete ConcreteProduct {obsolete.ProductType}.")
+                    new(obsolete.ProductFile, "Delete", $"Delete exact obsolete ConcreteProduct {obsolete.ProductType}."),
+                    new("Saucery.Core/Dojo/Browsers/BrowserFactory.cs", "Remove exact declaration", $"Remove exact {d.DisplayName} browser declaration when present."),
+                    new("Saucery.Core/Dojo/DojoExtensions.cs", "Remove exact declaration", $"Remove exact {d.DisplayName} Dojo declaration when present.")
                 };
 
                 if(obsolete.CreatorFile is not null)
                     changes.Add(new(obsolete.CreatorFile, "Delete", $"Delete exact obsolete PlatformCreator {obsolete.CreatorType}."));
 
+                if(obsolete.BrowserCreatorFile is not null)
+                    changes.Add(new(obsolete.BrowserCreatorFile, "Delete", $"Delete exact obsolete BrowserCreator {obsolete.BrowserCreatorType}."));
+
                 return new(d, RemediationDisposition.AutoFix, "exact-obsolete-type-removal",
-                    $"Delete {obsolete.ProductType}{(obsolete.CreatorType is null ? string.Empty : $" and {obsolete.CreatorType}")}, then remove only exact identifier references required for compilation.",
+                    $"Delete {obsolete.ProductType}{(obsolete.CreatorType is null ? string.Empty : $" and {obsolete.CreatorType}")}{(obsolete.BrowserCreatorType is null ? string.Empty : $" and {obsolete.BrowserCreatorType}")}, remove exact BrowserFactory/DojoExtensions declarations, repair tests, then validate.",
                     changes,
-                    ["Obsolete removal never uses nearest-version inference or fuzzy text matching."]);
+                    ["Obsolete removal never uses nearest-version inference or fuzzy repository-wide text matching."]);
             }
             catch(Exception ex)
             {
                 return new(d, RemediationDisposition.ManualReview, "exact-obsolete-type-removal",
-                    "The exact obsolete ConcreteProduct/PlatformCreator pair could not be resolved safely.",
+                    "The obsolete platform could not be resolved safely.",
                     Array.Empty<FileChange>(), [ex.Message]);
             }
         }
@@ -343,11 +359,64 @@ internal static class MissingSynthesizer
     private static string Major(string version) => Regex.Match(version, @"^\d+").Value;
 }
 
+internal static class ObsoleteDeclarationResolver
+{
+    public static bool IsDeclarationOnlyExactVersion(
+        RepositoryContext context,
+        CoverageDiscrepancy target)
+    {
+        if(target.Kind != PlatformRequirementKind.MobileExactVersion)
+            return false;
+
+        var version = target.Version ?? string.Empty;
+        if(!Regex.IsMatch(version, @"^\d+\.\d+$"))
+            return false;
+
+        var digits = Regex.Replace(version, @"\D", "");
+        var major = Regex.Match(version, @"^\d+").Value;
+
+        if(string.IsNullOrWhiteSpace(digits) || string.IsNullOrWhiteSpace(major))
+            return false;
+
+        var prefix = target.Family.Equals("iOS", StringComparison.OrdinalIgnoreCase)
+            ? "IOS"
+            : target.Family.Equals("Android", StringComparison.OrdinalIgnoreCase)
+                ? "Android"
+                : null;
+
+        if(prefix is null)
+            return false;
+
+        var exactType = $"{prefix}{digits}Platform";
+        var majorType = $"{prefix}{major}Platform";
+
+        var exactExists = HasClass(context, "/ConcreteProducts/", exactType);
+        var majorExists = HasClass(context, "/ConcreteProducts/", majorType);
+
+        // Example: iOS 26.0 has no IOS260Platform, but IOS26Platform exists for
+        // the 26.x family. That means only the exact 26.0 declaration is obsolete.
+        return !exactExists && majorExists;
+    }
+
+    private static bool HasClass(
+        RepositoryContext context,
+        string requiredPathSegment,
+        string typeName) =>
+        Directory.EnumerateFiles(context.Core, "*.cs", SearchOption.AllDirectories)
+            .Where(file => file.Replace('\\', '/')
+                .Contains(requiredPathSegment, StringComparison.OrdinalIgnoreCase))
+            .Any(file => Regex.IsMatch(
+                File.ReadAllText(file),
+                $@"\bclass\s+{Regex.Escape(typeName)}\b"));
+}
+
 internal sealed record ObsoleteTarget(
     string ProductType,
     string ProductFile,
     string? CreatorType,
-    string? CreatorFile);
+    string? CreatorFile,
+    string? BrowserCreatorType,
+    string? BrowserCreatorFile);
 
 internal static class ObsoleteTargetResolver
 {
@@ -368,11 +437,22 @@ internal static class ObsoleteTargetResolver
             creatorType,
             required: false);
 
+        var browserCreatorType = BuildBrowserCreatorType(target);
+        var browserCreatorFile = browserCreatorType is null
+            ? null
+            : FindExactClassFile(
+                context,
+                "/BrowserCreators/",
+                browserCreatorType,
+                required: false);
+
         return new(
             productType,
             productFile,
             creatorFile is null ? null : creatorType,
-            creatorFile);
+            creatorFile,
+            browserCreatorFile is null ? null : browserCreatorType,
+            browserCreatorFile);
     }
 
     private static string BuildProductType(CoverageDiscrepancy target)
@@ -419,6 +499,36 @@ internal static class ObsoleteTargetResolver
             : $"{family}{digits}Platform";
     }
 
+    private static string? BuildBrowserCreatorType(CoverageDiscrepancy target)
+    {
+        var version = target.Version ?? string.Empty;
+        var major = Regex.Match(version, @"^\d+").Value;
+        var digits = Regex.Replace(version, @"\D", "");
+
+        if(target.Family.Equals("Windows", StringComparison.OrdinalIgnoreCase))
+        {
+            if(string.IsNullOrWhiteSpace(digits))
+                return null;
+            return $"Windows{digits}BrowserCreator";
+        }
+
+        if(target.Family.Equals("iOS", StringComparison.OrdinalIgnoreCase))
+        {
+            if(string.IsNullOrWhiteSpace(major))
+                return null;
+            return $"IOS{major}BrowserCreator";
+        }
+
+        if(target.Family.Equals("Android", StringComparison.OrdinalIgnoreCase))
+        {
+            if(string.IsNullOrWhiteSpace(major))
+                return null;
+            return $"Android{major}BrowserCreator";
+        }
+
+        return null;
+    }
+
     private static string? FindExactClassFile(
         RepositoryContext context,
         string requiredPathSegment,
@@ -457,6 +567,14 @@ internal static class ObsoleteSynthesizer
     {
         _ = model;
 
+        if(ObsoleteDeclarationResolver.IsDeclarationOnlyExactVersion(context, target))
+        {
+            Console.WriteLine($"    Preserving shared major-family product/creator for exact obsolete version: {target.DisplayName}");
+            RemoveExactPlatformDeclarations(context, changes, target);
+            RemoveObsoleteUnitTestData(context, changes, target, Array.Empty<string>());
+            return;
+        }
+
         var obsolete = ObsoleteTargetResolver.Resolve(context, target);
 
         Console.WriteLine($"    Deleting obsolete ConcreteProduct: {obsolete.ProductFile}");
@@ -468,24 +586,150 @@ internal static class ObsoleteSynthesizer
             changes.Delete(obsolete.CreatorFile);
         }
 
-        var deletedTypes = new[] { obsolete.ProductType, obsolete.CreatorType }
+        if(obsolete.BrowserCreatorFile is not null)
+        {
+            Console.WriteLine($"    Deleting obsolete BrowserCreator: {obsolete.BrowserCreatorFile}");
+            changes.Delete(obsolete.BrowserCreatorFile);
+        }
+
+        var deletedTypes = new[]
+            {
+                obsolete.ProductType,
+                obsolete.CreatorType,
+                obsolete.BrowserCreatorType
+            }
             .Where(type => !string.IsNullOrWhiteSpace(type))
             .Select(type => type!)
             .ToArray();
 
-        var deletedFiles = new[] { obsolete.ProductFile, obsolete.CreatorFile }
+        var deletedFiles = new[]
+            {
+                obsolete.ProductFile,
+                obsolete.CreatorFile,
+                obsolete.BrowserCreatorFile
+            }
             .Where(file => !string.IsNullOrWhiteSpace(file))
             .Select(file => file!)
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-        // Production code is repaired only by removing exact references to the deleted
-        // product/creator types. No platform-name or version fuzzy matching is used.
         RemoveExactTypeReferences(context, changes, deletedTypes, deletedFiles);
 
-        // Unit-test data can refer to a platform through the platform constant rather than
-        // the deleted concrete type. Remove only exact obsolete-platform test rows and then
-        // update the corresponding count assertion in that same test project.
+        // Keep the repository's declaration surface internally consistent with the
+        // deleted implementation.
+        RemoveExactPlatformDeclarations(context, changes, target);
+
         RemoveObsoleteUnitTestData(context, changes, target, deletedTypes);
+    }
+
+    private static void RemoveExactPlatformDeclarations(
+        RepositoryContext context,
+        ChangeCollector changes,
+        CoverageDiscrepancy target)
+    {
+        var files = new[]
+        {
+            "Saucery.Core/Dojo/Browsers/BrowserFactory.cs",
+            "Saucery.Core/Dojo/DojoExtensions.cs"
+        };
+
+        foreach(var relative in files)
+        {
+            var path = context.PathFromRoot(relative);
+            if(!File.Exists(path))
+                continue;
+
+            var source = changes.Read(relative);
+            var lines = source.Replace("\r\n", "\n", StringComparison.Ordinal).Split('\n').ToList();
+            var changed = false;
+
+            for(var i = lines.Count - 1; i >= 0; i--)
+            {
+                var line = lines[i];
+                if(!IsExactPlatformDeclarationLine(line, target))
+                    continue;
+
+                var candidate = new List<string>(lines);
+                candidate.RemoveAt(i);
+                var candidateText = string.Join(Environment.NewLine, candidate);
+
+                try
+                {
+                    CSharpGuard.AssertValid(candidateText, path);
+                }
+                catch(InvalidDataException)
+                {
+                    throw new InvalidDataException(
+                        $"Exact obsolete declaration for {target.DisplayName} was found in {relative}, but removing its line would make the file syntactically invalid. Refusing broader cleanup.");
+                }
+
+                Console.WriteLine(
+                    $"    Removing exact obsolete declaration from {relative}: {line.Trim()}");
+
+                lines = candidate;
+                changed = true;
+            }
+
+            if(changed)
+                changes.Write(relative, string.Join(Environment.NewLine, lines));
+        }
+    }
+
+    private static bool IsExactPlatformDeclarationLine(
+        string line,
+        CoverageDiscrepancy target)
+    {
+        if(string.IsNullOrWhiteSpace(line))
+            return false;
+
+        var identity = ExactPlatformIdentity(target);
+        if(!string.IsNullOrWhiteSpace(identity) &&
+           ContainsExactIdentifier(line, identity))
+            return true;
+
+        var version = target.Version ?? string.Empty;
+
+        if(target.Family.Equals("iOS", StringComparison.OrdinalIgnoreCase))
+        {
+            if(Regex.IsMatch(version, @"^\d+\.\d+$"))
+            {
+                // Exact version: match only the exact literal, e.g. 26.0.
+                return Regex.IsMatch(
+                    line,
+                    $@"[""'](?:iOS\s+)?{Regex.Escape(version)}[""']",
+                    RegexOptions.IgnoreCase);
+            }
+
+            var major = Regex.Match(version, @"^\d+").Value;
+            if(!string.IsNullOrWhiteSpace(major))
+            {
+                return Regex.IsMatch(
+                    line,
+                    $@"[""']iOS\s+{Regex.Escape(major)}[""']",
+                    RegexOptions.IgnoreCase);
+            }
+        }
+
+        if(target.Family.Equals("Android", StringComparison.OrdinalIgnoreCase))
+        {
+            if(Regex.IsMatch(version, @"^\d+\.\d+$"))
+            {
+                return Regex.IsMatch(
+                    line,
+                    $@"[""'](?:Android\s+)?{Regex.Escape(version)}[""']",
+                    RegexOptions.IgnoreCase);
+            }
+
+            var major = Regex.Match(version, @"^\d+").Value;
+            if(!string.IsNullOrWhiteSpace(major))
+            {
+                return Regex.IsMatch(
+                    line,
+                    $@"[""']Android\s+{Regex.Escape(major)}[""']",
+                    RegexOptions.IgnoreCase);
+            }
+        }
+
+        return false;
     }
 
     private static void RemoveExactTypeReferences(
@@ -675,6 +919,14 @@ internal static class ObsoleteSynthesizer
            (line.Contains("new IOSPlatform(", StringComparison.Ordinal) ||
             line.Contains("new IOSRealDevice(", StringComparison.Ordinal)))
         {
+            if(Regex.IsMatch(version, @"^\d+\.\d+$"))
+            {
+                return Regex.IsMatch(
+                    line,
+                    $@"[""']{Regex.Escape(version)}[""']",
+                    RegexOptions.IgnoreCase);
+            }
+
             return Regex.IsMatch(
                 line,
                 $@"[""']{Regex.Escape(major)}(?:\.\d+|\.x)?[""']",
@@ -686,6 +938,14 @@ internal static class ObsoleteSynthesizer
            (line.Contains("new AndroidPlatform(", StringComparison.Ordinal) ||
             line.Contains("new AndroidRealDevice(", StringComparison.Ordinal)))
         {
+            if(Regex.IsMatch(version, @"^\d+\.\d+$"))
+            {
+                return Regex.IsMatch(
+                    line,
+                    $@"[""']{Regex.Escape(version)}[""']",
+                    RegexOptions.IgnoreCase);
+            }
+
             return Regex.IsMatch(
                 line,
                 $@"[""']{Regex.Escape(major)}(?:\.\d+|\.x)?[""']",
