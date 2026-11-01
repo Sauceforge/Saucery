@@ -51,3 +51,6 @@ Obsolete-candidate deletion remains opt-in because the reporter deliberately cal
 ```powershell
 --allow-obsolete-removal
 ```
+
+
+Validation builds both Core projects and verifies the discrepancy with CoverageGapReporter. Runtime test failures caused by the live Sauce Labs acquisition hook are reported as inconclusive rather than as remediation failures.

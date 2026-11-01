@@ -78,7 +78,10 @@ jobs:
           --apply
 
       - name: Show resulting changes
-        run: git diff --stat && git diff
+        run: |
+          git status --short
+          git diff --stat
+          git diff
 
       - name: Check whether source changed
         id: changes
@@ -106,12 +109,12 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add \
-            Saucery.Core \
-            Saucery.Core.Tests \
-            saucery-functional-platform-coverage-gaps.txt \
-            saucery-platform-remediation-plan.json \
-            saucery-platform-remediation-plan.md
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "No staged changes to commit."
+            exit 0
+          fi
 
           git commit -m "fix: align Saucery platform coverage with Sauce Labs"
 
@@ -135,9 +138,9 @@ jobs:
 
           The workflow:
           - generated the current Sauce Labs platform coverage report
-          - applied supported deterministic remediations
-          - ran the remediator validation process
-          - produced remediation plan artifacts
+          - applied inferred remediations
+          - validated the generated Core and test projects
+          - reran the coverage reporter
 
           Review the generated source and test changes before merging."
 

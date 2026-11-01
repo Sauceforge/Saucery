@@ -6,6 +6,7 @@
   <Folder Name="/Solution Items/">
     <File Path=".github/workflows/core-pipeline.yml" />
     <File Path="Delete-AllErroredSauceJobs.ps1" />
+    <File Path=".github/workflows/coverage-gap-remediation.yml" />
     <File Path=".github/workflows/delete-sauce-errored-jobs.yml" />
     <File Path=".github/dependabot.yml" />
     <File Path=".github/workflows/json-yaml-validate.yml" />
