@@ -64,19 +64,32 @@ internal sealed class RepositoryValidator
             }
 
             var after = await CoverageReportReader.ReadAsync(reportPath);
+
+            var reporterVerifiedTargets = targets
+                .Where(t => t.Type == DiscrepancyType.Missing)
+                .ToArray();
+
             var remaining = after
-                .Where(a => targets.Any(t => Equivalent(t, a)))
+                .Where(a => reporterVerifiedTargets.Any(t => Equivalent(t, a)))
                 .DistinctBy(a => a.Identity)
                 .ToArray();
 
             if(remaining.Length > 0)
             {
-                messages.Add($"Reporter verification: {remaining.Length} targeted discrepancy(s) remain; another synthesis pass will be attempted.");
+                messages.Add($"Reporter verification: {remaining.Length} missing-platform discrepancy(s) remain; another synthesis pass will be attempted.");
                 messages.AddRange(remaining.Select(x => $"  - {x.Type}: {x.DisplayName}"));
                 return new(false, messages, remaining);
             }
 
-            messages.Add("Reporter verification: PASS. All targeted discrepancies disappeared.");
+            var obsoleteTargets = targets
+                .Where(t => t.Type == DiscrepancyType.ObsoleteCandidate)
+                .ToArray();
+
+            if(reporterVerifiedTargets.Length > 0)
+                messages.Add("Reporter verification: PASS. All targeted missing-platform discrepancies disappeared.");
+
+            if(obsoleteTargets.Length > 0)
+                messages.Add($"Reporter verification: {obsoleteTargets.Length} obsolete candidate(s) are compile-validated only and will not be retried based on reporter output.");
         }
         else
         {
@@ -101,7 +114,7 @@ internal sealed class RepositoryValidator
             {
                 messages.Add($"Run {relativeProject}: INCONCLUSIVE");
                 messages.Add("  The test process reached the live Sauce Labs platform acquisition hook and failed before test execution because the external API response could not be deserialized.");
-                messages.Add("  This is treated as an external integration failure, not as a remediation failure. All Core/test projects built successfully and the coverage reporter verified the targeted discrepancy is gone.");
+                messages.Add("  This is treated as an external integration failure, not as a remediation failure. All Core/test projects built successfully and any missing-platform targets were verified by the coverage reporter.");
                 continue;
             }
 

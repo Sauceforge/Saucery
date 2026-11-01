@@ -75,12 +75,14 @@ Obsolete remediation removes matching registrations first and never line-edits o
 
 Obsolete removal is deterministic and does not use nearest-version inference.
 
-The discrepancy is converted directly to the expected implementation type. Examples:
+Examples:
 
 - `iOS 13.x` -> `IOS13Platform` and `IOS13PlatformCreator`
 - `Windows 8` -> `Windows8Platform` and `Windows8PlatformCreator`
 - `Windows 8.1` -> `Windows81Platform` and `Windows81PlatformCreator`
 
-The remediator locates the exact class declarations under `ConcreteProducts` and `ConcreteCreators`, deletes those files, and then removes only source lines that contain an exact C# identifier reference to one of those deleted types and remain syntactically valid after removal.
+The remediator deletes the exact `ConcreteProduct` and `PlatformCreator`, removes only exact C# identifier references to those deleted types that are required for the code to remain valid, and then validates by compiling Core and all discovered Core test projects.
 
-It does not fuzzy-match version names, constants, browser names, resolutions, or unrelated platform text. The normal build/validation stage is the final safety gate.
+Reporter disappearance is **not** a success criterion for obsolete candidates. The coverage reporter may continue to see legacy constants or metadata after the implementation classes have been removed. Obsolete candidates are complete once the exact implementation pair is removed and the solution compiles/tests successfully.
+
+Reporter disappearance remains the success criterion for `Missing` discrepancies.
