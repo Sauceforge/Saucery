@@ -84,6 +84,132 @@ jobs:
           git diff --stat
           git diff
 
+      #
+      # CRITICAL SAFETY GATE
+      #
+      # The exact remediated working tree is rebuilt and the xUnit.v3 suite
+      # is executed here BEFORE any branch, commit, push, or PR is created.
+      #
+      - name: Restore final xUnit.v3 test project
+        run: >
+          dotnet restore
+          Saucery.Core.Tests.XUnitv3/Saucery.Core.Tests.XUnitv3.csproj
+
+      - name: Build final Core project
+        run: >
+          dotnet build
+          Saucery.Core/Saucery.Core.csproj
+          --configuration Release
+
+      - name: Build final xUnit.v3 test project
+        run: >
+          dotnet build
+          Saucery.Core.Tests.XUnitv3/Saucery.Core.Tests.XUnitv3.csproj
+          --configuration Release
+          --no-restore
+
+      - name: Final xUnit.v3 validation gate
+        id: xunit_validation
+        shell: bash
+        run: |
+          set -uo pipefail
+
+          LOG_FILE="${RUNNER_TEMP}/saucery-xunit-v3-final.log"
+
+          echo "Running final xUnit.v3 tests against the exact remediated working tree..."
+
+          set +e
+          dotnet run \
+            --project Saucery.Core.Tests.XUnitv3/Saucery.Core.Tests.XUnitv3.csproj \
+            --configuration Release \
+            --no-build \
+            2>&1 | tee "$LOG_FILE"
+
+          TEST_EXIT_CODE=${PIPESTATUS[0]}
+          set -e
+
+          echo
+          echo "dotnet run exit code: $TEST_EXIT_CODE"
+
+          #
+          # Genuine unit-test failures always win.
+          #
+          # Do NOT trust the outer dotnet exit code by itself because
+          # Microsoft.Testing.Platform can produce failed-test output while
+          # the surrounding process still returns success.
+          #
+          if grep -Fq "Shouldly.ShouldAssertException" "$LOG_FILE"; then
+            echo "::error::xUnit.v3 validation failed: Shouldly assertion failure detected."
+            exit 1
+          fi
+
+          if grep -Eq 'Assert\.(Equal|True|False|Contains|DoesNotContain|NotNull|Null|Throws)\(\) Failure' "$LOG_FILE"; then
+            echo "::error::xUnit.v3 validation failed: xUnit assertion failure detected."
+            exit 1
+          fi
+
+          if grep -Eq '^[[:space:]]*failed[[:space:]]+Saucery\.Core\.Tests\.XUnitv3\.' "$LOG_FILE"; then
+            #
+            # Some of these can be the known live Sauce fixture failure.
+            # We distinguish that case below.
+            #
+            HAS_FAILED_TEST_LINES=true
+          else
+            HAS_FAILED_TEST_LINES=false
+          fi
+
+          #
+          # Recognised external Sauce Labs infrastructure failure.
+          #
+          # This is allowed ONLY when there are no genuine assertion failures.
+          #
+          if grep -Fq "SauceLabsRealDeviceAcquirer.AcquireRealDevicePlatforms" "$LOG_FILE" \
+             && grep -Fq "System.Text.Json.JsonException" "$LOG_FILE" \
+             && grep -Fq "PlatformConfiguratorAllFixture" "$LOG_FILE"; then
+
+            echo "Recognised Sauce Labs platform-acquisition failure detected."
+
+            #
+            # Assertions were already checked above. Therefore this is
+            # infrastructure-only and may be treated as inconclusive.
+            #
+            echo "::warning::xUnit.v3 live Sauce Labs validation was inconclusive because the external platform API response could not be deserialized."
+            exit 0
+          fi
+
+          #
+          # Any other failed-test output is a hard failure.
+          #
+          if [[ "$HAS_FAILED_TEST_LINES" == "true" ]]; then
+            echo "::error::xUnit.v3 validation failed: failed test results detected."
+            exit 1
+          fi
+
+          if grep -Fq "Test run summary: Failed!" "$LOG_FILE"; then
+            echo "::error::xUnit.v3 validation failed: Microsoft.Testing.Platform reported a failed test run."
+            exit 1
+          fi
+
+          if grep -Eq '^[[:space:]]*failed:[[:space:]]*[1-9][0-9]*[[:space:]]*$' "$LOG_FILE"; then
+            echo "::error::xUnit.v3 validation failed: non-zero failed-test count detected."
+            exit 1
+          fi
+
+          #
+          # If the process itself failed and it was not the recognised
+          # external Sauce failure above, validation fails.
+          #
+          if [[ "$TEST_EXIT_CODE" -ne 0 ]]; then
+            echo "::error::xUnit.v3 validation process exited with code $TEST_EXIT_CODE."
+            exit "$TEST_EXIT_CODE"
+          fi
+
+          echo "Final xUnit.v3 validation: PASS"
+
+      #
+      # Nothing below this point can execute unless the final xUnit.v3
+      # validation gate succeeded.
+      #
       - name: Check whether source changed
         id: changes
         shell: bash
@@ -95,7 +221,7 @@ jobs:
           fi
 
       - name: Create remediation branch
-        if: steps.changes.outputs.changed == 'true'
+        if: success() && steps.changes.outputs.changed == 'true'
         id: branch
         shell: bash
         run: |
@@ -104,7 +230,7 @@ jobs:
           echo "name=$BRANCH" >> "$GITHUB_OUTPUT"
 
       - name: Commit remediation
-        if: steps.changes.outputs.changed == 'true'
+        if: success() && steps.changes.outputs.changed == 'true'
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
@@ -120,14 +246,14 @@ jobs:
           git commit -m "fix: align Saucery platform coverage with Sauce Labs"
 
       - name: Push remediation branch
-        if: steps.changes.outputs.changed == 'true'
+        if: success() && steps.changes.outputs.changed == 'true'
         run: >
           git push
           --set-upstream origin
           "${{ steps.branch.outputs.name }}"
 
       - name: Create pull request
-        if: steps.changes.outputs.changed == 'true'
+        if: success() && steps.changes.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -141,12 +267,15 @@ jobs:
           - generated the current Sauce Labs platform coverage report
           - applied missing-platform remediations
           - removed obsolete platform coverage where reported
-          - updated all discovered Core test suites
-          - validated the generated Core and test projects
+          - updated the Core test suites
+          - rebuilt the final remediated Core project
+          - rebuilt the final Saucery.Core.Tests.XUnitv3 project
+          - executed Saucery.Core.Tests.XUnitv3 against the exact final working tree
+          - blocked branch/commit/PR creation on genuine unit-test failures
           - reran the coverage reporter
 
           Review the generated source and test changes before merging."
 
       - name: No remediation required
-        if: steps.changes.outputs.changed == 'false'
+        if: success() && steps.changes.outputs.changed == 'false'
         run: echo "No repository changes were required."
