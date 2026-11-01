@@ -1,86 +1,8 @@
 {
   "repositoryRoot": "/home/runner/work/Saucery/Saucery",
   "reportPath": "/home/runner/work/Saucery/Saucery/saucery-functional-platform-coverage-gaps.txt",
-  "generatedUtc": "2026-11-01T06:30:10.3929327+00:00",
+  "generatedUtc": "2026-11-01T07:13:08.6285754+00:00",
   "items": [
-    {
-      "discrepancy": {
-        "type": 0,
-        "family": "ChromiumOS",
-        "kind": 0,
-        "displayName": "ChromiumOS",
-        "version": "",
-        "sauceConfigurationCount": 2,
-        "representativeDevices": [
-          "Google Chrome"
-        ],
-        "evidenceFile": null,
-        "evidence": null
-      },
-      "disposition": 0,
-      "strategy": "repository-inference",
-      "summary": "Infer remediation from repository analogue LinuxPlatform (Linux ). No platform-specific remediation class is used.",
-      "plannedChanges": [
-        {
-          "path": "Saucery.Core/Dojo/Platforms/ConcreteProducts/Linux/LinuxPlatform.cs",
-          "changeType": "Clone/transform",
-          "description": "Use LinuxPlatform as the structural product analogue."
-        },
-        {
-          "path": "Saucery.Core/Dojo/Platforms/ConcreteCreators/Linux/LinuxPlatformCreator.cs",
-          "changeType": "Clone/transform",
-          "description": "Use LinuxPlatformCreator as the creator analogue."
-        },
-        {
-          "path": "Saucery.Core/Dojo/Browsers/ConcreteCreators/Linux/LinuxBrowserCreator.cs",
-          "changeType": "Clone/transform",
-          "description": "Use LinuxBrowserCreator as the browser-creator analogue."
-        },
-        {
-          "path": "Saucery.Core/Dojo/PlatformConfigurator.cs",
-          "changeType": "Infer registration",
-          "description": "Transform an analogous registration/test line when semantically applicable."
-        },
-        {
-          "path": "Saucery.Core/Dojo/DojoExtensions.cs",
-          "changeType": "Infer registration",
-          "description": "Transform an analogous registration/test line when semantically applicable."
-        },
-        {
-          "path": "Saucery.Core/Dojo/Browsers/BrowserFactory.cs",
-          "changeType": "Infer registration",
-          "description": "Transform an analogous registration/test line when semantically applicable."
-        },
-        {
-          "path": "Saucery.Core/Dojo/Platforms/DesktopPlatformFactory.cs",
-          "changeType": "Infer registration",
-          "description": "Transform an analogous registration/test line when semantically applicable."
-        },
-        {
-          "path": "Saucery.Core.Tests/DesktopFactoryVersionTests.cs",
-          "changeType": "Infer registration",
-          "description": "Transform an analogous registration/test line when semantically applicable."
-        },
-        {
-          "path": "Saucery.Core.Tests/DataProviders/PlatformDataClass.cs",
-          "changeType": "Infer registration",
-          "description": "Transform an analogous registration/test line when semantically applicable."
-        },
-        {
-          "path": "Saucery.Core.Tests/REST/Data/PlatformTypes.cs",
-          "changeType": "Infer registration",
-          "description": "Transform an analogous registration/test line when semantically applicable."
-        },
-        {
-          "path": "Saucery.Core/Dojo/PlatformConfigurator.cs",
-          "changeType": "Infer helper",
-          "description": "Clone a family-specific helper when a new family requires one."
-        }
-      ],
-      "warnings": [
-        "All generated C# is syntax-checked; source changes are retained only after build, tests, and reporter verification pass."
-      ]
-    },
     {
       "discrepancy": {
         "type": 1,
@@ -91,7 +13,7 @@
         "sauceConfigurationCount": 0,
         "representativeDevices": null,
         "evidenceFile": "Dojo/DojoExtensions.cs",
-        "evidence": "line 256: \u0022iOS 13\u0022 =\u003E platforms.GetPlatform\u003CIOS13Platform\u003E().FirstOrDefault(),"
+        "evidence": "line 258: \u0022iOS 13\u0022 =\u003E platforms.GetPlatform\u003CIOS13Platform\u003E().FirstOrDefault(),"
       },
       "disposition": 1,
       "strategy": "repository-inference",
@@ -111,7 +33,7 @@
         "sauceConfigurationCount": 0,
         "representativeDevices": null,
         "evidenceFile": "Dojo/Browsers/BrowserFactory.cs",
-        "evidence": "line 209: \u0022iOS 26.0\u0022 =\u003E platforms.GetPlatform\u003CIOS26Platform\u003E().FirstOrDefault(),"
+        "evidence": "line 211: \u0022iOS 26.0\u0022 =\u003E platforms.GetPlatform\u003CIOS26Platform\u003E().FirstOrDefault(),"
       },
       "disposition": 1,
       "strategy": "repository-inference",
@@ -131,7 +53,7 @@
         "sauceConfigurationCount": 0,
         "representativeDevices": null,
         "evidenceFile": "Dojo/Browsers/BrowserFactory.cs",
-        "evidence": "line 25: SauceryConstants.PLATFORM_WINDOWS_8 =\u003E new Windows8BrowserCreator(sp).Create(\u0022Windows 8\u0022, screenResolutions, isArmRequired),"
+        "evidence": "line 27: SauceryConstants.PLATFORM_WINDOWS_8 =\u003E new Windows8BrowserCreator(sp).Create(\u0022Windows 8\u0022, screenResolutions, isArmRequired),"
       },
       "disposition": 1,
       "strategy": "repository-inference",
@@ -151,7 +73,7 @@
         "sauceConfigurationCount": 0,
         "representativeDevices": null,
         "evidenceFile": "Dojo/Browsers/BrowserFactory.cs",
-        "evidence": "line 24: SauceryConstants.PLATFORM_WINDOWS_81 =\u003E new Windows81BrowserCreator(sp).Create(\u0022Windows 8.1\u0022, screenResolutions, isArmRequired),"
+        "evidence": "line 26: SauceryConstants.PLATFORM_WINDOWS_81 =\u003E new Windows81BrowserCreator(sp).Create(\u0022Windows 8.1\u0022, screenResolutions, isArmRequired),"
       },
       "disposition": 1,
       "strategy": "repository-inference",
@@ -162,6 +84,6 @@
       ]
     }
   ],
-  "autoFixCount": 1,
+  "autoFixCount": 0,
   "manualReviewCount": 4
 }
