@@ -13,8 +13,13 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
-      SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
+      CONFIG: Release
+      UT_PROJECT: Saucery.Core.Tests.XUnitv3/Saucery.Core.Tests.XUnitv3.csproj
+      COVERAGE_FORMAT: cobertura
+      UNIT_COVERAGE_FILENAME: coverage.cobertura.xml
+
+      SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+      SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
 
     steps:
       - name: Checkout repository
@@ -22,10 +27,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup .NET 10
-        uses: actions/setup-dotnet@v6
-        with:
-          dotnet-version: "10.0.x"
+      - uses: ./.github/actions/setup-dotnet
 
       - name: Restore Coverage Gap Reporter
         run: >
@@ -36,7 +38,7 @@ jobs:
         run: >
           dotnet build
           Saucery.CoverageGapReporter/Saucery.CoverageGapReporter.csproj
-          --configuration Release
+          --configuration ${{ env.CONFIG }}
           --no-restore
 
       - name: Restore Coverage Gap Remediator
@@ -48,14 +50,14 @@ jobs:
         run: >
           dotnet build
           Saucery.CoverageGapRemediator/Saucery.CoverageGapRemediator.csproj
-          --configuration Release
+          --configuration ${{ env.CONFIG }}
           --no-restore
 
       - name: Generate current coverage gap report
         run: >
           dotnet run
           --project Saucery.CoverageGapReporter/Saucery.CoverageGapReporter.csproj
-          --configuration Release
+          --configuration ${{ env.CONFIG }}
           --no-build
           --
           --repo-root "${{ github.workspace }}"
@@ -70,7 +72,7 @@ jobs:
         run: >
           dotnet run
           --project Saucery.CoverageGapRemediator/Saucery.CoverageGapRemediator.csproj
-          --configuration Release
+          --configuration ${{ env.CONFIG }}
           --no-build
           --
           --repo-root "${{ github.workspace }}"
@@ -84,114 +86,26 @@ jobs:
           git diff --stat
           git diff
 
-      - name: Restore final xUnit.v3 test project
-        run: >
-          dotnet restore
-          Saucery.Core.Tests.XUnitv3/Saucery.Core.Tests.XUnitv3.csproj
+      #
+      # HARD VALIDATION GATE
+      #
+      # Use the exact same xUnit.v3 runner already used by the working
+      # repository pipelines.
+      #
+      - name: Compile remediated solution
+        run: dotnet build -c ${{ env.CONFIG }}
 
-      - name: Build final Core project
-        run: >
-          dotnet build
-          Saucery.Core/Saucery.Core.csproj
-          --configuration Release
+      - name: Run xUnit.v3 unit tests
+        uses: ./.github/actions/run-xunit3-coverage
+        with:
+          project: ${{ env.UT_PROJECT }}
+          configuration: ${{ env.CONFIG }}
+          coverage-format: ${{ env.COVERAGE_FORMAT }}
+          coverage-output: ${{ env.UNIT_COVERAGE_FILENAME }}
 
-      - name: Build final xUnit.v3 test project
-        run: >
-          dotnet build
-          Saucery.Core.Tests.XUnitv3/Saucery.Core.Tests.XUnitv3.csproj
-          --configuration Release
-          --no-restore
-
-      - name: Final xUnit.v3 validation gate
-        shell: bash
-        run: |
-          set -uo pipefail
-
-          LOG_FILE="${RUNNER_TEMP}/saucery-xunit-v3-final.log"
-
-          echo "Running final xUnit.v3 suite against the exact remediated working tree..."
-
-          set +e
-
-          dotnet run \
-            --project Saucery.Core.Tests.XUnitv3/Saucery.Core.Tests.XUnitv3.csproj \
-            --configuration Release \
-            --no-build \
-            2>&1 | tee "$LOG_FILE"
-
-          TEST_EXIT_CODE=${PIPESTATUS[0]}
-
-          set -e
-
-          echo
-          echo "dotnet run exit code: $TEST_EXIT_CODE"
-          echo
-
-          #
-          # FAIL CLOSED.
-          #
-          # There are deliberately NO exceptions for Sauce Labs,
-          # fixture failures, network failures, JSON failures, or
-          # any other condition.
-          #
-          # If the final test suite does not unequivocally PASS,
-          # no branch may be created.
-          #
-
-          if [[ "$TEST_EXIT_CODE" -ne 0 ]]; then
-            echo "::error::xUnit.v3 process exited with code $TEST_EXIT_CODE."
-            exit 1
-          fi
-
-          if grep -Fq "Shouldly.ShouldAssertException" "$LOG_FILE"; then
-            echo "::error::xUnit.v3 Shouldly assertion failure detected."
-            exit 1
-          fi
-
-          if grep -Eq 'Assert\.(Equal|True|False|Contains|DoesNotContain|NotNull|Null|Throws)\(\) Failure' "$LOG_FILE"; then
-            echo "::error::xUnit.v3 assertion failure detected."
-            exit 1
-          fi
-
-          if grep -Fq "Test run summary: Failed!" "$LOG_FILE"; then
-            echo "::error::Microsoft.Testing.Platform reported a failed test run."
-            exit 1
-          fi
-
-          if grep -Eq '^[[:space:]]*failed:[[:space:]]*[1-9][0-9]*[[:space:]]*$' "$LOG_FILE"; then
-            echo "::error::xUnit.v3 reported one or more failed tests."
-            exit 1
-          fi
-
-          if grep -Eq '^[[:space:]]*failed[[:space:]]+Saucery\.Core\.Tests\.XUnitv3\.' "$LOG_FILE"; then
-            echo "::error::xUnit.v3 failed test result detected."
-            exit 1
-          fi
-
-          #
-          # Do not merely look for the absence of failures.
-          # Require an explicit successful test-run summary.
-          #
-          if ! grep -Fq "Test run summary: Passed!" "$LOG_FILE"; then
-            echo "::error::xUnit.v3 did not report an explicit PASS."
-            exit 1
-          fi
-
-          #
-          # Require an explicit zero failure count as a second
-          # independent confirmation.
-          #
-          if ! grep -Eq '^[[:space:]]*failed:[[:space:]]*0[[:space:]]*$' "$LOG_FILE"; then
-            echo "::error::xUnit.v3 did not report exactly zero failed tests."
-            exit 1
-          fi
-
-          echo
-          echo "=============================================="
-          echo "FINAL XUNIT.V3 VALIDATION: PASS"
-          echo "ZERO FAILED TESTS"
-          echo "=============================================="
-
+      #
+      # NOTHING BELOW HERE RUNS IF XUNIT.V3 FAILS.
+      #
       - name: Check whether source changed
         id: changes
         shell: bash
@@ -248,13 +162,10 @@ jobs:
           The workflow:
           - generated the current Sauce Labs platform coverage report
           - applied platform coverage remediations
-          - updated the Core test suites
-          - rebuilt the final remediated Core project
-          - rebuilt Saucery.Core.Tests.XUnitv3
-          - executed the complete Saucery.Core.Tests.XUnitv3 suite against the final working tree
-          - required an explicit Passed test summary
-          - required exactly zero failed tests
-          - blocked branch, commit, push, and PR creation unless every xUnit.v3 test passed
+          - updated Core and test projects
+          - rebuilt the remediated solution
+          - executed Saucery.Core.Tests.XUnitv3 using the repository's standard run-xunit3-coverage action
+          - blocked branch, commit, push, and PR creation when the xUnit.v3 suite failed
 
           Review the generated source and test changes before merging."
 
