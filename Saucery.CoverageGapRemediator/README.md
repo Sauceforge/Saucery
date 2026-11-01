@@ -111,3 +111,16 @@ For actual unit-test execution, the validator runs **only**:
 `Saucery.Core.Tests.XUnitv3/Saucery.Core.Tests.XUnitv3.csproj`
 
 The TUnit project is compiled but is not executed by the remediation pipeline. If the required xUnit.v3 project cannot be found, validation fails explicitly.
+
+
+## Unit-test remediation
+
+Obsolete platform remediation repairs both `Saucery.Core.Tests` and `Saucery.Core.Tests.XUnitv3`.
+
+- Supported-platform inventory rows for the obsolete platform are removed.
+- Expected inventory counts are reduced by the exact number of removed rows.
+- `PlatformExpansionTests` rows are not deleted merely because they use an obsolete platform as a generic fixture; those rows are retargeted to `PLATFORM_WINDOWS_10` so expansion cardinality remains unchanged.
+- Exact deleted-type references are removed from REST/platform-type test data.
+- The xUnit.v3 suite is the executed validation suite.
+
+Any genuine xUnit.v3 assertion failure is a hard failure. It takes precedence over recognized Sauce Labs infrastructure failures, causing transaction rollback and preventing branch/commit/PR creation.

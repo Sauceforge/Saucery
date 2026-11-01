@@ -550,7 +550,7 @@ internal static class ObsoleteSynthesizer
 
         foreach(var testRoot in context.TestRoots)
         {
-            var removedDataRows = 0;
+            var removedInventoryRows = 0;
 
             foreach(var path in Directory.EnumerateFiles(testRoot, "*.cs", SearchOption.AllDirectories))
             {
@@ -563,11 +563,33 @@ internal static class ObsoleteSynthesizer
                 {
                     var line = lines[i];
 
-                    // Direct deleted-type references are already handled above. This additional
-                    // test cleanup catches data rows that identify the platform by constant or
-                    // by a strongly typed mobile platform/version pair.
                     if(!IsExactObsoleteTestRow(line, target, platformIdentity, deletedTypes))
                         continue;
+
+                    // PlatformExpansionTests use platform rows only as generic expansion fixtures.
+                    // Removing the row changes the arithmetic under test (for example 103 -> 52).
+                    // Retarget the row to a supported desktop identity instead.
+                    if(relative.EndsWith("/PlatformExpansionTests.cs", StringComparison.OrdinalIgnoreCase) &&
+                       !string.IsNullOrWhiteSpace(platformIdentity) &&
+                       target.Family.Equals("Windows", StringComparison.OrdinalIgnoreCase))
+                    {
+                        const string supportedWindowsIdentity = "SauceryConstants.PLATFORM_WINDOWS_10";
+
+                        var updatedLine = ReplaceExactIdentifier(
+                            line,
+                            platformIdentity,
+                            supportedWindowsIdentity);
+
+                        if(updatedLine != line)
+                        {
+                            Console.WriteLine(
+                                $"    Retargeting expansion fixture in {relative}: {platformIdentity} -> {supportedWindowsIdentity}");
+                            lines[i] = updatedLine;
+                            changed = true;
+                        }
+
+                        continue;
+                    }
 
                     var candidateLines = new List<string>(lines);
                     candidateLines.RemoveAt(i);
@@ -585,7 +607,7 @@ internal static class ObsoleteSynthesizer
                     Console.WriteLine($"    Removing obsolete test data from {relative}: {line.Trim()}");
 
                     if(relative.Contains("/DataProviders/", StringComparison.OrdinalIgnoreCase))
-                        removedDataRows++;
+                        removedInventoryRows++;
 
                     lines = candidateLines;
                     changed = true;
@@ -595,10 +617,24 @@ internal static class ObsoleteSynthesizer
                     changes.Write(relative, string.Join(Environment.NewLine, lines));
             }
 
-            if(removedDataRows > 0)
-                AdjustPlatformCountAssertion(context, changes, testRoot, target, removedDataRows);
+            if(removedInventoryRows > 0)
+                AdjustPlatformCountAssertions(
+                    context,
+                    changes,
+                    testRoot,
+                    target,
+                    removedInventoryRows);
         }
     }
+
+    private static string ReplaceExactIdentifier(
+        string source,
+        string oldIdentifier,
+        string newIdentifier) =>
+        Regex.Replace(
+            source,
+            $@"(?<![A-Za-z0-9_]){Regex.Escape(oldIdentifier)}(?![A-Za-z0-9_])",
+            newIdentifier);
 
     private static string? ExactPlatformIdentity(CoverageDiscrepancy target)
     {
@@ -659,30 +695,46 @@ internal static class ObsoleteSynthesizer
         return false;
     }
 
-    private static void AdjustPlatformCountAssertion(
+    private static void AdjustPlatformCountAssertions(
         RepositoryContext context,
         ChangeCollector changes,
         string testRoot,
         CoverageDiscrepancy target,
         int removedRows)
     {
-        var methodName = CountTestMethodName(target);
-        if(methodName is null)
-            return;
+        foreach(var methodName in CountTestMethodNames(target))
+            AdjustSingleCountAssertion(
+                context,
+                changes,
+                testRoot,
+                methodName,
+                removedRows);
+    }
 
+    private static void AdjustSingleCountAssertion(
+        RepositoryContext context,
+        ChangeCollector changes,
+        string testRoot,
+        string methodName,
+        int removedRows)
+    {
         foreach(var path in Directory.EnumerateFiles(testRoot, "*.cs", SearchOption.AllDirectories))
         {
-            var source = File.ReadAllText(path);
+            var relative = context.Relative(path);
+
+            // Use the latest pending content when this file was already changed during
+            // remediation; otherwise read from disk.
+            var source = changes.TryGetPendingContent(relative, out var pending)
+                ? pending
+                : File.ReadAllText(path);
+
             if(!source.Contains(methodName, StringComparison.Ordinal))
                 continue;
 
             var pattern =
                 $@"(?<prefix>\b{Regex.Escape(methodName)}\s*\(\s*\)\s*\{{(?:(?!\n\s*\}}).)*?Items\.Count\(\)\.ShouldBe\()(?<count>\d+)(?<suffix>\))";
 
-            var match = Regex.Match(
-                source,
-                pattern,
-                RegexOptions.Singleline);
+            var match = Regex.Match(source, pattern, RegexOptions.Singleline);
 
             if(!match.Success)
                 continue;
@@ -692,7 +744,7 @@ internal static class ObsoleteSynthesizer
 
             if(newCount < 0)
                 throw new InvalidDataException(
-                    $"Cannot adjust {methodName} in {context.Relative(path)} from {oldCount} by {removedRows}.");
+                    $"Cannot adjust {methodName} in {relative} from {oldCount} by {removedRows}.");
 
             var updated =
                 source[..match.Groups["count"].Index] +
@@ -700,9 +752,9 @@ internal static class ObsoleteSynthesizer
                 source[(match.Groups["count"].Index + match.Groups["count"].Length)..];
 
             Console.WriteLine(
-                $"    Updating {context.Relative(path)} {methodName} expected count: {oldCount} -> {newCount}");
+                $"    Updating {relative} {methodName} expected count: {oldCount} -> {newCount}");
 
-            changes.Write(context.Relative(path), updated);
+            changes.Write(relative, updated);
             return;
         }
 
@@ -710,22 +762,22 @@ internal static class ObsoleteSynthesizer
             $"    No {methodName} count assertion was found under {context.Relative(testRoot)}; no count adjustment was required.");
     }
 
-    private static string? CountTestMethodName(CoverageDiscrepancy target)
+    private static IReadOnlyList<string> CountTestMethodNames(CoverageDiscrepancy target)
     {
         if(target.Family.Equals("Windows", StringComparison.OrdinalIgnoreCase) ||
            target.Family.Equals("macOS", StringComparison.OrdinalIgnoreCase) ||
            target.Family.Equals("Mac", StringComparison.OrdinalIgnoreCase) ||
            target.Family.Equals("Linux", StringComparison.OrdinalIgnoreCase) ||
            target.Family.Equals("ChromiumOS", StringComparison.OrdinalIgnoreCase))
-            return "DesktopPlatformsTest";
+            return ["DesktopPlatformsTest", "AllPlatformsTest"];
 
         if(target.Family.Equals("iOS", StringComparison.OrdinalIgnoreCase))
-            return "IOSPlatformsTest";
+            return ["IOSPlatformsTest", "AllPlatformsTest"];
 
         if(target.Family.Equals("Android", StringComparison.OrdinalIgnoreCase))
-            return "AndroidPlatformsTest";
+            return ["AndroidPlatformsTest", "AllPlatformsTest"];
 
-        return null;
+        return ["AllPlatformsTest"];
     }
 
     private static bool ContainsExactIdentifier(string text, string identifier) =>

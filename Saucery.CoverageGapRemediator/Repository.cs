@@ -115,6 +115,19 @@ internal sealed class ChangeCollector(RepositoryContext context, RepositoryTrans
         (existed ? changed : created).Add(context.Relative(path));
     }
 
+    public bool TryGetPendingContent(string relative, out string content)
+    {
+        var path = context.PathFromRoot(relative);
+        if(writes.TryGetValue(path, out var pending))
+        {
+            content = pending;
+            return true;
+        }
+
+        content = string.Empty;
+        return false;
+    }
+
     public void Modify(string relative, Func<string, string> edit)
     {
         var path = context.PathFromRoot(relative);

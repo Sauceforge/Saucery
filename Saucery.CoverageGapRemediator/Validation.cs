@@ -121,17 +121,55 @@ internal sealed class RepositoryValidator
             return new(true, messages, Array.Empty<CoverageDiscrepancy>());
         }
 
+        if(ContainsGenuineAssertionFailure(tests.CombinedOutput))
+        {
+            messages.Add($"Run {relativeXunitV3Project}: FAIL");
+            messages.Add("  Genuine xUnit.v3 assertion failures were detected. They always fail remediation validation, even when Sauce infrastructure failures are present in the same run.");
+            messages.Add(tests.CombinedOutput);
+            return new(false, messages, Array.Empty<CoverageDiscrepancy>());
+        }
+
         if(IsExternalSauceInfrastructureFailure(tests.CombinedOutput))
         {
             messages.Add($"Run {relativeXunitV3Project}: INCONCLUSIVE");
-            messages.Add("  The xUnit.v3 test process reached the live Sauce Labs platform acquisition hook and failed because the external API response could not be deserialized.");
-            messages.Add("  This is treated as an external integration failure, not as a remediation failure. Core and both test projects built successfully, and the xUnit.v3 suite was the only executed unit-test suite.");
+            messages.Add("  The xUnit.v3 run contains only the recognized live Sauce Labs platform-acquisition failure and no genuine assertion failures.");
+            messages.Add("  This is treated as an external integration failure rather than a remediation failure.");
             return new(true, messages, Array.Empty<CoverageDiscrepancy>());
         }
 
         messages.Add($"Run {relativeXunitV3Project}: FAIL");
         messages.Add(tests.CombinedOutput);
         return new(false, messages, Array.Empty<CoverageDiscrepancy>());
+    }
+
+    private static bool ContainsGenuineAssertionFailure(string output)
+    {
+        if(string.IsNullOrWhiteSpace(output))
+            return false;
+
+        if(output.Contains("Shouldly.ShouldAssertException", StringComparison.Ordinal))
+            return true;
+
+        var xunitAssertion =
+            output.Contains("Assert.Equal() Failure", StringComparison.Ordinal) ||
+            output.Contains("Assert.True() Failure", StringComparison.Ordinal) ||
+            output.Contains("Assert.False() Failure", StringComparison.Ordinal) ||
+            output.Contains("Assert.Contains() Failure", StringComparison.Ordinal) ||
+            output.Contains("Assert.DoesNotContain() Failure", StringComparison.Ordinal) ||
+            output.Contains("Assert.NotNull() Failure", StringComparison.Ordinal) ||
+            output.Contains("Assert.Null() Failure", StringComparison.Ordinal) ||
+            output.Contains("Assert.Throws() Failure", StringComparison.Ordinal);
+
+        if(xunitAssertion)
+            return true;
+
+        // xUnit/MTP can wrap assertion failures in XunitException. Require assertion-shaped
+        // output so fixture-constructor failures are not misclassified as assertions.
+        return output.Contains("XunitException", StringComparison.Ordinal) &&
+               (output.Contains("should be", StringComparison.OrdinalIgnoreCase) ||
+                output.Contains("but was", StringComparison.OrdinalIgnoreCase) ||
+                output.Contains("Expected:", StringComparison.OrdinalIgnoreCase) ||
+                output.Contains("Actual:", StringComparison.OrdinalIgnoreCase));
     }
 
     private static bool IsExternalSauceInfrastructureFailure(string output)
