@@ -4,14 +4,14 @@ namespace Saucery.CoverageGapRemediator;
 
 internal sealed class GenericRemediationEngine
 {
-    public static RemediationPlan BuildPlan(RepositoryContext context, string reportPath, IReadOnlyList<CoverageDiscrepancy> discrepancies, Options options)
+    public RemediationPlan BuildPlan(RepositoryContext context, string reportPath, IReadOnlyList<CoverageDiscrepancy> discrepancies, Options options)
     {
         var model = RepositoryModel.Build(context);
         var items = discrepancies.Select(d => PlanOne(model, context, d, options)).ToArray();
         return new(context.Root, reportPath, DateTimeOffset.UtcNow, items);
     }
 
-    public static async Task<ApplyResult> ApplyAsync(
+    public async Task<ApplyResult> ApplyAsync(
         RepositoryContext context,
         RemediationPlan plan,
         Options options,
@@ -157,7 +157,22 @@ internal static class MissingSynthesizer
                 if(!RegistrationApplies(line, source, target)) continue;
                 var transformed = map.Transform(line);
                 if(transformed == line || lines.Any(x => x.Trim() == transformed.Trim())) continue;
-                lines.Insert(site.LineIndex + 1, transformed);
+
+                // Never commit an inferred text insertion unless the entire containing C# file
+                // still parses. This turns a bad inference into a skipped candidate instead of
+                // corrupting the repository and aborting the workflow.
+                var candidateLines = new List<string>(lines);
+                candidateLines.Insert(site.LineIndex + 1, transformed);
+                var candidate = string.Join(Environment.NewLine, candidateLines);
+                try
+                {
+                    CSharpGuard.AssertValid(candidate, context.PathFromRoot(file));
+                    lines = candidateLines;
+                }
+                catch(InvalidDataException ex)
+                {
+                    Console.WriteLine($"    Skipping unsafe inferred registration in {file}: {ex.Message.Split(Environment.NewLine)[0]}");
+                }
             }
             return string.Join(Environment.NewLine, lines);
         });

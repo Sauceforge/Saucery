@@ -88,10 +88,9 @@ internal static class CoverageReportReader
             ParseObsolete(lines, obsoleteStart + 1, obsoleteEnd, result);
         }
 
-        return result
+        return [.. result
             .GroupBy(x => x.Identity, StringComparer.OrdinalIgnoreCase)
-            .Select(g => g.First())
-            .ToArray();
+            .Select(g => g.First())];
     }
 
     private static void ParseGaps(

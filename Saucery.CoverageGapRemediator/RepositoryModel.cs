@@ -126,6 +126,13 @@ internal sealed class RepositoryModel
                 g => g.Select(h => (h.StartLine, h.EndLine)).ToArray(),
                 StringComparer.OrdinalIgnoreCase);
 
+        var helperNames = helpers
+            .Select(h => Regex.Match(h.Text, @"\b(?:private|internal|public|protected)\s+(?:static\s+)?[^\r\n(]+\s+(?<name>[A-Za-z_][A-Za-z0-9_]*)\s*\("))
+            .Where(m => m.Success)
+            .Select(m => m.Groups["name"].Value)
+            .Distinct(StringComparer.Ordinal)
+            .ToArray();
+
         var result = new List<RegistrationSite>();
         foreach(var (file, lines) in files)
         {
@@ -133,20 +140,39 @@ internal sealed class RepositoryModel
                file.Contains("/ConcreteCreators/", StringComparison.OrdinalIgnoreCase) ||
                file.Contains("/Browsers/ConcreteCreators/", StringComparison.OrdinalIgnoreCase)) continue;
 
+            var isTestFile = file.StartsWith("Saucery.Core.Tests/", StringComparison.OrdinalIgnoreCase);
+
             for(var i = 0; i < lines.Length; i++)
             {
                 if(helperRanges.TryGetValue(file, out var ranges) && ranges.Any(r => i >= r.StartLine && i <= r.EndLine))
                     continue;
 
                 var line = lines[i];
-                var direct = line.Contains(productType, StringComparison.Ordinal) || line.Contains(creatorType, StringComparison.Ordinal) ||
+                var direct = line.Contains(productType, StringComparison.Ordinal) ||
+                             line.Contains(creatorType, StringComparison.Ordinal) ||
                              (browserCreatorType is not null && line.Contains(browserCreatorType, StringComparison.Ordinal));
-                var semantic = line.Contains(family, StringComparison.OrdinalIgnoreCase) &&
-                               (line.Contains("Platform", StringComparison.OrdinalIgnoreCase) || line.Contains("Browser", StringComparison.OrdinalIgnoreCase));
-                var versionedTest = file.StartsWith("Saucery.Core.Tests/", StringComparison.OrdinalIgnoreCase) &&
+
+                // A Core registration must have structural evidence: either a direct type/creator
+                // reference or an invocation of a helper method that belongs to this prototype.
+                // Never use family-name heuristics in production code; that is what caused an
+                // inferred ChromiumOS repair to corrupt OnDemand/AndroidPlatform.cs.
+                var helperInvocation = helperNames.Any(name =>
+                    line.Contains(name + "(", StringComparison.Ordinal));
+
+                // Test data often contains only literal platform names/versions, so a narrow
+                // semantic fallback is permitted there only.
+                var semanticTest = isTestFile &&
+                                   line.Contains(family, StringComparison.OrdinalIgnoreCase) &&
+                                   (line.Contains("Platform", StringComparison.OrdinalIgnoreCase) ||
+                                    line.Contains("Browser", StringComparison.OrdinalIgnoreCase) ||
+                                    line.Contains("Device", StringComparison.OrdinalIgnoreCase));
+                var versionedTest = isTestFile &&
                                     !string.IsNullOrEmpty(digits) && line.Any(char.IsDigit) &&
-                                    (line.Contains("Platform", StringComparison.OrdinalIgnoreCase) || line.Contains("Device", StringComparison.OrdinalIgnoreCase));
-                if(direct || semantic || versionedTest) result.Add(new RegistrationSite(file, i, line));
+                                    (line.Contains("Platform", StringComparison.OrdinalIgnoreCase) ||
+                                     line.Contains("Device", StringComparison.OrdinalIgnoreCase));
+
+                if(direct || helperInvocation || semanticTest || versionedTest)
+                    result.Add(new RegistrationSite(file, i, line));
             }
         }
         return result;
