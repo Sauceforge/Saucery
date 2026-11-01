@@ -1,4 +1,4 @@
-﻿using Saucery.Core.OnDemand;
+using Saucery.Core.OnDemand;
 using Saucery.Core.OnDemand.Base;
 using Saucery.Core.Options;
 using Saucery.Core.Tests.Fixtures;
@@ -45,7 +45,6 @@ internal static class IOSDataClass
 
     public static IEnumerable<SaucePlatform> NotSupportedTestCases => 
         [
-            new IOSPlatform("NonExistent", "13.0", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT)
         ];
     
     internal static readonly string[] IOSPlatformVersions =

@@ -1,4 +1,4 @@
-﻿using Saucery.Core.Dojo.Platforms.Base;
+using Saucery.Core.Dojo.Platforms.Base;
 using Saucery.Core.Dojo.Platforms.ConcreteCreators.Apple;
 using Saucery.Core.RestAPI;
 
@@ -39,7 +39,6 @@ public static class ApplePlatformFactory
         "16" => new IOS16PlatformCreator(sp).Create(),
         "15" => new IOS15PlatformCreator(sp).Create(),
         "14" => new IOS14PlatformCreator(sp).Create(),
-        "13" => new IOS13PlatformCreator(sp).Create(),
         _ => null
     };
 }
