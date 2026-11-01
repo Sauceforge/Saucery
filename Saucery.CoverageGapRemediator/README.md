@@ -225,3 +225,14 @@ After discovery, the remediator deletes all three implementation files, removes 
 ## Nullable resolver fix
 
 Required obsolete implementation slices now use explicit null checks and non-null tuple locals before constructing `ObsoleteTarget`. No nullable tuple `.Value` dereferences remain in the resolver.
+
+
+## Deterministic obsolete slice resolution
+
+Whole-platform obsolete remediation no longer uses source-content ownership heuristics.
+
+It resolves the exact `*Platform` type deterministically from family/version, locates that exact class declaration under `ConcreteProducts`, derives the exact `*PlatformCreator` class name and locates its declaration regardless of filename, and reads the actual `*BrowserCreator` type directly from the matching `BrowserFactory.cs` registration.
+
+For example, `Windows8PlatformCreator` is located by class declaration even when its file is named `Windows8BPlatformCreator.cs`.
+
+Windows obsolete remediation requires a matching BrowserFactory `*BrowserCreator` registration. Shared-family exact mobile versions such as `iOS 26.0 -> IOS26Platform` remain declaration-only cleanup.

@@ -390,30 +390,58 @@ internal static class ObsoleteDeclarationResolver
         if(!Regex.IsMatch(version, @"^\d+\.\d+$"))
             return false;
 
-        var digits = Regex.Replace(version, @"\D", "");
         var major = Regex.Match(version, @"^\d+").Value;
-
-        if(string.IsNullOrWhiteSpace(digits) || string.IsNullOrWhiteSpace(major))
+        if(string.IsNullOrWhiteSpace(major))
             return false;
 
-        var prefix = target.Family.Equals("iOS", StringComparison.OrdinalIgnoreCase)
-            ? "IOS"
+        var expectedSharedType = target.Family.Equals("iOS", StringComparison.OrdinalIgnoreCase)
+            ? $"IOS{major}Platform"
             : target.Family.Equals("Android", StringComparison.OrdinalIgnoreCase)
-                ? "Android"
+                ? $"Android{major}Platform"
                 : null;
 
-        if(prefix is null)
+        if(expectedSharedType is null)
             return false;
 
+        foreach(var relative in new[]
+        {
+            "Saucery.Core/Dojo/Browsers/BrowserFactory.cs",
+            "Saucery.Core/Dojo/DojoExtensions.cs"
+        })
+        {
+            var path = context.PathFromRoot(relative);
+            if(!File.Exists(path))
+                continue;
+
+            foreach(var line in File.ReadLines(path))
+            {
+                if(!Regex.IsMatch(
+                    line,
+                    $@"[""'](?:{Regex.Escape(target.Family)}\s+)?{Regex.Escape(version)}[""']",
+                    RegexOptions.IgnoreCase))
+                {
+                    continue;
+                }
+
+                if(Regex.IsMatch(
+                    line,
+                    $@"\b{Regex.Escape(expectedSharedType)}\b"))
+                {
+                    return true;
+                }
+            }
+        }
+
+        // Fallback: exact type does not exist but the major-family type does.
+        var digits = Regex.Replace(version, @"\D", "");
+        var prefix = target.Family.Equals("iOS", StringComparison.OrdinalIgnoreCase)
+            ? "IOS"
+            : "Android";
+
         var exactType = $"{prefix}{digits}Platform";
-        var majorType = $"{prefix}{major}Platform";
 
-        var exactExists = HasClass(context, "/ConcreteProducts/", exactType);
-        var majorExists = HasClass(context, "/ConcreteProducts/", majorType);
-
-        // Example: iOS 26.0 has no IOS260Platform, but IOS26Platform exists for
-        // the 26.x family. That means only the exact 26.0 declaration is obsolete.
-        return !exactExists && majorExists;
+        return !HasClass(context, "/ConcreteProducts/", exactType) &&
+               HasClass(context, "/ConcreteProducts/", expectedSharedType);
     }
 
     private static bool HasClass(
@@ -442,14 +470,7 @@ internal static class ObsoleteTargetResolver
         RepositoryContext context,
         CoverageDiscrepancy target)
     {
-        var product = FindOwnedClass(
-            context,
-            "/ConcreteProducts/",
-            "Platform",
-            target,
-            required: !ObsoleteDeclarationResolver.IsDeclarationOnlyExactVersion(context, target));
-
-        if(product is null)
+        if(ObsoleteDeclarationResolver.IsDeclarationOnlyExactVersion(context, target))
         {
             return new(
                 string.Empty,
@@ -460,211 +481,180 @@ internal static class ObsoleteTargetResolver
                 null);
         }
 
-        var resolvedProduct = product.GetValueOrDefault();
+        var productType = ExactProductType(target)
+            ?? throw new InvalidDataException(
+                $"No deterministic ConcreteProduct type rule exists for obsolete platform {target.DisplayName}.");
 
-        var creator = FindCreatorForProduct(
+        var productFile = FindExactClassFile(
             context,
-            resolvedProduct.Type,
-            required: true);
+            "/ConcreteProducts/",
+            productType,
+            required: true)!;
 
-        if(creator is null)
+        var creatorType = productType.EndsWith("Platform", StringComparison.Ordinal)
+            ? productType[..^"Platform".Length] + "PlatformCreator"
+            : throw new InvalidDataException(
+                $"ConcreteProduct type {productType} does not end in Platform.");
+
+        var creatorFile = FindExactClassFile(
+            context,
+            "/ConcreteCreators/",
+            creatorType,
+            required: true)!;
+
+        var browserCreatorType = FindBrowserCreatorTypeFromRegistration(
+            context,
+            target);
+
+        string? browserCreatorFile = null;
+
+        if(browserCreatorType is not null)
+        {
+            browserCreatorFile = FindExactClassFile(
+                context,
+                "/BrowserCreators/",
+                browserCreatorType,
+                required: true);
+        }
+        else if(target.Family.Equals("Windows", StringComparison.OrdinalIgnoreCase))
         {
             throw new InvalidDataException(
-                $"No PlatformCreator implementation constructs {resolvedProduct.Type}. Refusing to create a partial remediation.");
+                $"No BrowserCreator registration was found in BrowserFactory.cs for obsolete platform {target.DisplayName}. Refusing partial remediation.");
         }
-
-        var resolvedCreator = creator.GetValueOrDefault();
-
-        var browserCreator = FindOwnedClass(
-            context,
-            "/BrowserCreators/",
-            "BrowserCreator",
-            target,
-            required: true);
-
-        if(browserCreator is null)
-        {
-            throw new InvalidDataException(
-                $"No dedicated BrowserCreator implementation was found for obsolete platform {target.DisplayName}. Refusing to create a partial remediation.");
-        }
-
-        var resolvedBrowserCreator = browserCreator.GetValueOrDefault();
 
         return new(
-            resolvedProduct.Type,
-            resolvedProduct.File,
-            resolvedCreator.Type,
-            resolvedCreator.File,
-            resolvedBrowserCreator.Type,
-            resolvedBrowserCreator.File);
+            productType,
+            productFile,
+            creatorType,
+            creatorFile,
+            browserCreatorType,
+            browserCreatorFile);
     }
 
-    private static (string Type, string File)? FindOwnedClass(
-        RepositoryContext context,
-        string requiredPathSegment,
-        string classSuffix,
-        CoverageDiscrepancy target,
-        bool required)
+    private static string? ExactProductType(CoverageDiscrepancy target)
     {
-        var candidates = Directory
-            .EnumerateFiles(context.Core, "*.cs", SearchOption.AllDirectories)
-            .Where(file => file
-                .Replace('\\', '/')
-                .Contains(requiredPathSegment, StringComparison.OrdinalIgnoreCase))
-            .Select(file => new
-            {
-                File = file,
-                Text = File.ReadAllText(file)
-            })
-            .Select(x => new
-            {
-                x.File,
-                x.Text,
-                Type = ExtractClassName(x.Text, classSuffix)
-            })
-            .Where(x => x.Type is not null)
-            .Where(x => SourceOwnsTarget(x.Text, target))
-            .Select(x => (
-                Type: x.Type!,
-                File: context.Relative(x.File)))
-            .Distinct()
-            .ToArray();
+        var version = target.Version ?? string.Empty;
+        var major = Regex.Match(version, @"^\d+").Value;
+        var digits = Regex.Replace(version, @"\D", "");
 
-        if(candidates.Length == 1)
-            return candidates[0];
-
-        if(candidates.Length > 1)
+        if(target.Family.Equals("Windows", StringComparison.OrdinalIgnoreCase))
         {
-            throw new InvalidDataException(
-                $"Multiple {classSuffix} implementations own obsolete platform {target.DisplayName}: " +
-                string.Join(", ", candidates.Select(x => $"{x.Type} ({x.File})")));
+            return string.IsNullOrWhiteSpace(digits)
+                ? null
+                : $"Windows{digits}Platform";
         }
 
-        if(required)
+        if(target.Family.Equals("iOS", StringComparison.OrdinalIgnoreCase))
         {
-            throw new InvalidDataException(
-                $"No dedicated {classSuffix} implementation was found for obsolete platform {target.DisplayName}. " +
-                "Refusing to create a partial remediation.");
+            return string.IsNullOrWhiteSpace(major)
+                ? null
+                : $"IOS{major}Platform";
+        }
+
+        if(target.Family.Equals("Android", StringComparison.OrdinalIgnoreCase))
+        {
+            return string.IsNullOrWhiteSpace(major)
+                ? null
+                : $"Android{major}Platform";
         }
 
         return null;
     }
 
-    private static (string Type, string File)? FindCreatorForProduct(
+    private static string? FindBrowserCreatorTypeFromRegistration(
         RepositoryContext context,
-        string productType,
-        bool required)
-    {
-        var candidates = Directory
-            .EnumerateFiles(context.Core, "*.cs", SearchOption.AllDirectories)
-            .Where(file => file
-                .Replace('\\', '/')
-                .Contains("/ConcreteCreators/", StringComparison.OrdinalIgnoreCase))
-            .Select(file => new
-            {
-                File = file,
-                Text = File.ReadAllText(file)
-            })
-            .Where(x => Regex.IsMatch(
-                x.Text,
-                $@"\bnew\s+{Regex.Escape(productType)}\s*\("))
-            .Select(x => (
-                Type: ExtractClassName(x.Text, "PlatformCreator"),
-                File: context.Relative(x.File)))
-            .Where(x => x.Type is not null)
-            .Select(x => (Type: x.Type!, x.File))
-            .Distinct()
-            .ToArray();
-
-        if(candidates.Length == 1)
-            return candidates[0];
-
-        if(candidates.Length > 1)
-        {
-            throw new InvalidDataException(
-                $"Multiple PlatformCreator implementations construct {productType}: " +
-                string.Join(", ", candidates.Select(x => $"{x.Type} ({x.File})")));
-        }
-
-        if(required)
-        {
-            throw new InvalidDataException(
-                $"No PlatformCreator implementation constructs {productType}. " +
-                "Refusing to create a partial remediation.");
-        }
-
-        return null;
-    }
-
-    private static string? ExtractClassName(
-        string source,
-        string suffix)
-    {
-        var match = Regex.Match(
-            source,
-            $@"\bclass\s+(?<type>[A-Za-z_][A-Za-z0-9_]*{Regex.Escape(suffix)})\b");
-
-        return match.Success
-            ? match.Groups["type"].Value
-            : null;
-    }
-
-    private static bool SourceOwnsTarget(
-        string source,
         CoverageDiscrepancy target)
     {
+        var path = context.PathFromRoot(
+            "Saucery.Core/Dojo/Browsers/BrowserFactory.cs");
+
+        if(!File.Exists(path))
+            return null;
+
+        foreach(var line in File.ReadLines(path))
+        {
+            if(!IsExactRegistrationLine(line, target))
+                continue;
+
+            var match = Regex.Match(
+                line,
+                @"\bnew\s+(?<type>[A-Za-z_][A-Za-z0-9_]*BrowserCreator)\s*\(");
+
+            if(match.Success)
+                return match.Groups["type"].Value;
+        }
+
+        return null;
+    }
+
+    private static bool IsExactRegistrationLine(
+        string line,
+        CoverageDiscrepancy target)
+    {
+        if(string.IsNullOrWhiteSpace(line))
+            return false;
+
         var identity = ObsoletePlatformIdentity.Exact(target);
 
         if(!string.IsNullOrWhiteSpace(identity) &&
            Regex.IsMatch(
-               source,
+               line,
                $@"(?<![A-Za-z0-9_]){Regex.Escape(identity)}(?![A-Za-z0-9_])"))
         {
             return true;
         }
 
+        var display = target.DisplayName ?? string.Empty;
+        if(!string.IsNullOrWhiteSpace(display) &&
+           Regex.IsMatch(
+               line,
+               $@"[""']{Regex.Escape(display)}[""']",
+               RegexOptions.IgnoreCase))
+        {
+            return true;
+        }
+
         var version = target.Version ?? string.Empty;
-        var family = target.Family ?? string.Empty;
+        return !string.IsNullOrWhiteSpace(version) &&
+               Regex.IsMatch(
+                   line,
+                   $@"[""'](?:{Regex.Escape(target.Family)}\s+)?{Regex.Escape(version)}[""']",
+                   RegexOptions.IgnoreCase);
+    }
 
-        if(family.Equals("iOS", StringComparison.OrdinalIgnoreCase))
+    private static string? FindExactClassFile(
+        RepositoryContext context,
+        string requiredPathSegment,
+        string typeName,
+        bool required)
+    {
+        var matches = Directory
+            .EnumerateFiles(context.Core, "*.cs", SearchOption.AllDirectories)
+            .Where(file => file
+                .Replace('\\', '/')
+                .Contains(requiredPathSegment, StringComparison.OrdinalIgnoreCase))
+            .Where(file => Regex.IsMatch(
+                File.ReadAllText(file),
+                $@"\bclass\s+{Regex.Escape(typeName)}\b"))
+            .Select(context.Relative)
+            .ToArray();
+
+        if(matches.Length == 1)
+            return matches[0];
+
+        if(matches.Length > 1)
         {
-            if(Regex.IsMatch(version, @"^\d+\.\d+$"))
-            {
-                return Regex.IsMatch(
-                    source,
-                    $@"[""'](?:iOS\s+)?{Regex.Escape(version)}[""']",
-                    RegexOptions.IgnoreCase);
-            }
-
-            var major = Regex.Match(version, @"^\d+").Value;
-
-            return !string.IsNullOrWhiteSpace(major) &&
-                   Regex.IsMatch(
-                       source,
-                       $@"[""'](?:iOS\s+)?{Regex.Escape(major)}(?:\.x)?[""']",
-                       RegexOptions.IgnoreCase);
+            throw new InvalidDataException(
+                $"Multiple exact class declarations found for {typeName}: {string.Join(", ", matches)}");
         }
 
-        if(family.Equals("Android", StringComparison.OrdinalIgnoreCase))
+        if(required)
         {
-            if(Regex.IsMatch(version, @"^\d+\.\d+$"))
-            {
-                return Regex.IsMatch(
-                    source,
-                    $@"[""'](?:Android\s+)?{Regex.Escape(version)}[""']",
-                    RegexOptions.IgnoreCase);
-            }
-
-            var major = Regex.Match(version, @"^\d+").Value;
-
-            return !string.IsNullOrWhiteSpace(major) &&
-                   Regex.IsMatch(
-                       source,
-                       $@"[""'](?:Android\s+)?{Regex.Escape(major)}(?:\.x)?[""']",
-                       RegexOptions.IgnoreCase);
+            throw new InvalidDataException(
+                $"No exact class declaration was found for {typeName}.");
         }
 
-        return false;
+        return null;
     }
 }
 
@@ -697,14 +687,11 @@ internal static class ObsoleteSynthesizer
             changes.Delete(obsolete.CreatorFile);
         }
 
-        if(string.IsNullOrWhiteSpace(obsolete.BrowserCreatorFile))
+        if(!string.IsNullOrWhiteSpace(obsolete.BrowserCreatorFile))
         {
-            throw new InvalidDataException(
-                $"No dedicated BrowserCreator was resolved for obsolete platform {target.DisplayName}. Refusing partial remediation.");
+            Console.WriteLine($"    Deleting obsolete BrowserCreator: {obsolete.BrowserCreatorFile}");
+            changes.Delete(obsolete.BrowserCreatorFile);
         }
-
-        Console.WriteLine($"    Deleting obsolete BrowserCreator: {obsolete.BrowserCreatorFile}");
-        changes.Delete(obsolete.BrowserCreatorFile);
 
         var deletedTypes = new[]
             {
