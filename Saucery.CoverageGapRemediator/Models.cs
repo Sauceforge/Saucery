@@ -2,25 +2,9 @@ using System.Text.Json.Serialization;
 
 namespace Saucery.CoverageGapRemediator;
 
-internal enum DiscrepancyType
-{
-    Missing,
-    ObsoleteCandidate
-}
-
-internal enum PlatformRequirementKind
-{
-    DesktopPlatform,
-    MobileExactVersion,
-    MobileMajorWildcard
-}
-
-internal enum RemediationDisposition
-{
-    AutoFix,
-    ManualReview,
-    NoOp
-}
+internal enum DiscrepancyType { Missing, ObsoleteCandidate }
+internal enum PlatformRequirementKind { DesktopPlatform, MobileExactVersion, MobileMajorWildcard }
+internal enum RemediationDisposition { AutoFix, ManualReview, NoOp }
 
 internal sealed record CoverageDiscrepancy(
     DiscrepancyType Type,
@@ -33,17 +17,11 @@ internal sealed record CoverageDiscrepancy(
     string? EvidenceFile = null,
     string? Evidence = null)
 {
-    [JsonIgnore]
-    public IReadOnlyList<string> Devices => RepresentativeDevices ?? Array.Empty<string>();
-
-    [JsonIgnore]
-    public string Identity => $"{Type}|{Family}|{Kind}|{DisplayName}|{Version}";
+    [JsonIgnore] public IReadOnlyList<string> Devices => RepresentativeDevices ?? Array.Empty<string>();
+    [JsonIgnore] public string Identity => $"{Type}|{Family}|{Kind}|{DisplayName}|{Version}";
 }
 
-internal sealed record FileChange(
-    string Path,
-    string ChangeType,
-    string Description);
+internal sealed record FileChange(string Path, string ChangeType, string Description);
 
 internal sealed record RemediationItem(
     CoverageDiscrepancy Discrepancy,
@@ -82,3 +60,22 @@ internal sealed record ReporterJsonDiscrepancy(
     IReadOnlyList<string>? RepresentativeDevices,
     string? EvidenceFile,
     string? Evidence);
+
+internal sealed record PlatformPrototype(
+    string Family,
+    string IdentifierPrefix,
+    string Version,
+    PlatformRequirementKind Kind,
+    string ProductType,
+    string ProductFile,
+    string? CreatorType,
+    string? CreatorFile,
+    string? BrowserCreatorType,
+    string? BrowserCreatorFile,
+    IReadOnlyList<RegistrationSite> Registrations,
+    IReadOnlyList<MethodSite> HelperMethods,
+    double VersionNumber);
+
+internal sealed record RegistrationSite(string File, int LineIndex, string Line);
+internal sealed record MethodSite(string File, int StartLine, int EndLine, string Text);
+internal sealed record ValidationResult(bool Success, IReadOnlyList<string> Messages, IReadOnlyList<CoverageDiscrepancy> Remaining);
