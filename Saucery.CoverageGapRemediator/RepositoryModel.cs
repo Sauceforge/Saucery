@@ -110,7 +110,7 @@ internal sealed class RepositoryModel
     private static string? FindFileContaining(IEnumerable<string> files, string needle) =>
         files.FirstOrDefault(f => File.ReadAllText(f).Contains(needle, StringComparison.Ordinal));
 
-    private static List<RegistrationSite> FindRegistrations(
+    private static IReadOnlyList<RegistrationSite> FindRegistrations(
         IReadOnlyDictionary<string, string[]> files,
         string productType,
         string creatorType,
@@ -215,7 +215,7 @@ internal sealed class RepositoryModel
         return double.TryParse(clean, System.Globalization.NumberStyles.Number, System.Globalization.CultureInfo.InvariantCulture, out var value) ? value : 0;
     }
 
-    private static List<MethodSite> FindHelpers(IReadOnlyDictionary<string, string[]> files, string prefix, string family)
+    private static IReadOnlyList<MethodSite> FindHelpers(IReadOnlyDictionary<string, string[]> files, string prefix, string family)
     {
         var result = new List<MethodSite>();
         foreach(var (file, lines) in files.Where(x => x.Key.StartsWith("Saucery.Core/", StringComparison.OrdinalIgnoreCase)))

@@ -16,8 +16,11 @@ internal sealed class RepositoryValidator
             return new(false, messages, Array.Empty<CoverageDiscrepancy>());
         }
 
-        var tests = await ProcessRunner.RunAsync("dotnet", ["test", Path.Combine("Saucery.Core.Tests", "Saucery.Core.Tests.csproj"), "-c", "Release"], context.Root);
-        messages.Add($"Test Saucery.Core.Tests: {(tests.ExitCode == 0 ? "PASS" : "FAIL")}");
+        var tests = await ProcessRunner.RunAsync(
+            "dotnet",
+            ["run", "--project", Path.Combine("Saucery.Core.Tests", "Saucery.Core.Tests.csproj"), "--configuration", "Release"],
+            context.Root);
+        messages.Add($"Run Saucery.Core.Tests (Microsoft.Testing.Platform): {(tests.ExitCode == 0 ? "PASS" : "FAIL")}");
         if(tests.ExitCode != 0)
         {
             messages.Add(tests.CombinedOutput);
