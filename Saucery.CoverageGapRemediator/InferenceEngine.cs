@@ -4,14 +4,14 @@ namespace Saucery.CoverageGapRemediator;
 
 internal sealed class GenericRemediationEngine
 {
-    public RemediationPlan BuildPlan(RepositoryContext context, string reportPath, IReadOnlyList<CoverageDiscrepancy> discrepancies, Options options)
+    public static RemediationPlan BuildPlan(RepositoryContext context, string reportPath, IReadOnlyList<CoverageDiscrepancy> discrepancies, Options options)
     {
         var model = RepositoryModel.Build(context);
         var items = discrepancies.Select(d => PlanOne(model, context, d, options)).ToArray();
         return new(context.Root, reportPath, DateTimeOffset.UtcNow, items);
     }
 
-    public async Task<ApplyResult> ApplyAsync(
+    public static async Task<ApplyResult> ApplyAsync(
         RepositoryContext context,
         RemediationPlan plan,
         Options options,
@@ -51,16 +51,16 @@ internal sealed class GenericRemediationEngine
             if(validation.Remaining.Count == 0)
                 throw new InvalidOperationException("Generated remediation failed build/test validation. See validation output above.");
 
-            pending = validation.Remaining.ToList();
+            pending = [.. validation.Remaining];
         }
 
         if(pending.Count > 0)
             throw new InvalidOperationException($"Unable to eliminate {pending.Count} discrepancy(s) after {options.MaxRepairPasses} synthesis passes: {string.Join(", ", pending.Select(x => x.DisplayName))}");
 
         return new(
-            collector.ChangedFiles.OrderBy(x => x).ToArray(),
-            collector.CreatedFiles.OrderBy(x => x).ToArray(),
-            collector.DeletedFiles.OrderBy(x => x).ToArray(),
+            [.. collector.ChangedFiles.OrderBy(x => x)],
+            [.. collector.CreatedFiles.OrderBy(x => x)],
+            [.. collector.DeletedFiles.OrderBy(x => x)],
             messages);
     }
 
@@ -69,7 +69,7 @@ internal sealed class GenericRemediationEngine
         if(d.Type == DiscrepancyType.ObsoleteCandidate && !options.AllowObsoleteRemoval)
             return new(d, RemediationDisposition.ManualReview, "repository-inference",
                 "The repository graph can remove this candidate, but destructive remediation is disabled. Re-run with --allow-obsolete-removal after lifecycle evidence has been reviewed.",
-                Array.Empty<FileChange>(), ["Obsolete-candidate removal is opt-in because a Sauce catalogue can be incomplete."]);
+                [], ["Obsolete-candidate removal is opt-in because a Sauce catalogue can be incomplete."]);
 
         PlatformPrototype analogue;
         try { analogue = model.FindBestAnalogue(d); }
@@ -77,7 +77,7 @@ internal sealed class GenericRemediationEngine
         {
             return new(d, RemediationDisposition.ManualReview, "repository-inference",
                 "No existing repository implementation can be used as a structural analogue.",
-                Array.Empty<FileChange>(), [ex.Message]);
+                [], [ex.Message]);
         }
 
         var changes = new List<FileChange>();
@@ -96,7 +96,7 @@ internal sealed class GenericRemediationEngine
 
         return new(d, RemediationDisposition.AutoFix, "repository-inference",
             $"Infer remediation from repository analogue {analogue.ProductType} ({analogue.Family} {analogue.Version}). No platform-specific remediation class is used.",
-            changes.DistinctBy(x => (x.Path, x.ChangeType, x.Description)).ToArray(),
+            [.. changes.DistinctBy(x => (x.Path, x.ChangeType, x.Description))],
             ["All generated C# is syntax-checked; source changes are retained only after build, tests, and reporter verification pass."]);
     }
 }
@@ -115,7 +115,7 @@ internal static class MissingSynthesizer
             CloneOwnedFile(context, changes, source.BrowserCreatorFile, source.BrowserCreatorType, map.TargetBrowserCreatorType, map);
 
         foreach(var group in source.Registrations.GroupBy(x => x.File, StringComparer.OrdinalIgnoreCase))
-            InsertTransformedRegistrations(context, changes, group.Key, group.OrderByDescending(x => x.LineIndex).ToArray(), source, target, map);
+            InsertTransformedRegistrations(context, changes, group.Key, [.. group.OrderByDescending(x => x.LineIndex)], source, target, map);
 
         if(!SameFamily(source.Family, target.Family))
             foreach(var helper in source.HelperMethods.OrderByDescending(x => x.StartLine))
@@ -153,6 +153,7 @@ internal static class MissingSynthesizer
             {
                 if(site.LineIndex < 0 || site.LineIndex >= lines.Count) continue;
                 var line = lines[site.LineIndex];
+                if(IsMethodDeclaration(line)) continue;
                 if(!RegistrationApplies(line, source, target)) continue;
                 var transformed = map.Transform(line);
                 if(transformed == line || lines.Any(x => x.Trim() == transformed.Trim())) continue;
@@ -161,6 +162,9 @@ internal static class MissingSynthesizer
             return string.Join(Environment.NewLine, lines);
         });
     }
+
+    private static bool IsMethodDeclaration(string line) =>
+        Regex.IsMatch(line, @"^\s*(?:public|private|internal|protected)\s+(?:static\s+)?[A-Za-z_][A-Za-z0-9_<>,?\[\]\s]*\s+[A-Za-z_][A-Za-z0-9_]*\s*\(");
 
     private static bool RegistrationApplies(string line, PlatformPrototype source, CoverageDiscrepancy target)
     {
@@ -302,7 +306,7 @@ internal sealed class TransformationMap
                 list.Add((source.IdentifierPrefix + sourceDigits, targetPrefix + targetDigits));
         }
 
-        return new TransformationMap(list.Where(x => x.Item1 != x.Item2 && !string.IsNullOrEmpty(x.Item1)).Distinct().OrderByDescending(x => x.Item1.Length).ToArray(), targetProduct, targetCreator, targetBrowser);
+        return new TransformationMap([.. list.Where(x => x.Item1 != x.Item2 && !string.IsNullOrEmpty(x.Item1)).Distinct().OrderByDescending(x => x.Item1.Length)], targetProduct, targetCreator, targetBrowser);
     }
 
     public string Transform(string input)

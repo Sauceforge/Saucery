@@ -43,12 +43,12 @@ internal sealed class RepositoryModel
             var creatorFile = FindFileContaining(files, $"class {creatorType}");
             var browserCreatorType = string.IsNullOrEmpty(digits) ? prefix + "BrowserCreator" : null;
             var browserCreatorFile = browserCreatorType is null ? null : FindFileContaining(files, $"class {browserCreatorType}");
-            var refs = FindRegistrations(lines, productType, creatorType, browserCreatorType, family, digits);
+            var helpers = FindHelpers(lines, prefix, family);
+            var refs = FindRegistrations(lines, productType, creatorType, browserCreatorType, family, digits, helpers);
             var version = InferVersion(refs, prefix, digits);
             var kind = prefix.Equals("IOS", StringComparison.OrdinalIgnoreCase) || prefix.Equals("Android", StringComparison.OrdinalIgnoreCase)
                 ? PlatformRequirementKind.MobileExactVersion
                 : PlatformRequirementKind.DesktopPlatform;
-            var helpers = FindHelpers(lines, prefix, family);
 
             prototypes.Add(new PlatformPrototype(
                 family, prefix, version, kind, productType, context.Relative(productFile),
@@ -110,14 +110,22 @@ internal sealed class RepositoryModel
     private static string? FindFileContaining(IEnumerable<string> files, string needle) =>
         files.FirstOrDefault(f => File.ReadAllText(f).Contains(needle, StringComparison.Ordinal));
 
-    private static IReadOnlyList<RegistrationSite> FindRegistrations(
+    private static List<RegistrationSite> FindRegistrations(
         IReadOnlyDictionary<string, string[]> files,
         string productType,
         string creatorType,
         string? browserCreatorType,
         string family,
-        string digits)
+        string digits,
+        IReadOnlyList<MethodSite> helpers)
     {
+        var helperRanges = helpers
+            .GroupBy(h => h.File, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(
+                g => g.Key,
+                g => g.Select(h => (h.StartLine, h.EndLine)).ToArray(),
+                StringComparer.OrdinalIgnoreCase);
+
         var result = new List<RegistrationSite>();
         foreach(var (file, lines) in files)
         {
@@ -127,6 +135,9 @@ internal sealed class RepositoryModel
 
             for(var i = 0; i < lines.Length; i++)
             {
+                if(helperRanges.TryGetValue(file, out var ranges) && ranges.Any(r => i >= r.StartLine && i <= r.EndLine))
+                    continue;
+
                 var line = lines[i];
                 var direct = line.Contains(productType, StringComparison.Ordinal) || line.Contains(creatorType, StringComparison.Ordinal) ||
                              (browserCreatorType is not null && line.Contains(browserCreatorType, StringComparison.Ordinal));
@@ -178,7 +189,7 @@ internal sealed class RepositoryModel
         return double.TryParse(clean, System.Globalization.NumberStyles.Number, System.Globalization.CultureInfo.InvariantCulture, out var value) ? value : 0;
     }
 
-    private static IReadOnlyList<MethodSite> FindHelpers(IReadOnlyDictionary<string, string[]> files, string prefix, string family)
+    private static List<MethodSite> FindHelpers(IReadOnlyDictionary<string, string[]> files, string prefix, string family)
     {
         var result = new List<MethodSite>();
         foreach(var (file, lines) in files.Where(x => x.Key.StartsWith("Saucery.Core/", StringComparison.OrdinalIgnoreCase)))
