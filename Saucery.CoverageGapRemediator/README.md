@@ -205,3 +205,18 @@ Exact mobile versions that share a major-family implementation remain declaratio
 ## Shared obsolete platform identity
 
 Exact platform identity resolution is shared by obsolete discovery and synthesis through `ObsoletePlatformIdentity.Exact`. This prevents resolver code from depending on a private synthesizer method.
+
+
+## Owned obsolete slice discovery
+
+Whole-platform obsolete removal now discovers implementation ownership from source content rather than guessed class names or BrowserFactory constructor syntax.
+
+For each obsolete whole platform it requires exactly one dedicated:
+
+- `*Platform` under `ConcreteProducts`
+- `*PlatformCreator` under `ConcreteCreators` that constructs that exact platform type
+- `*BrowserCreator` under `BrowserCreators` whose source owns the exact obsolete platform identity/version
+
+If any required implementation cannot be uniquely resolved, remediation fails instead of creating a partial two-file PR.
+
+After discovery, the remediator deletes all three implementation files, removes exact declarations from `BrowserFactory.cs` and `DojoExtensions.cs`, repairs test data, builds, and validates xUnit.v3.

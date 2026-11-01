@@ -442,240 +442,164 @@ internal static class ObsoleteTargetResolver
         RepositoryContext context,
         CoverageDiscrepancy target)
     {
-        var browserFactory = context.PathFromRoot(
-            "Saucery.Core/Dojo/Browsers/BrowserFactory.cs");
-
-        var dojoExtensions = context.PathFromRoot(
-            "Saucery.Core/Dojo/DojoExtensions.cs");
-
-        var platformFactoryCandidates = Directory
-            .EnumerateFiles(
-                context.PathFromRoot("Saucery.Core/Dojo/Platforms"),
-                "*PlatformFactory.cs",
-                SearchOption.AllDirectories)
-            .ToArray();
-
-        var browserCreatorType = FindReferencedCreatorType(
-            browserFactory,
+        var product = FindOwnedClass(
+            context,
+            "/ConcreteProducts/",
+            "Platform",
             target,
-            suffix: "BrowserCreator");
+            required: !ObsoleteDeclarationResolver.IsDeclarationOnlyExactVersion(context, target));
 
-        var browserCreatorFile = browserCreatorType is null
-            ? null
-            : FindClassFile(
-                context,
-                browserCreatorType,
-                "/BrowserCreators/");
-
-        var productType = FindReferencedPlatformType(
-            dojoExtensions,
-            target);
-
-        string? creatorType = null;
-        string? creatorFile = null;
-
-        if(productType is not null)
+        if(product is null)
         {
-            foreach(var factory in platformFactoryCandidates)
-            {
-                var maybeCreator = FindCreatorForPlatform(
-                    factory,
-                    productType);
-
-                if(maybeCreator is null)
-                    continue;
-
-                creatorType = maybeCreator;
-                creatorFile = FindClassFile(
-                    context,
-                    creatorType,
-                    "/ConcreteCreators/");
-                break;
-            }
+            return new(
+                string.Empty,
+                string.Empty,
+                null,
+                null,
+                null,
+                null);
         }
 
-        string? productFile = null;
-        if(productType is not null)
-        {
-            productFile = FindClassFile(
-                context,
-                productType,
-                "/ConcreteProducts/");
-        }
+        var creator = FindCreatorForProduct(
+            context,
+            product.Value.Type,
+            required: true);
 
-        // Fallback for cases where DojoExtensions does not expose the product type
-        // directly but the platform creator does.
-        if(productType is null && creatorFile is not null)
-        {
-            productType = FindProductTypeFromCreator(
-                context.PathFromRoot(creatorFile));
-
-            if(productType is not null)
-            {
-                productFile = FindClassFile(
-                    context,
-                    productType,
-                    "/ConcreteProducts/");
-            }
-        }
-
-        // For whole-family obsolete candidates the product is required.
-        if(!ObsoleteDeclarationResolver.IsDeclarationOnlyExactVersion(context, target))
-        {
-            if(string.IsNullOrWhiteSpace(productType) ||
-               string.IsNullOrWhiteSpace(productFile))
-            {
-                throw new InvalidDataException(
-                    $"Could not resolve the exact ConcreteProduct for obsolete platform {target.DisplayName} from repository registrations.");
-            }
-        }
+        var browserCreator = FindOwnedClass(
+            context,
+            "/BrowserCreators/",
+            "BrowserCreator",
+            target,
+            required: true);
 
         return new(
-            productType ?? string.Empty,
-            productFile ?? string.Empty,
-            creatorType,
-            creatorFile,
-            browserCreatorType,
-            browserCreatorFile);
+            product.Value.Type,
+            product.Value.File,
+            creator.Value.Type,
+            creator.Value.File,
+            browserCreator.Value.Type,
+            browserCreator.Value.File);
     }
 
-    private static string? FindReferencedCreatorType(
-        string file,
-        CoverageDiscrepancy target,
-        string suffix)
-    {
-        if(!File.Exists(file))
-            return null;
-
-        foreach(var line in File.ReadLines(file))
-        {
-            if(!IsTargetRegistrationLine(line, target))
-                continue;
-
-            var match = Regex.Match(
-                line,
-                $@"new\s+(?<type>[A-Za-z_][A-Za-z0-9_]*{Regex.Escape(suffix)})\b");
-
-            if(match.Success)
-                return match.Groups["type"].Value;
-        }
-
-        return null;
-    }
-
-    private static string? FindReferencedPlatformType(
-        string file,
-        CoverageDiscrepancy target)
-    {
-        if(!File.Exists(file))
-            return null;
-
-        foreach(var line in File.ReadLines(file))
-        {
-            if(!IsTargetRegistrationLine(line, target))
-                continue;
-
-            var generic = Regex.Match(
-                line,
-                @"GetPlatform<(?<type>[A-Za-z_][A-Za-z0-9_]*Platform)>\s*\(");
-
-            if(generic.Success)
-                return generic.Groups["type"].Value;
-
-            var ctor = Regex.Match(
-                line,
-                @"new\s+(?<type>[A-Za-z_][A-Za-z0-9_]*Platform)\s*\(");
-
-            if(ctor.Success)
-                return ctor.Groups["type"].Value;
-        }
-
-        return null;
-    }
-
-    private static string? FindCreatorForPlatform(
-        string platformFactoryFile,
-        string productType)
-    {
-        if(!File.Exists(platformFactoryFile))
-            return null;
-
-        var text = File.ReadAllText(platformFactoryFile);
-
-        // First preference: creator branch that ultimately returns the exact product type.
-        var creatorCandidates = Regex.Matches(
-            text,
-            @"new\s+(?<creator>[A-Za-z_][A-Za-z0-9_]*PlatformCreator)\s*\([^)]*\)\.Create\(\)")
-            .Select(m => m.Groups["creator"].Value)
-            .Distinct(StringComparer.Ordinal)
-            .ToArray();
-
-        foreach(var creator in creatorCandidates)
-        {
-            // Naming is only used as a weak filter here; final resolution is by class content.
-            if(productType.StartsWith(
-                creator.Replace("Creator", string.Empty),
-                StringComparison.OrdinalIgnoreCase))
-            {
-                return creator;
-            }
-        }
-
-        return creatorCandidates.FirstOrDefault();
-    }
-
-    private static string? FindProductTypeFromCreator(string creatorFile)
-    {
-        if(!File.Exists(creatorFile))
-            return null;
-
-        var text = File.ReadAllText(creatorFile);
-
-        var direct = Regex.Match(
-            text,
-            @"new\s+(?<type>[A-Za-z_][A-Za-z0-9_]*Platform)\s*\(");
-
-        return direct.Success
-            ? direct.Groups["type"].Value
-            : null;
-    }
-
-    private static string? FindClassFile(
+    private static (string Type, string File)? FindOwnedClass(
         RepositoryContext context,
-        string typeName,
-        string requiredPathSegment)
+        string requiredPathSegment,
+        string classSuffix,
+        CoverageDiscrepancy target,
+        bool required)
     {
-        var matches = Directory
+        var candidates = Directory
             .EnumerateFiles(context.Core, "*.cs", SearchOption.AllDirectories)
             .Where(file => file
                 .Replace('\\', '/')
                 .Contains(requiredPathSegment, StringComparison.OrdinalIgnoreCase))
-            .Where(file => Regex.IsMatch(
-                File.ReadAllText(file),
-                $@"\bclass\s+{Regex.Escape(typeName)}\b"))
-            .Select(context.Relative)
+            .Select(file => new
+            {
+                File = file,
+                Text = File.ReadAllText(file)
+            })
+            .Select(x => new
+            {
+                x.File,
+                x.Text,
+                Type = ExtractClassName(x.Text, classSuffix)
+            })
+            .Where(x => x.Type is not null)
+            .Where(x => SourceOwnsTarget(x.Text, target))
+            .Select(x => (
+                Type: x.Type!,
+                File: context.Relative(x.File)))
+            .Distinct()
             .ToArray();
 
-        return matches.Length switch
+        if(candidates.Length == 1)
+            return candidates[0];
+
+        if(candidates.Length > 1)
         {
-            0 => null,
-            1 => matches[0],
-            _ => throw new InvalidDataException(
-                $"Multiple class declarations found for {typeName}: {string.Join(", ", matches)}")
-        };
+            throw new InvalidDataException(
+                $"Multiple {classSuffix} implementations own obsolete platform {target.DisplayName}: " +
+                string.Join(", ", candidates.Select(x => $"{x.Type} ({x.File})")));
+        }
+
+        if(required)
+        {
+            throw new InvalidDataException(
+                $"No dedicated {classSuffix} implementation was found for obsolete platform {target.DisplayName}. " +
+                "Refusing to create a partial remediation.");
+        }
+
+        return null;
     }
 
-    private static bool IsTargetRegistrationLine(
-        string line,
+    private static (string Type, string File)? FindCreatorForProduct(
+        RepositoryContext context,
+        string productType,
+        bool required)
+    {
+        var candidates = Directory
+            .EnumerateFiles(context.Core, "*.cs", SearchOption.AllDirectories)
+            .Where(file => file
+                .Replace('\\', '/')
+                .Contains("/ConcreteCreators/", StringComparison.OrdinalIgnoreCase))
+            .Select(file => new
+            {
+                File = file,
+                Text = File.ReadAllText(file)
+            })
+            .Where(x => Regex.IsMatch(
+                x.Text,
+                $@"\bnew\s+{Regex.Escape(productType)}\s*\("))
+            .Select(x => (
+                Type: ExtractClassName(x.Text, "PlatformCreator"),
+                File: context.Relative(x.File)))
+            .Where(x => x.Type is not null)
+            .Select(x => (Type: x.Type!, x.File))
+            .Distinct()
+            .ToArray();
+
+        if(candidates.Length == 1)
+            return candidates[0];
+
+        if(candidates.Length > 1)
+        {
+            throw new InvalidDataException(
+                $"Multiple PlatformCreator implementations construct {productType}: " +
+                string.Join(", ", candidates.Select(x => $"{x.Type} ({x.File})")));
+        }
+
+        if(required)
+        {
+            throw new InvalidDataException(
+                $"No PlatformCreator implementation constructs {productType}. " +
+                "Refusing to create a partial remediation.");
+        }
+
+        return null;
+    }
+
+    private static string? ExtractClassName(
+        string source,
+        string suffix)
+    {
+        var match = Regex.Match(
+            source,
+            $@"\bclass\s+(?<type>[A-Za-z_][A-Za-z0-9_]*{Regex.Escape(suffix)})\b");
+
+        return match.Success
+            ? match.Groups["type"].Value
+            : null;
+    }
+
+    private static bool SourceOwnsTarget(
+        string source,
         CoverageDiscrepancy target)
     {
-        if(string.IsNullOrWhiteSpace(line))
-            return false;
-
         var identity = ObsoletePlatformIdentity.Exact(target);
+
         if(!string.IsNullOrWhiteSpace(identity) &&
            Regex.IsMatch(
-               line,
+               source,
                $@"(?<![A-Za-z0-9_]){Regex.Escape(identity)}(?![A-Za-z0-9_])"))
         {
             return true;
@@ -689,16 +613,17 @@ internal static class ObsoleteTargetResolver
             if(Regex.IsMatch(version, @"^\d+\.\d+$"))
             {
                 return Regex.IsMatch(
-                    line,
+                    source,
                     $@"[""'](?:iOS\s+)?{Regex.Escape(version)}[""']",
                     RegexOptions.IgnoreCase);
             }
 
             var major = Regex.Match(version, @"^\d+").Value;
+
             return !string.IsNullOrWhiteSpace(major) &&
                    Regex.IsMatch(
-                       line,
-                       $@"[""']iOS\s+{Regex.Escape(major)}[""']",
+                       source,
+                       $@"[""'](?:iOS\s+)?{Regex.Escape(major)}(?:\.x)?[""']",
                        RegexOptions.IgnoreCase);
         }
 
@@ -707,16 +632,17 @@ internal static class ObsoleteTargetResolver
             if(Regex.IsMatch(version, @"^\d+\.\d+$"))
             {
                 return Regex.IsMatch(
-                    line,
+                    source,
                     $@"[""'](?:Android\s+)?{Regex.Escape(version)}[""']",
                     RegexOptions.IgnoreCase);
             }
 
             var major = Regex.Match(version, @"^\d+").Value;
+
             return !string.IsNullOrWhiteSpace(major) &&
                    Regex.IsMatch(
-                       line,
-                       $@"[""']Android\s+{Regex.Escape(major)}[""']",
+                       source,
+                       $@"[""'](?:Android\s+)?{Regex.Escape(major)}(?:\.x)?[""']",
                        RegexOptions.IgnoreCase);
         }
 
@@ -753,15 +679,14 @@ internal static class ObsoleteSynthesizer
             changes.Delete(obsolete.CreatorFile);
         }
 
-        if(obsolete.BrowserCreatorFile is not null)
+        if(string.IsNullOrWhiteSpace(obsolete.BrowserCreatorFile))
         {
-            Console.WriteLine($"    Deleting obsolete BrowserCreator: {obsolete.BrowserCreatorFile}");
-            changes.Delete(obsolete.BrowserCreatorFile);
+            throw new InvalidDataException(
+                $"No dedicated BrowserCreator was resolved for obsolete platform {target.DisplayName}. Refusing partial remediation.");
         }
-        else
-        {
-            Console.WriteLine($"    No dedicated BrowserCreator class was registered for {target.DisplayName}; none will be deleted.");
-        }
+
+        Console.WriteLine($"    Deleting obsolete BrowserCreator: {obsolete.BrowserCreatorFile}");
+        changes.Delete(obsolete.BrowserCreatorFile);
 
         var deletedTypes = new[]
             {

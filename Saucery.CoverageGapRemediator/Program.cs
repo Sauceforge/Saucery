@@ -5,7 +5,7 @@ namespace Saucery.CoverageGapRemediator;
 
 internal static class Program
 {
-    internal const string Build = "coverage-remediator-v31-shared-platform-identity";
+    internal const string Build = "coverage-remediator-v32-owned-slice-discovery";
 
     public static async Task<int> Main(string[] args)
     {
