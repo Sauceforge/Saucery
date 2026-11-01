@@ -114,8 +114,6 @@ public static class DojoExtensions
             SauceryConstants.PLATFORM_CHROMIUM_OS => platforms.GetPlatform<ChromiumOSPlatform>().FirstOrDefault(),
             SauceryConstants.PLATFORM_WINDOWS_11 => platforms.GetPlatform<Windows11Platform>().FirstOrDefault(),
             SauceryConstants.PLATFORM_WINDOWS_10 => platforms.GetPlatform<Windows10Platform>().FirstOrDefault(),
-            SauceryConstants.PLATFORM_WINDOWS_81 => platforms.GetPlatform<Windows81Platform>().FirstOrDefault(),
-            SauceryConstants.PLATFORM_WINDOWS_8 => platforms.GetPlatform<Windows8Platform>().FirstOrDefault(),
             SauceryConstants.PLATFORM_MAC_26 => platforms.GetPlatform<Mac26Platform>().FirstOrDefault(),
             SauceryConstants.PLATFORM_MAC_15 => platforms.GetPlatform<Mac15Platform>().FirstOrDefault(),
             SauceryConstants.PLATFORM_MAC_14 => platforms.GetPlatform<Mac14Platform>().FirstOrDefault(),
@@ -255,7 +253,6 @@ public static class DojoExtensions
             "iOS 16" => platforms.GetPlatform<IOS16Platform>().FirstOrDefault(),
             "iOS 15" => platforms.GetPlatform<IOS15Platform>().FirstOrDefault(),
             "iOS 14" => platforms.GetPlatform<IOS14Platform>().FirstOrDefault(),
-            "iOS 13" => platforms.GetPlatform<IOS13Platform>().FirstOrDefault(),
             _ => null
         };
     }
