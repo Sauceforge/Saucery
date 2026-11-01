@@ -23,8 +23,6 @@ public static class BrowserFactory {
                     SauceryConstants.PLATFORM_CHROMIUM_OS => new ChromiumOSBrowserCreator(sp).Create(SauceryConstants.PLATFORM_CHROMIUM_OS, screenResolutions, isArmRequired),
                     SauceryConstants.PLATFORM_WINDOWS_11 => new Windows11BrowserCreator(sp).Create(SauceryConstants.PLATFORM_WINDOWS_11, screenResolutions, isArmRequired),
                     SauceryConstants.PLATFORM_WINDOWS_10 => new Windows10BrowserCreator(sp).Create(SauceryConstants.PLATFORM_WINDOWS_10, screenResolutions, isArmRequired),
-                    SauceryConstants.PLATFORM_WINDOWS_81 => new Windows81BrowserCreator(sp).Create("Windows 8.1", screenResolutions, isArmRequired),
-                    SauceryConstants.PLATFORM_WINDOWS_8 => new Windows8BrowserCreator(sp).Create("Windows 8", screenResolutions, isArmRequired),
                     SauceryConstants.PLATFORM_MAC_26 => new Mac26BrowserCreator(sp).Create("macOS 26", screenResolutions, isArmRequired),
                     SauceryConstants.PLATFORM_MAC_15 => new Mac15BrowserCreator(sp).Create("macOS 15", screenResolutions, isArmRequired),
                     SauceryConstants.PLATFORM_MAC_14 => new Mac14BrowserCreator(sp).Create("macOS 14", screenResolutions, isArmRequired),

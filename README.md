@@ -142,8 +142,6 @@ We use it ourselves to manage our own packages, and we hope you find it useful t
 | Status | Platform | Evidence |
 | --- | --- | --- |
 | Obsolete candidate | iOS 26.0 | Declared in `Dojo/DojoExtensions.cs`; no matching current Sauce API-derived functional platform requirement. |
-| Obsolete candidate | Windows 8 | Declared in `Dojo/Browsers/BrowserFactory.cs`; no matching current Sauce API-derived functional platform requirement. |
-| Obsolete candidate | Windows 8.1 | Declared in `Dojo/Browsers/BrowserFactory.cs`; no matching current Sauce API-derived functional platform requirement. |
 <!-- END SAUCERY PLATFORM COVERAGE -->
 
 ### Trends
