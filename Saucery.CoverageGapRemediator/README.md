@@ -100,3 +100,14 @@ The remediator removes:
 When rows are removed from a `DataProviders` source, the matching platform-count test (`DesktopPlatformsTest`, `IOSPlatformsTest`, or `AndroidPlatformsTest`) is decremented by exactly the number of removed rows in that test project.
 
 External Sauce Labs fixture-construction failures are treated as inconclusive only when the run contains no ordinary assertion failure. A real assertion failure such as a stale platform count still fails remediation and must be repaired.
+
+
+## Validation test runner
+
+The remediation validator builds every discovered `Saucery.Core.Tests*` project so compile-time breakage is caught in both test suites.
+
+For actual unit-test execution, the validator runs **only**:
+
+`Saucery.Core.Tests.XUnitv3/Saucery.Core.Tests.XUnitv3.csproj`
+
+The TUnit project is compiled but is not executed by the remediation pipeline. If the required xUnit.v3 project cannot be found, validation fails explicitly.

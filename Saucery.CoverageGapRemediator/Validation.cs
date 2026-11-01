@@ -96,34 +96,42 @@ internal sealed class RepositoryValidator
             messages.Add("Coverage reporter verification: SKIPPED");
         }
 
-        foreach(var testProject in context.TestProjects)
+        var xunitV3Project = context.TestProjects
+            .SingleOrDefault(project =>
+                Path.GetFileName(project).Equals(
+                    "Saucery.Core.Tests.XUnitv3.csproj",
+                    StringComparison.OrdinalIgnoreCase));
+
+        if(xunitV3Project is null)
         {
-            var relativeProject = context.Relative(testProject);
-            var tests = await ProcessRunner.RunAsync(
-                "dotnet",
-                ["run", "--project", relativeProject, "--configuration", "Release"],
-                context.Root);
-
-            if(tests.ExitCode == 0)
-            {
-                messages.Add($"Run {relativeProject}: PASS");
-                continue;
-            }
-
-            if(IsExternalSauceInfrastructureFailure(tests.CombinedOutput))
-            {
-                messages.Add($"Run {relativeProject}: INCONCLUSIVE");
-                messages.Add("  The test process reached the live Sauce Labs platform acquisition hook and failed before test execution because the external API response could not be deserialized.");
-                messages.Add("  This is treated as an external integration failure, not as a remediation failure. All Core/test projects built successfully and any missing-platform targets were verified by the coverage reporter.");
-                continue;
-            }
-
-            messages.Add($"Run {relativeProject}: FAIL");
-            messages.Add(tests.CombinedOutput);
+            messages.Add("Run Saucery.Core.Tests.XUnitv3: FAIL");
+            messages.Add("  Required xUnit.v3 test project Saucery.Core.Tests.XUnitv3/Saucery.Core.Tests.XUnitv3.csproj was not found.");
             return new(false, messages, Array.Empty<CoverageDiscrepancy>());
         }
 
-        return new(true, messages, Array.Empty<CoverageDiscrepancy>());
+        var relativeXunitV3Project = context.Relative(xunitV3Project);
+        var tests = await ProcessRunner.RunAsync(
+            "dotnet",
+            ["run", "--project", relativeXunitV3Project, "--configuration", "Release"],
+            context.Root);
+
+        if(tests.ExitCode == 0)
+        {
+            messages.Add($"Run {relativeXunitV3Project}: PASS");
+            return new(true, messages, Array.Empty<CoverageDiscrepancy>());
+        }
+
+        if(IsExternalSauceInfrastructureFailure(tests.CombinedOutput))
+        {
+            messages.Add($"Run {relativeXunitV3Project}: INCONCLUSIVE");
+            messages.Add("  The xUnit.v3 test process reached the live Sauce Labs platform acquisition hook and failed because the external API response could not be deserialized.");
+            messages.Add("  This is treated as an external integration failure, not as a remediation failure. Core and both test projects built successfully, and the xUnit.v3 suite was the only executed unit-test suite.");
+            return new(true, messages, Array.Empty<CoverageDiscrepancy>());
+        }
+
+        messages.Add($"Run {relativeXunitV3Project}: FAIL");
+        messages.Add(tests.CombinedOutput);
+        return new(false, messages, Array.Empty<CoverageDiscrepancy>());
     }
 
     private static bool IsExternalSauceInfrastructureFailure(string output)
