@@ -84,12 +84,6 @@ jobs:
           git diff --stat
           git diff
 
-      #
-      # CRITICAL SAFETY GATE
-      #
-      # The exact remediated working tree is rebuilt and the xUnit.v3 suite
-      # is executed here BEFORE any branch, commit, push, or PR is created.
-      #
       - name: Restore final xUnit.v3 test project
         run: >
           dotnet restore
@@ -109,16 +103,16 @@ jobs:
           --no-restore
 
       - name: Final xUnit.v3 validation gate
-        id: xunit_validation
         shell: bash
         run: |
           set -uo pipefail
 
           LOG_FILE="${RUNNER_TEMP}/saucery-xunit-v3-final.log"
 
-          echo "Running final xUnit.v3 tests against the exact remediated working tree..."
+          echo "Running final xUnit.v3 suite against the exact remediated working tree..."
 
           set +e
+
           dotnet run \
             --project Saucery.Core.Tests.XUnitv3/Saucery.Core.Tests.XUnitv3.csproj \
             --configuration Release \
@@ -126,90 +120,78 @@ jobs:
             2>&1 | tee "$LOG_FILE"
 
           TEST_EXIT_CODE=${PIPESTATUS[0]}
+
           set -e
 
           echo
           echo "dotnet run exit code: $TEST_EXIT_CODE"
+          echo
 
           #
-          # Genuine unit-test failures always win.
+          # FAIL CLOSED.
           #
-          # Do NOT trust the outer dotnet exit code by itself because
-          # Microsoft.Testing.Platform can produce failed-test output while
-          # the surrounding process still returns success.
+          # There are deliberately NO exceptions for Sauce Labs,
+          # fixture failures, network failures, JSON failures, or
+          # any other condition.
           #
+          # If the final test suite does not unequivocally PASS,
+          # no branch may be created.
+          #
+
+          if [[ "$TEST_EXIT_CODE" -ne 0 ]]; then
+            echo "::error::xUnit.v3 process exited with code $TEST_EXIT_CODE."
+            exit 1
+          fi
+
           if grep -Fq "Shouldly.ShouldAssertException" "$LOG_FILE"; then
-            echo "::error::xUnit.v3 validation failed: Shouldly assertion failure detected."
+            echo "::error::xUnit.v3 Shouldly assertion failure detected."
             exit 1
           fi
 
           if grep -Eq 'Assert\.(Equal|True|False|Contains|DoesNotContain|NotNull|Null|Throws)\(\) Failure' "$LOG_FILE"; then
-            echo "::error::xUnit.v3 validation failed: xUnit assertion failure detected."
-            exit 1
-          fi
-
-          if grep -Eq '^[[:space:]]*failed[[:space:]]+Saucery\.Core\.Tests\.XUnitv3\.' "$LOG_FILE"; then
-            #
-            # Some of these can be the known live Sauce fixture failure.
-            # We distinguish that case below.
-            #
-            HAS_FAILED_TEST_LINES=true
-          else
-            HAS_FAILED_TEST_LINES=false
-          fi
-
-          #
-          # Recognised external Sauce Labs infrastructure failure.
-          #
-          # This is allowed ONLY when there are no genuine assertion failures.
-          #
-          if grep -Fq "SauceLabsRealDeviceAcquirer.AcquireRealDevicePlatforms" "$LOG_FILE" \
-             && grep -Fq "System.Text.Json.JsonException" "$LOG_FILE" \
-             && grep -Fq "PlatformConfiguratorAllFixture" "$LOG_FILE"; then
-
-            echo "Recognised Sauce Labs platform-acquisition failure detected."
-
-            #
-            # Assertions were already checked above. Therefore this is
-            # infrastructure-only and may be treated as inconclusive.
-            #
-            echo "::warning::xUnit.v3 live Sauce Labs validation was inconclusive because the external platform API response could not be deserialized."
-            exit 0
-          fi
-
-          #
-          # Any other failed-test output is a hard failure.
-          #
-          if [[ "$HAS_FAILED_TEST_LINES" == "true" ]]; then
-            echo "::error::xUnit.v3 validation failed: failed test results detected."
+            echo "::error::xUnit.v3 assertion failure detected."
             exit 1
           fi
 
           if grep -Fq "Test run summary: Failed!" "$LOG_FILE"; then
-            echo "::error::xUnit.v3 validation failed: Microsoft.Testing.Platform reported a failed test run."
+            echo "::error::Microsoft.Testing.Platform reported a failed test run."
             exit 1
           fi
 
           if grep -Eq '^[[:space:]]*failed:[[:space:]]*[1-9][0-9]*[[:space:]]*$' "$LOG_FILE"; then
-            echo "::error::xUnit.v3 validation failed: non-zero failed-test count detected."
+            echo "::error::xUnit.v3 reported one or more failed tests."
+            exit 1
+          fi
+
+          if grep -Eq '^[[:space:]]*failed[[:space:]]+Saucery\.Core\.Tests\.XUnitv3\.' "$LOG_FILE"; then
+            echo "::error::xUnit.v3 failed test result detected."
             exit 1
           fi
 
           #
-          # If the process itself failed and it was not the recognised
-          # external Sauce failure above, validation fails.
+          # Do not merely look for the absence of failures.
+          # Require an explicit successful test-run summary.
           #
-          if [[ "$TEST_EXIT_CODE" -ne 0 ]]; then
-            echo "::error::xUnit.v3 validation process exited with code $TEST_EXIT_CODE."
-            exit "$TEST_EXIT_CODE"
+          if ! grep -Fq "Test run summary: Passed!" "$LOG_FILE"; then
+            echo "::error::xUnit.v3 did not report an explicit PASS."
+            exit 1
           fi
 
-          echo "Final xUnit.v3 validation: PASS"
+          #
+          # Require an explicit zero failure count as a second
+          # independent confirmation.
+          #
+          if ! grep -Eq '^[[:space:]]*failed:[[:space:]]*0[[:space:]]*$' "$LOG_FILE"; then
+            echo "::error::xUnit.v3 did not report exactly zero failed tests."
+            exit 1
+          fi
 
-      #
-      # Nothing below this point can execute unless the final xUnit.v3
-      # validation gate succeeded.
-      #
+          echo
+          echo "=============================================="
+          echo "FINAL XUNIT.V3 VALIDATION: PASS"
+          echo "ZERO FAILED TESTS"
+          echo "=============================================="
+
       - name: Check whether source changed
         id: changes
         shell: bash
@@ -265,14 +247,14 @@ jobs:
 
           The workflow:
           - generated the current Sauce Labs platform coverage report
-          - applied missing-platform remediations
-          - removed obsolete platform coverage where reported
+          - applied platform coverage remediations
           - updated the Core test suites
           - rebuilt the final remediated Core project
-          - rebuilt the final Saucery.Core.Tests.XUnitv3 project
-          - executed Saucery.Core.Tests.XUnitv3 against the exact final working tree
-          - blocked branch/commit/PR creation on genuine unit-test failures
-          - reran the coverage reporter
+          - rebuilt Saucery.Core.Tests.XUnitv3
+          - executed the complete Saucery.Core.Tests.XUnitv3 suite against the final working tree
+          - required an explicit Passed test summary
+          - required exactly zero failed tests
+          - blocked branch, commit, push, and PR creation unless every xUnit.v3 test passed
 
           Review the generated source and test changes before merging."
 
