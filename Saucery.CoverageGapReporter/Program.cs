@@ -8,7 +8,7 @@ namespace Saucery.CoverageGapReporter;
 
 internal static class Program
 {
-    internal const string ReporterBuild = "lifecycle-structural-v4";
+    internal const string ReporterBuild = "lifecycle-readme-v5";
     private const string CoreProjectDirectory = "Saucery.Core";
     private const string TestsProjectDirectory = "Saucery.Core.Tests";
 
@@ -86,6 +86,9 @@ internal static class Program
             Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
             await File.WriteAllTextAsync(outputPath, report, new UTF8Encoding(false));
 
+            var readmePath = Path.Combine(repoRoot, "README.md");
+            var readmeChanged = ReadmeCoverageUpdater.Update(readmePath, findings, lifecycle);
+
             var coreGaps = findings.Count(x => x.CoreStatus == CoverageStatus.Gap);
             var coreReview = findings.Count(x => x.CoreStatus == CoverageStatus.Review);
             var missingFamilySamples = findings
@@ -94,6 +97,7 @@ internal static class Program
 
             Console.WriteLine();
             Console.WriteLine($"Report written to: {outputPath}");
+            Console.WriteLine($"README coverage table: {(readmeChanged ? "updated" : "unchanged")} ({readmePath})");
             Console.WriteLine($"Sauce virtual rows read: {virtualRows.Count:N0}");
             Console.WriteLine($"Sauce real devices read: {realDevices.Count:N0}");
             Console.WriteLine($"Functional platform requirements: {requirements.Count:N0}");
@@ -1966,6 +1970,140 @@ internal static class ReportWriter
 
         return $"{evidence.Strength}; {evidence.File}; matched '{evidence.Match}'";
     }
+}
+
+
+internal static class ReadmeCoverageUpdater
+{
+    private const string BeginMarker = "<!-- BEGIN SAUCERY PLATFORM COVERAGE -->";
+    private const string EndMarker = "<!-- END SAUCERY PLATFORM COVERAGE -->";
+    private const string PreferredInsertionHeading = "### Packages";
+
+    public static bool Update(
+        string readmePath,
+        IReadOnlyList<CoverageFinding> findings,
+        PlatformLifecycleResult lifecycle)
+    {
+        if (!File.Exists(readmePath))
+        {
+            throw new FileNotFoundException("The repository root README.md could not be found.", readmePath);
+        }
+
+        var original = File.ReadAllText(readmePath);
+        var newline = original.Contains("\r\n", StringComparison.Ordinal) ? "\r\n" : "\n";
+        var section = BuildSection(findings, lifecycle, newline);
+        var updated = ReplaceOrInsertSection(original, section, newline);
+
+        if (string.Equals(original, updated, StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        File.WriteAllText(readmePath, updated, new UTF8Encoding(false));
+        return true;
+    }
+
+    private static string BuildSection(
+        IReadOnlyList<CoverageFinding> findings,
+        PlatformLifecycleResult lifecycle,
+        string newline)
+    {
+        var missing = findings
+            .Where(x => x.CoreStatus == CoverageStatus.Gap)
+            .OrderBy(x => x.Requirement.Family)
+            .ThenBy(x => x.Requirement.SortKey, NaturalStringComparer.Instance)
+            .ToList();
+
+        var obsolete = lifecycle.ObsoleteCandidates
+            .OrderBy(x => x.Family)
+            .ThenBy(x => x.Version, NaturalStringComparer.Instance)
+            .ThenBy(x => x.DisplayName, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        var lines = new List<string>
+        {
+            BeginMarker,
+            "### Platform Coverage Audit",
+            string.Empty,
+            "> Automatically maintained by `Saucery.CoverageGapReporter`. Missing means Sauce currently advertises the functional platform but Saucery.Core coverage was not detected. Obsolete candidate means an explicit Saucery.Core declaration was not found in the current Sauce API-derived functional platform set and should be reviewed before removal.",
+            string.Empty,
+            "| Status | Platform | Evidence |",
+            "| --- | --- | --- |"
+        };
+
+        foreach (var finding in missing)
+        {
+            var requirement = finding.Requirement;
+            var evidence = requirement.SauceConfigurationCount == 1
+                ? "1 Sauce catalogue configuration; no Saucery.Core coverage detected."
+                : $"{requirement.SauceConfigurationCount:N0} Sauce catalogue configurations; no Saucery.Core coverage detected.";
+
+            lines.Add($"| Missing | {EscapeCell(requirement.DisplayName)} | {EscapeCell(evidence)} |");
+        }
+
+        foreach (var platform in obsolete)
+        {
+            var evidence = $"Declared in `{platform.File}`; no matching current Sauce API-derived functional platform requirement.";
+            lines.Add($"| Obsolete candidate | {EscapeCell(platform.DisplayName)} | {EscapeCell(evidence)} |");
+        }
+
+        if (missing.Count == 0 && obsolete.Count == 0)
+        {
+            lines.Add("| None | — | No missing or obsolete coverage detected. |");
+        }
+
+        lines.Add(EndMarker);
+        return string.Join(newline, lines);
+    }
+
+    private static string ReplaceOrInsertSection(string original, string section, string newline)
+    {
+        var beginIndex = original.IndexOf(BeginMarker, StringComparison.Ordinal);
+        var endIndex = original.IndexOf(EndMarker, StringComparison.Ordinal);
+
+        if (beginIndex >= 0 || endIndex >= 0)
+        {
+            if (beginIndex < 0 || endIndex < 0 || endIndex < beginIndex)
+            {
+                throw new InvalidDataException(
+                    $"README.md contains an incomplete or invalid generated coverage section. Expected both '{BeginMarker}' and '{EndMarker}'.");
+            }
+
+            var replaceEnd = endIndex + EndMarker.Length;
+            return original[..beginIndex] + section + original[replaceEnd..];
+        }
+
+        var headingIndex = FindHeadingStart(original, PreferredInsertionHeading);
+        if (headingIndex >= 0)
+        {
+            var prefix = original[..headingIndex].TrimEnd('\r', '\n');
+            var suffix = original[headingIndex..].TrimStart('\r', '\n');
+            return prefix + newline + newline + section + newline + newline + suffix;
+        }
+
+        return original.TrimEnd('\r', '\n') + newline + newline + section + newline;
+    }
+
+    private static int FindHeadingStart(string text, string heading)
+    {
+        var index = text.IndexOf(heading, StringComparison.Ordinal);
+        while (index >= 0)
+        {
+            if (index == 0 || text[index - 1] == '\n')
+            {
+                return index;
+            }
+
+            index = text.IndexOf(heading, index + heading.Length, StringComparison.Ordinal);
+        }
+
+        return -1;
+    }
+
+    private static string EscapeCell(string value) =>
+        value.Replace("|", "\\|", StringComparison.Ordinal)
+             .Replace("\r", " ", StringComparison.Ordinal)
+             .Replace("\n", " ", StringComparison.Ordinal);
 }
 
 internal sealed class NaturalStringComparer : IComparer<string>

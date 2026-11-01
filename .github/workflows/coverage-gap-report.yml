@@ -4,7 +4,6 @@ on:
   workflow_dispatch:
 
   schedule:
-    # Run every day at 02:00 UTC.
     - cron: "0 2 * * *"
 
   push:
@@ -17,7 +16,7 @@ on:
       - ".github/workflows/coverage-gap-report.yml"
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   coverage-gap-report:
@@ -25,12 +24,14 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
-      SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
+      SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+      SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
       - name: Setup .NET 10
         uses: actions/setup-dotnet@v6
@@ -65,19 +66,28 @@ jobs:
           --include-real true
 
       - name: Print Coverage Gap Report
-        if: always()
-        run: |
-          if [ -f saucery-functional-platform-coverage-gaps.txt ]; then
-            cat saucery-functional-platform-coverage-gaps.txt
-          else
-            echo "Coverage gap report was not generated."
-          fi
+        run: cat saucery-functional-platform-coverage-gaps.txt
 
       - name: Upload Coverage Gap Report
-        if: always()
         uses: actions/upload-artifact@v6
         with:
           name: saucery-functional-platform-coverage-gaps
           path: saucery-functional-platform-coverage-gaps.txt
           if-no-files-found: error
           retention-days: 30
+
+      - name: Commit README coverage table
+        if: github.ref == 'refs/heads/master'
+        shell: bash
+        run: |
+          if git diff --quiet -- README.md; then
+            echo "README platform coverage table is already current."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add README.md
+          git commit -m "docs: update platform coverage audit"
+          git push origin HEAD:master

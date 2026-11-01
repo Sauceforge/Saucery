@@ -1,4 +1,4 @@
-﻿<p align="center">
+<p align="center">
   <img src="/Saucery.Core/Images/Saucery.Core.png" alt="Saucery" width="200">
 </p>
 
@@ -21,6 +21,20 @@
 Saucery handles all the plumbing required to integrate with SauceLabs, making writing tests a breeze, so you only need to tell Saucery *what* you want. Saucery takes care of the *how*.
 
 Saucery comes in multiple flavors supporting popular test frameworks. Targeting all real and emulated [platforms](https://saucelabs.com/products/platform-configurator) for Appium and Selenium 4+. The templates below include example tests.
+
+<!-- BEGIN SAUCERY PLATFORM COVERAGE -->
+### Platform Coverage Audit
+
+> Automatically maintained by `Saucery.CoverageGapReporter`. Missing means Sauce currently advertises the functional platform but Saucery.Core coverage was not detected. Obsolete candidate means an explicit Saucery.Core declaration was not found in the current Sauce API-derived functional platform set and should be reviewed before removal.
+
+| Status | Platform | Evidence |
+| --- | --- | --- |
+| Missing | ChromiumOS | 2 Sauce catalogue configurations; no Saucery.Core coverage detected. |
+| Obsolete candidate | iOS 13.x | Declared in `Dojo\DojoExtensions.cs`; no matching current Sauce API-derived functional platform requirement. |
+| Obsolete candidate | iOS 26.0 | Declared in `Dojo\DojoExtensions.cs`; no matching current Sauce API-derived functional platform requirement. |
+| Obsolete candidate | Windows 8 | Declared in `Dojo\Browsers\BrowserFactory.cs`; no matching current Sauce API-derived functional platform requirement. |
+| Obsolete candidate | Windows 8.1 | Declared in `Dojo\Browsers\BrowserFactory.cs`; no matching current Sauce API-derived functional platform requirement. |
+<!-- END SAUCERY PLATFORM COVERAGE -->
 
 ### Packages
 
