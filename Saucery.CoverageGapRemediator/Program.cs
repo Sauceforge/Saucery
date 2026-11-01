@@ -5,7 +5,7 @@ namespace Saucery.CoverageGapRemediator;
 
 internal static class Program
 {
-    internal const string Build = "coverage-remediator-v23-xunit-test-repair-gate";
+    internal const string Build = "coverage-remediator-v24-change-collector-read-fix";
 
     public static async Task<int> Main(string[] args)
     {

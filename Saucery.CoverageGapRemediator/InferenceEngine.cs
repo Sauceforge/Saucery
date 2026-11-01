@@ -722,11 +722,9 @@ internal static class ObsoleteSynthesizer
         {
             var relative = context.Relative(path);
 
-            // Use the latest pending content when this file was already changed during
-            // remediation; otherwise read from disk.
-            var source = changes.TryGetPendingContent(relative, out var pending)
-                ? pending
-                : File.ReadAllText(path);
+            // ChangeCollector.Write writes immediately through the repository transaction,
+            // so Read returns the latest remediated content for this file.
+            var source = changes.Read(relative);
 
             if(!source.Contains(methodName, StringComparison.Ordinal))
                 continue;

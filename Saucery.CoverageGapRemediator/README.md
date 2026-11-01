@@ -124,3 +124,8 @@ Obsolete platform remediation repairs both `Saucery.Core.Tests` and `Saucery.Cor
 - The xUnit.v3 suite is the executed validation suite.
 
 Any genuine xUnit.v3 assertion failure is a hard failure. It takes precedence over recognized Sauce Labs infrastructure failures, causing transaction rollback and preventing branch/commit/PR creation.
+
+
+## ChangeCollector consistency
+
+`ChangeCollector.Write` persists remediated content immediately through `RepositoryTransaction`. Subsequent remediation steps read the current transactional file content with `ChangeCollector.Read`; there is no separate pending-write dictionary.
