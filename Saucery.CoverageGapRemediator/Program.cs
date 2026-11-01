@@ -5,7 +5,7 @@ namespace Saucery.CoverageGapRemediator;
 
 internal static class Program
 {
-    internal const string Build = "coverage-remediator-v7-structural-registrations";
+    internal const string Build = "coverage-remediator-v8-complete-slice-cloning";
 
     public static async Task<int> Main(string[] args)
     {
@@ -23,7 +23,7 @@ internal static class Program
             Console.WriteLine($"Discrepancies read: {discrepancies.Count:N0}");
             var context = new RepositoryContext(repoRoot);
             var engine = new GenericRemediationEngine();
-            var plan = engine.BuildPlan(context, reportPath, discrepancies, options);
+            var plan = GenericRemediationEngine.BuildPlan(context, reportPath, discrepancies, options);
             await PlanWriter.WriteAsync(plan, Resolve(repoRoot, options.PlanJsonPath), Resolve(repoRoot, options.PlanMarkdownPath));
             Console.WriteLine($"Automatic fixes inferred: {plan.AutoFixCount:N0}");
             Console.WriteLine($"Manual-review items: {plan.ManualReviewCount:N0}");
@@ -37,7 +37,7 @@ internal static class Program
             var transaction = new RepositoryTransaction();
             try
             {
-                var result = await engine.ApplyAsync(context, plan, options, transaction);
+                var result = await GenericRemediationEngine.ApplyAsync(context, plan, options, transaction);
                 transaction.Commit();
                 Console.WriteLine("Remediation applied successfully.");
                 Console.WriteLine($"Changed files: {result.ChangedFiles.Count:N0}");

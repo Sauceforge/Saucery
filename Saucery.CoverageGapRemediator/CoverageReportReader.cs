@@ -1,10 +1,13 @@
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace Saucery.CoverageGapRemediator;
 
 internal static class CoverageReportReader
 {
+    private static readonly JsonSerializerOptions jsonSerializerOptions = new() { PropertyNameCaseInsensitive = true };
+
     public static async Task<IReadOnlyList<CoverageDiscrepancy>> ReadAsync(string path)
     {
         return Path.GetExtension(path).Equals(".json", StringComparison.OrdinalIgnoreCase)
@@ -15,22 +18,13 @@ internal static class CoverageReportReader
     private static async Task<IReadOnlyList<CoverageDiscrepancy>> ReadJsonAsync(string path)
     {
         await using var stream = File.OpenRead(path);
-        var document = await JsonSerializer.DeserializeAsync<ReporterJsonDocument>(
-            stream,
-            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        var document = await JsonSerializer.DeserializeAsync<ReporterJsonDocument>(stream, jsonSerializerOptions) 
+            ?? throw new InvalidDataException("The reporter JSON document could not be parsed.");
 
-        if (document is null)
-        {
-            throw new InvalidDataException("The reporter JSON document could not be parsed.");
-        }
-
-        var result = new List<CoverageDiscrepancy>();
-        foreach (var item in document.Missing ?? Array.Empty<ReporterJsonDiscrepancy>())
-        {
-            result.Add(ConvertJson(item, DiscrepancyType.Missing));
-        }
-
-        foreach (var item in document.ObsoleteCandidates ?? Array.Empty<ReporterJsonDiscrepancy>())
+        var result = (from item in document.Missing ?? []
+                      select ConvertJson(item, DiscrepancyType.Missing)).ToList();
+        
+        foreach(var item in document.ObsoleteCandidates ?? [])
         {
             result.Add(ConvertJson(item, DiscrepancyType.ObsoleteCandidate));
         }
@@ -94,10 +88,10 @@ internal static class CoverageReportReader
     }
 
     private static void ParseGaps(
-        IReadOnlyList<string> lines,
+        string[] lines,
         int start,
         int end,
-        ICollection<CoverageDiscrepancy> result)
+        List<CoverageDiscrepancy> result)
     {
         for (var i = start; i < end; i++)
         {
@@ -141,10 +135,10 @@ internal static class CoverageReportReader
     }
 
     private static void ParseObsolete(
-        IReadOnlyList<string> lines,
+        string[] lines,
         int start,
         int end,
-        ICollection<CoverageDiscrepancy> result)
+        List<CoverageDiscrepancy> result)
     {
         for (var i = start; i < end; i++)
         {
@@ -192,9 +186,9 @@ internal static class CoverageReportReader
         }
     }
 
-    private static int FindHeading(IReadOnlyList<string> lines, string heading)
+    private static int FindHeading(string[] lines, string heading)
     {
-        for (var i = 0; i < lines.Count; i++)
+        for (var i = 0; i < lines.Length; i++)
         {
             if (lines[i].Trim().Equals(heading, StringComparison.OrdinalIgnoreCase))
             {

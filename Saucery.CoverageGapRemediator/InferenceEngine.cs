@@ -4,14 +4,14 @@ namespace Saucery.CoverageGapRemediator;
 
 internal sealed class GenericRemediationEngine
 {
-    public RemediationPlan BuildPlan(RepositoryContext context, string reportPath, IReadOnlyList<CoverageDiscrepancy> discrepancies, Options options)
+    public static RemediationPlan BuildPlan(RepositoryContext context, string reportPath, IReadOnlyList<CoverageDiscrepancy> discrepancies, Options options)
     {
         var model = RepositoryModel.Build(context);
         var items = discrepancies.Select(d => PlanOne(model, context, d, options)).ToArray();
         return new(context.Root, reportPath, DateTimeOffset.UtcNow, items);
     }
 
-    public async Task<ApplyResult> ApplyAsync(
+    public static async Task<ApplyResult> ApplyAsync(
         RepositoryContext context,
         RemediationPlan plan,
         Options options,
@@ -108,6 +108,7 @@ internal static class MissingSynthesizer
         var source = model.FindBestAnalogue(target);
         var map = TransformationMap.Create(source, target);
 
+        CloneSymbolDependencies(context, changes, source, map);
         CloneOwnedFile(context, changes, source.ProductFile, source.ProductType, map.TargetProductType, map);
         if(source.CreatorFile is not null && source.CreatorType is not null)
             CloneOwnedFile(context, changes, source.CreatorFile, source.CreatorType, map.TargetCreatorType, map);
@@ -120,6 +121,85 @@ internal static class MissingSynthesizer
         if(!SameFamily(source.Family, target.Family))
             foreach(var helper in source.HelperMethods.OrderByDescending(x => x.StartLine))
                 CloneHelper(changes, helper, map);
+    }
+
+    private static void CloneSymbolDependencies(
+        RepositoryContext context,
+        ChangeCollector changes,
+        PlatformPrototype source,
+        TransformationMap map)
+    {
+        CloneConstantDependencies(context, changes, source, map);
+        CloneNamespaceImports(context, changes, source, map);
+    }
+
+    private static void CloneConstantDependencies(
+        RepositoryContext context,
+        ChangeCollector changes,
+        PlatformPrototype source,
+        TransformationMap map)
+    {
+        var referencedConstants = new HashSet<string>(StringComparer.Ordinal);
+        foreach(var relative in new[] { source.ProductFile, source.CreatorFile, source.BrowserCreatorFile }.Where(x => x is not null)!)
+        {
+            var text = File.ReadAllText(context.PathFromRoot(relative!));
+            foreach(Match match in Regex.Matches(text, @"SauceryConstants\.(?<name>[A-Z][A-Z0-9_]*)"))
+                referencedConstants.Add(match.Groups["name"].Value);
+        }
+        foreach(var registration in source.Registrations)
+            foreach(Match match in Regex.Matches(registration.Line, @"SauceryConstants\.(?<name>[A-Z][A-Z0-9_]*)"))
+                referencedConstants.Add(match.Groups["name"].Value);
+
+        const string constantsFile = "Saucery.Core/Util/SauceryConstants.cs";
+        changes.Modify(constantsFile, text =>
+        {
+            var lines = text.Replace("\r\n", "\n", StringComparison.Ordinal).Split('\n').ToList();
+            foreach(var sourceName in referencedConstants)
+            {
+                var targetName = map.Transform(sourceName);
+                if(targetName == sourceName || Regex.IsMatch(text, $@"\b{Regex.Escape(targetName)}\b")) continue;
+
+                var sourceLine = lines.FindIndex(line => Regex.IsMatch(line, $@"\bconst\s+string\s+{Regex.Escape(sourceName)}\s*="));
+                if(sourceLine < 0) continue;
+
+                var transformed = map.Transform(lines[sourceLine]);
+                if(transformed == lines[sourceLine] || lines.Any(line => line.Trim() == transformed.Trim())) continue;
+                lines.Insert(sourceLine + 1, transformed);
+            }
+            return string.Join(Environment.NewLine, lines);
+        });
+    }
+
+    private static void CloneNamespaceImports(
+        RepositoryContext context,
+        ChangeCollector changes,
+        PlatformPrototype source,
+        TransformationMap map)
+    {
+        foreach(var file in source.Registrations.Select(x => x.File).Distinct(StringComparer.OrdinalIgnoreCase))
+        {
+            if(!file.EndsWith(".cs", StringComparison.OrdinalIgnoreCase)) continue;
+            changes.Modify(file, text =>
+            {
+                var lines = text.Replace("\r\n", "\n", StringComparison.Ordinal).Split('\n').ToList();
+                var additions = new List<(int Index, string Line)>();
+                for(var i = 0; i < lines.Count; i++)
+                {
+                    var line = lines[i];
+                    if(!line.TrimStart().StartsWith("using ", StringComparison.Ordinal)) continue;
+                    var transformed = map.Transform(line);
+                    if(transformed == line || lines.Any(existing => existing.Trim() == transformed.Trim())) continue;
+
+                    // Only clone imports changed by the analogue transformation. This keeps the
+                    // complete type slice coherent without copying unrelated namespace imports.
+                    additions.Add((i + 1, transformed));
+                }
+
+                foreach(var addition in additions.OrderByDescending(x => x.Index))
+                    lines.Insert(addition.Index, addition.Line);
+                return string.Join(Environment.NewLine, lines);
+            });
+        }
     }
 
     private static void CloneOwnedFile(RepositoryContext context, ChangeCollector changes, string sourceRelative, string sourceType, string targetType, TransformationMap map)
@@ -151,8 +231,13 @@ internal static class MissingSynthesizer
             var lines = text.Replace("\r\n", "\n", StringComparison.Ordinal).Split('\n').ToList();
             foreach(var site in sites)
             {
-                if(site.LineIndex < 0 || site.LineIndex >= lines.Count) continue;
-                var line = lines[site.LineIndex];
+                // Earlier edits (especially cloned using directives) can shift every stored line
+                // number. Relocate the exact analogue registration in the current source instead
+                // of trusting RepositoryModel's original index.
+                var currentIndex = lines.FindIndex(line => line.Trim() == site.Line.Trim());
+                if(currentIndex < 0) continue;
+
+                var line = lines[currentIndex];
                 if(IsMethodDeclaration(line)) continue;
                 if(!RegistrationApplies(line, source, target)) continue;
                 var transformed = map.Transform(line);
@@ -162,7 +247,7 @@ internal static class MissingSynthesizer
                 // still parses. This turns a bad inference into a skipped candidate instead of
                 // corrupting the repository and aborting the workflow.
                 var candidateLines = new List<string>(lines);
-                candidateLines.Insert(site.LineIndex + 1, transformed);
+                candidateLines.Insert(currentIndex + 1, transformed);
                 var candidate = string.Join(Environment.NewLine, candidateLines);
                 try
                 {
@@ -338,6 +423,12 @@ internal sealed class TransformationMap
         return id.Length == 0 ? "Platform" : char.ToUpperInvariant(id[0]) + id[1..];
     }
 
-    private static string ConstantToken(string family) => "PLATFORM_" + Regex.Replace(family, "[^A-Za-z0-9]", "_").ToUpperInvariant();
+    private static string ConstantToken(string family)
+    {
+        var identifier = Identifier(family);
+        var token = Regex.Replace(identifier, @"(?<=[a-z0-9])(?=[A-Z])", "_");
+        token = Regex.Replace(token, @"(?<=[A-Z])(?=[A-Z][a-z])", "_");
+        return "PLATFORM_" + Regex.Replace(token, "[^A-Za-z0-9]+", "_").Trim('_').ToUpperInvariant();
+    }
     private static string Normalize(string value) => Regex.Replace(value, "[^A-Za-z0-9]", "").ToUpperInvariant();
 }
