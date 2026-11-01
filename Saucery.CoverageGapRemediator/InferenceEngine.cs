@@ -770,12 +770,12 @@ internal static class ObsoleteSynthesizer
             return ["DesktopPlatformsTest", "AllPlatformsTest"];
 
         if(target.Family.Equals("iOS", StringComparison.OrdinalIgnoreCase))
-            return ["IOSPlatformsTest", "AllPlatformsTest"];
+            return ["IOSPlatformsTest"];
 
         if(target.Family.Equals("Android", StringComparison.OrdinalIgnoreCase))
-            return ["AndroidPlatformsTest", "AllPlatformsTest"];
+            return ["AndroidPlatformsTest"];
 
-        return ["AllPlatformsTest"];
+        return Array.Empty<string>();
     }
 
     private static bool ContainsExactIdentifier(string text, string identifier) =>

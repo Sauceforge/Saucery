@@ -129,3 +129,29 @@ Any genuine xUnit.v3 assertion failure is a hard failure. It takes precedence ov
 ## ChangeCollector consistency
 
 `ChangeCollector.Write` persists remediated content immediately through `RepositoryTransaction`. Subsequent remediation steps read the current transactional file content with `ChangeCollector.Read`; there is no separate pending-write dictionary.
+
+
+## Count assertion scope
+
+Count assertions are adjusted only for the inventory that actually feeds them:
+
+- desktop-family removals adjust `DesktopPlatformsTest` and `AllPlatformsTest`;
+- iOS removals adjust `IOSPlatformsTest` only;
+- Android removals adjust `AndroidPlatformsTest` only.
+
+This prevents an iOS/Android remediation from incorrectly decrementing the desktop-backed `AllPlatformsTest` count.
+
+
+## Test result authority
+
+The xUnit.v3 test output is authoritative over the outer process exit code.
+
+Validation fails immediately if output contains any of:
+
+- `Shouldly.ShouldAssertException`
+- xUnit assertion failure markers
+- `Test run summary: Failed!`
+- a non-zero `failed: N` Microsoft.Testing.Platform summary
+- an individual `failed Saucery.Core.Tests.XUnitv3...` result
+
+Only after confirming that the output contains no failed tests may an exit code of zero be treated as PASS. This prevents a successful `dotnet run` process code from masking failed xUnit.v3 tests.
