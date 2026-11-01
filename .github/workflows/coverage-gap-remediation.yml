@@ -66,7 +66,7 @@ jobs:
       - name: Print coverage gap report
         run: cat saucery-functional-platform-coverage-gaps.txt
 
-      - name: Apply supported remediations
+      - name: Apply remediations
         run: >
           dotnet run
           --project Saucery.CoverageGapRemediator/Saucery.CoverageGapRemediator.csproj
@@ -76,6 +76,7 @@ jobs:
           --repo-root "${{ github.workspace }}"
           --report "${{ github.workspace }}/saucery-functional-platform-coverage-gaps.txt"
           --apply
+          --allow-obsolete-removal
 
       - name: Show resulting changes
         run: |
@@ -138,7 +139,9 @@ jobs:
 
           The workflow:
           - generated the current Sauce Labs platform coverage report
-          - applied inferred remediations
+          - applied missing-platform remediations
+          - removed obsolete platform coverage where reported
+          - updated all discovered Core test suites
           - validated the generated Core and test projects
           - reran the coverage reporter
 
