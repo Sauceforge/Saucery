@@ -73,14 +73,14 @@ Obsolete remediation removes matching registrations first and never line-edits o
 
 ## Obsolete platform remediation
 
-Obsolete remediation is intentionally minimal.
+Obsolete removal is deterministic and does not use nearest-version inference.
 
-For an `ObsoleteCandidate`, the remediator:
+The discrepancy is converted directly to the expected implementation type. Examples:
 
-1. resolves the matching repository platform prototype;
-2. deletes the matching `ConcreteProducts` implementation file;
-3. deletes the matching `ConcreteCreators` / `PlatformCreator` implementation file when one exists;
-4. runs normal build/validation;
-5. rolls the transaction back if the solution no longer compiles.
+- `iOS 13.x` -> `IOS13Platform` and `IOS13PlatformCreator`
+- `Windows 8` -> `Windows8Platform` and `Windows8PlatformCreator`
+- `Windows 8.1` -> `Windows81Platform` and `Windows81PlatformCreator`
 
-It does not remove constants, factory registrations, browser mappings, test data, switch arms, or any other references. Compilation is the safety gate.
+The remediator locates the exact class declarations under `ConcreteProducts` and `ConcreteCreators`, deletes those files, and then removes only source lines that contain an exact C# identifier reference to one of those deleted types and remain syntactically valid after removal.
+
+It does not fuzzy-match version names, constants, browser names, resolutions, or unrelated platform text. The normal build/validation stage is the final safety gate.

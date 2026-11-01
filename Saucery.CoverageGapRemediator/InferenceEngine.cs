@@ -71,10 +71,36 @@ internal sealed class GenericRemediationEngine
                 "The repository graph can remove this candidate, but destructive remediation is disabled. Re-run with --allow-obsolete-removal after lifecycle evidence has been reviewed.",
                 Array.Empty<FileChange>(), ["Obsolete-candidate removal is opt-in because a Sauce catalogue can be incomplete."]);
 
-        PlatformPrototype? analogue = null;
+        if(d.Type == DiscrepancyType.ObsoleteCandidate)
+        {
+            try
+            {
+                var obsolete = ObsoleteTargetResolver.Resolve(context, d);
+                var changes = new List<FileChange>
+                {
+                    new(obsolete.ProductFile, "Delete", $"Delete exact obsolete ConcreteProduct {obsolete.ProductType}.")
+                };
+
+                if(obsolete.CreatorFile is not null)
+                    changes.Add(new(obsolete.CreatorFile, "Delete", $"Delete exact obsolete PlatformCreator {obsolete.CreatorType}."));
+
+                return new(d, RemediationDisposition.AutoFix, "exact-obsolete-type-removal",
+                    $"Delete {obsolete.ProductType}{(obsolete.CreatorType is null ? string.Empty : $" and {obsolete.CreatorType}")}, then remove only exact identifier references required for compilation.",
+                    changes,
+                    ["Obsolete removal never uses nearest-version inference or fuzzy text matching."]);
+            }
+            catch(Exception ex)
+            {
+                return new(d, RemediationDisposition.ManualReview, "exact-obsolete-type-removal",
+                    "The exact obsolete ConcreteProduct/PlatformCreator pair could not be resolved safely.",
+                    Array.Empty<FileChange>(), [ex.Message]);
+            }
+        }
+
+        PlatformPrototype analogue;
         try
         {
-            analogue = d.Type == DiscrepancyType.ObsoleteCandidate ? model.FindObsoletePrototype(d) : model.FindBestAnalogue(d);
+            analogue = model.FindBestAnalogue(d);
         }
         catch(Exception ex)
         {
@@ -83,26 +109,22 @@ internal sealed class GenericRemediationEngine
                 Array.Empty<FileChange>(), [ex.Message]);
         }
 
-        var changes = new List<FileChange>();
-        if(d.Type == DiscrepancyType.Missing)
+        var missingChanges = new List<FileChange>
         {
-            changes.Add(new(analogue!.ProductFile, "Clone/transform", $"Use {analogue!.ProductType} as the structural product analogue."));
-            if(analogue!.CreatorFile is not null) changes.Add(new(analogue!.CreatorFile, "Clone/transform", $"Use {analogue!.CreatorType} as the creator analogue."));
-            if(analogue!.BrowserCreatorFile is not null) changes.Add(new(analogue!.BrowserCreatorFile, "Clone/transform", $"Use {analogue!.BrowserCreatorType} as the browser-creator analogue."));
-            changes.AddRange(analogue.Registrations.Select(x => new FileChange(x.File, "Infer registration", "Transform an analogous registration/test line when semantically applicable.")));
-            changes.AddRange(analogue.HelperMethods.Select(x => new FileChange(x.File, "Infer helper", "Clone a family-specific helper when a new family requires one.")));
-        }
-        else
-        {
-            changes.Add(new(analogue!.ProductFile, "Delete if unreferenced", $"Remove {analogue!.ProductType} only after obsolete registrations are removed and no external references remain."));
-            if(analogue!.CreatorFile is not null) changes.Add(new(analogue!.CreatorFile, "Delete if unreferenced", $"Remove {analogue!.CreatorType} only if no surviving registration still uses it."));
-            if(analogue!.BrowserCreatorFile is not null) changes.Add(new(analogue!.BrowserCreatorFile, "Delete if unreferenced", $"Remove {analogue!.BrowserCreatorType} only if no surviving registration still uses it."));
-            changes.AddRange(analogue.Registrations.Select(x => new FileChange(x.File, "Remove matching registration", "Remove only registrations/tests whose version semantics match the obsolete requirement.")));
-        }
+            new(analogue.ProductFile, "Clone/transform", $"Use {analogue.ProductType} as the structural product analogue.")
+        };
+
+        if(analogue.CreatorFile is not null)
+            missingChanges.Add(new(analogue.CreatorFile, "Clone/transform", $"Use {analogue.CreatorType} as the creator analogue."));
+        if(analogue.BrowserCreatorFile is not null)
+            missingChanges.Add(new(analogue.BrowserCreatorFile, "Clone/transform", $"Use {analogue.BrowserCreatorType} as the browser-creator analogue."));
+
+        missingChanges.AddRange(analogue.Registrations.Select(x => new FileChange(x.File, "Infer registration", "Transform an analogous registration/test line when semantically applicable.")));
+        missingChanges.AddRange(analogue.HelperMethods.Select(x => new FileChange(x.File, "Infer helper", "Clone a family-specific helper when a new family requires one.")));
 
         return new(d, RemediationDisposition.AutoFix, "repository-inference",
-            $"Infer remediation from repository analogue {analogue!.ProductType} ({analogue.Family} {analogue.Version}). No platform-specific remediation class is used.",
-            changes.DistinctBy(x => (x.Path, x.ChangeType, x.Description)).ToArray(),
+            $"Infer remediation from repository analogue {analogue.ProductType} ({analogue.Family} {analogue.Version}). No platform-specific remediation class is used.",
+            missingChanges.DistinctBy(x => (x.Path, x.ChangeType, x.Description)).ToArray(),
             ["All generated C# is syntax-checked; source changes are retained only after build, tests, and reporter verification pass."]);
     }
 }
@@ -321,6 +343,110 @@ internal static class MissingSynthesizer
     private static string Major(string version) => Regex.Match(version, @"^\d+").Value;
 }
 
+internal sealed record ObsoleteTarget(
+    string ProductType,
+    string ProductFile,
+    string? CreatorType,
+    string? CreatorFile);
+
+internal static class ObsoleteTargetResolver
+{
+    public static ObsoleteTarget Resolve(RepositoryContext context, CoverageDiscrepancy target)
+    {
+        var productType = BuildProductType(target);
+        var creatorType = productType + "Creator";
+
+        var productFile = FindExactClassFile(
+            context,
+            "/ConcreteProducts/",
+            productType,
+            required: true)!;
+
+        var creatorFile = FindExactClassFile(
+            context,
+            "/ConcreteCreators/",
+            creatorType,
+            required: false);
+
+        return new(
+            productType,
+            productFile,
+            creatorFile is null ? null : creatorType,
+            creatorFile);
+    }
+
+    private static string BuildProductType(CoverageDiscrepancy target)
+    {
+        var version = target.Version ?? string.Empty;
+        var major = Regex.Match(version, @"^\d+").Value;
+        var digits = Regex.Replace(version, @"\D", "");
+
+        if(target.Family.Equals("iOS", StringComparison.OrdinalIgnoreCase))
+        {
+            if(string.IsNullOrWhiteSpace(major))
+                throw new InvalidDataException($"Cannot derive iOS ConcreteProduct type from '{target.DisplayName}'.");
+            return $"IOS{major}Platform";
+        }
+
+        if(target.Family.Equals("Android", StringComparison.OrdinalIgnoreCase))
+        {
+            if(string.IsNullOrWhiteSpace(major))
+                throw new InvalidDataException($"Cannot derive Android ConcreteProduct type from '{target.DisplayName}'.");
+            return $"Android{major}Platform";
+        }
+
+        if(target.Family.Equals("Windows", StringComparison.OrdinalIgnoreCase))
+        {
+            if(string.IsNullOrWhiteSpace(digits))
+                throw new InvalidDataException($"Cannot derive Windows ConcreteProduct type from '{target.DisplayName}'.");
+            return $"Windows{digits}Platform";
+        }
+
+        if(target.Family.Equals("macOS", StringComparison.OrdinalIgnoreCase) ||
+           target.Family.Equals("Mac", StringComparison.OrdinalIgnoreCase))
+        {
+            if(string.IsNullOrWhiteSpace(major))
+                throw new InvalidDataException($"Cannot derive macOS ConcreteProduct type from '{target.DisplayName}'.");
+            return $"Mac{major}Platform";
+        }
+
+        var family = Regex.Replace(target.Family, @"[^A-Za-z0-9]", "");
+        if(string.IsNullOrWhiteSpace(family))
+            throw new InvalidDataException($"Cannot derive ConcreteProduct type from '{target.DisplayName}'.");
+
+        return string.IsNullOrWhiteSpace(digits)
+            ? $"{family}Platform"
+            : $"{family}{digits}Platform";
+    }
+
+    private static string? FindExactClassFile(
+        RepositoryContext context,
+        string requiredPathSegment,
+        string typeName,
+        bool required)
+    {
+        var matches = Directory.EnumerateFiles(context.Core, "*.cs", SearchOption.AllDirectories)
+            .Where(file => file.Replace('\\', '/').Contains(requiredPathSegment, StringComparison.OrdinalIgnoreCase))
+            .Where(file => Regex.IsMatch(
+                File.ReadAllText(file),
+                $@"\bclass\s+{Regex.Escape(typeName)}\b"))
+            .Select(context.Relative)
+            .ToArray();
+
+        if(matches.Length == 1)
+            return matches[0];
+
+        if(matches.Length > 1)
+            throw new InvalidDataException(
+                $"Multiple exact class declarations were found for {typeName}: {string.Join(", ", matches)}");
+
+        if(required)
+            throw new InvalidDataException($"No exact class declaration was found for {typeName}.");
+
+        return null;
+    }
+}
+
 internal static class ObsoleteSynthesizer
 {
     public static void Apply(
@@ -329,61 +455,85 @@ internal static class ObsoleteSynthesizer
         CoverageDiscrepancy target,
         ChangeCollector changes)
     {
-        var prototype = model.FindObsoletePrototype(target);
+        _ = model;
 
-        DeleteRequiredConcreteProduct(context, target, changes, prototype.ProductFile);
+        var obsolete = ObsoleteTargetResolver.Resolve(context, target);
 
-        if(!string.IsNullOrWhiteSpace(prototype.CreatorFile))
-            DeleteRequiredPlatformCreator(context, target, changes, prototype.CreatorFile);
+        Console.WriteLine($"    Deleting obsolete ConcreteProduct: {obsolete.ProductFile}");
+        changes.Delete(obsolete.ProductFile);
+
+        if(obsolete.CreatorFile is not null)
+        {
+            Console.WriteLine($"    Deleting obsolete PlatformCreator: {obsolete.CreatorFile}");
+            changes.Delete(obsolete.CreatorFile);
+        }
+
+        var deletedTypes = new[] { obsolete.ProductType, obsolete.CreatorType }
+            .Where(type => !string.IsNullOrWhiteSpace(type))
+            .Select(type => type!)
+            .ToArray();
+
+        RemoveExactTypeReferences(context, changes, deletedTypes,
+            new[] { obsolete.ProductFile, obsolete.CreatorFile }
+                .Where(file => !string.IsNullOrWhiteSpace(file))
+                .Select(file => file!)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase));
     }
 
-    private static void DeleteRequiredConcreteProduct(
+    private static void RemoveExactTypeReferences(
         RepositoryContext context,
-        CoverageDiscrepancy target,
         ChangeCollector changes,
-        string? relative)
+        IReadOnlyList<string> deletedTypes,
+        IReadOnlySet<string> deletedFiles)
     {
-        if(string.IsNullOrWhiteSpace(relative))
-            throw new InvalidDataException(
-                $"No ConcreteProduct source file was identified for obsolete platform {target.DisplayName}.");
+        var roots = new[] { context.Core }.Concat(context.TestRoots);
 
-        var normalized = relative.Replace('\\', '/');
+        foreach(var path in roots
+            .Where(Directory.Exists)
+            .SelectMany(root => Directory.EnumerateFiles(root, "*.cs", SearchOption.AllDirectories)))
+        {
+            var relative = context.Relative(path);
+            if(deletedFiles.Contains(relative))
+                continue;
 
-        if(!normalized.Contains("/ConcreteProducts/", StringComparison.OrdinalIgnoreCase))
-            throw new InvalidDataException(
-                $"Refusing obsolete removal because {relative} is not a ConcreteProducts source file.");
+            var source = File.ReadAllText(path);
+            if(!deletedTypes.Any(type => ContainsExactIdentifier(source, type)))
+                continue;
 
-        var path = context.PathFromRoot(relative);
-        if(!File.Exists(path))
-            throw new FileNotFoundException(
-                $"ConcreteProduct source file for obsolete platform {target.DisplayName} was not found.",
-                path);
+            var lines = source.Replace("\r\n", "\n", StringComparison.Ordinal).Split('\n').ToList();
+            var changed = false;
 
-        Console.WriteLine($"    Deleting obsolete ConcreteProduct: {relative}");
-        changes.Delete(relative);
+            for(var i = lines.Count - 1; i >= 0; i--)
+            {
+                var line = lines[i];
+                if(!deletedTypes.Any(type => ContainsExactIdentifier(line, type)))
+                    continue;
+
+                var candidateLines = new List<string>(lines);
+                candidateLines.RemoveAt(i);
+                var candidateText = string.Join(Environment.NewLine, candidateLines);
+
+                try
+                {
+                    CSharpGuard.AssertValid(candidateText, path);
+                }
+                catch(InvalidDataException)
+                {
+                    continue;
+                }
+
+                Console.WriteLine($"    Removing direct reference from {relative}: {line.Trim()}");
+                lines = candidateLines;
+                changed = true;
+            }
+
+            if(changed)
+                changes.Write(relative, string.Join(Environment.NewLine, lines));
+        }
     }
 
-    private static void DeleteRequiredPlatformCreator(
-        RepositoryContext context,
-        CoverageDiscrepancy target,
-        ChangeCollector changes,
-        string relative)
-    {
-        var normalized = relative.Replace('\\', '/');
-
-        if(!normalized.Contains("/ConcreteCreators/", StringComparison.OrdinalIgnoreCase))
-            throw new InvalidDataException(
-                $"Refusing obsolete removal because {relative} is not a ConcreteCreators source file.");
-
-        var path = context.PathFromRoot(relative);
-        if(!File.Exists(path))
-            throw new FileNotFoundException(
-                $"PlatformCreator source file for obsolete platform {target.DisplayName} was not found.",
-                path);
-
-        Console.WriteLine($"    Deleting obsolete PlatformCreator: {relative}");
-        changes.Delete(relative);
-    }
+    private static bool ContainsExactIdentifier(string text, string identifier) =>
+        Regex.IsMatch(text, $@"(?<![A-Za-z0-9_]){Regex.Escape(identifier)}(?![A-Za-z0-9_])");
 }
 
 
