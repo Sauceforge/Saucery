@@ -66,8 +66,15 @@ internal sealed class RepositoryModel
         if(candidates.Length == 0) throw new InvalidDataException($"No repository prototype can model {target.DisplayName}.");
 
         var targetNumber = VersionNumber(target.Version);
+        var targetIsVersioned = !string.IsNullOrWhiteSpace(target.Version);
+
         return candidates
             .OrderByDescending(p => FamilyEquivalent(p.Family, target.Family))
+            // Architecture shape is more important than how many registrations a prototype happens to have.
+            // An unversioned desktop family (for example ChromiumOS) should be modelled from an
+            // unversioned desktop family (for example Linux), not from Mac27/Windows11.
+            .ThenByDescending(p => target.Kind != PlatformRequirementKind.DesktopPlatform ||
+                                   targetIsVersioned == !string.IsNullOrWhiteSpace(p.Version))
             .ThenBy(p => targetNumber == 0 || p.VersionNumber == 0 ? 0 : Math.Abs(p.VersionNumber - targetNumber))
             .ThenByDescending(p => p.Registrations.Count)
             .First();

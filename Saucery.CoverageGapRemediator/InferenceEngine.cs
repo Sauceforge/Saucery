@@ -125,7 +125,14 @@ internal static class MissingSynthesizer
     private static void CloneOwnedFile(RepositoryContext context, ChangeCollector changes, string sourceRelative, string sourceType, string targetType, TransformationMap map)
     {
         if(sourceType == targetType) return;
-        var targetRelative = Path.Combine(Path.GetDirectoryName(sourceRelative) ?? "", Path.GetFileName(sourceRelative).Replace(sourceType, targetType, StringComparison.Ordinal)).Replace('\\', '/');
+
+        // Transform the path as well as the file contents. This prevents a newly inferred family
+        // from being emitted into the source family's folder merely because that was the analogue.
+        var transformedPath = map.Transform(sourceRelative.Replace('\\', '/'));
+        var directory = Path.GetDirectoryName(transformedPath)?.Replace('\\', '/') ?? string.Empty;
+        var targetRelative = Path.Combine(directory, Path.GetFileName(transformedPath).Replace(sourceType, targetType, StringComparison.Ordinal))
+            .Replace('\\', '/');
+
         if(File.Exists(context.PathFromRoot(targetRelative))) return;
         changes.Write(targetRelative, map.Transform(File.ReadAllText(context.PathFromRoot(sourceRelative))));
     }
@@ -178,13 +185,24 @@ internal static class MissingSynthesizer
     {
         var transformed = map.Transform(helper.Text);
         if(transformed == helper.Text) return;
+
         changes.Modify(helper.File, text =>
         {
-            if(text.Contains(transformed.Trim(), StringComparison.Ordinal)) return text;
-            var lines = text.Replace("\r\n", "\n", StringComparison.Ordinal).Split('\n').ToList();
-            var insert = Math.Min(helper.EndLine + 1, lines.Count);
-            lines.Insert(insert, transformed);
-            return string.Join(Environment.NewLine, lines);
+            var normalized = text.Replace("\r\n", "\n", StringComparison.Ordinal);
+            var originalHelper = helper.Text.Replace("\r\n", "\n", StringComparison.Ordinal);
+            var transformedHelper = transformed.Replace("\r\n", "\n", StringComparison.Ordinal);
+
+            if(normalized.Contains(transformedHelper.Trim(), StringComparison.Ordinal)) return text;
+
+            // Do not use the RepositoryModel line numbers here. Earlier registration edits may
+            // already have shifted this file. Locate the exact method in the current source.
+            var methodIndex = normalized.IndexOf(originalHelper, StringComparison.Ordinal);
+            if(methodIndex < 0)
+                throw new InvalidDataException($"Could not relocate analogue helper in {helper.File} after earlier edits.");
+
+            var insert = methodIndex + originalHelper.Length;
+            normalized = normalized.Insert(insert, "\n\n" + transformedHelper);
+            return normalized.Replace("\n", Environment.NewLine, StringComparison.Ordinal);
         });
     }
 
