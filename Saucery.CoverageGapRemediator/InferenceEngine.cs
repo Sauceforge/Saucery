@@ -473,11 +473,19 @@ internal static class ObsoleteSynthesizer
             .Select(type => type!)
             .ToArray();
 
-        RemoveExactTypeReferences(context, changes, deletedTypes,
-            new[] { obsolete.ProductFile, obsolete.CreatorFile }
-                .Where(file => !string.IsNullOrWhiteSpace(file))
-                .Select(file => file!)
-                .ToHashSet(StringComparer.OrdinalIgnoreCase));
+        var deletedFiles = new[] { obsolete.ProductFile, obsolete.CreatorFile }
+            .Where(file => !string.IsNullOrWhiteSpace(file))
+            .Select(file => file!)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        // Production code is repaired only by removing exact references to the deleted
+        // product/creator types. No platform-name or version fuzzy matching is used.
+        RemoveExactTypeReferences(context, changes, deletedTypes, deletedFiles);
+
+        // Unit-test data can refer to a platform through the platform constant rather than
+        // the deleted concrete type. Remove only exact obsolete-platform test rows and then
+        // update the corresponding count assertion in that same test project.
+        RemoveObsoleteUnitTestData(context, changes, target, deletedTypes);
     }
 
     private static void RemoveExactTypeReferences(
@@ -532,8 +540,198 @@ internal static class ObsoleteSynthesizer
         }
     }
 
+    private static void RemoveObsoleteUnitTestData(
+        RepositoryContext context,
+        ChangeCollector changes,
+        CoverageDiscrepancy target,
+        IReadOnlyList<string> deletedTypes)
+    {
+        var platformIdentity = ExactPlatformIdentity(target);
+
+        foreach(var testRoot in context.TestRoots)
+        {
+            var removedDataRows = 0;
+
+            foreach(var path in Directory.EnumerateFiles(testRoot, "*.cs", SearchOption.AllDirectories))
+            {
+                var relative = context.Relative(path);
+                var original = File.ReadAllText(path);
+                var lines = original.Replace("\r\n", "\n", StringComparison.Ordinal).Split('\n').ToList();
+                var changed = false;
+
+                for(var i = lines.Count - 1; i >= 0; i--)
+                {
+                    var line = lines[i];
+
+                    // Direct deleted-type references are already handled above. This additional
+                    // test cleanup catches data rows that identify the platform by constant or
+                    // by a strongly typed mobile platform/version pair.
+                    if(!IsExactObsoleteTestRow(line, target, platformIdentity, deletedTypes))
+                        continue;
+
+                    var candidateLines = new List<string>(lines);
+                    candidateLines.RemoveAt(i);
+                    var candidateText = string.Join(Environment.NewLine, candidateLines);
+
+                    try
+                    {
+                        CSharpGuard.AssertValid(candidateText, path);
+                    }
+                    catch(InvalidDataException)
+                    {
+                        continue;
+                    }
+
+                    Console.WriteLine($"    Removing obsolete test data from {relative}: {line.Trim()}");
+
+                    if(relative.Contains("/DataProviders/", StringComparison.OrdinalIgnoreCase))
+                        removedDataRows++;
+
+                    lines = candidateLines;
+                    changed = true;
+                }
+
+                if(changed)
+                    changes.Write(relative, string.Join(Environment.NewLine, lines));
+            }
+
+            if(removedDataRows > 0)
+                AdjustPlatformCountAssertion(context, changes, testRoot, target, removedDataRows);
+        }
+    }
+
+    private static string? ExactPlatformIdentity(CoverageDiscrepancy target)
+    {
+        var version = target.Version ?? string.Empty;
+
+        if(target.Family.Equals("Windows", StringComparison.OrdinalIgnoreCase))
+        {
+            var digits = Regex.Replace(version, @"\D", "");
+            return string.IsNullOrWhiteSpace(digits)
+                ? null
+                : $"SauceryConstants.PLATFORM_WINDOWS_{digits}";
+        }
+
+        return null;
+    }
+
+    private static bool IsExactObsoleteTestRow(
+        string line,
+        CoverageDiscrepancy target,
+        string? platformIdentity,
+        IReadOnlyList<string> deletedTypes)
+    {
+        if(string.IsNullOrWhiteSpace(line))
+            return false;
+
+        if(deletedTypes.Any(type => ContainsExactIdentifier(line, type)))
+            return true;
+
+        if(!string.IsNullOrWhiteSpace(platformIdentity) &&
+           ContainsExactIdentifier(line, platformIdentity))
+            return true;
+
+        var version = target.Version ?? string.Empty;
+        var major = Regex.Match(version, @"^\d+").Value;
+
+        if(target.Family.Equals("iOS", StringComparison.OrdinalIgnoreCase) &&
+           !string.IsNullOrWhiteSpace(major) &&
+           (line.Contains("new IOSPlatform(", StringComparison.Ordinal) ||
+            line.Contains("new IOSRealDevice(", StringComparison.Ordinal)))
+        {
+            return Regex.IsMatch(
+                line,
+                $@"[""']{Regex.Escape(major)}(?:\.\d+|\.x)?[""']",
+                RegexOptions.IgnoreCase);
+        }
+
+        if(target.Family.Equals("Android", StringComparison.OrdinalIgnoreCase) &&
+           !string.IsNullOrWhiteSpace(major) &&
+           (line.Contains("new AndroidPlatform(", StringComparison.Ordinal) ||
+            line.Contains("new AndroidRealDevice(", StringComparison.Ordinal)))
+        {
+            return Regex.IsMatch(
+                line,
+                $@"[""']{Regex.Escape(major)}(?:\.\d+|\.x)?[""']",
+                RegexOptions.IgnoreCase);
+        }
+
+        return false;
+    }
+
+    private static void AdjustPlatformCountAssertion(
+        RepositoryContext context,
+        ChangeCollector changes,
+        string testRoot,
+        CoverageDiscrepancy target,
+        int removedRows)
+    {
+        var methodName = CountTestMethodName(target);
+        if(methodName is null)
+            return;
+
+        foreach(var path in Directory.EnumerateFiles(testRoot, "*.cs", SearchOption.AllDirectories))
+        {
+            var source = File.ReadAllText(path);
+            if(!source.Contains(methodName, StringComparison.Ordinal))
+                continue;
+
+            var pattern =
+                $@"(?<prefix>\b{Regex.Escape(methodName)}\s*\(\s*\)\s*\{{(?:(?!\n\s*\}}).)*?Items\.Count\(\)\.ShouldBe\()(?<count>\d+)(?<suffix>\))";
+
+            var match = Regex.Match(
+                source,
+                pattern,
+                RegexOptions.Singleline);
+
+            if(!match.Success)
+                continue;
+
+            var oldCount = int.Parse(match.Groups["count"].Value);
+            var newCount = oldCount - removedRows;
+
+            if(newCount < 0)
+                throw new InvalidDataException(
+                    $"Cannot adjust {methodName} in {context.Relative(path)} from {oldCount} by {removedRows}.");
+
+            var updated =
+                source[..match.Groups["count"].Index] +
+                newCount.ToString() +
+                source[(match.Groups["count"].Index + match.Groups["count"].Length)..];
+
+            Console.WriteLine(
+                $"    Updating {context.Relative(path)} {methodName} expected count: {oldCount} -> {newCount}");
+
+            changes.Write(context.Relative(path), updated);
+            return;
+        }
+
+        Console.WriteLine(
+            $"    No {methodName} count assertion was found under {context.Relative(testRoot)}; no count adjustment was required.");
+    }
+
+    private static string? CountTestMethodName(CoverageDiscrepancy target)
+    {
+        if(target.Family.Equals("Windows", StringComparison.OrdinalIgnoreCase) ||
+           target.Family.Equals("macOS", StringComparison.OrdinalIgnoreCase) ||
+           target.Family.Equals("Mac", StringComparison.OrdinalIgnoreCase) ||
+           target.Family.Equals("Linux", StringComparison.OrdinalIgnoreCase) ||
+           target.Family.Equals("ChromiumOS", StringComparison.OrdinalIgnoreCase))
+            return "DesktopPlatformsTest";
+
+        if(target.Family.Equals("iOS", StringComparison.OrdinalIgnoreCase))
+            return "IOSPlatformsTest";
+
+        if(target.Family.Equals("Android", StringComparison.OrdinalIgnoreCase))
+            return "AndroidPlatformsTest";
+
+        return null;
+    }
+
     private static bool ContainsExactIdentifier(string text, string identifier) =>
-        Regex.IsMatch(text, $@"(?<![A-Za-z0-9_]){Regex.Escape(identifier)}(?![A-Za-z0-9_])");
+        Regex.IsMatch(
+            text,
+            $@"(?<![A-Za-z0-9_]){Regex.Escape(identifier)}(?![A-Za-z0-9_])");
 }
 
 

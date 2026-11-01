@@ -86,3 +86,17 @@ The remediator deletes the exact `ConcreteProduct` and `PlatformCreator`, remove
 Reporter disappearance is **not** a success criterion for obsolete candidates. The coverage reporter may continue to see legacy constants or metadata after the implementation classes have been removed. Obsolete candidates are complete once the exact implementation pair is removed and the solution compiles/tests successfully.
 
 Reporter disappearance remains the success criterion for `Missing` discrepancies.
+
+
+## Unit-test remediation for obsolete platforms
+
+Deleting an obsolete platform implementation also updates both discovered Core test suites.
+
+The remediator removes:
+- direct references to the deleted `ConcreteProduct`/`PlatformCreator` types;
+- exact obsolete platform data rows such as `SauceryConstants.PLATFORM_WINDOWS_8` and `SauceryConstants.PLATFORM_WINDOWS_81`;
+- matching strongly typed iOS/Android data rows for the obsolete major version.
+
+When rows are removed from a `DataProviders` source, the matching platform-count test (`DesktopPlatformsTest`, `IOSPlatformsTest`, or `AndroidPlatformsTest`) is decremented by exactly the number of removed rows in that test project.
+
+External Sauce Labs fixture-construction failures are treated as inconclusive only when the run contains no ordinary assertion failure. A real assertion failure such as a stale platform count still fails remediation and must be repaired.

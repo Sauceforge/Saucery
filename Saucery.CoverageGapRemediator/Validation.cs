@@ -140,11 +140,19 @@ internal sealed class RepositoryValidator
             output.Contains("TaskCanceledException", StringComparison.Ordinal) ||
             output.Contains("The JSON value could not be converted", StringComparison.Ordinal);
 
-        var beforeTests =
+        var fixtureSetupFailure =
             output.Contains("BeforeClassException", StringComparison.Ordinal) ||
-            output.Contains("BeforeClass hook failed", StringComparison.Ordinal);
+            output.Contains("BeforeClass hook failed", StringComparison.Ordinal) ||
+            (output.Contains("Class fixture type", StringComparison.Ordinal) &&
+             output.Contains("threw in its constructor", StringComparison.Ordinal));
 
-        return sauceAcquirer && externalFailure && beforeTests;
+        var genuineAssertionFailure =
+            output.Contains("Shouldly.ShouldAssertException", StringComparison.Ordinal) ||
+            output.Contains("Assert.Equal() Failure", StringComparison.Ordinal) ||
+            output.Contains("Assert.True() Failure", StringComparison.Ordinal) ||
+            output.Contains("Assert.False() Failure", StringComparison.Ordinal);
+
+        return sauceAcquirer && externalFailure && fixtureSetupFailure && !genuineAssertionFailure;
     }
 
     private static bool Equivalent(CoverageDiscrepancy a, CoverageDiscrepancy b) =>
