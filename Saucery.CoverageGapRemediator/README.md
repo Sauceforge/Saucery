@@ -129,3 +129,14 @@ Any genuine xUnit.v3 assertion failure is a hard failure. It takes precedence ov
 ## ChangeCollector consistency
 
 `ChangeCollector.Write` persists remediated content immediately through `RepositoryTransaction`. Subsequent remediation steps read the current transactional file content with `ChangeCollector.Read`; there is no separate pending-write dictionary.
+
+
+## Count assertion scope
+
+Count assertions are adjusted only for the inventory that actually feeds them:
+
+- desktop-family removals adjust `DesktopPlatformsTest` and `AllPlatformsTest`;
+- iOS removals adjust `IOSPlatformsTest` only;
+- Android removals adjust `AndroidPlatformsTest` only.
+
+This prevents an iOS/Android remediation from incorrectly decrementing the desktop-backed `AllPlatformsTest` count.
