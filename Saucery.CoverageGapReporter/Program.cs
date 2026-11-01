@@ -1612,7 +1612,7 @@ internal static class PlatformLifecycleAnalyzer
 
     private static bool ShouldReportAsObsoleteCandidate(
         DeclaredPlatform platform,
-        IReadOnlySet<string> sauceFamilies)
+        HashSet<string> sauceFamilies)
     {
         // An explicit exact version or wildcard that is absent from Sauce is a lifecycle candidate.
         if (platform.Kind is PlatformRequirementKind.MobileExactVersion or
