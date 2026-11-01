@@ -243,3 +243,17 @@ Windows obsolete remediation requires a matching BrowserFactory `*BrowserCreator
 Obsolete remediation now normalizes the target version from `CoverageDiscrepancy.Version` when present, otherwise from `DisplayName` (`Windows 8`, `Windows 8.1`, `iOS 26.0`, etc.). The normalized version is reused for exact product type resolution, Windows platform constants, BrowserFactory registration matching, declaration removal, and obsolete test-row matching.
 
 Shared-family exact mobile versions are detected from the actual class surface rather than depending on `PlatformRequirementKind`; for example, `iOS 26.0` is declaration-only when `IOS260Platform` is absent but `IOS26Platform` exists.
+
+
+## Obsolete candidates: AutoFix or fail
+
+`ObsoleteCandidate` entries can no longer be emitted as `ManualReview`.
+
+The invariant is now:
+
+- with `--allow-obsolete-removal`: every obsolete candidate must become `AutoFix`;
+- if exact obsolete resolution fails: the remediator throws and the workflow fails immediately;
+- without `--allow-obsolete-removal`: the remediator throws immediately;
+- a plan-only PR caused by obsolete candidates silently falling back to `ManualReview` is no longer possible.
+
+`ManualReview` remains available only for non-obsolete inference paths.

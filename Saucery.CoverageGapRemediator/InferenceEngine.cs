@@ -8,6 +8,20 @@ internal sealed class GenericRemediationEngine
     {
         var model = RepositoryModel.Build(context);
         var items = discrepancies.Select(d => PlanOne(model, context, d, options)).ToArray();
+
+        var obsoleteManualReview = items
+            .Where(item =>
+                item.Discrepancy.Type == DiscrepancyType.ObsoleteCandidate &&
+                item.Disposition == RemediationDisposition.ManualReview)
+            .ToArray();
+
+        if(obsoleteManualReview.Length > 0)
+        {
+            throw new InvalidOperationException(
+                "Invariant violation: obsolete candidates must never be emitted as ManualReview. " +
+                string.Join(", ", obsoleteManualReview.Select(item => item.Discrepancy.DisplayName)));
+        }
+
         return new(context.Root, reportPath, DateTimeOffset.UtcNow, items);
     }
 
@@ -67,50 +81,55 @@ internal sealed class GenericRemediationEngine
     private static RemediationItem PlanOne(RepositoryModel model, RepositoryContext context, CoverageDiscrepancy d, Options options)
     {
         if(d.Type == DiscrepancyType.ObsoleteCandidate && !options.AllowObsoleteRemoval)
-            return new(d, RemediationDisposition.ManualReview, "repository-inference",
-                "The repository graph can remove this candidate, but destructive remediation is disabled. Re-run with --allow-obsolete-removal after lifecycle evidence has been reviewed.",
-                Array.Empty<FileChange>(), ["Obsolete-candidate removal is opt-in because a Sauce catalogue can be incomplete."]);
+        {
+            throw new InvalidOperationException(
+                $"Obsolete candidate {d.DisplayName} requires --allow-obsolete-removal. " +
+                "Obsolete candidates are never downgraded to ManualReview.");
+        }
 
         if(d.Type == DiscrepancyType.ObsoleteCandidate)
         {
+            if(ObsoleteDeclarationResolver.IsDeclarationOnlyExactVersion(context, d))
+            {
+                return new(d, RemediationDisposition.AutoFix, "exact-obsolete-declaration-removal",
+                    $"Remove only the exact {d.DisplayName} declarations from BrowserFactory/DojoExtensions and matching unit-test data. Shared major-family product/creator implementations are preserved.",
+                    [
+                        new("Saucery.Core/Dojo/Browsers/BrowserFactory.cs", "Remove exact declaration", $"Remove exact {d.DisplayName} browser declaration when present."),
+                        new("Saucery.Core/Dojo/DojoExtensions.cs", "Remove exact declaration", $"Remove exact {d.DisplayName} Dojo declaration when present.")
+                    ],
+                    ["Exact-version cleanup never deletes a shared major-family ConcreteProduct or PlatformCreator."]);
+            }
+
+            ObsoleteTarget obsolete;
             try
             {
-                if(ObsoleteDeclarationResolver.IsDeclarationOnlyExactVersion(context, d))
-                {
-                    return new(d, RemediationDisposition.AutoFix, "exact-obsolete-declaration-removal",
-                        $"Remove only the exact {d.DisplayName} declarations from BrowserFactory/DojoExtensions and matching unit-test data. Shared major-family product/creator implementations are preserved.",
-                        [
-                            new("Saucery.Core/Dojo/Browsers/BrowserFactory.cs", "Remove exact declaration", $"Remove exact {d.DisplayName} browser declaration when present."),
-                            new("Saucery.Core/Dojo/DojoExtensions.cs", "Remove exact declaration", $"Remove exact {d.DisplayName} Dojo declaration when present.")
-                        ],
-                        ["Exact-version cleanup never deletes a shared major-family ConcreteProduct or PlatformCreator."]);
-                }
-
-                var obsolete = ObsoleteTargetResolver.Resolve(context, d);
-                var changes = new List<FileChange>
-                {
-                    new(obsolete.ProductFile, "Delete", $"Delete exact obsolete ConcreteProduct {obsolete.ProductType}."),
-                    new("Saucery.Core/Dojo/Browsers/BrowserFactory.cs", "Remove exact declaration", $"Remove exact {d.DisplayName} browser declaration when present."),
-                    new("Saucery.Core/Dojo/DojoExtensions.cs", "Remove exact declaration", $"Remove exact {d.DisplayName} Dojo declaration when present.")
-                };
-
-                if(obsolete.CreatorFile is not null)
-                    changes.Add(new(obsolete.CreatorFile, "Delete", $"Delete exact obsolete PlatformCreator {obsolete.CreatorType}."));
-
-                if(obsolete.BrowserCreatorFile is not null)
-                    changes.Add(new(obsolete.BrowserCreatorFile, "Delete", $"Delete exact obsolete BrowserCreator {obsolete.BrowserCreatorType}."));
-
-                return new(d, RemediationDisposition.AutoFix, "exact-obsolete-type-removal",
-                    $"Delete {obsolete.ProductType}{(obsolete.CreatorType is null ? string.Empty : $" and {obsolete.CreatorType}")}{(obsolete.BrowserCreatorType is null ? string.Empty : $" and {obsolete.BrowserCreatorType}")}, remove exact BrowserFactory/DojoExtensions declarations, repair tests, then validate.",
-                    changes,
-                    ["Obsolete removal never uses nearest-version inference or fuzzy repository-wide text matching."]);
+                obsolete = ObsoleteTargetResolver.Resolve(context, d);
             }
             catch(Exception ex)
             {
-                return new(d, RemediationDisposition.ManualReview, "exact-obsolete-type-removal",
-                    "The obsolete platform could not be resolved safely.",
-                    Array.Empty<FileChange>(), [ex.Message]);
+                throw new InvalidOperationException(
+                    $"Failed to resolve obsolete platform {d.DisplayName}. " +
+                    "Obsolete candidates are never downgraded to ManualReview.",
+                    ex);
             }
+
+            var changes = new List<FileChange>
+            {
+                new(obsolete.ProductFile, "Delete", $"Delete exact obsolete ConcreteProduct {obsolete.ProductType}."),
+                new("Saucery.Core/Dojo/Browsers/BrowserFactory.cs", "Remove exact declaration", $"Remove exact {d.DisplayName} browser declaration when present."),
+                new("Saucery.Core/Dojo/DojoExtensions.cs", "Remove exact declaration", $"Remove exact {d.DisplayName} Dojo declaration when present.")
+            };
+
+            if(obsolete.CreatorFile is not null)
+                changes.Add(new(obsolete.CreatorFile, "Delete", $"Delete exact obsolete PlatformCreator {obsolete.CreatorType}."));
+
+            if(obsolete.BrowserCreatorFile is not null)
+                changes.Add(new(obsolete.BrowserCreatorFile, "Delete", $"Delete exact obsolete BrowserCreator {obsolete.BrowserCreatorType}."));
+
+            return new(d, RemediationDisposition.AutoFix, "exact-obsolete-type-removal",
+                $"Delete {obsolete.ProductType}{(obsolete.CreatorType is null ? string.Empty : $" and {obsolete.CreatorType}")}{(obsolete.BrowserCreatorType is null ? string.Empty : $" and {obsolete.BrowserCreatorType}")}, remove exact BrowserFactory/DojoExtensions declarations, repair tests, then validate.",
+                changes,
+                ["Obsolete removal never uses nearest-version inference or fuzzy repository-wide text matching."]);
         }
 
         PlatformPrototype analogue;
