@@ -19,7 +19,8 @@ internal sealed class RepositoryModel
     public static RepositoryModel Build(RepositoryContext context)
     {
         var files = Directory.EnumerateFiles(context.Core, "*.cs", SearchOption.AllDirectories)
-            .Concat(Directory.EnumerateFiles(context.Tests, "*.cs", SearchOption.AllDirectories))
+            .Concat(context.TestRoots.SelectMany(root => Directory.EnumerateFiles(root, "*.cs", SearchOption.AllDirectories)))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToArray();
         var lines = files.ToDictionary(context.Relative, File.ReadAllLines, StringComparer.OrdinalIgnoreCase);
         var products = files.Where(x => x.Replace('\\', '/').Contains("/ConcreteProducts/", StringComparison.OrdinalIgnoreCase)).ToArray();
@@ -140,7 +141,7 @@ internal sealed class RepositoryModel
                file.Contains("/ConcreteCreators/", StringComparison.OrdinalIgnoreCase) ||
                file.Contains("/Browsers/ConcreteCreators/", StringComparison.OrdinalIgnoreCase)) continue;
 
-            var isTestFile = file.StartsWith("Saucery.Core.Tests/", StringComparison.OrdinalIgnoreCase);
+            var isTestFile = file.StartsWith("Saucery.Core.Tests", StringComparison.OrdinalIgnoreCase);
 
             for(var i = 0; i < lines.Length; i++)
             {

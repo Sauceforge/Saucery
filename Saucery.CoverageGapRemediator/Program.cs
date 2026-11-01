@@ -5,7 +5,7 @@ namespace Saucery.CoverageGapRemediator;
 
 internal static class Program
 {
-    internal const string Build = "coverage-remediator-v10-differential-validation";
+    internal const string Build = "coverage-remediator-v11-multi-test-suite";
 
     public static async Task<int> Main(string[] args)
     {
