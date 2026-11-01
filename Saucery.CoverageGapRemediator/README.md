@@ -220,3 +220,8 @@ For each obsolete whole platform it requires exactly one dedicated:
 If any required implementation cannot be uniquely resolved, remediation fails instead of creating a partial two-file PR.
 
 After discovery, the remediator deletes all three implementation files, removes exact declarations from `BrowserFactory.cs` and `DojoExtensions.cs`, repairs test data, builds, and validates xUnit.v3.
+
+
+## Nullable resolver fix
+
+Required obsolete implementation slices now use explicit null checks and non-null tuple locals before constructing `ObsoleteTarget`. No nullable tuple `.Value` dereferences remain in the resolver.

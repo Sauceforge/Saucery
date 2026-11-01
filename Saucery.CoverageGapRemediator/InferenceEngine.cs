@@ -460,10 +460,20 @@ internal static class ObsoleteTargetResolver
                 null);
         }
 
+        var resolvedProduct = product.GetValueOrDefault();
+
         var creator = FindCreatorForProduct(
             context,
-            product.Value.Type,
+            resolvedProduct.Type,
             required: true);
+
+        if(creator is null)
+        {
+            throw new InvalidDataException(
+                $"No PlatformCreator implementation constructs {resolvedProduct.Type}. Refusing to create a partial remediation.");
+        }
+
+        var resolvedCreator = creator.GetValueOrDefault();
 
         var browserCreator = FindOwnedClass(
             context,
@@ -472,13 +482,21 @@ internal static class ObsoleteTargetResolver
             target,
             required: true);
 
+        if(browserCreator is null)
+        {
+            throw new InvalidDataException(
+                $"No dedicated BrowserCreator implementation was found for obsolete platform {target.DisplayName}. Refusing to create a partial remediation.");
+        }
+
+        var resolvedBrowserCreator = browserCreator.GetValueOrDefault();
+
         return new(
-            product.Value.Type,
-            product.Value.File,
-            creator.Value.Type,
-            creator.Value.File,
-            browserCreator.Value.Type,
-            browserCreator.Value.File);
+            resolvedProduct.Type,
+            resolvedProduct.File,
+            resolvedCreator.Type,
+            resolvedCreator.File,
+            resolvedBrowserCreator.Type,
+            resolvedBrowserCreator.File);
     }
 
     private static (string Type, string File)? FindOwnedClass(
