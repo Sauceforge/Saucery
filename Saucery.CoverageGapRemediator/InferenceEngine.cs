@@ -325,7 +325,22 @@ internal static class ObsoleteSynthesizer
 {
     public static void Apply(RepositoryContext context, RepositoryModel model, CoverageDiscrepancy target, ChangeCollector changes)
     {
-        var prototype = model.FindObsoletePrototype(target);
+        PlatformPrototype prototype;
+        try
+        {
+            prototype = model.FindObsoletePrototype(target);
+        }
+        catch(InvalidDataException)
+        {
+            // A previous synthesis pass may already have removed the product/creator prototype
+            // while the reporter has exposed a second surviving registration. In that state the
+            // new reporter evidence is the authority: remove that exact declaration and continue.
+            if(RemoveFreshReporterEvidence(context, changes, target))
+                return;
+
+            throw;
+        }
+
         var ownedFiles = new[] { prototype.ProductFile, prototype.CreatorFile, prototype.BrowserCreatorFile }
             .Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x!).Distinct(StringComparer.OrdinalIgnoreCase)
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
@@ -350,6 +365,41 @@ internal static class ObsoleteSynthesizer
             foreach(var file in ownedFiles) changes.Delete(file);
 
         RemoveUnusedConstants(context, changes, constants);
+    }
+
+    private static bool RemoveFreshReporterEvidence(
+        RepositoryContext context,
+        ChangeCollector changes,
+        CoverageDiscrepancy target)
+    {
+        if(string.IsNullOrWhiteSpace(target.EvidenceFile) ||
+           string.IsNullOrWhiteSpace(target.Evidence))
+            return false;
+
+        var path = context.PathFromRoot(target.EvidenceFile);
+        if(!File.Exists(path))
+            return false;
+
+        var evidence = EvidenceText(target);
+        if(string.IsNullOrWhiteSpace(evidence))
+            return false;
+
+        var source = File.ReadAllText(path);
+        var lines = source.Replace("\r\n", "\n", StringComparison.Ordinal).Split('\n').ToList();
+        var index = lines.FindIndex(line => line.Trim() == evidence);
+
+        if(index < 0)
+            return false;
+
+        var candidate = new List<string>(lines);
+        candidate.RemoveAt(index);
+        var candidateText = string.Join(Environment.NewLine, candidate);
+
+        // Reporter evidence is a declaration/registration line. Never accept the removal
+        // unless the complete file remains syntactically valid.
+        CSharpGuard.AssertValid(candidateText, path);
+        changes.Write(target.EvidenceFile, candidateText);
+        return true;
     }
 
     private static IEnumerable<string> EnumerateRemovalCandidates(

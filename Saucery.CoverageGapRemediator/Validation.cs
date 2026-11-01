@@ -64,7 +64,10 @@ internal sealed class RepositoryValidator
             }
 
             var after = await CoverageReportReader.ReadAsync(reportPath);
-            var remaining = targets.Where(t => after.Any(a => Equivalent(t, a))).ToArray();
+            var remaining = after
+                .Where(a => targets.Any(t => Equivalent(t, a)))
+                .DistinctBy(a => a.Identity)
+                .ToArray();
 
             if(remaining.Length > 0)
             {

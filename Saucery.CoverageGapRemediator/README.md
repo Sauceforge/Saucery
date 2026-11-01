@@ -76,3 +76,10 @@ Obsolete remediation removes matching registrations first and never line-edits o
 Production-code removal is scoped to registration files structurally associated with the obsolete platform. The remediator does not scan or line-edit unrelated platform product/creator classes.
 
 Only `PLATFORM_*` identity constants found in structural registrations are considered platform-owned. Shared browser, screen-resolution, timeout, and capability constants are never inferred as owned by a platform merely because its product class references them.
+
+
+## Multi-pass obsolete removal
+
+Each reporter rerun is authoritative. If an obsolete platform has multiple surviving declarations, the next synthesis pass consumes the **fresh evidence file and source line from the newly generated report**, rather than retrying the stale declaration from the previous pass.
+
+If the original product/creator prototype has already been deleted, the remediator can still remove the next exact reporter-evidenced registration after syntax-validating the resulting file.
