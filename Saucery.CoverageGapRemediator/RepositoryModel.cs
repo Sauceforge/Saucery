@@ -81,6 +81,59 @@ internal sealed class RepositoryModel
             .First();
     }
 
+    public PlatformPrototype FindObsoletePrototype(CoverageDiscrepancy target)
+    {
+        var candidates = Prototypes
+            .Where(p => FamilyEquivalent(p.Family, target.Family))
+            .ToArray();
+
+        if(candidates.Length == 0)
+            throw new InvalidDataException($"No repository prototype matches obsolete platform {target.DisplayName}.");
+
+        var targetMajor = Major(target.Version);
+        var targetNumber = VersionNumber(target.Version);
+        var wildcard = target.Kind == PlatformRequirementKind.MobileMajorWildcard;
+
+        var best = candidates
+            .OrderByDescending(p =>
+                wildcard
+                    ? Major(p.Version) == targetMajor
+                    : VersionsEquivalent(p.Version, target.Version))
+            .ThenBy(p =>
+                targetNumber == 0 || p.VersionNumber == 0
+                    ? double.MaxValue
+                    : Math.Abs(p.VersionNumber - targetNumber))
+            .ThenByDescending(p => p.Registrations.Count)
+            .First();
+
+        if(wildcard && Major(best.Version) != targetMajor)
+            throw new InvalidDataException($"No repository prototype matches obsolete major version {target.DisplayName}.");
+
+        if(!wildcard && !VersionsEquivalent(best.Version, target.Version))
+            throw new InvalidDataException($"No repository prototype matches obsolete exact version {target.DisplayName}.");
+
+        return best;
+    }
+
+    private static string Major(string version) =>
+        Regex.Match(version ?? string.Empty, @"^\d+").Value;
+
+    private static bool VersionsEquivalent(string a, string b)
+    {
+        static string NormalizeVersion(string value) =>
+            (value ?? string.Empty)
+                .Trim()
+                .Replace(".x", ".0", StringComparison.OrdinalIgnoreCase);
+
+        if(double.TryParse(NormalizeVersion(a), System.Globalization.NumberStyles.Number,
+            System.Globalization.CultureInfo.InvariantCulture, out var av) &&
+           double.TryParse(NormalizeVersion(b), System.Globalization.NumberStyles.Number,
+            System.Globalization.CultureInfo.InvariantCulture, out var bv))
+            return Math.Abs(av - bv) < 0.0001;
+
+        return NormalizeVersion(a).Equals(NormalizeVersion(b), StringComparison.OrdinalIgnoreCase);
+    }
+
     public IEnumerable<RegistrationSite> FindTargetSites(CoverageDiscrepancy discrepancy)
     {
         var tokens = TargetTokens(discrepancy).Where(x => x.Length >= 2).Distinct(StringComparer.OrdinalIgnoreCase).ToArray();

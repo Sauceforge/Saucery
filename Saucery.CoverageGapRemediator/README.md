@@ -64,3 +64,8 @@ The remediator discovers every top-level `Saucery.Core.Tests*` project and treat
 - `Saucery.Core.Tests,XUnit3` (xUnit.v3)
 
 When a platform remediation is inferred from an existing analogue, equivalent test registrations/data are transformed in every discovered test suite. Validation builds and runs every discovered test project.
+
+
+## Obsolete removal safety
+
+Obsolete remediation removes matching registrations first and never line-edits owned platform/creator class declarations. Product/creator files are deleted only when no surviving source or test project references their declared symbols. Shared platform slices, such as an exact simulator version whose major real-device family is still supported, remain intact.

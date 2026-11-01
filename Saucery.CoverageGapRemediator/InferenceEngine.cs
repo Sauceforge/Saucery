@@ -72,11 +72,14 @@ internal sealed class GenericRemediationEngine
                 Array.Empty<FileChange>(), ["Obsolete-candidate removal is opt-in because a Sauce catalogue can be incomplete."]);
 
         PlatformPrototype analogue;
-        try { analogue = model.FindBestAnalogue(d); }
+        try
+        {
+            analogue = d.Type == DiscrepancyType.ObsoleteCandidate ? model.FindObsoletePrototype(d) : model.FindBestAnalogue(d);
+        }
         catch(Exception ex)
         {
             return new(d, RemediationDisposition.ManualReview, "repository-inference",
-                "No existing repository implementation can be used as a structural analogue.",
+                "No existing repository implementation can be matched safely.",
                 Array.Empty<FileChange>(), [ex.Message]);
         }
 
@@ -91,7 +94,10 @@ internal sealed class GenericRemediationEngine
         }
         else
         {
-            changes.AddRange(model.FindTargetSites(d).Select(x => new FileChange(x.File, "Remove reference", "Remove a declaration/reference belonging to the obsolete logical platform.")));
+            changes.Add(new(analogue.ProductFile, "Delete if unreferenced", $"Remove {analogue.ProductType} only after obsolete registrations are removed and no external references remain."));
+            if(analogue.CreatorFile is not null) changes.Add(new(analogue.CreatorFile, "Delete if unreferenced", $"Remove {analogue.CreatorType} only if no surviving registration still uses it."));
+            if(analogue.BrowserCreatorFile is not null) changes.Add(new(analogue.BrowserCreatorFile, "Delete if unreferenced", $"Remove {analogue.BrowserCreatorType} only if no surviving registration still uses it."));
+            changes.AddRange(analogue.Registrations.Select(x => new FileChange(x.File, "Remove matching registration", "Remove only registrations/tests whose version semantics match the obsolete requirement.")));
         }
 
         return new(d, RemediationDisposition.AutoFix, "repository-inference",
@@ -319,38 +325,204 @@ internal static class ObsoleteSynthesizer
 {
     public static void Apply(RepositoryContext context, RepositoryModel model, CoverageDiscrepancy target, ChangeCollector changes)
     {
-        var sites = model.FindTargetSites(target).GroupBy(x => x.File, StringComparer.OrdinalIgnoreCase);
-        foreach(var group in sites)
+        var prototype = model.FindObsoletePrototype(target);
+        var ownedFiles = new[] { prototype.ProductFile, prototype.CreatorFile, prototype.BrowserCreatorFile }
+            .Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x!).Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var symbols = new[] { prototype.ProductType, prototype.CreatorType, prototype.BrowserCreatorType }
+            .Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x!).Distinct(StringComparer.Ordinal).ToArray();
+        var constants = DiscoverPrototypeConstants(context, prototype);
+
+        foreach(var relative in EnumerateEditableSourceFiles(context))
         {
-            if(!IsRemovableFile(group.Key)) continue;
-            var indices = group.Select(x => x.LineIndex).ToHashSet();
-            changes.Modify(group.Key, text =>
+            if(ownedFiles.Contains(relative)) continue;
+            var original = File.ReadAllText(context.PathFromRoot(relative));
+            var edited = RemoveTargetReferences(original, relative, target, symbols, constants);
+            if(edited != original) changes.Write(relative, edited);
+        }
+
+        RemoveExactEvidenceLine(context, changes, target, ownedFiles);
+
+        if(!HasExternalReferences(context, ownedFiles, symbols))
+            foreach(var file in ownedFiles) changes.Delete(file);
+
+        RemoveUnusedConstants(context, changes, constants);
+    }
+
+    private static IEnumerable<string> EnumerateEditableSourceFiles(RepositoryContext context)
+    {
+        var roots = new[] { context.Core }.Concat(context.TestRoots);
+        return roots.Where(Directory.Exists)
+            .SelectMany(root => Directory.EnumerateFiles(root, "*.cs", SearchOption.AllDirectories))
+            .Select(context.Relative).Distinct(StringComparer.OrdinalIgnoreCase);
+    }
+
+    private static IReadOnlyList<string> DiscoverPrototypeConstants(RepositoryContext context, PlatformPrototype prototype)
+    {
+        var result = new HashSet<string>(StringComparer.Ordinal);
+        foreach(var relative in new[] { prototype.ProductFile, prototype.CreatorFile, prototype.BrowserCreatorFile }.Where(x => !string.IsNullOrWhiteSpace(x)))
+        {
+            var path = context.PathFromRoot(relative!);
+            if(!File.Exists(path)) continue;
+            var text = File.ReadAllText(path);
+            foreach(Match match in Regex.Matches(text, @"SauceryConstants\.(?<name>[A-Z][A-Z0-9_]*)")) result.Add(match.Groups["name"].Value);
+        }
+        var structuralSymbols = new[] { prototype.ProductType, prototype.CreatorType, prototype.BrowserCreatorType }
+            .Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x!).ToArray();
+        foreach(var registration in prototype.Registrations.Where(r => structuralSymbols.Any(symbol => r.Line.Contains(symbol, StringComparison.Ordinal))))
+            foreach(Match match in Regex.Matches(registration.Line, @"SauceryConstants\.(?<name>[A-Z][A-Z0-9_]*)")) result.Add(match.Groups["name"].Value);
+        return result.ToArray();
+    }
+
+    private static string RemoveTargetReferences(string source, string relative, CoverageDiscrepancy target, IReadOnlyList<string> symbols, IReadOnlyList<string> constants)
+    {
+        var lines = source.Replace("\r\n", "\n", StringComparison.Ordinal).Split('\n').ToList();
+        var changed = false;
+        for(var i = lines.Count - 1; i >= 0; i--)
+        {
+            if(!ShouldRemoveLine(lines[i], relative, target, symbols, constants)) continue;
+            var candidate = new List<string>(lines);
+            candidate.RemoveAt(i);
+            var candidateText = string.Join(Environment.NewLine, candidate);
+            try
             {
-                var lines = text.Replace("\r\n", "\n", StringComparison.Ordinal).Split('\n').ToList();
-                for(var i = lines.Count - 1; i >= 0; i--)
-                    if(indices.Contains(i) && LineBelongsToTarget(lines[i], target)) lines.RemoveAt(i);
+                CSharpGuard.AssertValid(candidateText, relative);
+                lines = candidate;
+                changed = true;
+            }
+            catch(InvalidDataException)
+            {
+                // Never partially delete multi-line syntax or class bodies.
+            }
+        }
+        return changed ? string.Join(Environment.NewLine, lines) : source;
+    }
+
+    private static bool ShouldRemoveLine(string line, string relative, CoverageDiscrepancy target, IReadOnlyList<string> symbols, IReadOnlyList<string> constants)
+    {
+        if(string.IsNullOrWhiteSpace(line) || IsDeclarationLine(line)) return false;
+        var evidence = EvidenceText(target);
+        if(evidence is not null && line.Trim() == evidence) return true;
+
+        var hasSymbol = symbols.Any(symbol => line.Contains(symbol, StringComparison.Ordinal));
+        var hasConstant = constants.Any(name => line.Contains($"SauceryConstants.{name}", StringComparison.Ordinal));
+        var isTest = relative.StartsWith("Saucery.Core.Tests", StringComparison.OrdinalIgnoreCase);
+
+        if(target.Kind == PlatformRequirementKind.MobileExactVersion)
+            return ExactVersionMatches(line, target) && (hasSymbol || hasConstant || (isTest && HasFamilyContext(line, target.Family)));
+
+        if(target.Kind == PlatformRequirementKind.MobileMajorWildcard)
+        {
+            var majorMatches = MajorMatches(line, target.Version);
+            return ((hasSymbol || hasConstant) && majorMatches) || (isTest && majorMatches && HasFamilyContext(line, target.Family));
+        }
+
+        if(target.Kind == PlatformRequirementKind.DesktopPlatform)
+        {
+            if(hasSymbol || hasConstant) return true;
+            return isTest && ExactVersionMatches(line, target) && HasFamilyContext(line, target.Family);
+        }
+
+        return false;
+    }
+
+    private static bool IsDeclarationLine(string line) =>
+        Regex.IsMatch(line, @"^\s*(?:public|internal|private|protected)?\s*(?:sealed\s+|abstract\s+|static\s+|partial\s+)*class\s+") ||
+        Regex.IsMatch(line, @"^\s*namespace\s+");
+
+    private static string? EvidenceText(CoverageDiscrepancy target)
+    {
+        if(string.IsNullOrWhiteSpace(target.Evidence)) return null;
+        return Regex.Replace(target.Evidence, @"^line\s+\d+:\s*", "", RegexOptions.IgnoreCase).Trim();
+    }
+
+    private static bool ExactVersionMatches(string line, CoverageDiscrepancy target)
+    {
+        if(string.IsNullOrWhiteSpace(target.Version)) return true;
+        var version = target.Version.Replace(".x", "", StringComparison.OrdinalIgnoreCase);
+        var family = Regex.Escape(target.Family);
+        var escaped = Regex.Escape(version);
+        return Regex.IsMatch(line, $"\"(?:{family}\\s+)?{escaped}\"", RegexOptions.IgnoreCase) ||
+               line.Contains($"\"{version}\"", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool MajorMatches(string line, string version)
+    {
+        var major = Regex.Match(version ?? string.Empty, @"^\d+").Value;
+        if(string.IsNullOrEmpty(major)) return false;
+        return Regex.IsMatch(line, $"\"(?:iOS|Android|Linux)?\\s*{Regex.Escape(major)}(?:\\.0|\\.x)?\"", RegexOptions.IgnoreCase);
+    }
+
+    private static bool HasFamilyContext(string line, string family)
+    {
+        if(line.Contains(family, StringComparison.OrdinalIgnoreCase)) return true;
+        return family switch
+        {
+            "iOS" => line.Contains("IOS", StringComparison.OrdinalIgnoreCase) || line.Contains("Apple", StringComparison.OrdinalIgnoreCase),
+            "Android" => line.Contains("Android", StringComparison.OrdinalIgnoreCase),
+            "macOS" => line.Contains("Mac", StringComparison.OrdinalIgnoreCase),
+            _ => false
+        };
+    }
+
+    private static void RemoveExactEvidenceLine(RepositoryContext context, ChangeCollector changes, CoverageDiscrepancy target, IReadOnlySet<string> ownedFiles)
+    {
+        if(string.IsNullOrWhiteSpace(target.EvidenceFile) || string.IsNullOrWhiteSpace(target.Evidence) || ownedFiles.Contains(target.EvidenceFile)) return;
+        var path = context.PathFromRoot(target.EvidenceFile);
+        if(!File.Exists(path)) return;
+        var evidence = EvidenceText(target);
+        if(evidence is null) return;
+        changes.Modify(target.EvidenceFile, source =>
+        {
+            var lines = source.Replace("\r\n", "\n", StringComparison.Ordinal).Split('\n').ToList();
+            var index = lines.FindIndex(line => line.Trim() == evidence);
+            if(index < 0) return source;
+            var candidate = new List<string>(lines);
+            candidate.RemoveAt(index);
+            var candidateText = string.Join(Environment.NewLine, candidate);
+            CSharpGuard.AssertValid(candidateText, path);
+            return candidateText;
+        });
+    }
+
+    private static bool HasExternalReferences(RepositoryContext context, IReadOnlySet<string> ownedFiles, IReadOnlyList<string> symbols)
+    {
+        foreach(var relative in EnumerateEditableSourceFiles(context))
+        {
+            if(ownedFiles.Contains(relative)) continue;
+            var text = File.ReadAllText(context.PathFromRoot(relative));
+            if(symbols.Any(symbol => Regex.IsMatch(text, $@"\b{Regex.Escape(symbol)}\b"))) return true;
+        }
+        return false;
+    }
+
+    private static void RemoveUnusedConstants(RepositoryContext context, ChangeCollector changes, IReadOnlyList<string> constants)
+    {
+        const string constantsFile = "Saucery.Core/Util/SauceryConstants.cs";
+        if(!File.Exists(context.PathFromRoot(constantsFile))) return;
+        foreach(var constant in constants)
+        {
+            if(IsConstantReferencedElsewhere(context, constantsFile, constant)) continue;
+            changes.Modify(constantsFile, source =>
+            {
+                var lines = source.Replace("\r\n", "\n", StringComparison.Ordinal).Split('\n').ToList();
+                var index = lines.FindIndex(line => Regex.IsMatch(line, $@"\bconst\s+string\s+{Regex.Escape(constant)}\s*="));
+                if(index < 0) return source;
+                lines.RemoveAt(index);
                 return string.Join(Environment.NewLine, lines);
             });
         }
     }
 
-    private static bool IsRemovableFile(string file) =>
-        file.StartsWith("Saucery.Core/Dojo/", StringComparison.OrdinalIgnoreCase) ||
-        file.StartsWith("Saucery.Core.Tests", StringComparison.OrdinalIgnoreCase);
-
-    private static bool LineBelongsToTarget(string line, CoverageDiscrepancy target)
+    private static bool IsConstantReferencedElsewhere(RepositoryContext context, string constantsFile, string constant)
     {
-        if(!string.IsNullOrWhiteSpace(target.Evidence))
+        foreach(var relative in EnumerateEditableSourceFiles(context))
         {
-            var evidence = Regex.Replace(target.Evidence, @"^line\s+\d+:\s*", "", RegexOptions.IgnoreCase).Trim();
-            if(line.Trim() == evidence) return true;
+            if(relative.Equals(constantsFile, StringComparison.OrdinalIgnoreCase)) continue;
+            var text = File.ReadAllText(context.PathFromRoot(relative));
+            if(text.Contains($"SauceryConstants.{constant}", StringComparison.Ordinal)) return true;
         }
-
-        var family = Regex.Replace(target.Family, "[^A-Za-z0-9]", "");
-        var major = Regex.Match(target.Version, @"^\d+").Value;
-        var versionMatch = string.IsNullOrEmpty(target.Version) || line.Contains(target.Version.Replace(".x", "", StringComparison.OrdinalIgnoreCase), StringComparison.OrdinalIgnoreCase) ||
-                           (!string.IsNullOrEmpty(major) && line.Contains($"\"{major}\"", StringComparison.Ordinal));
-        return versionMatch && (line.Contains(target.Family, StringComparison.OrdinalIgnoreCase) || line.Contains(family, StringComparison.OrdinalIgnoreCase));
+        return false;
     }
 }
 
