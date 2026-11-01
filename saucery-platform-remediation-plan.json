@@ -1,39 +1,8 @@
 {
   "repositoryRoot": "/home/runner/work/Saucery/Saucery",
   "reportPath": "/home/runner/work/Saucery/Saucery/saucery-functional-platform-coverage-gaps.txt",
-  "generatedUtc": "2026-11-01T10:53:15.8027744+00:00",
+  "generatedUtc": "2026-11-01T11:40:12.134563+00:00",
   "items": [
-    {
-      "discrepancy": {
-        "type": 1,
-        "family": "iOS",
-        "kind": 2,
-        "displayName": "iOS 13.x",
-        "version": "13.x",
-        "sauceConfigurationCount": 0,
-        "representativeDevices": null,
-        "evidenceFile": "Dojo/DojoExtensions.cs",
-        "evidence": "line 258: \u0022iOS 13\u0022 =\u003E platforms.GetPlatform\u003CIOS13Platform\u003E().FirstOrDefault(),"
-      },
-      "disposition": 0,
-      "strategy": "exact-obsolete-type-removal",
-      "summary": "Delete IOS13Platform and IOS13PlatformCreator, then remove only exact identifier references required for compilation.",
-      "plannedChanges": [
-        {
-          "path": "Saucery.Core/Dojo/Platforms/ConcreteProducts/Apple/IOS13Platform.cs",
-          "changeType": "Delete",
-          "description": "Delete exact obsolete ConcreteProduct IOS13Platform."
-        },
-        {
-          "path": "Saucery.Core/Dojo/Platforms/ConcreteCreators/Apple/IOS13PlatformCreator.cs",
-          "changeType": "Delete",
-          "description": "Delete exact obsolete PlatformCreator IOS13PlatformCreator."
-        }
-      ],
-      "warnings": [
-        "Obsolete removal never uses nearest-version inference or fuzzy text matching."
-      ]
-    },
     {
       "discrepancy": {
         "type": 1,
@@ -44,11 +13,11 @@
         "sauceConfigurationCount": 0,
         "representativeDevices": null,
         "evidenceFile": "Dojo/Browsers/BrowserFactory.cs",
-        "evidence": "line 211: \u0022iOS 26.0\u0022 =\u003E platforms.GetPlatform\u003CIOS26Platform\u003E().FirstOrDefault(),"
+        "evidence": "line 209: \u0022iOS 26.0\u0022 =\u003E platforms.GetPlatform\u003CIOS26Platform\u003E().FirstOrDefault(),"
       },
       "disposition": 1,
       "strategy": "exact-obsolete-type-removal",
-      "summary": "The exact obsolete ConcreteProduct/PlatformCreator pair could not be resolved safely.",
+      "summary": "The obsolete platform could not be resolved safely.",
       "plannedChanges": [],
       "warnings": [
         "No exact class declaration was found for Windows260Platform."
@@ -66,23 +35,12 @@
         "evidenceFile": "Dojo/Browsers/BrowserFactory.cs",
         "evidence": "line 27: SauceryConstants.PLATFORM_WINDOWS_8 =\u003E new Windows8BrowserCreator(sp).Create(\u0022Windows 8\u0022, screenResolutions, isArmRequired),"
       },
-      "disposition": 0,
+      "disposition": 1,
       "strategy": "exact-obsolete-type-removal",
-      "summary": "Delete Windows8Platform and Windows8PlatformCreator, then remove only exact identifier references required for compilation.",
-      "plannedChanges": [
-        {
-          "path": "Saucery.Core/Dojo/Platforms/ConcreteProducts/PC/Windows8Platform.cs",
-          "changeType": "Delete",
-          "description": "Delete exact obsolete ConcreteProduct Windows8Platform."
-        },
-        {
-          "path": "Saucery.Core/Dojo/Platforms/ConcreteCreators/PC/Windows8BPlatformCreator.cs",
-          "changeType": "Delete",
-          "description": "Delete exact obsolete PlatformCreator Windows8PlatformCreator."
-        }
-      ],
+      "summary": "The obsolete platform could not be resolved safely.",
+      "plannedChanges": [],
       "warnings": [
-        "Obsolete removal never uses nearest-version inference or fuzzy text matching."
+        "No exact class declaration was found for Windows8Platform."
       ]
     },
     {
@@ -97,26 +55,15 @@
         "evidenceFile": "Dojo/Browsers/BrowserFactory.cs",
         "evidence": "line 26: SauceryConstants.PLATFORM_WINDOWS_81 =\u003E new Windows81BrowserCreator(sp).Create(\u0022Windows 8.1\u0022, screenResolutions, isArmRequired),"
       },
-      "disposition": 0,
+      "disposition": 1,
       "strategy": "exact-obsolete-type-removal",
-      "summary": "Delete Windows81Platform and Windows81PlatformCreator, then remove only exact identifier references required for compilation.",
-      "plannedChanges": [
-        {
-          "path": "Saucery.Core/Dojo/Platforms/ConcreteProducts/PC/Windows81Platform.cs",
-          "changeType": "Delete",
-          "description": "Delete exact obsolete ConcreteProduct Windows81Platform."
-        },
-        {
-          "path": "Saucery.Core/Dojo/Platforms/ConcreteCreators/PC/Windows81PlatformCreator.cs",
-          "changeType": "Delete",
-          "description": "Delete exact obsolete PlatformCreator Windows81PlatformCreator."
-        }
-      ],
+      "summary": "The obsolete platform could not be resolved safely.",
+      "plannedChanges": [],
       "warnings": [
-        "Obsolete removal never uses nearest-version inference or fuzzy text matching."
+        "No exact class declaration was found for Windows81Platform."
       ]
     }
   ],
-  "autoFixCount": 3,
-  "manualReviewCount": 1
+  "autoFixCount": 0,
+  "manualReviewCount": 3
 }
