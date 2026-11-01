@@ -1,6 +1,7 @@
-﻿using Saucery.Core.Dojo.Platforms.ConcreteProducts.Apple;
+using Saucery.Core.Dojo.Platforms.ConcreteProducts.Apple;
 using Saucery.Core.Dojo.Platforms.ConcreteProducts.Google;
 using Saucery.Core.Dojo.Platforms.ConcreteProducts.Linux;
+using Saucery.Core.Dojo.Platforms.ConcreteProducts.ChromiumOS;
 using Saucery.Core.Dojo.Platforms.ConcreteProducts.PC;
 
 namespace Saucery.Core.Tests.REST.Data;
@@ -10,6 +11,7 @@ public class PlatformTypes {
         Select(
         [
             typeof(LinuxPlatform),
+            typeof(ChromiumOSPlatform),
             typeof(Windows11Platform),
             typeof(Windows10Platform),
             typeof(Windows81Platform),

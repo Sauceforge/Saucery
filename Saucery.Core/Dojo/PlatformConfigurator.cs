@@ -1,4 +1,4 @@
-﻿using Saucery.Core.Dojo.Platforms.Base;
+using Saucery.Core.Dojo.Platforms.Base;
 using Saucery.Core.OnDemand;
 using Saucery.Core.OnDemand.Base;
 using Saucery.Core.RestAPI;
@@ -77,6 +77,7 @@ public class PlatformConfigurator
     private static List<SupportedPlatform> FilterSupportedPlatforms(List<SupportedPlatform> supportedPlatforms) => 
         [
             ..FindLinuxPlatforms(supportedPlatforms),
+            ..FindChromiumOSPlatforms(supportedPlatforms),
             ..FindWindowsPlatforms(supportedPlatforms),
             ..FindMacPlatforms(supportedPlatforms,
             [
@@ -111,6 +112,12 @@ public class PlatformConfigurator
     private static List<SupportedPlatform> FindLinuxPlatforms(List<SupportedPlatform> platforms) =>
         platforms.FindAll(p =>
             p.Os == SauceryConstants.PLATFORM_LINUX &&
+            p.automation_backend!.Equals("webdriver") &&
+            p.device == null);
+
+    private static List<SupportedPlatform> FindChromiumOSPlatforms(List<SupportedPlatform> platforms) =>
+        platforms.FindAll(p =>
+            p.Os == SauceryConstants.PLATFORM_CHROMIUM_OS &&
             p.automation_backend!.Equals("webdriver") &&
             p.device == null);
 
