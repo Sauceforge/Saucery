@@ -8,6 +8,7 @@ namespace Saucery.CoverageGapReporter;
 
 internal static class Program
 {
+    internal const string ReporterBuild = "lifecycle-structural-v4";
     private const string CoreProjectDirectory = "Saucery.Core";
     private const string TestsProjectDirectory = "Saucery.Core.Tests";
 
@@ -20,6 +21,7 @@ internal static class Program
             var coreRoot = Path.Combine(repoRoot, CoreProjectDirectory);
             var testsRoot = Path.Combine(repoRoot, TestsProjectDirectory);
 
+            Console.WriteLine($"Reporter build: {ReporterBuild}");
             Console.WriteLine($"Repository: {repoRoot}");
             Console.WriteLine("Indexing Saucery.Core...");
             var coreCorpus = SourceCorpus.Load(coreRoot);
@@ -54,12 +56,17 @@ internal static class Program
             Console.WriteLine("Collapsing Sauce rows into functional platform requirements...");
             var requirements = FunctionalPlatformBuilder.Build(virtualRows, realDevices);
 
+            Console.WriteLine("Extracting explicitly declared Saucery.Core platforms...");
+            var declaredPlatforms = SauceryPlatformExtractor.Extract(coreRoot);
+
             Console.WriteLine($"Comparing {requirements.Count:N0} functional platform requirements...");
             var findings = requirements
                 .Select(r => CoverageAnalyzer.Analyze(r, coreCorpus, testCorpus))
                 .OrderBy(x => x.Requirement.Family)
                 .ThenBy(x => x.Requirement.SortKey, NaturalStringComparer.Instance)
                 .ToList();
+
+            var lifecycle = PlatformLifecycleAnalyzer.Analyze(requirements, declaredPlatforms);
 
             var report = ReportWriter.Write(
                 repoRoot,
@@ -68,6 +75,7 @@ internal static class Program
                 virtualRows.Count,
                 realDevices.Count,
                 findings,
+                lifecycle,
                 realDeviceWarning);
 
             var outputPath = Path.GetFullPath(
@@ -91,6 +99,7 @@ internal static class Program
             Console.WriteLine($"Functional platform requirements: {requirements.Count:N0}");
             Console.WriteLine($"Core functional gaps: {coreGaps:N0}");
             Console.WriteLine($"Core review items: {coreReview:N0}");
+            Console.WriteLine($"Saucery-only obsolete candidates: {lifecycle.ObsoleteCandidates.Count:N0}");
             Console.WriteLine($"Platform families with no representative test sample: {missingFamilySamples:N0}");
 
             return 0;
@@ -821,21 +830,20 @@ internal sealed class SourceCorpus
         {
             foreach (var file in _files)
             {
-                if (HasFamilyContext(file, familyAliases))
+                if (!HasFamilyContext(file, familyAliases))
                 {
-                    if (string.IsNullOrWhiteSpace(requirement.Version))
-                    {
-                        return new Evidence(true, EvidenceStrength.Contextual, file.RelativePath,
-                            familyAliases.First(file.Contains));
-                    }
-
-                    var versionAliases = ExactVersionAliases(requirement.Version);
-                    if (versionAliases.Any(file.Contains))
-                    {
-                        return new Evidence(true, EvidenceStrength.Contextual, file.RelativePath,
-                            versionAliases.First(file.Contains));
-                    }
+                    continue;
                 }
+
+                if (string.IsNullOrWhiteSpace(requirement.Version))
+                {
+                    return new Evidence(true, EvidenceStrength.Contextual, file.RelativePath,
+                        familyAliases.First(file.Contains));
+                }
+
+                // A bare desktop version number such as "27" or "11" is not evidence by itself.
+                // Versioned desktop coverage must have been found through a platform-specific
+                // direct alias such as "Mac 27", "Golden Gate", or "Windows 11" above.
             }
         }
 
@@ -966,7 +974,6 @@ internal sealed class SourceCorpus
         var major = Regex.Match(version, @"^(\d+)").Groups[1].Value;
         return [
             Normalize(version),
-            Normalize($"{major}.*"),
             Normalize($"{major}x"),
             Normalize($"v{major}x"),
             Normalize($"version {major} x")
@@ -1106,6 +1113,521 @@ internal static class CoverageAnalyzer
     }
 }
 
+
+internal sealed record DeclaredPlatform(
+    PlatformRequirementKind Kind,
+    string Family,
+    string FamilyKey,
+    string DisplayName,
+    string Version,
+    string CanonicalKey,
+    string File,
+    string Match);
+
+internal sealed record PlatformLifecycleResult(
+    IReadOnlyList<DeclaredPlatform> DeclaredPlatforms,
+    IReadOnlyList<DeclaredPlatform> ObsoleteCandidates);
+
+internal static class PlatformCanonicalizer
+{
+    public static string RequirementKey(FunctionalPlatformRequirement requirement) =>
+        Key(requirement.Kind, requirement.FamilyKey, requirement.Version, requirement.DisplayName);
+
+    public static string Key(
+        PlatformRequirementKind kind,
+        string familyKey,
+        string version,
+        string displayName)
+    {
+        return kind switch
+        {
+            PlatformRequirementKind.MobileExactVersion =>
+                $"mobile-exact|{familyKey}|{NormalizeMobileExactVersion(version)}",
+            PlatformRequirementKind.MobileMajorWildcard =>
+                $"mobile-wildcard|{familyKey}|{NormalizeWildcard(version)}",
+            PlatformRequirementKind.DesktopPlatform =>
+                $"desktop|{familyKey}|{NormalizeDesktopVersion(version, displayName)}",
+            _ => throw new ArgumentOutOfRangeException(nameof(kind))
+        };
+    }
+
+    private static string NormalizeMobileExactVersion(string value)
+    {
+        var match = Regex.Match(
+            value,
+            @"^\s*(?<major>\d+)(?:\.(?<minor>\d+))?\s*$",
+            RegexOptions.CultureInvariant);
+
+        if (!match.Success)
+        {
+            return value.Trim().ToLowerInvariant();
+        }
+
+        var major = int.Parse(match.Groups["major"].Value);
+        var minor = match.Groups["minor"].Success
+            ? int.Parse(match.Groups["minor"].Value)
+            : 0;
+
+        return $"{major}.{minor}";
+    }
+
+    private static string NormalizeWildcard(string value)
+    {
+        var match = Regex.Match(value, @"(?<major>\d+)", RegexOptions.CultureInvariant);
+        return match.Success
+            ? $"{int.Parse(match.Groups["major"].Value)}.x"
+            : value.Trim().ToLowerInvariant();
+    }
+
+    private static string NormalizeDesktopVersion(string version, string displayName)
+    {
+        if (string.IsNullOrWhiteSpace(version))
+        {
+            return Regex.Replace(displayName.Trim().ToLowerInvariant(), @"\s+", " ");
+        }
+
+        var match = Regex.Match(
+            version,
+            @"^\s*(?<major>\d+)(?:\.(?<minor>\d+))?(?:\.(?<patch>\d+))?\s*$",
+            RegexOptions.CultureInvariant);
+
+        if (!match.Success)
+        {
+            return version.Trim().ToLowerInvariant();
+        }
+
+        var parts = new List<int>
+        {
+            int.Parse(match.Groups["major"].Value)
+        };
+
+        if (match.Groups["minor"].Success)
+        {
+            parts.Add(int.Parse(match.Groups["minor"].Value));
+        }
+
+        if (match.Groups["patch"].Success)
+        {
+            parts.Add(int.Parse(match.Groups["patch"].Value));
+        }
+
+        while (parts.Count > 1 && parts[^1] == 0)
+        {
+            parts.RemoveAt(parts.Count - 1);
+        }
+
+        return string.Join('.', parts);
+    }
+}
+
+internal static class SauceryPlatformExtractor
+{
+    private static readonly Dictionary<int, string> MacMarketingNames = new()
+    {
+        [11] = "Big Sur",
+        [12] = "Monterey",
+        [13] = "Ventura",
+        [14] = "Sonoma",
+        [15] = "Sequoia",
+        [26] = "Tahoe",
+        [27] = "Golden Gate"
+    };
+
+    private static readonly Regex MobileMappingRegex = new(
+        "\\\"(?<label>[^\\\"]+)\\\"\\s*=>.*?GetPlatform<(?<type>Android\\d+Platform|IOS\\d+Platform)>",
+        RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
+    private static readonly Regex DesktopPlatformTypeRegex = new(
+        @"GetPlatform<(?<type>LinuxPlatform|Windows\d+Platform|Mac\d+Platform)>",
+        RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
+    private static readonly Regex DesktopCreatorTypeRegex = new(
+        @"new\s+(?<type>LinuxBrowserCreator|Windows\d+BrowserCreator|Mac\d+BrowserCreator)\b",
+        RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
+    public static List<DeclaredPlatform> Extract(string coreRoot)
+    {
+        var found = new Dictionary<string, DeclaredPlatform>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var path in Directory
+                     .EnumerateFiles(coreRoot, "*.cs", SearchOption.AllDirectories)
+                     .Where(path => !ContainsBuildDirectory(path))
+                     .OrderBy(path => path, StringComparer.OrdinalIgnoreCase))
+        {
+            var relativePath = Path.GetRelativePath(coreRoot, path);
+            var lines = File.ReadAllLines(path);
+
+            for (var i = 0; i < lines.Length; i++)
+            {
+                var sourceText = lines[i].Trim();
+                if (string.IsNullOrWhiteSpace(sourceText) ||
+                    sourceText is "{" or "}" or "," or ";")
+                {
+                    continue;
+                }
+
+                ExtractMobileMapping(found, relativePath, i + 1, sourceText);
+                ExtractDesktopMapping(found, relativePath, i + 1, sourceText);
+                ExtractChromiumOs(found, relativePath, i + 1, sourceText);
+            }
+        }
+
+        return [.. found.Values
+            .OrderBy(x => x.Family)
+            .ThenBy(x => x.Version, NaturalStringComparer.Instance)
+            .ThenBy(x => x.DisplayName, StringComparer.OrdinalIgnoreCase)];
+    }
+
+    private static void ExtractMobileMapping(
+        IDictionary<string, DeclaredPlatform> found,
+        string file,
+        int lineNumber,
+        string sourceText)
+    {
+        var match = MobileMappingRegex.Match(sourceText);
+        if (!match.Success)
+        {
+            return;
+        }
+
+        var label = match.Groups["label"].Value.Trim();
+        var typeName = match.Groups["type"].Value;
+
+        var family = typeName.StartsWith("Android", StringComparison.Ordinal)
+            ? "Android"
+            : "iOS";
+        var familyKey = family == "Android" ? "mobile:Android" : "mobile:iOS";
+
+        if (family == "Android")
+        {
+            if (!label.StartsWith("Linux ", StringComparison.OrdinalIgnoreCase) &&
+                !label.StartsWith("Android ", StringComparison.OrdinalIgnoreCase))
+            {
+                throw ContradictoryDeclaration(file, lineNumber, sourceText,
+                    $"Android platform type '{typeName}' has unexpected label '{label}'.");
+            }
+        }
+        else if (!label.StartsWith("iOS ", StringComparison.OrdinalIgnoreCase))
+        {
+            throw ContradictoryDeclaration(file, lineNumber, sourceText,
+                $"iOS platform type '{typeName}' has unexpected label '{label}'.");
+        }
+
+        var versionMatch = Regex.Match(
+            label,
+            @"(?<major>\d{1,3})(?:\.(?<minor>\d{1,3}))?\s*$",
+            RegexOptions.CultureInvariant);
+
+        if (!versionMatch.Success)
+        {
+            throw ContradictoryDeclaration(file, lineNumber, sourceText,
+                $"Could not parse a platform version from '{label}'.");
+        }
+
+        var major = int.Parse(versionMatch.Groups["major"].Value);
+        var hasMinor = versionMatch.Groups["minor"].Success;
+
+        if (hasMinor)
+        {
+            var minor = int.Parse(versionMatch.Groups["minor"].Value);
+            var version = $"{major}.{minor}";
+            Add(
+                found,
+                PlatformRequirementKind.MobileExactVersion,
+                family,
+                familyKey,
+                $"{family} {version}",
+                version,
+                file,
+                lineNumber,
+                sourceText);
+        }
+        else
+        {
+            var version = $"{major}.x";
+            Add(
+                found,
+                PlatformRequirementKind.MobileMajorWildcard,
+                family,
+                familyKey,
+                $"{family} {version}",
+                version,
+                file,
+                lineNumber,
+                sourceText);
+        }
+    }
+
+    private static void ExtractDesktopMapping(
+        IDictionary<string, DeclaredPlatform> found,
+        string file,
+        int lineNumber,
+        string sourceText)
+    {
+        var platformTypeMatch = DesktopPlatformTypeRegex.Match(sourceText);
+        var creatorTypeMatch = DesktopCreatorTypeRegex.Match(sourceText);
+
+        if (!platformTypeMatch.Success && !creatorTypeMatch.Success)
+        {
+            return;
+        }
+
+        var typeName = platformTypeMatch.Success
+            ? platformTypeMatch.Groups["type"].Value
+            : creatorTypeMatch.Groups["type"].Value;
+
+        if (typeName.StartsWith("Linux", StringComparison.Ordinal))
+        {
+            Add(
+                found,
+                PlatformRequirementKind.DesktopPlatform,
+                "Linux",
+                "desktop:Linux",
+                "Linux",
+                string.Empty,
+                file,
+                lineNumber,
+                sourceText);
+            return;
+        }
+
+        if (typeName.StartsWith("Windows", StringComparison.Ordinal))
+        {
+            var digits = Regex.Match(typeName, @"Windows(?<digits>\d+)").Groups["digits"].Value;
+            var version = ParseWindowsVersion(digits, file, lineNumber, sourceText);
+
+            Add(
+                found,
+                PlatformRequirementKind.DesktopPlatform,
+                "Windows",
+                "desktop:Windows",
+                $"Windows {version}",
+                version,
+                file,
+                lineNumber,
+                sourceText);
+            return;
+        }
+
+        if (typeName.StartsWith("Mac", StringComparison.Ordinal))
+        {
+            var digits = Regex.Match(typeName, @"Mac(?<digits>\d+)").Groups["digits"].Value;
+            if (!int.TryParse(digits, out var major))
+            {
+                throw ContradictoryDeclaration(file, lineNumber, sourceText,
+                    $"Could not parse macOS version from type '{typeName}'.");
+            }
+
+            var version = major.ToString();
+            var displayName = MacMarketingNames.TryGetValue(major, out var marketingName)
+                ? $"Mac {marketingName} ({version})"
+                : $"Mac {version}";
+
+            Add(
+                found,
+                PlatformRequirementKind.DesktopPlatform,
+                "macOS",
+                "desktop:macOS",
+                displayName,
+                version,
+                file,
+                lineNumber,
+                sourceText);
+        }
+    }
+
+    private static void ExtractChromiumOs(
+        IDictionary<string, DeclaredPlatform> found,
+        string file,
+        int lineNumber,
+        string sourceText)
+    {
+        var hasExplicitDeclaration =
+            sourceText.Contains("ChromiumOS", StringComparison.OrdinalIgnoreCase) ||
+            sourceText.Contains("Chromium OS", StringComparison.OrdinalIgnoreCase) ||
+            sourceText.Contains("ChromeOS", StringComparison.OrdinalIgnoreCase) ||
+            sourceText.Contains("Chrome OS", StringComparison.OrdinalIgnoreCase);
+
+        if (!hasExplicitDeclaration)
+        {
+            return;
+        }
+
+        if (!sourceText.Contains("PLATFORM_", StringComparison.OrdinalIgnoreCase) &&
+            !sourceText.Contains("Platform", StringComparison.OrdinalIgnoreCase) &&
+            !sourceText.Contains("BrowserCreator", StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
+
+        Add(
+            found,
+            PlatformRequirementKind.DesktopPlatform,
+            "ChromiumOS",
+            "desktop:ChromiumOS",
+            "ChromiumOS",
+            string.Empty,
+            file,
+            lineNumber,
+            sourceText);
+    }
+
+    private static string ParseWindowsVersion(
+        string digits,
+        string file,
+        int lineNumber,
+        string sourceText)
+    {
+        if (digits == "81")
+        {
+            return "8.1";
+        }
+
+        if (int.TryParse(digits, out var major))
+        {
+            return major.ToString();
+        }
+
+        throw ContradictoryDeclaration(file, lineNumber, sourceText,
+            $"Could not parse Windows version from '{digits}'.");
+    }
+
+    private static void Add(
+        IDictionary<string, DeclaredPlatform> found,
+        PlatformRequirementKind kind,
+        string family,
+        string familyKey,
+        string displayName,
+        string version,
+        string file,
+        int lineNumber,
+        string sourceText)
+    {
+        ValidateDeclaration(kind, family, version, file, lineNumber, sourceText);
+
+        var key = PlatformCanonicalizer.Key(kind, familyKey, version, displayName);
+        if (found.ContainsKey(key))
+        {
+            return;
+        }
+
+        found[key] = new DeclaredPlatform(
+            kind,
+            family,
+            familyKey,
+            displayName,
+            version,
+            key,
+            file,
+            $"line {lineNumber}: {sourceText}");
+    }
+
+    private static void ValidateDeclaration(
+        PlatformRequirementKind kind,
+        string family,
+        string version,
+        string file,
+        int lineNumber,
+        string sourceText)
+    {
+        if (string.IsNullOrWhiteSpace(sourceText) ||
+            sourceText.Trim() is "{" or "}" or "," or ";")
+        {
+            throw ContradictoryDeclaration(file, lineNumber, sourceText,
+                "A platform declaration cannot be represented by punctuation or an empty source line.");
+        }
+
+        if (family == "Android" &&
+            !sourceText.Contains("Android", StringComparison.Ordinal))
+        {
+            throw ContradictoryDeclaration(file, lineNumber, sourceText,
+                "Android declaration does not contain an Android platform type.");
+        }
+
+        if (family == "iOS" &&
+            !sourceText.Contains("IOS", StringComparison.Ordinal) &&
+            !sourceText.Contains("iOS", StringComparison.OrdinalIgnoreCase))
+        {
+            throw ContradictoryDeclaration(file, lineNumber, sourceText,
+                "iOS declaration does not contain an iOS platform type or label.");
+        }
+
+        if (family == "Linux" &&
+            sourceText.Contains("Android", StringComparison.Ordinal))
+        {
+            throw ContradictoryDeclaration(file, lineNumber, sourceText,
+                "Linux declaration contains an Android platform type.");
+        }
+
+        if (kind != PlatformRequirementKind.DesktopPlatform && string.IsNullOrWhiteSpace(version))
+        {
+            throw ContradictoryDeclaration(file, lineNumber, sourceText,
+                "Mobile platform declaration has no version.");
+        }
+    }
+
+    private static InvalidDataException ContradictoryDeclaration(
+        string file,
+        int lineNumber,
+        string sourceText,
+        string detail) =>
+        new($"Invalid Saucery platform declaration extraction at {file}:{lineNumber}. {detail} Source: {sourceText}");
+
+    private static bool ContainsBuildDirectory(string path)
+    {
+        var parts = path.Split(
+            [Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar],
+            StringSplitOptions.RemoveEmptyEntries);
+
+        return parts.Any(x =>
+            x.Equals("bin", StringComparison.OrdinalIgnoreCase) ||
+            x.Equals("obj", StringComparison.OrdinalIgnoreCase));
+    }
+}
+
+internal static class PlatformLifecycleAnalyzer
+{
+    public static PlatformLifecycleResult Analyze(
+        IReadOnlyList<FunctionalPlatformRequirement> sauceRequirements,
+        IReadOnlyList<DeclaredPlatform> declaredPlatforms)
+    {
+        var sauceKeys = sauceRequirements
+            .Select(PlatformCanonicalizer.RequirementKey)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        var sauceFamilies = sauceRequirements
+            .Select(x => x.FamilyKey)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        var obsolete = declaredPlatforms
+            .Where(x => !sauceKeys.Contains(x.CanonicalKey))
+            .Where(x => ShouldReportAsObsoleteCandidate(x, sauceFamilies))
+            .OrderBy(x => x.Family)
+            .ThenBy(x => x.Version, NaturalStringComparer.Instance)
+            .ThenBy(x => x.DisplayName, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        return new PlatformLifecycleResult(declaredPlatforms, obsolete);
+    }
+
+    private static bool ShouldReportAsObsoleteCandidate(
+        DeclaredPlatform platform,
+        IReadOnlySet<string> sauceFamilies)
+    {
+        // An explicit exact version or wildcard that is absent from Sauce is a lifecycle candidate.
+        if (platform.Kind is PlatformRequirementKind.MobileExactVersion or
+            PlatformRequirementKind.MobileMajorWildcard)
+        {
+            return true;
+        }
+
+        // For desktop platforms, report explicit versioned declarations. Also report a whole
+        // platform family when Sauce no longer advertises that family at all.
+        return !string.IsNullOrWhiteSpace(platform.Version) ||
+               !sauceFamilies.Contains(platform.FamilyKey);
+    }
+}
+
 internal sealed record PackageVersionFinding(
     string Package,
     string? Version,
@@ -1229,6 +1751,7 @@ internal static class ReportWriter
         int virtualRowCount,
         int realDeviceCount,
         IReadOnlyList<CoverageFinding> findings,
+        PlatformLifecycleResult lifecycle,
         string? realDeviceWarning)
     {
         var sb = new StringBuilder(128 * 1024);
@@ -1248,6 +1771,7 @@ internal static class ReportWriter
         sb.AppendLine("SAUCERY FUNCTIONAL PLATFORM COVERAGE GAP REPORT");
         sb.AppendLine(new string('=', 92));
         sb.AppendLine($"Generated UTC : {DateTimeOffset.UtcNow:O}");
+        sb.AppendLine($"Reporter build : {Program.ReporterBuild}");
         sb.AppendLine($"Repository    : {repoRoot}");
         sb.AppendLine($"Region        : {options.Region}");
         sb.AppendLine();
@@ -1301,6 +1825,8 @@ internal static class ReportWriter
         sb.AppendLine($"Core functional gaps             : {coreGaps.Count,6:N0}");
         sb.AppendLine($"Platform families                : {familyGroups.Count,6:N0}");
         sb.AppendLine($"Families with no test sample     : {familiesWithoutTests.Count,6:N0}");
+        sb.AppendLine($"Explicit Core platform entries   : {lifecycle.DeclaredPlatforms.Count,6:N0}");
+        sb.AppendLine($"Obsolete Core candidates         : {lifecycle.ObsoleteCandidates.Count,6:N0}");
         sb.AppendLine();
 
         sb.AppendLine("SUMMARY BY PLATFORM FAMILY");
@@ -1320,6 +1846,8 @@ internal static class ReportWriter
 
         WriteCoreGapSection(sb, "CORE FUNCTIONAL PLATFORM GAPS", coreGaps);
         WriteCoreGapSection(sb, "CORE REVIEW ITEMS", reviews);
+
+        WriteObsoleteSection(sb, lifecycle.ObsoleteCandidates);
 
         sb.AppendLine("REPRESENTATIVE TEST COVERAGE");
         sb.AppendLine(new string('=', 92));
@@ -1380,6 +1908,35 @@ internal static class ReportWriter
         }
 
         sb.AppendLine();
+    }
+
+    private static void WriteObsoleteSection(
+        StringBuilder sb,
+        IReadOnlyList<DeclaredPlatform> obsolete)
+    {
+        sb.AppendLine("SAUCERY COVERAGE NO LONGER REQUIRED BY CURRENT SAUCE CATALOGUE");
+        sb.AppendLine(new string('=', 92));
+        sb.AppendLine("These are explicit Saucery.Core platform/version declarations that could not be matched to");
+        sb.AppendLine("the current Sauce functional platform set. Treat them as removal candidates, not automatic");
+        sb.AppendLine("deletions: a temporarily absent/private Sauce target or an extraction ambiguity should be reviewed.");
+        sb.AppendLine();
+
+        if (obsolete.Count == 0)
+        {
+            sb.AppendLine("None detected.");
+            sb.AppendLine();
+            return;
+        }
+
+        foreach (var platform in obsolete)
+        {
+            sb.AppendLine($"OBSOLETE? {platform.DisplayName}");
+            sb.AppendLine($"          Family          : {platform.Family}");
+            sb.AppendLine($"          Core declaration: {platform.File}");
+            sb.AppendLine($"          Matched source  : {platform.Match}");
+            sb.AppendLine("          Sauce status    : no matching current functional platform requirement");
+            sb.AppendLine();
+        }
     }
 
     private static void WriteFinding(StringBuilder sb, CoverageFinding finding)

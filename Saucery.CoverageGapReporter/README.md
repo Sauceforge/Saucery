@@ -1,10 +1,10 @@
 # Saucery.CoverageGapReporter
 
-This version reports **functional platform coverage**, not coverage of every Sauce Labs device/configuration row.
+.NET 10 console application that performs a bidirectional functional-platform lifecycle audit between the current Sauce Labs catalogue and `Saucery.Core` / `Saucery.Core.Tests`.
 
-## Coverage units
+## What it reports
 
-Examples:
+The unit of coverage is a functional platform, not an individual device. Examples include:
 
 - ChromiumOS
 - Mac Golden Gate (27)
@@ -13,47 +13,55 @@ Examples:
 - Android 17.0
 - Android 17.x
 
-Individual iPhones, iPads, Pixels, Galaxies, browser versions, and Electron versions do **not** create separate platform requirements.
+The report contains four important classes of result:
 
-## Test philosophy
+1. **Required and covered** — Sauce currently advertises the functional platform and Saucery has support evidence.
+2. **Required but missing/review** — Sauce advertises the platform, but Saucery support is missing or cannot be proven safely.
+3. **Obsolete Core candidates** — Saucery.Core contains an explicit platform/version declaration that has no matching current Sauce functional-platform requirement.
+4. **Representative test coverage** — tests are sampled by platform family/path; there is no requirement to test every individual Sauce device model.
 
-`Saucery.Core.Tests` only needs representative evidence for a platform family/path. It does not need one test for every physical or simulated device.
+## Obsolete-platform detection
 
-The report therefore separates:
-
-- Core functional platform coverage
-- Core review items
-- Core functional gaps
-- Representative test sampling by platform family
+The reporter extracts explicit platform/version declarations from `Saucery.Core` and compares them back to the normalized Sauce platform set. An obsolete result is deliberately labelled a **candidate**, not an automatic deletion instruction, because private targets, temporary catalogue omissions, or unusual source declarations can require manual review.
 
 ## Run
 
-From `C:\gitrepos\Saucery\Saucery.CoverageGapReporter`:
+From the reporter project directory:
 
 ```powershell
 dotnet run -c Release
 ```
 
-The repository root is auto-detected by walking upward until both `Saucery.Core` and `Saucery.Core.Tests` are found.
+The repository root is discovered automatically by walking upward until both `Saucery.Core` and `Saucery.Core.Tests` are found.
 
-Default output:
+Optional override:
+
+```powershell
+dotnet run -c Release -- --repo-root C:\gitrepos\Saucery
+```
+
+Default report:
 
 ```text
-C:\gitrepos\Saucery\saucery-functional-platform-coverage-gaps.txt
+saucery-functional-platform-coverage-gaps.txt
 ```
 
 ## Sauce credentials
 
-Use either:
+The reporter accepts either:
 
-```powershell
-$env:SAUCE_USERNAME = "..."
-$env:SAUCE_ACCESS_KEY = "..."
+```text
+SAUCE_USERNAME / SAUCE_ACCESS_KEY
 ```
 
 or:
 
-```powershell
-$env:SAUCE_USER_NAME = "..."
-$env:SAUCE_API_KEY = "..."
+```text
+SAUCE_USER_NAME / SAUCE_API_KEY
 ```
+
+Credentials can also be supplied with `--username` and `--access-key`.
+
+## Obsolete-platform extraction
+
+Lifecycle extraction is structural rather than proximity-based. The reporter only creates Saucery declarations from explicit switch mappings whose target platform/creator type is on the same source statement. The target type determines the family (for example, `Android17Platform` is Android even when the Sauce-facing lookup label is `Linux 17.0`). Source evidence includes the exact line number and statement. Desktop numeric versions are canonicalized so equivalent spellings such as macOS `11.00` and Sauce `Mac 11` compare as the same platform.
