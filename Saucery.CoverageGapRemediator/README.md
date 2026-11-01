@@ -83,3 +83,12 @@ Only `PLATFORM_*` identity constants found in structural registrations are consi
 Each reporter rerun is authoritative. If an obsolete platform has multiple surviving declarations, the next synthesis pass consumes the **fresh evidence file and source line from the newly generated report**, rather than retrying the stale declaration from the previous pass.
 
 If the original product/creator prototype has already been deleted, the remediator can still remove the next exact reporter-evidenced registration after syntax-validating the resulting file.
+
+
+## Evidence-driven obsolete cleanup
+
+When a complete platform prototype no longer exists, obsolete remediation falls back to the latest reporter evidence plus a narrowly derived platform identity (`Windows81`, `PLATFORM_WINDOWS_81`, `IOS13`, `iOS 13`, and equivalent forms).
+
+Only syntax-safe residual registration/constant/switch/test-data lines are removed. Class and namespace declarations are never line-deleted by the fallback.
+
+With `--allow-obsolete-removal`, a reporter-evidenced obsolete candidate can be auto-fixed even when no complete product prototype remains.

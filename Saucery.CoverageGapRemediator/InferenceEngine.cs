@@ -71,13 +71,22 @@ internal sealed class GenericRemediationEngine
                 "The repository graph can remove this candidate, but destructive remediation is disabled. Re-run with --allow-obsolete-removal after lifecycle evidence has been reviewed.",
                 Array.Empty<FileChange>(), ["Obsolete-candidate removal is opt-in because a Sauce catalogue can be incomplete."]);
 
-        PlatformPrototype analogue;
+        PlatformPrototype? analogue = null;
         try
         {
             analogue = d.Type == DiscrepancyType.ObsoleteCandidate ? model.FindObsoletePrototype(d) : model.FindBestAnalogue(d);
         }
         catch(Exception ex)
         {
+            if(d.Type == DiscrepancyType.ObsoleteCandidate &&
+               options.AllowObsoleteRemoval &&
+               (!string.IsNullOrWhiteSpace(d.EvidenceFile) || !string.IsNullOrWhiteSpace(d.Evidence)))
+            {
+                return new(d, RemediationDisposition.AutoFix, "reporter-evidence-removal",
+                    "No complete repository prototype remains, but the coverage reporter supplied source evidence. Remove syntax-safe residual registrations matching the reported platform identity.",
+                    Array.Empty<FileChange>(), [ex.Message]);
+            }
+
             return new(d, RemediationDisposition.ManualReview, "repository-inference",
                 "No existing repository implementation can be matched safely.",
                 Array.Empty<FileChange>(), [ex.Message]);
@@ -86,22 +95,22 @@ internal sealed class GenericRemediationEngine
         var changes = new List<FileChange>();
         if(d.Type == DiscrepancyType.Missing)
         {
-            changes.Add(new(analogue.ProductFile, "Clone/transform", $"Use {analogue.ProductType} as the structural product analogue."));
-            if(analogue.CreatorFile is not null) changes.Add(new(analogue.CreatorFile, "Clone/transform", $"Use {analogue.CreatorType} as the creator analogue."));
-            if(analogue.BrowserCreatorFile is not null) changes.Add(new(analogue.BrowserCreatorFile, "Clone/transform", $"Use {analogue.BrowserCreatorType} as the browser-creator analogue."));
+            changes.Add(new(analogue!.ProductFile, "Clone/transform", $"Use {analogue!.ProductType} as the structural product analogue."));
+            if(analogue!.CreatorFile is not null) changes.Add(new(analogue!.CreatorFile, "Clone/transform", $"Use {analogue!.CreatorType} as the creator analogue."));
+            if(analogue!.BrowserCreatorFile is not null) changes.Add(new(analogue!.BrowserCreatorFile, "Clone/transform", $"Use {analogue!.BrowserCreatorType} as the browser-creator analogue."));
             changes.AddRange(analogue.Registrations.Select(x => new FileChange(x.File, "Infer registration", "Transform an analogous registration/test line when semantically applicable.")));
             changes.AddRange(analogue.HelperMethods.Select(x => new FileChange(x.File, "Infer helper", "Clone a family-specific helper when a new family requires one.")));
         }
         else
         {
-            changes.Add(new(analogue.ProductFile, "Delete if unreferenced", $"Remove {analogue.ProductType} only after obsolete registrations are removed and no external references remain."));
-            if(analogue.CreatorFile is not null) changes.Add(new(analogue.CreatorFile, "Delete if unreferenced", $"Remove {analogue.CreatorType} only if no surviving registration still uses it."));
-            if(analogue.BrowserCreatorFile is not null) changes.Add(new(analogue.BrowserCreatorFile, "Delete if unreferenced", $"Remove {analogue.BrowserCreatorType} only if no surviving registration still uses it."));
+            changes.Add(new(analogue!.ProductFile, "Delete if unreferenced", $"Remove {analogue!.ProductType} only after obsolete registrations are removed and no external references remain."));
+            if(analogue!.CreatorFile is not null) changes.Add(new(analogue!.CreatorFile, "Delete if unreferenced", $"Remove {analogue!.CreatorType} only if no surviving registration still uses it."));
+            if(analogue!.BrowserCreatorFile is not null) changes.Add(new(analogue!.BrowserCreatorFile, "Delete if unreferenced", $"Remove {analogue!.BrowserCreatorType} only if no surviving registration still uses it."));
             changes.AddRange(analogue.Registrations.Select(x => new FileChange(x.File, "Remove matching registration", "Remove only registrations/tests whose version semantics match the obsolete requirement.")));
         }
 
         return new(d, RemediationDisposition.AutoFix, "repository-inference",
-            $"Infer remediation from repository analogue {analogue.ProductType} ({analogue.Family} {analogue.Version}). No platform-specific remediation class is used.",
+            $"Infer remediation from repository analogue {analogue!.ProductType} ({analogue.Family} {analogue.Version}). No platform-specific remediation class is used.",
             changes.DistinctBy(x => (x.Path, x.ChangeType, x.Description)).ToArray(),
             ["All generated C# is syntax-checked; source changes are retained only after build, tests, and reporter verification pass."]);
     }
@@ -330,15 +339,18 @@ internal static class ObsoleteSynthesizer
         {
             prototype = model.FindObsoletePrototype(target);
         }
-        catch(InvalidDataException)
+        catch(InvalidDataException ex)
         {
-            // A previous synthesis pass may already have removed the product/creator prototype
-            // while the reporter has exposed a second surviving registration. In that state the
-            // new reporter evidence is the authority: remove that exact declaration and continue.
-            if(RemoveFreshReporterEvidence(context, changes, target))
+            // A previous synthesis pass may already have removed the product/creator prototype,
+            // or the reporter may describe a residual registration that never had its own product
+            // type. In that state, the freshly generated reporter discrepancy is authoritative.
+            if(RemoveResidualTargetEvidence(context, changes, target))
                 return;
 
-            throw;
+            throw new InvalidDataException(
+                $"No repository prototype remains for {target.DisplayName}, and no syntax-safe residual registration could be removed. " +
+                $"Reporter evidence file: {target.EvidenceFile ?? "<none>"}. Reporter evidence: {target.Evidence ?? "<none>"}.",
+                ex);
         }
 
         var ownedFiles = new[] { prototype.ProductFile, prototype.CreatorFile, prototype.BrowserCreatorFile }
@@ -367,39 +379,141 @@ internal static class ObsoleteSynthesizer
         RemoveUnusedConstants(context, changes, constants);
     }
 
-    private static bool RemoveFreshReporterEvidence(
+    private static bool RemoveResidualTargetEvidence(
         RepositoryContext context,
         ChangeCollector changes,
         CoverageDiscrepancy target)
     {
-        if(string.IsNullOrWhiteSpace(target.EvidenceFile) ||
-           string.IsNullOrWhiteSpace(target.Evidence))
+        var candidates = new List<string>();
+
+        if(!string.IsNullOrWhiteSpace(target.EvidenceFile))
+            candidates.Add(target.EvidenceFile);
+
+        candidates.AddRange(EnumerateAllSourceFiles(context)
+            .Where(file => !candidates.Contains(file, StringComparer.OrdinalIgnoreCase)));
+
+        var removedAny = false;
+
+        foreach(var relative in candidates)
+        {
+            var path = context.PathFromRoot(relative);
+            if(!File.Exists(path))
+                continue;
+
+            var original = File.ReadAllText(path);
+            var lines = original.Replace("\r\n", "\n", StringComparison.Ordinal).Split('\n').ToList();
+            var changed = false;
+
+            for(var i = lines.Count - 1; i >= 0; i--)
+            {
+                var line = lines[i];
+                if(!IsResidualTargetLine(line, target))
+                    continue;
+
+                // Whole class/namespace declarations are never line-deleted. Product files are
+                // handled by the prototype path; this fallback is for residual registrations,
+                // constants, switches, factories and test data.
+                if(IsDeclarationLine(line))
+                    continue;
+
+                var candidateLines = new List<string>(lines);
+                candidateLines.RemoveAt(i);
+                var candidateText = string.Join(Environment.NewLine, candidateLines);
+
+                try
+                {
+                    CSharpGuard.AssertValid(candidateText, path);
+                    lines = candidateLines;
+                    changed = true;
+                    removedAny = true;
+                    Console.WriteLine($"    Removed residual {target.DisplayName} evidence from {relative}: {line.Trim()}");
+                }
+                catch(InvalidDataException)
+                {
+                    // Do not partially remove multi-line constructs.
+                }
+            }
+
+            if(changed)
+                changes.Write(relative, string.Join(Environment.NewLine, lines));
+        }
+
+        return removedAny;
+    }
+
+    private static bool IsResidualTargetLine(string line, CoverageDiscrepancy target)
+    {
+        if(string.IsNullOrWhiteSpace(line))
             return false;
 
-        var path = context.PathFromRoot(target.EvidenceFile);
-        if(!File.Exists(path))
-            return false;
-
+        var trimmed = line.Trim();
         var evidence = EvidenceText(target);
-        if(string.IsNullOrWhiteSpace(evidence))
-            return false;
+        if(!string.IsNullOrWhiteSpace(evidence))
+        {
+            // Reporter output may contain only the interesting expression rather than the full
+            // physical source line, so allow either side to contain the other after trimming.
+            if(trimmed.Equals(evidence, StringComparison.Ordinal) ||
+               trimmed.Contains(evidence, StringComparison.Ordinal) ||
+               evidence.Contains(trimmed, StringComparison.Ordinal))
+                return true;
+        }
 
-        var source = File.ReadAllText(path);
-        var lines = source.Replace("\r\n", "\n", StringComparison.Ordinal).Split('\n').ToList();
-        var index = lines.FindIndex(line => line.Trim() == evidence);
+        var family = target.Family;
+        var version = target.Version ?? string.Empty;
+        var major = Regex.Match(version, @"^\d+").Value;
 
-        if(index < 0)
-            return false;
+        var normalizedLine = Regex.Replace(trimmed, "[^A-Za-z0-9]", "").ToUpperInvariant();
+        var normalizedFamily = Regex.Replace(family, "[^A-Za-z0-9]", "").ToUpperInvariant();
+        var normalizedVersion = Regex.Replace(version.Replace(".x", "", StringComparison.OrdinalIgnoreCase), "[^A-Za-z0-9]", "").ToUpperInvariant();
 
-        var candidate = new List<string>(lines);
-        candidate.RemoveAt(index);
-        var candidateText = string.Join(Environment.NewLine, candidate);
+        if(!string.IsNullOrWhiteSpace(normalizedFamily) &&
+           !string.IsNullOrWhiteSpace(normalizedVersion))
+        {
+            var identifier = normalizedFamily + normalizedVersion;
+            if(normalizedLine.Contains(identifier, StringComparison.Ordinal))
+                return true;
+        }
 
-        // Reporter evidence is a declaration/registration line. Never accept the removal
-        // unless the complete file remains syntactically valid.
-        CSharpGuard.AssertValid(candidateText, path);
-        changes.Write(target.EvidenceFile, candidateText);
-        return true;
+        if(family.Equals("Windows", StringComparison.OrdinalIgnoreCase) &&
+           !string.IsNullOrWhiteSpace(version))
+        {
+            var digits = Regex.Replace(version, @"\D", "");
+            if(!string.IsNullOrWhiteSpace(digits) &&
+               (normalizedLine.Contains("WINDOWS" + digits, StringComparison.Ordinal) ||
+                normalizedLine.Contains("PLATFORMWINDOWS" + digits, StringComparison.Ordinal)))
+                return true;
+
+            if(trimmed.Contains($"Windows {version}", StringComparison.OrdinalIgnoreCase))
+                return true;
+        }
+
+        if(family.Equals("iOS", StringComparison.OrdinalIgnoreCase) &&
+           !string.IsNullOrWhiteSpace(major))
+        {
+            if(normalizedLine.Contains("IOS" + major, StringComparison.Ordinal))
+                return true;
+
+            if(trimmed.Contains($"iOS {major}", StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            // Test-data rows sometimes store family and major version in separate arguments.
+            if(trimmed.Contains("iOS", StringComparison.OrdinalIgnoreCase) &&
+               Regex.IsMatch(trimmed, $@"[""']{Regex.Escape(major)}(?:\.0|\.x)?[""']", RegexOptions.IgnoreCase))
+                return true;
+        }
+
+        if(family.Equals("Android", StringComparison.OrdinalIgnoreCase) &&
+           !string.IsNullOrWhiteSpace(major))
+        {
+            if(normalizedLine.Contains("ANDROID" + major, StringComparison.Ordinal))
+                return true;
+
+            if(trimmed.Contains("Android", StringComparison.OrdinalIgnoreCase) &&
+               Regex.IsMatch(trimmed, $@"[""']{Regex.Escape(major)}(?:\.0|\.x)?[""']", RegexOptions.IgnoreCase))
+                return true;
+        }
+
+        return false;
     }
 
     private static IEnumerable<string> EnumerateRemovalCandidates(
