@@ -1,0 +1,83 @@
+name: Saucery Coverage Gap Report
+
+on:
+  workflow_dispatch:
+
+  schedule:
+    # Run every day at 02:00 UTC.
+    - cron: "0 2 * * *"
+
+  push:
+    branches:
+      - master
+    paths:
+      - "Saucery.Core/**"
+      - "Saucery.Core.Tests/**"
+      - "Saucery.CoverageGapReporter/**"
+      - ".github/workflows/coverage-gap-report.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  coverage-gap-report:
+    name: Generate Saucery Coverage Gap Report
+    runs-on: ubuntu-latest
+
+    env:
+      SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
+      SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Display .NET information
+        run: dotnet --info
+
+      - name: Restore Coverage Gap Reporter
+        run: >
+          dotnet restore
+          Saucery.CoverageGapReporter/Saucery.CoverageGapReporter.csproj
+
+      - name: Build Coverage Gap Reporter
+        run: >
+          dotnet build
+          Saucery.CoverageGapReporter/Saucery.CoverageGapReporter.csproj
+          --configuration Release
+          --no-restore
+
+      - name: Run Coverage Gap Reporter
+        run: >
+          dotnet run
+          --project Saucery.CoverageGapReporter/Saucery.CoverageGapReporter.csproj
+          --configuration Release
+          --no-build
+          --
+          --repo-root "${{ github.workspace }}"
+          --output "${{ github.workspace }}/saucery-functional-platform-coverage-gaps.txt"
+          --region us-west-1
+          --include-real true
+
+      - name: Print Coverage Gap Report
+        if: always()
+        run: |
+          if [ -f saucery-functional-platform-coverage-gaps.txt ]; then
+            cat saucery-functional-platform-coverage-gaps.txt
+          else
+            echo "Coverage gap report was not generated."
+          fi
+
+      - name: Upload Coverage Gap Report
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: saucery-functional-platform-coverage-gaps
+          path: saucery-functional-platform-coverage-gaps.txt
+          if-no-files-found: error
+          retention-days: 30
