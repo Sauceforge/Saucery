@@ -22,20 +22,6 @@ Saucery handles all the plumbing required to integrate with SauceLabs, making wr
 
 Saucery comes in multiple flavors supporting popular test frameworks. Targeting all real and emulated [platforms](https://saucelabs.com/products/platform-configurator) for Appium and Selenium 4+. The templates below include example tests.
 
-<!-- BEGIN SAUCERY PLATFORM COVERAGE -->
-### Platform Coverage Audit
-
-> Automatically maintained by `Saucery.CoverageGapReporter`. Missing means Sauce currently advertises the functional platform but Saucery.Core coverage was not detected. Obsolete candidate means an explicit Saucery.Core declaration was not found in the current Sauce API-derived functional platform set and should be reviewed before removal.
-
-| Status | Platform | Evidence |
-| --- | --- | --- |
-| Missing | ChromiumOS | 2 Sauce catalogue configurations; no Saucery.Core coverage detected. |
-| Obsolete candidate | iOS 13.x | Declared in `Dojo\DojoExtensions.cs`; no matching current Sauce API-derived functional platform requirement. |
-| Obsolete candidate | iOS 26.0 | Declared in `Dojo\DojoExtensions.cs`; no matching current Sauce API-derived functional platform requirement. |
-| Obsolete candidate | Windows 8 | Declared in `Dojo\Browsers\BrowserFactory.cs`; no matching current Sauce API-derived functional platform requirement. |
-| Obsolete candidate | Windows 8.1 | Declared in `Dojo\Browsers\BrowserFactory.cs`; no matching current Sauce API-derived functional platform requirement. |
-<!-- END SAUCERY PLATFORM COVERAGE -->
-
 ### Packages
 
 | Package | Badges |
@@ -147,6 +133,20 @@ Yes, Saucery supports Real Devices!
 A global .NET tool for managing NuGet package upgrades from [NuGet](https://nuget.org) and managing version relationships across multiple packages.
 
 We use it ourselves to manage our own packages, and we hope you find it useful too!
+
+<!-- BEGIN SAUCERY PLATFORM COVERAGE -->
+### Platform Coverage Audit
+
+> Automatically maintained by `Saucery.CoverageGapReporter`. Missing means Sauce currently advertises the functional platform but Saucery.Core coverage was not detected. Obsolete candidate means an explicit Saucery.Core declaration was not found in the current Sauce API-derived functional platform set and should be reviewed before removal.
+
+| Status | Platform | Evidence |
+| --- | --- | --- |
+| Missing | ChromiumOS | 2 Sauce catalogue configurations; no Saucery.Core coverage detected. |
+| Obsolete candidate | iOS 13.x | Declared in `Dojo\DojoExtensions.cs`; no matching current Sauce API-derived functional platform requirement. |
+| Obsolete candidate | iOS 26.0 | Declared in `Dojo\DojoExtensions.cs`; no matching current Sauce API-derived functional platform requirement. |
+| Obsolete candidate | Windows 8 | Declared in `Dojo\Browsers\BrowserFactory.cs`; no matching current Sauce API-derived functional platform requirement. |
+| Obsolete candidate | Windows 8.1 | Declared in `Dojo\Browsers\BrowserFactory.cs`; no matching current Sauce API-derived functional platform requirement. |
+<!-- END SAUCERY PLATFORM COVERAGE -->
 
 ### Trends
 

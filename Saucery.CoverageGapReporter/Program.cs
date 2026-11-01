@@ -8,7 +8,7 @@ namespace Saucery.CoverageGapReporter;
 
 internal static class Program
 {
-    internal const string ReporterBuild = "lifecycle-readme-v5";
+    internal const string ReporterBuild = "lifecycle-readme-v7";
     private const string CoreProjectDirectory = "Saucery.Core";
     private const string TestsProjectDirectory = "Saucery.Core.Tests";
 
@@ -1616,7 +1616,7 @@ internal static class PlatformLifecycleAnalyzer
 
     private static bool ShouldReportAsObsoleteCandidate(
         DeclaredPlatform platform,
-        HashSet<string> sauceFamilies)
+        IReadOnlySet<string> sauceFamilies)
     {
         // An explicit exact version or wildcard that is absent from Sauce is a lifecycle candidate.
         if (platform.Kind is PlatformRequirementKind.MobileExactVersion or
@@ -1977,7 +1977,7 @@ internal static class ReadmeCoverageUpdater
 {
     private const string BeginMarker = "<!-- BEGIN SAUCERY PLATFORM COVERAGE -->";
     private const string EndMarker = "<!-- END SAUCERY PLATFORM COVERAGE -->";
-    private const string PreferredInsertionHeading = "### Packages";
+    private const string PreferredInsertionHeading = "### Trends";
 
     public static bool Update(
         string readmePath,
@@ -2058,30 +2058,56 @@ internal static class ReadmeCoverageUpdater
 
     private static string ReplaceOrInsertSection(string original, string section, string newline)
     {
-        var beginIndex = original.IndexOf(BeginMarker, StringComparison.Ordinal);
-        var endIndex = original.IndexOf(EndMarker, StringComparison.Ordinal);
+        // Always remove an existing generated block first. This intentionally allows the updater
+        // to relocate a block written by an older reporter version instead of merely replacing
+        // it in its previous position.
+        var withoutGeneratedSection = RemoveExistingSection(original, newline);
 
-        if (beginIndex >= 0 || endIndex >= 0)
+        var trendsHeadingIndex = FindHeadingStart(withoutGeneratedSection, PreferredInsertionHeading);
+        if (trendsHeadingIndex < 0)
         {
-            if (beginIndex < 0 || endIndex < 0 || endIndex < beginIndex)
-            {
-                throw new InvalidDataException(
-                    $"README.md contains an incomplete or invalid generated coverage section. Expected both '{BeginMarker}' and '{EndMarker}'.");
-            }
-
-            var replaceEnd = endIndex + EndMarker.Length;
-            return original[..beginIndex] + section + original[replaceEnd..];
+            return withoutGeneratedSection.TrimEnd('\r', '\n') +
+                   newline + newline +
+                   section + newline;
         }
 
-        var headingIndex = FindHeadingStart(original, PreferredInsertionHeading);
-        if (headingIndex >= 0)
+        var prefix = withoutGeneratedSection[..trendsHeadingIndex].TrimEnd('\r', '\n');
+        var suffix = withoutGeneratedSection[trendsHeadingIndex..].TrimStart('\r', '\n');
+
+        return prefix + newline + newline + section + newline + newline + suffix;
+    }
+
+    private static string RemoveExistingSection(string text, string newline)
+    {
+        var beginIndex = text.IndexOf(BeginMarker, StringComparison.Ordinal);
+        var endIndex = text.IndexOf(EndMarker, StringComparison.Ordinal);
+
+        if (beginIndex < 0 && endIndex < 0)
         {
-            var prefix = original[..headingIndex].TrimEnd('\r', '\n');
-            var suffix = original[headingIndex..].TrimStart('\r', '\n');
-            return prefix + newline + newline + section + newline + newline + suffix;
+            return text;
         }
 
-        return original.TrimEnd('\r', '\n') + newline + newline + section + newline;
+        if (beginIndex < 0 || endIndex < 0 || endIndex < beginIndex)
+        {
+            throw new InvalidDataException(
+                $"README.md contains an incomplete or invalid generated coverage section. Expected both '{BeginMarker}' and '{EndMarker}'.");
+        }
+
+        var removeEnd = endIndex + EndMarker.Length;
+        var prefix = text[..beginIndex].TrimEnd('\r', '\n');
+        var suffix = text[removeEnd..].TrimStart('\r', '\n');
+
+        if (prefix.Length == 0)
+        {
+            return suffix;
+        }
+
+        if (suffix.Length == 0)
+        {
+            return prefix + newline;
+        }
+
+        return prefix + newline + newline + suffix;
     }
 
     private static int FindHeadingStart(string text, string heading)
@@ -2089,12 +2115,75 @@ internal static class ReadmeCoverageUpdater
         var index = text.IndexOf(heading, StringComparison.Ordinal);
         while (index >= 0)
         {
-            if (index == 0 || text[index - 1] == '\n')
+            if ((index == 0 || text[index - 1] == '\n') &&
+                IsCompleteHeadingLine(text, index, heading))
             {
                 return index;
             }
 
             index = text.IndexOf(heading, index + heading.Length, StringComparison.Ordinal);
+        }
+
+        return -1;
+    }
+
+    private static bool IsCompleteHeadingLine(string text, int index, string heading)
+    {
+        var afterHeading = index + heading.Length;
+        return afterHeading >= text.Length ||
+               text[afterHeading] == '\r' ||
+               text[afterHeading] == '\n';
+    }
+
+    private static int HeadingLevel(string heading)
+    {
+        var level = 0;
+        while (level < heading.Length && heading[level] == '#')
+        {
+            level++;
+        }
+
+        return level;
+    }
+
+    private static int FindNextHeadingAtOrAboveLevel(string text, int startIndex, int maximumLevel)
+    {
+        var position = Math.Max(0, startIndex);
+
+        while (position < text.Length)
+        {
+            var lineStart = position;
+            var lineEnd = text.IndexOf('\n', lineStart);
+            if (lineEnd < 0)
+            {
+                lineEnd = text.Length;
+            }
+
+            var contentEnd = lineEnd;
+            if (contentEnd > lineStart && text[contentEnd - 1] == '\r')
+            {
+                contentEnd--;
+            }
+
+            var level = 0;
+            while (lineStart + level < contentEnd && text[lineStart + level] == '#')
+            {
+                level++;
+            }
+
+            if (level is > 0 && level <= maximumLevel &&
+                lineStart + level < contentEnd &&
+                char.IsWhiteSpace(text[lineStart + level]))
+            {
+                return lineStart;
+            }
+
+            if (lineEnd >= text.Length)
+            {
+                break;
+            }
+
+            position = lineEnd + 1;
         }
 
         return -1;
