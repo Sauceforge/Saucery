@@ -1961,15 +1961,10 @@ internal static class ReportWriter
         sb.AppendLine();
     }
 
-    private static string FormatEvidence(Evidence evidence)
-    {
-        if (evidence.Strength == EvidenceStrength.None)
-        {
-            return "none";
-        }
-
-        return $"{evidence.Strength}; {evidence.File}; matched '{evidence.Match}'";
-    }
+    private static string FormatEvidence(Evidence evidence) 
+        => evidence.Strength == EvidenceStrength.None 
+        ? "none" 
+        : $"{evidence.Strength}; {evidence.File}; matched '{evidence.Match}'";
 }
 
 
@@ -2049,7 +2044,7 @@ internal static class ReadmeCoverageUpdater
 
         if (missing.Count == 0 && obsolete.Count == 0)
         {
-            lines.Add("| None | — | No missing or obsolete coverage detected. |");
+            lines.Add("| Clean | — | No missing or obsolete coverage detected. |");
         }
 
         lines.Add(EndMarker);
@@ -2133,60 +2128,6 @@ internal static class ReadmeCoverageUpdater
         return afterHeading >= text.Length ||
                text[afterHeading] == '\r' ||
                text[afterHeading] == '\n';
-    }
-
-    private static int HeadingLevel(string heading)
-    {
-        var level = 0;
-        while (level < heading.Length && heading[level] == '#')
-        {
-            level++;
-        }
-
-        return level;
-    }
-
-    private static int FindNextHeadingAtOrAboveLevel(string text, int startIndex, int maximumLevel)
-    {
-        var position = Math.Max(0, startIndex);
-
-        while (position < text.Length)
-        {
-            var lineStart = position;
-            var lineEnd = text.IndexOf('\n', lineStart);
-            if (lineEnd < 0)
-            {
-                lineEnd = text.Length;
-            }
-
-            var contentEnd = lineEnd;
-            if (contentEnd > lineStart && text[contentEnd - 1] == '\r')
-            {
-                contentEnd--;
-            }
-
-            var level = 0;
-            while (lineStart + level < contentEnd && text[lineStart + level] == '#')
-            {
-                level++;
-            }
-
-            if (level is > 0 && level <= maximumLevel &&
-                lineStart + level < contentEnd &&
-                char.IsWhiteSpace(text[lineStart + level]))
-            {
-                return lineStart;
-            }
-
-            if (lineEnd >= text.Length)
-            {
-                break;
-            }
-
-            position = lineEnd + 1;
-        }
-
-        return -1;
     }
 
     private static string EscapeCell(string value) =>
