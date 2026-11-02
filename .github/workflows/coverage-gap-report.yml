@@ -69,7 +69,7 @@ jobs:
         run: cat saucery-functional-platform-coverage-gaps.txt
 
       - name: Upload Coverage Gap Report
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: saucery-functional-platform-coverage-gaps
           path: saucery-functional-platform-coverage-gaps.txt
