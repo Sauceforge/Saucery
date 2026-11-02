@@ -141,7 +141,7 @@ We use it ourselves to manage our own packages, and we hope you find it useful t
 
 | Status | Platform | Evidence |
 | --- | --- | --- |
-| None | — | No missing or obsolete coverage detected. |
+| Clean | — | No missing or obsolete coverage detected. |
 <!-- END SAUCERY PLATFORM COVERAGE -->
 
 ### Trends
