@@ -1,40 +1,8 @@
 {
   "repositoryRoot": "/home/runner/work/Saucery/Saucery",
   "reportPath": "/home/runner/work/Saucery/Saucery/saucery-functional-platform-coverage-gaps.txt",
-  "generatedUtc": "2026-11-01T13:03:56.405468+00:00",
-  "items": [
-    {
-      "discrepancy": {
-        "type": 1,
-        "family": "iOS",
-        "kind": 1,
-        "displayName": "iOS 26.0",
-        "version": "26.0",
-        "sauceConfigurationCount": 0,
-        "representativeDevices": null,
-        "evidenceFile": "Dojo/DojoExtensions.cs",
-        "evidence": "line 209: \u0022iOS 26.0\u0022 =\u003E platforms.GetPlatform\u003CIOS26Platform\u003E().FirstOrDefault(),"
-      },
-      "disposition": 0,
-      "strategy": "exact-obsolete-declaration-removal",
-      "summary": "Remove only the exact iOS 26.0 declarations from BrowserFactory/DojoExtensions and matching unit-test data. Shared major-family product/creator implementations are preserved.",
-      "plannedChanges": [
-        {
-          "path": "Saucery.Core/Dojo/Browsers/BrowserFactory.cs",
-          "changeType": "Remove exact declaration",
-          "description": "Remove exact iOS 26.0 browser declaration when present."
-        },
-        {
-          "path": "Saucery.Core/Dojo/DojoExtensions.cs",
-          "changeType": "Remove exact declaration",
-          "description": "Remove exact iOS 26.0 Dojo declaration when present."
-        }
-      ],
-      "warnings": [
-        "Exact-version cleanup never deletes a shared major-family ConcreteProduct or PlatformCreator."
-      ]
-    }
-  ],
-  "autoFixCount": 1,
+  "generatedUtc": "2026-11-02T04:09:12.267509+00:00",
+  "items": [],
+  "autoFixCount": 0,
   "manualReviewCount": 0
 }
