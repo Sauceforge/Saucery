@@ -5,6 +5,11 @@ on:
 
   schedule:
     - cron: "0 2 * * 1"
+  
+  push:
+    paths:
+      - "Saucery.CoverageGapRemediator/**"
+      - ".github/workflows/coverage-gap-remediation.yml"
 
 permissions:
   contents: write

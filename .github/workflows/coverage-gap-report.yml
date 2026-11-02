@@ -12,6 +12,7 @@ on:
     paths:
       - "Saucery.Core/**"
       - "Saucery.Core.Tests/**"
+      - "Saucery.Core.Tests.XUnitv3/**"
       - "Saucery.CoverageGapReporter/**"
       - ".github/workflows/coverage-gap-report.yml"
 
