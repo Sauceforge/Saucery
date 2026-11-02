@@ -1,4 +1,4 @@
-name: Saucery Coverage Gap Remediation
+name: Saucery Platform Coverage Remediation
 
 on:
   workflow_dispatch:
@@ -7,19 +7,17 @@ permissions:
   contents: write
   pull-requests: write
 
+env:
+  CONFIG: Release
+  UT_PROJECT: Saucery.Core.Tests.XUnitv3/Saucery.Core.Tests.XUnitv3.csproj
+  COVERAGE_FORMAT: cobertura
+  UNIT_COVERAGE_FILENAME: coverage.cobertura.xml
+  SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+  SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
+
 jobs:
   remediate:
-    name: Remediate platform coverage gaps
     runs-on: ubuntu-latest
-
-    env:
-      CONFIG: Release
-      UT_PROJECT: Saucery.Core.Tests.XUnitv3/Saucery.Core.Tests.XUnitv3.csproj
-      COVERAGE_FORMAT: cobertura
-      UNIT_COVERAGE_FILENAME: coverage.cobertura.xml
-
-      SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
-      SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
 
     steps:
       - name: Checkout repository
@@ -27,7 +25,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: ./.github/actions/setup-dotnet
+      - name: Setup .NET
+        uses: ./.github/actions/setup-dotnet
 
       - name: Restore Coverage Gap Reporter
         run: >
@@ -53,49 +52,74 @@ jobs:
           --configuration ${{ env.CONFIG }}
           --no-restore
 
-      - name: Generate current coverage gap report
+      - name: Generate platform coverage report
         run: >
           dotnet run
           --project Saucery.CoverageGapReporter/Saucery.CoverageGapReporter.csproj
           --configuration ${{ env.CONFIG }}
           --no-build
-          --
-          --repo-root "${{ github.workspace }}"
-          --output "${{ github.workspace }}/saucery-functional-platform-coverage-gaps.txt"
-          --region us-west-1
-          --include-real true
 
-      - name: Print coverage gap report
+      - name: Print platform coverage report
         run: cat saucery-functional-platform-coverage-gaps.txt
 
-      - name: Apply remediations
+      - name: Apply platform remediations
         run: >
           dotnet run
           --project Saucery.CoverageGapRemediator/Saucery.CoverageGapRemediator.csproj
           --configuration ${{ env.CONFIG }}
           --no-build
           --
-          --repo-root "${{ github.workspace }}"
-          --report "${{ github.workspace }}/saucery-functional-platform-coverage-gaps.txt"
           --apply
           --allow-obsolete-removal
 
-      - name: Show resulting changes
+      - name: Show remediation diff
         run: |
           git status --short
           git diff --stat
           git diff
 
-      #
-      # HARD VALIDATION GATE
-      #
-      # Use the exact same xUnit.v3 runner already used by the working
-      # repository pipelines.
-      #
+      - name: Check for actionable remediation changes
+        id: actionable
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          changed_files="$(
+            git status \
+              --porcelain=v1 \
+              --untracked-files=all |
+            cut -c4-
+          )"
+
+          echo "All changed files:"
+          printf '%s\n' "$changed_files"
+
+          actionable_files="$(
+            printf '%s\n' "$changed_files" |
+            grep -v -x 'saucery-platform-remediation-plan.json' |
+            grep -v -x 'saucery-platform-remediation-plan.md' ||
+            true
+          )"
+
+          echo
+          echo "Actionable changed files:"
+          printf '%s\n' "$actionable_files"
+
+          if [[ -n "$actionable_files" ]]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "Actionable remediation changes exist."
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Only remediation-plan files changed."
+            echo "Skipping solution validation, xUnit tests, branch creation, commit, push, and pull request."
+          fi
+
       - name: Compile remediated solution
+        if: steps.actionable.outputs.changed == 'true'
         run: dotnet build -c ${{ env.CONFIG }}
 
       - name: Run xUnit.v3 unit tests
+        if: steps.actionable.outputs.changed == 'true'
         uses: ./.github/actions/run-xunit3-coverage
         with:
           project: ${{ env.UT_PROJECT }}
@@ -103,72 +127,48 @@ jobs:
           coverage-format: ${{ env.COVERAGE_FORMAT }}
           coverage-output: ${{ env.UNIT_COVERAGE_FILENAME }}
 
-      #
-      # NOTHING BELOW HERE RUNS IF XUNIT.V3 FAILS.
-      #
-      - name: Check whether source changed
-        id: changes
-        shell: bash
-        run: |
-          if [[ -n "$(git status --porcelain)" ]]; then
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Create remediation branch
-        if: success() && steps.changes.outputs.changed == 'true'
+        if: success() && steps.actionable.outputs.changed == 'true'
         id: branch
         shell: bash
         run: |
-          BRANCH="automation/platform-coverage-${GITHUB_RUN_ID}"
-          git switch -c "$BRANCH"
-          echo "name=$BRANCH" >> "$GITHUB_OUTPUT"
+          set -euo pipefail
+
+          branch="automated/platform-coverage-remediation-$(date -u +%Y%m%d%H%M%S)"
+
+          git switch -c "$branch"
+
+          echo "name=$branch" >> "$GITHUB_OUTPUT"
 
       - name: Commit remediation
-        if: success() && steps.changes.outputs.changed == 'true'
+        if: success() && steps.actionable.outputs.changed == 'true'
         shell: bash
         run: |
+          set -euo pipefail
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           git add -A
 
-          if git diff --cached --quiet; then
-            echo "No staged changes to commit."
-            exit 0
-          fi
-
-          git commit -m "fix: align Saucery platform coverage with Sauce Labs"
+          git commit \
+            -m "Remediate Sauce platform coverage"
 
       - name: Push remediation branch
-        if: success() && steps.changes.outputs.changed == 'true'
-        run: >
-          git push
-          --set-upstream origin
-          "${{ steps.branch.outputs.name }}"
+        if: success() && steps.actionable.outputs.changed == 'true'
+        run: |
+          git push \
+            --set-upstream \
+            origin \
+            "${{ steps.branch.outputs.name }}"
 
       - name: Create pull request
-        if: success() && steps.changes.outputs.changed == 'true'
+        if: success() && steps.actionable.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh pr create \
-            --base master \
+            --base "${{ github.event.repository.default_branch }}" \
             --head "${{ steps.branch.outputs.name }}" \
-            --title "fix: align Saucery platform coverage with Sauce Labs" \
-            --body "Automated remediation generated by Saucery.CoverageGapRemediator.
-
-          The workflow:
-          - generated the current Sauce Labs platform coverage report
-          - applied platform coverage remediations
-          - updated Core and test projects
-          - rebuilt the remediated solution
-          - executed Saucery.Core.Tests.XUnitv3 using the repository's standard run-xunit3-coverage action
-          - blocked branch, commit, push, and PR creation when the xUnit.v3 suite failed
-
-          Review the generated source and test changes before merging."
-
-      - name: No remediation required
-        if: success() && steps.changes.outputs.changed == 'false'
-        run: echo "No repository changes were required."
+            --title "Remediate Sauce platform coverage" \
+            --body "Automatically generated platform coverage remediation."
