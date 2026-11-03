@@ -41,11 +41,11 @@ public class IOSFactoryVersionTests()
 
 internal static class IOSDataClass
 {
-    public static IEnumerable<SaucePlatform> SupportedTestCases => IOSPlatformVersions.Select(v => new IOSPlatform("iPhone Simulator", v, SauceryConstants.DEVICE_ORIENTATION_PORTRAIT));
+    public static IEnumerable<SaucePlatform> SupportedTestCases => 
+        IOSPlatformVersions.Select(v => new IOSPlatform("iPhone Simulator", v, SauceryConstants.DEVICE_ORIENTATION_PORTRAIT));
 
     public static IEnumerable<SaucePlatform> NotSupportedTestCases => 
-        [
-        ];
+        [new IOSPlatform("iPhone Simulator", "13.0", SauceryConstants.DEVICE_ORIENTATION_PORTRAIT)];
     
     internal static readonly string[] IOSPlatformVersions =
     [

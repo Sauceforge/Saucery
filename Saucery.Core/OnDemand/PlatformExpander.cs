@@ -57,7 +57,7 @@ public class PlatformExpander(PlatformConfigurator platformConfigurator, List<Sa
     {
         var maxVersion = PlatformConfigurator.FindMaxBrowserVersion(platform);
         AddNumericRange(platform, lowerBound, maxVersion);
-        AddNonNumericRange(platform, SauceryConstants.BROWSER_VERSION_LATEST_MINUS1, upperBound);
+        AddNonNumericRange(platform, SauceryConstants.BROWSER_VERSION_PREVIOUS_MAJOR, upperBound);
     }
 
     private void AddNonNumericRange(SaucePlatform platform, string lowerBound, string upperBound)

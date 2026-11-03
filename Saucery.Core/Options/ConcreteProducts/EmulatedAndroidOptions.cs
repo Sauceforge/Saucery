@@ -26,10 +26,14 @@ internal class EmulatedAndroidOptions : BaseOptions {
         options.AddAdditionalAppiumOption("w3c", true);
         options.AddAdditionalAppiumOption("autoGrantPermissions", true);
 
-        options.AddAdditionalAppiumOption(SauceryConstants.SAUCE_APPIUM_VERSION_CAPABILITY,
+
+        if(options.PlatformVersion != SauceryConstants.BROWSER_VERSION_CURRENT_MAJOR &&
+           options.PlatformVersion != SauceryConstants.BROWSER_VERSION_PREVIOUS_MAJOR) {
+            options.AddAdditionalAppiumOption(SauceryConstants.SAUCE_APPIUM_VERSION_CAPABILITY,
             !string.IsNullOrEmpty(browserVersion.RecommendedAppiumVersion)
                 ? browserVersion.RecommendedAppiumVersion
                 : "latest");
+        }
 
         if(!string.IsNullOrEmpty(browserVersion.DeviceOrientation)) {
             SauceOptions.Add(SauceryConstants.SAUCE_DEVICE_ORIENTATION_CAPABILITY, browserVersion.DeviceOrientation);

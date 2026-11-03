@@ -59,8 +59,8 @@ public class PlatformConfigurator
             AvailablePlatforms.AddPlatform(sp);
         }
 
-        AddLatestBrowserVersion(SauceryConstants.BROWSER_VERSION_LATEST);
-        AddLatestBrowserVersion(SauceryConstants.BROWSER_VERSION_LATEST_MINUS1);
+        AddLatestBrowserVersion(SauceryConstants.BROWSER_VERSION_CURRENT_MAJOR);
+        AddLatestBrowserVersion(SauceryConstants.BROWSER_VERSION_PREVIOUS_MAJOR);
     }
 
     // Synchronously block on the async acquirer so AvailableRealDevices is populated.
@@ -99,7 +99,7 @@ public class PlatformConfigurator
         var numericBrowserVersions = browser?.BrowserVersions
             .Where(x =>
                 x.Name!.Any(char.IsNumber) &&
-                x.Name != SauceryConstants.BROWSER_VERSION_LATEST_MINUS1);
+                x.Name != SauceryConstants.BROWSER_VERSION_PREVIOUS_MAJOR);
         var browserVersion = numericBrowserVersions?
             .Aggregate((maxItem, nextItem) =>
                 int.Parse(maxItem.Name!) > int.Parse(nextItem.Name!)

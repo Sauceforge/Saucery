@@ -196,10 +196,10 @@ public static class SauceryConstants {
     //BROWSER VERSIONS
     public static readonly string BROWSER_VERSION_DEV = "dev";
     public static readonly string BROWSER_VERSION_BETA = "beta";
-    public static readonly string BROWSER_VERSION_LATEST = "latest";
-    public static readonly string BROWSER_VERSION_LATEST_MINUS1 = "latest-1";
+    public static readonly string BROWSER_VERSION_CURRENT_MAJOR = "current_major";
+    public static readonly string BROWSER_VERSION_PREVIOUS_MAJOR = "previous_major";
     public static readonly string PLATFORM_SEPARATOR = "->";
-    public static readonly List<string> BROWSER_VERSIONS_LATEST = [BROWSER_VERSION_LATEST_MINUS1, BROWSER_VERSION_LATEST];
+    public static readonly List<string> BROWSER_VERSIONS_LATEST = [BROWSER_VERSION_PREVIOUS_MAJOR, BROWSER_VERSION_CURRENT_MAJOR];
     public static readonly List<string> BROWSER_VERSIONS_DEVS = [BROWSER_VERSION_BETA, BROWSER_VERSION_DEV];
     internal static readonly List<string> BROWSER_VERSIONS_NONNUMERIC = [.. BROWSER_VERSIONS_LATEST, .. BROWSER_VERSIONS_DEVS];
 
