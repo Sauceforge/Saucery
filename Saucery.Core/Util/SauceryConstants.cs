@@ -196,6 +196,7 @@ public static class SauceryConstants {
     //BROWSER VERSIONS
     public static readonly string BROWSER_VERSION_DEV = "dev";
     public static readonly string BROWSER_VERSION_BETA = "beta";
+    public static readonly string BROWSER_VERSION_LATEST = "latest";
     public static readonly string BROWSER_VERSION_CURRENT_MAJOR = "current_major";
     public static readonly string BROWSER_VERSION_PREVIOUS_MAJOR = "previous_major";
     public static readonly string PLATFORM_SEPARATOR = "->";
