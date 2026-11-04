@@ -27,7 +27,7 @@
     <PackageVersion Include="RestSharp" Version="114.1.0" />
     <PackageVersion Include="Saucery" Version="5.0.0" />
     <PackageVersion Include="Saucery.Core" Version="4.10.28" />
-    <PackageVersion Include="Saucery.TUnit" Version="1.78.0" />
+    <PackageVersion Include="Saucery.TUnit" Version="1.79.0" />
     <PackageVersion Include="Saucery.XUnit" Version="4.10.28" />
     <PackageVersion Include="Saucery.XUnit.v3" Version="4.0.2" />
     <PackageVersion Include="Selenium.Support" Version="4.52.0" />
