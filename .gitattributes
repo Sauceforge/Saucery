@@ -61,3 +61,8 @@
 #*.PDF   diff=astextplain
 #*.rtf   diff=astextplain
 #*.RTF   diff=astextplain
+
+###############################################################################
+# Verify snapshot files must always use LF line endings (newer Verify versions enforce this)
+###############################################################################
+Template.Tests/Snapshots/** text eol=lf

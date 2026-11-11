@@ -35,6 +35,7 @@
     <PackageVersion Include="Shouldly" Version="4.3.0" />
     <PackageVersion Include="System.CommandLine" Version="3.0.0" />
     <PackageVersion Include="TUnit" Version="1.83.0" />
+    <PackageVersion Include="Verify.TUnit" Version="33.3.4" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.1" />
     <PackageVersion Include="xunit.v3" Version="4.0.3" />

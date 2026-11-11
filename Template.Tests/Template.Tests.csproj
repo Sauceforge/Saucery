@@ -17,6 +17,7 @@
 
     <!-- Template verifier + assertions -->
     <PackageReference Include="Microsoft.TemplateEngine.Authoring.TemplateVerifier" />
+    <PackageReference Include="Verify.TUnit" />
     <PackageReference Include="Shouldly" />
   </ItemGroup>
 
