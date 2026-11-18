@@ -45,7 +45,7 @@ dotnet tool install Saucery.NuGet
 
 ## Requirements
 
-- .NET 10 SDK
+- .NET 11 SDK
 - Network access to the NuGet.org v3 API at `https://api.nuget.org/v3/index.json`
 
 ---
@@ -76,7 +76,7 @@ For example:
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net11.0</TargetFramework>
     <SauceryNuGetOptIn>true</SauceryNuGetOptIn>
   </PropertyGroup>
 
@@ -557,7 +557,7 @@ These exclusions apply to both:
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net11.0</TargetFramework>
     <SauceryNuGetOptIn>true</SauceryNuGetOptIn>
   </PropertyGroup>
 
@@ -815,7 +815,7 @@ MyRepository/
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net11.0</TargetFramework>
     <PackageVersion>1.0.0</PackageVersion>
     <SauceryNuGetOptIn>true</SauceryNuGetOptIn>
   </PropertyGroup>

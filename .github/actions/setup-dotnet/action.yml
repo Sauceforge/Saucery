@@ -2,7 +2,7 @@ name: Setup .NET SDK
 inputs:
   dotnet-version:
     required: false
-    default: 10.0.x
+    default: 11.0.x
 runs:
   using: composite
   steps:
