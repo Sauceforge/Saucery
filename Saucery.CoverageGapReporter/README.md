@@ -1,6 +1,6 @@
 # Saucery.CoverageGapReporter
 
-.NET 10 console application that performs a bidirectional functional-platform lifecycle audit between the current Sauce Labs catalogue and `Saucery.Core` / `Saucery.Core.Tests`.
+.NET 11 console application that performs a bidirectional functional-platform lifecycle audit between the current Sauce Labs catalogue and `Saucery.Core` / `Saucery.Core.Tests`.
 
 ## What it reports
 
