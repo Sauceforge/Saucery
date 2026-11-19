@@ -111,8 +111,9 @@ internal static class CoverageReportReader
             var displayName = match.Groups["name"].Value.Trim();
             var count = 0;
             var devices = new List<string>();
+            var browsers = new List<string>();
 
-            for (var j = i + 1; j < end && j <= i + 6; j++)
+            for (var j = i + 1; j < end && IsEntryDetailLine(lines[j]); j++)
             {
                 var countMatch = Regex.Match(lines[j], @"Sauce rows collapsed into this requirement:\s*(?<count>\d+)");
                 if (countMatch.Success)
@@ -126,6 +127,13 @@ internal static class CoverageReportReader
                     devices.AddRange(deviceMatch.Groups["devices"].Value
                         .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
                 }
+
+                var browserMatch = Regex.Match(lines[j], @"Sauce browsers:\s*(?<browsers>.+)$");
+                if (browserMatch.Success)
+                {
+                    browsers.AddRange(browserMatch.Groups["browsers"].Value
+                        .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
+                }
             }
 
             var family = InferFamily(displayName);
@@ -137,7 +145,8 @@ internal static class CoverageReportReader
                 displayName,
                 version,
                 count,
-                devices));
+                devices,
+                SauceBrowsers: browsers));
         }
     }
 
@@ -160,7 +169,7 @@ internal static class CoverageReportReader
             string? file = null;
             string? evidence = null;
 
-            for (var j = i + 1; j < end && j <= i + 8; j++)
+            for (var j = i + 1; j < end && IsEntryDetailLine(lines[j]); j++)
             {
                 var familyMatch = Regex.Match(lines[j], @"Family\s*:\s*(?<family>.+)$");
                 if (familyMatch.Success)
@@ -192,6 +201,11 @@ internal static class CoverageReportReader
                 Evidence: evidence));
         }
     }
+
+    // Entry headers start at column 0 and their detail lines are indented, so a blank or
+    // unindented line ends the entry. Reading further would take the next entry's details.
+    private static bool IsEntryDetailLine(string line) =>
+        line.Length > 0 && char.IsWhiteSpace(line[0]) && !string.IsNullOrWhiteSpace(line);
 
     private static int FindHeading(IReadOnlyList<string> lines, string heading)
     {

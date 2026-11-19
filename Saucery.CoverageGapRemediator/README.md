@@ -4,22 +4,33 @@
 
 ## Design
 
-There are no `ChromiumOsMissingStrategy`, `IosExactMissingStrategy`, `Android18Strategy`, or other platform/version-specific remediation classes.
+The reporter and remediator together keep Saucery.Core in step with the Sauce Labs platform catalogue in both directions: a platform Sauce starts offering is reported as a `Gap` and added; a platform Sauce stops offering is reported as an obsolete candidate and removed. Browser-version choices such as "latest", "prev. major" and "Any version" are not platforms and never produce discrepancies.
 
-The remediator:
+Saucery.Core declares three kinds of platform, and each is matched against its own Sauce inventory:
 
-1. scans `Saucery.Core` and `Saucery.Core.Tests`;
-2. discovers platform products, creators, browser creators, factory/lookup registrations, helper methods and representative test registrations;
-3. chooses the closest structural analogue for each discrepancy;
-4. clones and transforms the analogue's implementation slice;
-5. syntax-checks every generated C# file with Roslyn;
-6. builds `Saucery.Core`;
-7. runs `Saucery.Core.Tests`;
-8. reruns `Saucery.CoverageGapReporter`;
-9. repeats synthesis for any targeted discrepancy that remains, up to `--max-repair-passes`;
-10. rolls the entire transaction back if build/test validation fails or the discrepancy cannot be eliminated.
+| Kind | Sauce source | Saucery.Core declaration |
+|---|---|---|
+| Simulator/emulator exact version (`iOS 27.1`, `Android 5.0`) | virtual catalogue | `"iOS 27.1"` / `"Linux 5.0"` in `FindIOSBrowser`/`FindAndroidBrowser`, `"27.1"` in `CreatePlatform` |
+| Real-device major (`iOS 27.x`, `Android 17.x`) | real-device catalogue | `"iOS 27"` / `"Linux 17"` in `FindIOSPlatform`/`FindAndroidPlatform`, `"27"` in `CreateRealPlatform` |
+| Desktop (`Windows 8.1`, `Mac Golden Gate (27)`) | virtual catalogue | `SauceryConstants.PLATFORM_*` in `DesktopPlatformFactory`, `FindDesktopBrowser`, `BrowserFactory` |
 
-This means future Android/iOS/macOS/Windows versions and new platform families are not selected through a predefined strategy table. The engine attempts to infer them from the repository it is actually modifying.
+A simulator and a real device of the same major share one product/creator pair (`IOS27Platform`), so additions reuse it and removals keep it while either kind still uses it.
+
+### Additions
+
+Each `Gap` is added by cloning the nearest existing platform of the same kind and family (the *sibling*) at every site Saucery.Core registers one. Type names (`IOS27Platform` → `IOS271Platform`), `SauceryConstants` names and quoted version labels are rewritten; a registration that already exists is left alone. For desktop platforms the report's `Sauce browsers:` line limits the cloned browser lists to what Sauce offers on that OS, and a sibling that already supports all of those browsers is preferred.
+
+Every addition also adds tests, mirroring the sibling's coverage in both test projects:
+
+- simulator/emulator: `typeof` in `SupportedPlatformTypes`, plus the sibling's version list (`IOSPlatformVersions`) or factory-version row, when the sibling has one;
+- real-device major: `typeof` in `SupportedRealDeviceTypes`, the `Real*FactoryVersionTests` version list/rows, and a `PlatformDataClass` real-device row using a device Sauce reports for that version;
+- desktop: `typeof` in `SupportedPlatformTypes` and `PlatformsWithBrowsersTypes`, and a `DesktopFactoryVersionTests` supported row for a browser Sauce offers.
+
+Shapes with no sibling pattern (for example a new unversioned desktop family) are planned as `ManualReview` rather than guessed.
+
+### Validation
+
+After synthesis the remediator syntax-checks every generated C# file with Roslyn, builds `Saucery.Core` and every `Saucery.Core.Tests*` project, runs the xUnit.v3 tests, and re-runs `Saucery.CoverageGapReporter` to confirm every targeted `Gap` disappeared. If validation fails, the whole transaction is rolled back.
 
 ## Central Package Management
 
@@ -63,7 +74,11 @@ The remediator discovers every top-level `Saucery.Core.Tests*` project and treat
 - `Saucery.Core.Tests` (TUnit)
 - `Saucery.Core.Tests,XUnit3` (xUnit.v3)
 
-When a platform remediation is inferred from an existing analogue, equivalent test registrations/data are transformed in every discovered test suite. Validation builds and runs every discovered test project.
+Additions and removals update test data in every discovered test suite. Validation builds every discovered test project.
+
+## Real-device obsolete removal
+
+An obsolete real-device major (for example `iOS 14.x`) removes only its real-device declarations: the bare-major lines in `FindIOSPlatform`/`FindAndroidPlatform` and `CreateRealPlatform`, and that family's real-device test data (`IOSRealDevice`/`AndroidRealDevice` rows, `typeof` entries in `SupportedRealDeviceTypes`, and the version in `RealIOS*`/`RealAndroid*` version lists). The product/creator pair and the simulator declarations are kept while simulators still use them; only when nothing else references them does the whole-platform removal below apply.
 
 
 ## Obsolete removal safety

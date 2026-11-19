@@ -15,9 +15,11 @@ internal sealed record CoverageDiscrepancy(
     int SauceConfigurationCount = 0,
     IReadOnlyList<string>? RepresentativeDevices = null,
     string? EvidenceFile = null,
-    string? Evidence = null)
+    string? Evidence = null,
+    IReadOnlyList<string>? SauceBrowsers = null)
 {
     [JsonIgnore] public IReadOnlyList<string> Devices => RepresentativeDevices ?? Array.Empty<string>();
+    [JsonIgnore] public IReadOnlyList<string> Browsers => SauceBrowsers ?? Array.Empty<string>();
     [JsonIgnore] public string Identity => $"{Type}|{Family}|{Kind}|{DisplayName}|{Version}";
 }
 

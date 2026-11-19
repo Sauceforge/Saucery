@@ -43,12 +43,16 @@ internal sealed class GenericRemediationEngine
             {
                 Console.WriteLine($"  Synthesizing {discrepancy.Type}: {discrepancy.DisplayName}");
                 if(discrepancy.Type == DiscrepancyType.Missing)
-                    MissingSynthesizer.Apply(context, model, discrepancy, collector);
+                    AdditionSynthesizer.Apply(context, discrepancy, collector);
                 else
                     ObsoleteSynthesizer.Apply(context, model, discrepancy, collector);
             }
 
-            if(options.SkipValidation) break;
+            if(options.SkipValidation)
+            {
+                pending.Clear();
+                break;
+            }
 
             transaction.Capture(Path.Combine(context.Root, "README.md"));
             transaction.Capture(Path.Combine(context.Root, "saucery-functional-platform-coverage-gaps.txt"));
@@ -100,6 +104,18 @@ internal sealed class GenericRemediationEngine
                     ["Exact-version cleanup never deletes a shared major-family ConcreteProduct or PlatformCreator."]);
             }
 
+            if(RealDeviceDeclarations.IsSharedRealDeviceMajor(context, d))
+            {
+                var (productType, creatorType) = RealDeviceDeclarations.Types(d);
+                return new(d, RemediationDisposition.AutoFix, "real-device-declaration-removal",
+                    $"Remove only the real-device {d.DisplayName} declarations and real-device unit-test data. {productType}/{creatorType} are still used by simulator/emulator declarations and are preserved.",
+                    [
+                        .. RealDeviceDeclarations.DeclarationFiles(context, d)
+                            .Select(file => new FileChange(file, "Remove real-device declaration", $"Remove the major-version real-device mapping for {d.DisplayName}."))
+                    ],
+                    ["Real-device cleanup never deletes a ConcreteProduct or PlatformCreator that simulator/emulator declarations still use."]);
+            }
+
             ObsoleteTarget obsolete;
             try
             {
@@ -148,34 +164,18 @@ internal sealed class GenericRemediationEngine
                 ["Obsolete cleanup is idempotent: already-removed implementation files do not block removal of remaining declarations or references."]);
         }
 
-        PlatformPrototype analogue;
-        try
+        _ = model;
+        var unsupported = AdditionSynthesizer.WhyUnsupported(context, d);
+        if(unsupported is not null)
         {
-            analogue = model.FindBestAnalogue(d);
-        }
-        catch(Exception ex)
-        {
-            return new(d, RemediationDisposition.ManualReview, "repository-inference",
-                "No existing repository implementation can be matched safely.",
-                Array.Empty<FileChange>(), [ex.Message]);
+            return new(d, RemediationDisposition.ManualReview, "sibling-addition",
+                "No existing Saucery.Core platform of the same kind can be cloned safely.",
+                Array.Empty<FileChange>(), [unsupported]);
         }
 
-        var missingChanges = new List<FileChange>
-        {
-            new(analogue.ProductFile, "Clone/transform", $"Use {analogue.ProductType} as the structural product analogue.")
-        };
-
-        if(analogue.CreatorFile is not null)
-            missingChanges.Add(new(analogue.CreatorFile, "Clone/transform", $"Use {analogue.CreatorType} as the creator analogue."));
-        if(analogue.BrowserCreatorFile is not null)
-            missingChanges.Add(new(analogue.BrowserCreatorFile, "Clone/transform", $"Use {analogue.BrowserCreatorType} as the browser-creator analogue."));
-
-        missingChanges.AddRange(analogue.Registrations.Select(x => new FileChange(x.File, "Infer registration", "Transform an analogous registration/test line when semantically applicable.")));
-        missingChanges.AddRange(analogue.HelperMethods.Select(x => new FileChange(x.File, "Infer helper", "Clone a family-specific helper when a new family requires one.")));
-
-        return new(d, RemediationDisposition.AutoFix, "repository-inference",
-            $"Infer remediation from repository analogue {analogue.ProductType} ({analogue.Family} {analogue.Version}). No platform-specific remediation class is used.",
-            missingChanges.DistinctBy(x => (x.Path, x.ChangeType, x.Description)).ToArray(),
+        return new(d, RemediationDisposition.AutoFix, "sibling-addition",
+            $"Clone the nearest existing {d.Family} declaration of the same kind at every Saucery.Core registration site and add {d.DisplayName} to the tests that cover that sibling.",
+            AdditionSynthesizer.DescribeChanges(context, d),
             ["All generated C# is syntax-checked; source changes are retained only after build, tests, and reporter verification pass."]);
     }
 }
@@ -506,6 +506,100 @@ internal static class ObsoleteDeclarationResolver
                 $@"\bclass\s+{Regex.Escape(typeName)}\b"));
 }
 
+// Saucery.Core resolves real devices by major version only ("iOS 14" in DojoExtensions,
+// "14" in CreateRealPlatform) and simulators/emulators by exact version ("iOS 14.0", "14.0"),
+// with both mapping to the same major-family product and creator. An obsolete major wildcard
+// is therefore a real-device declaration: removing it must not delete types the simulator or
+// emulator declarations still use.
+internal static class RealDeviceDeclarations
+{
+    public static bool IsRealDeviceMajor(CoverageDiscrepancy target) =>
+        (target.Family.Equals("iOS", StringComparison.OrdinalIgnoreCase) ||
+         target.Family.Equals("Android", StringComparison.OrdinalIgnoreCase)) &&
+        Regex.IsMatch(ObsoletePlatformIdentity.EffectiveVersion(target), @"^\d+\.x$", RegexOptions.IgnoreCase);
+
+    public static string Major(CoverageDiscrepancy target) =>
+        Regex.Match(ObsoletePlatformIdentity.EffectiveVersion(target), @"^\d+").Value;
+
+    public static (string ProductType, string CreatorType) Types(CoverageDiscrepancy target)
+    {
+        var prefix = target.Family.Equals("iOS", StringComparison.OrdinalIgnoreCase) ? "IOS" : "Android";
+        var productType = $"{prefix}{Major(target)}Platform";
+        return (productType, $"{productType}Creator");
+    }
+
+    /// <summary>
+    /// True when the target is an obsolete real-device major whose product/creator types are
+    /// still referenced by Saucery.Core code other than its real-device declarations.
+    /// </summary>
+    public static bool IsSharedRealDeviceMajor(RepositoryContext context, CoverageDiscrepancy target)
+    {
+        if(!IsRealDeviceMajor(target))
+            return false;
+
+        var (productType, creatorType) = Types(target);
+
+        foreach(var path in CoreSourceFiles(context))
+        {
+            var source = File.ReadAllText(path);
+            if(DeclaresClass(source, productType) || DeclaresClass(source, creatorType))
+                continue;
+
+            foreach(var line in source.Replace("\r\n", "\n", StringComparison.Ordinal).Split('\n'))
+            {
+                if(ReferencesTargetType(line, target) && !IsDeclarationLine(line, target))
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static IReadOnlyList<string> DeclarationFiles(RepositoryContext context, CoverageDiscrepancy target) =>
+        [.. CoreSourceFiles(context)
+            .Where(path => File.ReadLines(path).Any(line => IsDeclarationLine(line, target)))
+            .Select(context.Relative)
+            .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)];
+
+    /// <summary>
+    /// A real-device declaration maps a bare major label to the target type, e.g.
+    /// <c>"iOS 14" =&gt; platforms.GetPlatform&lt;IOS14Platform&gt;()</c>,
+    /// <c>"Linux 9" =&gt; platforms.GetPlatform&lt;Android9Platform&gt;()</c> or
+    /// <c>"14" =&gt; new IOS14PlatformCreator(sp).Create()</c>. Exact simulator labels such as
+    /// "iOS 14.0" or "14.0" never match.
+    /// </summary>
+    public static bool IsDeclarationLine(string line, CoverageDiscrepancy target) =>
+        ReferencesTargetType(line, target) &&
+        Regex.IsMatch(
+            line,
+            $@"^\s*""(?:(?:iOS|Android|Linux)\s+)?{Regex.Escape(Major(target))}""\s*=>",
+            RegexOptions.IgnoreCase);
+
+    public static IEnumerable<string> CoreSourceFiles(RepositoryContext context) =>
+        Directory.EnumerateFiles(context.Core, "*.cs", SearchOption.AllDirectories)
+            .Where(path => !IsBuildOutput(context, path));
+
+    // Checked relative to the repository root so a checkout that itself lives under a
+    // bin/obj directory is not mistaken for build output.
+    public static bool IsBuildOutput(RepositoryContext context, string path) =>
+        context.Relative(path)
+            .Split('/', StringSplitOptions.RemoveEmptyEntries)
+            .Any(part => part.Equals("bin", StringComparison.OrdinalIgnoreCase) ||
+                         part.Equals("obj", StringComparison.OrdinalIgnoreCase));
+
+    private static bool ReferencesTargetType(string line, CoverageDiscrepancy target)
+    {
+        var (productType, creatorType) = Types(target);
+        return ContainsIdentifier(line, productType) || ContainsIdentifier(line, creatorType);
+    }
+
+    private static bool DeclaresClass(string source, string typeName) =>
+        Regex.IsMatch(source, $@"\bclass\s+{Regex.Escape(typeName)}\b");
+
+    public static bool ContainsIdentifier(string text, string identifier) =>
+        Regex.IsMatch(text, $@"(?<![A-Za-z0-9_]){Regex.Escape(identifier)}(?![A-Za-z0-9_])");
+}
+
 internal sealed record ObsoleteTarget(
     string ProductType,
     string? ProductFile,
@@ -721,6 +815,15 @@ internal static class ObsoleteSynthesizer
             return;
         }
 
+        if(RealDeviceDeclarations.IsSharedRealDeviceMajor(context, target))
+        {
+            var (productType, creatorType) = RealDeviceDeclarations.Types(target);
+            Console.WriteLine($"    Preserving {productType}/{creatorType}: still used by simulator/emulator declarations. Removing real-device {target.DisplayName} only.");
+            RemoveRealDeviceDeclarations(context, changes, target);
+            RemoveRealDeviceUnitTestData(context, changes, target);
+            return;
+        }
+
         var obsolete = ObsoleteTargetResolver.Resolve(context, target);
 
         if(obsolete.ProductFile is not null)
@@ -833,6 +936,166 @@ internal static class ObsoleteSynthesizer
             if(changed)
                 changes.Write(relative, string.Join(Environment.NewLine, lines));
         }
+    }
+
+    private static void RemoveRealDeviceDeclarations(
+        RepositoryContext context,
+        ChangeCollector changes,
+        CoverageDiscrepancy target)
+    {
+        foreach(var relative in RealDeviceDeclarations.DeclarationFiles(context, target))
+        {
+            var path = context.PathFromRoot(relative);
+            var lines = changes.Read(relative).Replace("\r\n", "\n", StringComparison.Ordinal).Split('\n').ToList();
+            var changed = false;
+
+            for(var i = lines.Count - 1; i >= 0; i--)
+            {
+                var line = lines[i];
+                if(!RealDeviceDeclarations.IsDeclarationLine(line, target))
+                    continue;
+
+                var candidate = new List<string>(lines);
+                candidate.RemoveAt(i);
+
+                try
+                {
+                    CSharpGuard.AssertValid(string.Join(Environment.NewLine, candidate), path);
+                }
+                catch(InvalidDataException)
+                {
+                    throw new InvalidDataException(
+                        $"Real-device declaration for {target.DisplayName} was found in {relative}, but removing its line would make the file syntactically invalid. Refusing broader cleanup.");
+                }
+
+                Console.WriteLine($"    Removing real-device declaration from {relative}: {line.Trim()}");
+                lines = candidate;
+                changed = true;
+            }
+
+            if(changed)
+                changes.Write(relative, string.Join(Environment.NewLine, lines));
+        }
+    }
+
+    private static void RemoveRealDeviceUnitTestData(
+        RepositoryContext context,
+        ChangeCollector changes,
+        CoverageDiscrepancy target)
+    {
+        var (productType, _) = RealDeviceDeclarations.Types(target);
+        var major = RealDeviceDeclarations.Major(target);
+        var realDeviceConstructor = target.Family.Equals("iOS", StringComparison.OrdinalIgnoreCase)
+            ? "new IOSRealDevice("
+            : "new AndroidRealDevice(";
+        var versionLiteral = $@"""{Regex.Escape(major)}(?:\.\d+)?""";
+
+        foreach(var testRoot in context.TestRoots)
+        {
+            foreach(var path in Directory.EnumerateFiles(testRoot, "*.cs", SearchOption.AllDirectories)
+                         .Where(path => !RealDeviceDeclarations.IsBuildOutput(context, path)))
+            {
+                var relative = context.Relative(path);
+                var lines = changes.Read(relative).Replace("\r\n", "\n", StringComparison.Ordinal).Split('\n').ToList();
+                // Only this family's real-device tests (RealIOS*/RealAndroid*): an Android major
+                // must never touch the iOS version list, which shares the same digits.
+                var familyPrefix = target.Family.Equals("iOS", StringComparison.OrdinalIgnoreCase) ? "RealIOS" : "RealAndroid";
+                var isRealDeviceTestFile = Path.GetFileName(path).StartsWith(familyPrefix, StringComparison.Ordinal);
+                var changed = false;
+
+                // Members whose name marks them as real-device data, e.g. SupportedRealDeviceTypes.
+                var realDeviceMemberLines = RealDeviceMemberLineIndexes(lines);
+
+                for(var i = lines.Count - 1; i >= 0; i--)
+                {
+                    var line = lines[i];
+                    List<string>? candidate = null;
+
+                    var isRealDeviceRow =
+                        line.Contains(realDeviceConstructor, StringComparison.Ordinal) &&
+                        Regex.IsMatch(line, versionLiteral) &&
+                        // NotSupported cases deliberately use versions Sauce does not offer.
+                        !line.Contains("\"NonExistent\"", StringComparison.Ordinal);
+
+                    var isRealDeviceTypeRow =
+                        realDeviceMemberLines.Contains(i) &&
+                        line.Contains($"typeof({productType})", StringComparison.Ordinal);
+
+                    if(isRealDeviceRow || isRealDeviceTypeRow)
+                    {
+                        candidate = new List<string>(lines);
+                        candidate.RemoveAt(i);
+                    }
+                    else if(isRealDeviceTestFile && IsVersionArrayLine(line))
+                    {
+                        // e.g. ["14", "15", "16"] or new[] { "14", "15" } feeding real-device cases.
+                        var updated = RemoveVersionElement(line, major);
+                        if(updated != line)
+                        {
+                            candidate = new List<string>(lines);
+                            candidate[i] = updated;
+                        }
+                    }
+
+                    if(candidate is null)
+                        continue;
+
+                    try
+                    {
+                        CSharpGuard.AssertValid(string.Join(Environment.NewLine, candidate), path);
+                    }
+                    catch(InvalidDataException)
+                    {
+                        continue;
+                    }
+
+                    Console.WriteLine($"    Removing real-device test data from {relative}: {line.Trim()}");
+                    lines = candidate;
+                    changed = true;
+                }
+
+                if(changed)
+                    changes.Write(relative, string.Join(Environment.NewLine, lines));
+            }
+        }
+    }
+
+    private static HashSet<int> RealDeviceMemberLineIndexes(IReadOnlyList<string> lines)
+    {
+        var result = new HashSet<int>();
+
+        for(var i = 0; i < lines.Count; i++)
+        {
+            if(!Regex.IsMatch(lines[i], @"\b(?:public|internal|private)\b[^=(]*\b\w*RealDevice\w*\s*(?:=>|=|\{|$)"))
+                continue;
+
+            // The member body runs until its terminating semicolon.
+            for(var j = i + 1; j < lines.Count; j++)
+            {
+                result.Add(j);
+                if(lines[j].TrimEnd().EndsWith(';'))
+                    break;
+            }
+        }
+
+        return result;
+    }
+
+    private static bool IsVersionArrayLine(string line)
+    {
+        var literals = Regex.Matches(line, @"""[^""]*""");
+        return literals.Count >= 2 &&
+               literals.All(m => Regex.IsMatch(m.Value, @"^""\d+(?:\.\d+)?""$")) &&
+               (line.Contains('[') || line.Contains("new[]", StringComparison.Ordinal));
+    }
+
+    private static string RemoveVersionElement(string line, string major)
+    {
+        var element = $@"""{Regex.Escape(major)}""";
+        var leading = Regex.Replace(line, $@"{element}\s*,\s*", string.Empty);
+        return leading != line
+            ? leading
+            : Regex.Replace(line, $@",\s*{element}(?=\s*[\]}}])", string.Empty);
     }
 
     private static bool IsExactPlatformDeclarationLine(

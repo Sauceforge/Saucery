@@ -58,15 +58,19 @@ internal static class Program
 
             Console.WriteLine("Extracting explicitly declared Saucery.Core platforms...");
             var declaredPlatforms = SauceryPlatformExtractor.Extract(coreRoot);
+            var declaredByKey = declaredPlatforms.ToDictionary(x => x.CanonicalKey, StringComparer.OrdinalIgnoreCase);
 
             Console.WriteLine($"Comparing {requirements.Count:N0} functional platform requirements...");
             var findings = requirements
-                .Select(r => CoverageAnalyzer.Analyze(r, coreCorpus, testCorpus))
+                .Select(r => CoverageAnalyzer.Analyze(r, declaredByKey, coreCorpus, testCorpus))
                 .OrderBy(x => x.Requirement.Family)
                 .ThenBy(x => x.Requirement.SortKey, NaturalStringComparer.Instance)
                 .ToList();
 
-            var lifecycle = PlatformLifecycleAnalyzer.Analyze(requirements, declaredPlatforms);
+            var lifecycle = PlatformLifecycleAnalyzer.Analyze(
+                requirements,
+                declaredPlatforms,
+                realDeviceInventoryRead: options.IncludeRealDevices && realDeviceWarning is null);
 
             var report = ReportWriter.Write(
                 repoRoot,
@@ -448,7 +452,8 @@ internal sealed record FunctionalPlatformRequirement(
     string SortKey,
     int SauceConfigurationCount,
     IReadOnlyList<string> RepresentativeDevices,
-    IReadOnlyList<string> SourceDescriptions);
+    IReadOnlyList<string> SourceDescriptions,
+    IReadOnlyList<string> SauceBrowsers);
 
 internal static class FunctionalPlatformBuilder
 {
@@ -469,6 +474,11 @@ internal static class FunctionalPlatformBuilder
     {
         var accumulators = new Dictionary<string, RequirementAccumulator>(StringComparer.OrdinalIgnoreCase);
 
+        // Saucery.Core resolves simulators/emulators by exact major.minor version
+        // (FindIOSBrowser/FindAndroidBrowser over AvailablePlatforms) and real devices by
+        // major version only (FindIOSPlatform/FindAndroidPlatform over AvailableRealDevices).
+        // Each requirement kind must therefore come only from the inventory Saucery resolves it
+        // against; otherwise a simulator keeps a retired real-device major looking supported.
         foreach (var row in virtualRows)
         {
             if (TryGetMobileFamily(row, out var mobileFamily))
@@ -477,7 +487,6 @@ internal static class FunctionalPlatformBuilder
                 if (!string.IsNullOrWhiteSpace(version))
                 {
                     AddMobileExact(accumulators, mobileFamily, version, DescribeVirtual(row), RepresentativeDevice(row));
-                    AddMobileWildcard(accumulators, mobileFamily, version, DescribeVirtual(row), RepresentativeDevice(row));
                 }
 
                 continue;
@@ -501,7 +510,7 @@ internal static class FunctionalPlatformBuilder
                 desktop.Value.DisplayName,
                 desktop.Value.Version,
                 desktop.Value.SortKey)
-                .Add(DescribeVirtual(row), RepresentativeDevice(row));
+                .Add(DescribeVirtual(row), RepresentativeDevice(row), row.ApiName);
         }
 
         foreach (var device in realDevices)
@@ -516,7 +525,6 @@ internal static class FunctionalPlatformBuilder
 
             var source = $"Real device: {device.Os} {device.OsVersion}";
             var sample = FirstNonEmpty(device.Name, device.Id);
-            AddMobileExact(accumulators, family, version, source, sample);
             AddMobileWildcard(accumulators, family, version, source, sample);
         }
 
@@ -651,6 +659,19 @@ internal static class FunctionalPlatformBuilder
             return ("ChromiumOS", "desktop:ChromiumOS", "ChromiumOS", "ChromiumOS", string.Empty, "ChromiumOS");
         }
 
+        // Sauce names its Windows 8 / 8.1 hosts by their server editions; Saucery.Core declares
+        // them as Windows 8 / 8.1 (SauceryConstants.PLATFORM_WINDOWS_8 = "Windows 2012"). Without
+        // this mapping each side reads the other as missing/obsolete and they churn forever.
+        if (os.Equals("Windows 2012 R2", StringComparison.OrdinalIgnoreCase))
+        {
+            return ("Windows", "desktop:Windows", "Windows 8.1", "Windows 8.1", "8.1", "Windows 8.1");
+        }
+
+        if (os.Equals("Windows 2012", StringComparison.OrdinalIgnoreCase))
+        {
+            return ("Windows", "desktop:Windows", "Windows 8", "Windows 8", "8", "Windows 8");
+        }
+
         if (os.StartsWith("Windows", StringComparison.OrdinalIgnoreCase))
         {
             return ("Windows", "desktop:Windows", os, os, ExtractTrailingVersion(os), os);
@@ -731,6 +752,7 @@ internal static class FunctionalPlatformBuilder
         string sortKey) {
         private readonly HashSet<string> _sources = new(StringComparer.OrdinalIgnoreCase);
         private readonly HashSet<string> _devices = new(StringComparer.OrdinalIgnoreCase);
+        private readonly HashSet<string> _browsers = new(StringComparer.OrdinalIgnoreCase);
         private int _count;
 
         public PlatformRequirementKind Kind { get; } = kind;
@@ -740,9 +762,14 @@ internal static class FunctionalPlatformBuilder
         public string Version { get; } = version;
         public string SortKey { get; } = sortKey;
 
-        public void Add(string source, string device)
+        public void Add(string source, string device, string? browser = null)
         {
             _count++;
+            if (!string.IsNullOrWhiteSpace(browser))
+            {
+                _browsers.Add(browser.Trim());
+            }
+
             if (!string.IsNullOrWhiteSpace(source) && _sources.Count < 8)
             {
                 _sources.Add(source);
@@ -763,7 +790,8 @@ internal static class FunctionalPlatformBuilder
                 SortKey,
                 _count,
                 [.. _devices.OrderBy(x => x)],
-                [.. _sources.OrderBy(x => x)]);
+                [.. _sources.OrderBy(x => x)],
+                [.. _browsers.OrderBy(x => x, StringComparer.OrdinalIgnoreCase)]);
     }
 }
 
@@ -780,7 +808,7 @@ internal sealed class SourceCorpus
     {
         var files = Directory
             .EnumerateFiles(root, "*.cs", SearchOption.AllDirectories)
-            .Where(path => !ContainsBuildDirectory(path))
+            .Where(path => !ContainsBuildDirectory(Path.GetRelativePath(root, path)))
             .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
             .Select(path => new SourceFile(
                 Path.GetRelativePath(root, path),
@@ -1081,16 +1109,29 @@ internal static class CoverageAnalyzer
 {
     public static CoverageFinding Analyze(
         FunctionalPlatformRequirement requirement,
+        IReadOnlyDictionary<string, DeclaredPlatform> declaredByKey,
         SourceCorpus core,
         SourceCorpus tests)
     {
-        var coreEvidence = core.Find(requirement);
-        var coreStatus = coreEvidence switch
+        // Core coverage is decided by Saucery.Core's explicit platform declarations, the same
+        // canonical set the obsolete check uses, so adding and removing are symmetric. Free-text
+        // search is not used for the decision: the family name ("ios", "android") appears all
+        // over Saucery.Core, which used to turn every unmapped version into a Review instead of
+        // a Gap. A declared platform is Covered; anything else Sauce offers is a Gap.
+        CoverageStatus coreStatus;
+        Evidence coreEvidence;
+
+        if (declaredByKey.TryGetValue(PlatformCanonicalizer.RequirementKey(requirement), out var declared))
         {
-            { Found: true, Strength: EvidenceStrength.Direct or EvidenceStrength.Contextual } => CoverageStatus.Covered,
-            { Strength: EvidenceStrength.FamilyOnly } => CoverageStatus.Review,
-            _ => CoverageStatus.Gap
-        };
+            coreStatus = CoverageStatus.Covered;
+            coreEvidence = new Evidence(true, EvidenceStrength.Direct, declared.File, declared.Match);
+        }
+        else
+        {
+            coreStatus = CoverageStatus.Gap;
+            // Kept only as a pointer for whoever reviews the gap.
+            coreEvidence = core.Find(requirement) with { Found = false };
+        }
 
         var directTest = tests.Find(requirement);
         TestSampleStatus sampleStatus;
@@ -1255,7 +1296,7 @@ internal static class SauceryPlatformExtractor
 
         foreach (var path in Directory
                      .EnumerateFiles(coreRoot, "*.cs", SearchOption.AllDirectories)
-                     .Where(path => !ContainsBuildDirectory(path))
+                     .Where(path => !ContainsBuildDirectory(Path.GetRelativePath(coreRoot, path)))
                      .OrderBy(path => path, StringComparer.OrdinalIgnoreCase))
         {
             var relativePath = Path.GetRelativePath(coreRoot, path);
@@ -1593,7 +1634,8 @@ internal static class PlatformLifecycleAnalyzer
 {
     public static PlatformLifecycleResult Analyze(
         IReadOnlyList<FunctionalPlatformRequirement> sauceRequirements,
-        IReadOnlyList<DeclaredPlatform> declaredPlatforms)
+        IReadOnlyList<DeclaredPlatform> declaredPlatforms,
+        bool realDeviceInventoryRead)
     {
         var sauceKeys = sauceRequirements
             .Select(PlatformCanonicalizer.RequirementKey)
@@ -1605,6 +1647,9 @@ internal static class PlatformLifecycleAnalyzer
 
         var obsolete = declaredPlatforms
             .Where(x => !sauceKeys.Contains(x.CanonicalKey))
+            // Major wildcards are real-device declarations; without the real-device inventory
+            // every one of them would look obsolete.
+            .Where(x => realDeviceInventoryRead || x.Kind != PlatformRequirementKind.MobileMajorWildcard)
             .Where(x => ShouldReportAsObsoleteCandidate(x, sauceFamilies))
             .OrderBy(x => x.Family)
             .ThenBy(x => x.Version, NaturalStringComparer.Instance)
@@ -1793,7 +1838,8 @@ internal static class ReportWriter
         sb.AppendLine(new string('-', 92));
         sb.AppendLine("1. Mobile simulator/emulator rows are classified as iOS or Android before host OS is considered.");
         sb.AppendLine("2. Mobile patch versions are collapsed to major.minor functional versions (for example 17.0).");
-        sb.AppendLine("3. Every observed mobile major version also creates a major wildcard requirement (for example 17.x).");
+        sb.AppendLine("3. Exact mobile versions (for example 17.0) come from simulator/emulator rows only; major wildcard");
+        sb.AppendLine("   requirements (for example 17.x) come from real devices only, matching how Saucery.Core resolves each.");
         sb.AppendLine("4. Selenium rows collapse to their OS platform; browser/version permutations do not multiply requirements.");
         sb.AppendLine("5. Tests are reported as direct-platform samples or family-level representative samples; missing per-device tests are ignored.");
         sb.AppendLine();
@@ -1908,6 +1954,13 @@ internal static class ReportWriter
             if (finding.Requirement.RepresentativeDevices.Count > 0)
             {
                 sb.AppendLine($"        Example devices: {string.Join("; ", finding.Requirement.RepresentativeDevices.Take(3))}");
+            }
+
+            // Saucery.CoverageGapRemediator uses this to give a new desktop platform the
+            // browsers Sauce actually offers on it, rather than its sibling's.
+            if (finding.Requirement.SauceBrowsers.Count > 0)
+            {
+                sb.AppendLine($"        Sauce browsers: {string.Join("; ", finding.Requirement.SauceBrowsers)}");
             }
         }
 
