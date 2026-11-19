@@ -27,6 +27,9 @@ inputs:
     description: Publishing mode. Currently only local-version-newer is supported.
     required: false
     default: local-version-newer
+  tag-prefix:
+    description: Prefix for the git tag created after a successful publish. The tag is <tag-prefix>-<version>. Requires contents write permission.
+    required: true
 
 outputs:
   version:
@@ -38,6 +41,9 @@ outputs:
   published:
     description: true only after dotnet nuget push completes successfully.
     value: ${{ steps.publish-result.outputs.published }}
+  tag:
+    description: Git tag applied to the published commit, or empty when nothing was published.
+    value: ${{ steps.tag.outputs.tag }}
 
 runs:
   using: composite
@@ -49,6 +55,10 @@ runs:
 
         if ('${{ inputs.publish-mode }}' -ne 'local-version-newer') {
           throw "Unsupported publish-mode '${{ inputs.publish-mode }}'. This action currently supports only 'local-version-newer'."
+        }
+
+        if ([string]::IsNullOrWhiteSpace('${{ inputs.tag-prefix }}')) {
+          throw "tag-prefix must not be empty."
         }
 
     - name: Pack package
@@ -169,6 +179,32 @@ runs:
             --skip-duplicate
 
         }
+
+    - name: Tag published commit
+      if: steps.package.outputs.should_publish == 'true'
+      id: tag
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = 'Stop'
+
+        $tag = '${{ inputs.tag-prefix }}-${{ steps.package.outputs.version }}'
+        "tag=$tag" >> $env:GITHUB_OUTPUT
+
+        $existing = git ls-remote --tags origin "refs/tags/$tag"
+        if ($LASTEXITCODE -ne 0) { throw "git ls-remote failed while checking for tag $tag." }
+
+        if ($existing) {
+          Write-Host "Tag $tag already exists on origin; leaving it unchanged."
+          exit 0
+        }
+
+        git tag $tag $env:GITHUB_SHA
+        if ($LASTEXITCODE -ne 0) { throw "git tag failed for $tag." }
+
+        git push origin "refs/tags/$tag"
+        if ($LASTEXITCODE -ne 0) { throw "git push failed for tag $tag." }
+
+        Write-Host "Tagged $env:GITHUB_SHA as $tag."
 
     - name: Set publish result
       if: ${{ always() }}
