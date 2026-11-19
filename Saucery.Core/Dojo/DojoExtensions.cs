@@ -114,6 +114,9 @@ public static class DojoExtensions
             SauceryConstants.PLATFORM_CHROMIUM_OS => platforms.GetPlatform<ChromiumOSPlatform>().FirstOrDefault(),
             SauceryConstants.PLATFORM_WINDOWS_11 => platforms.GetPlatform<Windows11Platform>().FirstOrDefault(),
             SauceryConstants.PLATFORM_WINDOWS_10 => platforms.GetPlatform<Windows10Platform>().FirstOrDefault(),
+            SauceryConstants.PLATFORM_WINDOWS_81 => platforms.GetPlatform<Windows81Platform>().FirstOrDefault(),
+            SauceryConstants.PLATFORM_WINDOWS_8 => platforms.GetPlatform<Windows8Platform>().FirstOrDefault(),
+            SauceryConstants.PLATFORM_MAC_27 => platforms.GetPlatform<Mac27Platform>().FirstOrDefault(),
             SauceryConstants.PLATFORM_MAC_26 => platforms.GetPlatform<Mac26Platform>().FirstOrDefault(),
             SauceryConstants.PLATFORM_MAC_15 => platforms.GetPlatform<Mac15Platform>().FirstOrDefault(),
             SauceryConstants.PLATFORM_MAC_14 => platforms.GetPlatform<Mac14Platform>().FirstOrDefault(),
@@ -162,6 +165,7 @@ public static class DojoExtensions
             "Linux 7.0" => platforms.GetPlatform<Android7Platform>().FirstOrDefault(),
             "Linux 6.0" => platforms.GetPlatform<Android6Platform>().FirstOrDefault(),
             "Linux 5.1" => platforms.GetPlatform<Android51Platform>().FirstOrDefault(),
+            "Linux 5.0" => platforms.GetPlatform<Android5Platform>().FirstOrDefault(),
             _ => null
         };
 
@@ -193,7 +197,6 @@ public static class DojoExtensions
             "Linux 12" => platforms.GetPlatform<Android12Platform>().FirstOrDefault(),
             "Linux 11" => platforms.GetPlatform<Android11Platform>().FirstOrDefault(),
             "Linux 10" => platforms.GetPlatform<Android10Platform>().FirstOrDefault(),
-            "Linux 9" => platforms.GetPlatform<Android9Platform>().FirstOrDefault(),
             _ => null
         };
     }
@@ -203,6 +206,7 @@ public static class DojoExtensions
         string platformToSearchFor = $"{sp.Os} {sp.LongVersion}";
         PlatformBase? platform = platformToSearchFor switch
         {
+            "iOS 27.1" => platforms.GetPlatform<IOS271Platform>().FirstOrDefault(),
             "iOS 27.0" => platforms.GetPlatform<IOS27Platform>().FirstOrDefault(),
             "iOS 26.5" => platforms.GetPlatform<IOS265Platform>().FirstOrDefault(),
             "iOS 26.1" => platforms.GetPlatform<IOS261Platform>().FirstOrDefault(),
@@ -251,7 +255,6 @@ public static class DojoExtensions
             "iOS 17" => platforms.GetPlatform<IOS17Platform>().FirstOrDefault(),
             "iOS 16" => platforms.GetPlatform<IOS16Platform>().FirstOrDefault(),
             "iOS 15" => platforms.GetPlatform<IOS15Platform>().FirstOrDefault(),
-            "iOS 14" => platforms.GetPlatform<IOS14Platform>().FirstOrDefault(),
             _ => null
         };
     }

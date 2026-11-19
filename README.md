@@ -141,13 +141,7 @@ We use it ourselves to manage our own packages, and we hope you find it useful t
 
 | Status | Platform | Evidence |
 | --- | --- | --- |
-| Missing | Android 5.0 | 14 Sauce catalogue configurations; no Saucery.Core coverage detected. |
-| Missing | iOS 27.1 | 2 Sauce catalogue configurations; no Saucery.Core coverage detected. |
-| Missing | Mac Golden Gate (27) | 26 Sauce catalogue configurations; no Saucery.Core coverage detected. |
-| Missing | Windows 8 | 156 Sauce catalogue configurations; no Saucery.Core coverage detected. |
-| Missing | Windows 8.1 | 187 Sauce catalogue configurations; no Saucery.Core coverage detected. |
-| Obsolete candidate | Android 9.x | Declared in `Dojo/DojoExtensions.cs`; no matching current Sauce API-derived functional platform requirement. |
-| Obsolete candidate | iOS 14.x | Declared in `Dojo/DojoExtensions.cs`; no matching current Sauce API-derived functional platform requirement. |
+| Clean | — | No missing or obsolete coverage detected. |
 <!-- END SAUCERY PLATFORM COVERAGE -->
 
 ### Trends
