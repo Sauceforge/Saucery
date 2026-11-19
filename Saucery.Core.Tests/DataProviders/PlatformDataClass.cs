@@ -49,6 +49,5 @@ public static class PlatformDataClass {
         new IOSRealDevice("iPhone 15 Pro Max", "17"),
         new IOSRealDevice("iPhone 14 Pro Max", "16"),
         new IOSRealDevice("iPhone 13 Pro Max", "15"),
-        new IOSRealDevice("iPhone 12 Pro Max", "14"),
     ];
 }

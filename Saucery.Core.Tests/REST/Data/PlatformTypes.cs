@@ -65,7 +65,6 @@ public class PlatformTypes {
             typeof(IOS17Platform),
             typeof(IOS16Platform),
             typeof(IOS15Platform),
-            typeof(IOS14Platform),
             typeof(Android17Platform),
             typeof(Android16Platform),
             typeof(Android15Platform),
