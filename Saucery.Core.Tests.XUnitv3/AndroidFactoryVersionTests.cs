@@ -1,4 +1,4 @@
-﻿using Saucery.Core.OnDemand;
+using Saucery.Core.OnDemand;
 using Saucery.Core.OnDemand.Base;
 using Saucery.Core.Options;
 using Saucery.Core.Tests.XUnitv3.Fixtures;
@@ -52,6 +52,7 @@ public static class AndroidDataClass
             [new AndroidPlatform("Google Nexus 9 Tablet Emulator", "7.1", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE)],
             [new AndroidPlatform("Google Nexus 9 Tablet Emulator", "7.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE)],
             [new AndroidPlatform("Google Nexus 9 Tablet Emulator", "6.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE)],
+            [new AndroidPlatform("Google Nexus 10 Tablet Emulator", "5.0", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE)],
             [new AndroidPlatform("Google Nexus 10 Tablet Emulator", "5.1", SauceryConstants.DEVICE_ORIENTATION_LANDSCAPE)]
         ];
 
