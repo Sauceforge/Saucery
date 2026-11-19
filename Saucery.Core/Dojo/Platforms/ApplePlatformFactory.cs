@@ -8,6 +8,7 @@ public static class ApplePlatformFactory
 {
     public static PlatformBase? CreatePlatform(SupportedPlatform sp) => sp.short_version switch
     {
+        "27.1" => new IOS271PlatformCreator(sp).Create(),
         "27.0" => new IOS27PlatformCreator(sp).Create(),
         "26.5" => new IOS265PlatformCreator(sp).Create(),
         "26.1" => new IOS261PlatformCreator(sp).Create(),
@@ -38,7 +39,6 @@ public static class ApplePlatformFactory
         "17" => new IOS17PlatformCreator(sp).Create(),
         "16" => new IOS16PlatformCreator(sp).Create(),
         "15" => new IOS15PlatformCreator(sp).Create(),
-        "14" => new IOS14PlatformCreator(sp).Create(),
         _ => null
     };
 }

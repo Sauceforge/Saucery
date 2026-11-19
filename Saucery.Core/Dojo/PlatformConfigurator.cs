@@ -81,6 +81,7 @@ public class PlatformConfigurator
             ..FindWindowsPlatforms(supportedPlatforms),
             ..FindMacPlatforms(supportedPlatforms,
             [
+                SauceryConstants.PLATFORM_MAC_27,
                 SauceryConstants.PLATFORM_MAC_26,
                 SauceryConstants.PLATFORM_MAC_15,
                 SauceryConstants.PLATFORM_MAC_14,
