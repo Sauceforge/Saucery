@@ -14,6 +14,7 @@ on:
       - "Saucery.Core.Tests/**"
       - "Saucery.Core.Tests.XUnitv3/**"
       - "Saucery.CoverageGapReporter/**"
+      - "Saucery.CoverageGapReporter.Tests/**"
       - ".github/workflows/coverage-gap-report.yml"
 
 permissions:
@@ -53,6 +54,11 @@ jobs:
           Saucery.CoverageGapReporter/Saucery.CoverageGapReporter.csproj
           --configuration Release
           --no-restore
+
+      - name: Test Coverage Gap tools
+        run: |
+          dotnet run --project Saucery.CoverageGapReporter.Tests/Saucery.CoverageGapReporter.Tests.csproj --configuration Release
+          dotnet run --project Saucery.CoverageGapRemediator.Tests/Saucery.CoverageGapRemediator.Tests.csproj --configuration Release
 
       - name: Run Coverage Gap Reporter
         run: >

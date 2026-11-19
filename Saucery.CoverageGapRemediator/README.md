@@ -20,6 +20,8 @@ A simulator and a real device of the same major share one product/creator pair (
 
 Each `Gap` is added by cloning the nearest existing platform of the same kind and family (the *sibling*) at every site Saucery.Core registers one. Type names (`IOS27Platform` → `IOS271Platform`), `SauceryConstants` names and quoted version labels are rewritten; a registration that already exists is left alone. For desktop platforms the report's `Sauce browsers:` line limits the cloned browser lists to what Sauce offers on that OS, and a sibling that already supports all of those browsers is preferred.
 
+`isArmRequired` is set from the new platform's own version, never inherited from the sibling: `true` for macOS 14 and later and for iOS 16.4 and later, otherwise left at the `PlatformBase` default of `false`.
+
 Every addition also adds tests, mirroring the sibling's coverage in both test projects:
 
 - simulator/emulator: `typeof` in `SupportedPlatformTypes`, plus the sibling's version list (`IOSPlatformVersions`) or factory-version row, when the sibling has one;
@@ -31,6 +33,15 @@ Shapes with no sibling pattern (for example a new unversioned desktop family) ar
 ### Validation
 
 After synthesis the remediator syntax-checks every generated C# file with Roslyn, builds `Saucery.Core` and every `Saucery.Core.Tests*` project, runs the xUnit.v3 tests, and re-runs `Saucery.CoverageGapReporter` to confirm every targeted `Gap` disappeared. If validation fails, the whole transaction is rolled back.
+
+## Tests
+
+`Saucery.CoverageGapRemediator.Tests` runs additions and removals against a miniature Saucery repository on disk containing both Core test projects, and checks that every change lands identically in `Saucery.Core.Tests` and `Saucery.Core.Tests.XUnitv3`. A contract test feeds `Saucery.CoverageGapReporter`'s real report output into the remediator's reader. `Saucery.CoverageGapReporter.Tests` covers how Sauce rows become requirements and how coverage and obsolete candidates are decided. Neither needs Sauce credentials; both run in the coverage workflows before either tool is used.
+
+```powershell
+dotnet run -c Release --project Saucery.CoverageGapReporter.Tests
+dotnet run -c Release --project Saucery.CoverageGapRemediator.Tests
+```
 
 ## Central Package Management
 

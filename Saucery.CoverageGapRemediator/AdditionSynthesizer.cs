@@ -265,6 +265,9 @@ internal static class AdditionSynthesizer
             if (offered is not null)
                 source = RestrictBrowsers(source, offered);
 
+            if (siblingType == sibling.ProductType && ArmRequired(target) is { } armRequired)
+                source = SetArmRequired(source, armRequired);
+
             Console.WriteLine($"    Creating {targetFile} from {siblingFile}.");
             changes.Write(targetFile, source);
         }
@@ -314,6 +317,96 @@ internal static class AdditionSynthesizer
             });
 
         return string.Join(Environment.NewLine, lines);
+    }
+
+    /// <summary>
+    /// Sauce runs macOS 14+ and iOS 16.4+ simulators on ARM hosts, so those platforms must ask
+    /// for ARM. Set from the target's own version rather than inherited from the sibling, which
+    /// may sit on the other side of the threshold. Null for families with no ARM rule.
+    /// </summary>
+    internal static bool? ArmRequired(PlatformIdentity target) => target.TypePrefix switch
+    {
+        "Mac" => target.Number >= 14,
+        "IOS" => target.Number >= 16.4,
+        _ => null
+    };
+
+    /// <summary>
+    /// Rewrites the product's <c>PlatformBase(...)</c> base call so its isArmRequired argument
+    /// matches. PlatformBase takes isArmRequired only as the sixth argument (the 3-5 argument
+    /// overloads default it to false), so the call is padded to six arguments to require ARM,
+    /// and trimmed back to the shorter overload to not require it.
+    /// </summary>
+    internal static string SetArmRequired(string source, bool required)
+    {
+        var call = source.IndexOf("PlatformBase(", StringComparison.Ordinal);
+        if (call < 0)
+            throw new InvalidDataException("Product class has no PlatformBase(...) base call to set isArmRequired on.");
+
+        var open = call + "PlatformBase".Length;
+        var args = new List<(int Start, int End)>();
+        var depth = 0;
+        var argStart = open + 1;
+        var close = -1;
+
+        for (var i = open; i < source.Length && close < 0; i++)
+        {
+            switch (source[i])
+            {
+                case '(' or '[' or '{':
+                    depth++;
+                    break;
+                case ')' or ']' or '}':
+                    depth--;
+                    if (depth == 0)
+                    {
+                        args.Add((argStart, i));
+                        close = i;
+                    }
+                    break;
+                case ',' when depth == 1:
+                    args.Add((argStart, i));
+                    argStart = i + 1;
+                    break;
+            }
+        }
+
+        if (close < 0 || args.Count < 3 || args.Count > 6)
+            throw new InvalidDataException($"Unexpected PlatformBase(...) call with {args.Count} arguments; cannot set isArmRequired.");
+
+        string Arg(int index) => source[args[index].Start..args[index].End].Trim();
+
+        // Multi-line calls (desktop products) put each argument on its own line; keep that style.
+        var lastArg = source[args[^1].Start..args[^1].End];
+        var separator = lastArg.Contains('\n')
+            ? "," + Environment.NewLine + Regex.Match(lastArg, @"\n(?<indent>[ \t]*)\S").Groups["indent"].Value
+            : ", ";
+
+        if (required)
+        {
+            if (args.Count == 6)
+            {
+                // Replace the existing isArmRequired value, keeping its surrounding whitespace.
+                var (start, end) = args[5];
+                var text = source[start..end];
+                var leading = text.Length - text.TrimStart().Length;
+                var trailing = text.Length - text.TrimEnd().Length;
+                return source[..(start + leading)] + "true" + source[(end - trailing)..];
+            }
+
+            var padding = Enumerable.Repeat("null!", 5 - args.Count).Append("true");
+            return source[..close].TrimEnd() + separator + string.Join(separator, padding) + source[close..];
+        }
+
+        if (args.Count < 6 || Arg(5) == "false")
+            return source;
+
+        // Drop isArmRequired, and any null! list placeholders left trailing before it.
+        var keep = 5;
+        while (keep > 3 && Arg(keep - 1) == "null!")
+            keep--;
+
+        return source[..args[keep - 1].End].TrimEnd() + source[close..];
     }
 
     private static string? FindClassFile(RepositoryContext context, string typeName, string segment) =>
@@ -513,6 +606,10 @@ internal static class AdditionSynthesizer
         {
             if (!Regex.IsMatch(lines[i], $@"\b(?:public|internal|private)\b.*\b{Regex.Escape(memberName)}\b\s*(?:=>|=|\{{|$)"))
                 continue;
+
+            // A one-line member has no body lines to edit; don't run on into the next member.
+            if (lines[i].TrimEnd().EndsWith(';'))
+                return (i + 1, i);
 
             for (var j = i + 1; j < lines.Count; j++)
             {

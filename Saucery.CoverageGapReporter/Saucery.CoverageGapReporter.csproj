@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Saucery.CoverageGapReporter.Tests" />
+    <InternalsVisibleTo Include="Saucery.CoverageGapRemediator.Tests" />
+  </ItemGroup>
 </Project>

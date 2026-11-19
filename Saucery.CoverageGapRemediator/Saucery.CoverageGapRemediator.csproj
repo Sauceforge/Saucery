@@ -10,4 +10,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" />
   </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Saucery.CoverageGapRemediator.Tests" />
+  </ItemGroup>
 </Project>

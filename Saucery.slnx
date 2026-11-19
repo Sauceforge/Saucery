@@ -157,9 +157,11 @@
     <Project Path="Saucery.Badges/Saucery.Badges.csproj" />
   </Folder>
   <Folder Name="/Tools/GapRemediator/">
+    <Project Path="Saucery.CoverageGapRemediator.Tests/Saucery.CoverageGapRemediator.Tests.csproj" />
     <Project Path="Saucery.CoverageGapRemediator/Saucery.CoverageGapRemediator.csproj" />
   </Folder>
   <Folder Name="/Tools/GapReporter/">
+    <Project Path="Saucery.CoverageGapReporter.Tests/Saucery.CoverageGapReporter.Tests.csproj" />
     <Project Path="Saucery.CoverageGapReporter/Saucery.CoverageGapReporter.csproj" />
   </Folder>
   <Folder Name="/Tools/NuGet/">
