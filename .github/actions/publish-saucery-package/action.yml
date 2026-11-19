@@ -28,8 +28,9 @@ inputs:
     required: false
     default: local-version-newer
   tag-prefix:
-    description: Prefix for the git tag created after a successful publish. The tag is <tag-prefix>-<version>. Requires contents write permission.
-    required: true
+    description: Prefix for the git tag created after a successful publish. The tag is <tag-prefix>-<version>. Leave empty to skip tagging. Requires contents write permission when set.
+    required: false
+    default: ''
 
 outputs:
   version:
@@ -55,10 +56,6 @@ runs:
 
         if ('${{ inputs.publish-mode }}' -ne 'local-version-newer') {
           throw "Unsupported publish-mode '${{ inputs.publish-mode }}'. This action currently supports only 'local-version-newer'."
-        }
-
-        if ([string]::IsNullOrWhiteSpace('${{ inputs.tag-prefix }}')) {
-          throw "tag-prefix must not be empty."
         }
 
     - name: Pack package
@@ -181,7 +178,7 @@ runs:
         }
 
     - name: Tag published commit
-      if: steps.package.outputs.should_publish == 'true'
+      if: steps.package.outputs.should_publish == 'true' && inputs.tag-prefix != ''
       id: tag
       shell: pwsh
       run: |

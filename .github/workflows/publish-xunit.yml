@@ -16,13 +16,14 @@ env:
   NUGET_USER: fullcircle
   DOTNET_VERSION: 11.0.x
   PUBLISH_MODE: local-version-newer
+  TAG_PREFIX: xunit
 
 jobs:
   publish:
     name: build, pack & publish Saucery.XUnit
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       id-token: write
     environment: nuget-publish
 
@@ -46,6 +47,7 @@ jobs:
           nuget-source: ${{ env.NUGET_SOURCE }}
           nuget-user: ${{ env.NUGET_USER }}
           publish-mode: ${{ env.PUBLISH_MODE }}
+          tag-prefix: ${{ env.TAG_PREFIX }}
 
       - name: Publish outcome
         shell: pwsh
@@ -53,3 +55,4 @@ jobs:
           Write-Information "Package version: ${{ steps.publish.outputs.version }}"
           Write-Information "Should publish:   ${{ steps.publish.outputs.should-publish }}"
           Write-Information "Published:        ${{ steps.publish.outputs.published }}"
+          Write-Information "Tag:              ${{ steps.publish.outputs.tag }}"
