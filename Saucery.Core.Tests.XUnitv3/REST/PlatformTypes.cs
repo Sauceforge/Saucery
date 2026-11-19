@@ -11,13 +11,17 @@ public static class PlatformTypes {
             [
                 typeof(LinuxPlatform),
                 typeof(Windows11Platform),
+                typeof(Windows8Platform),
+                typeof(Windows81Platform),
                 typeof(Windows10Platform),
+                typeof(Mac27Platform),
                 typeof(Mac26Platform),
                 typeof(Mac15Platform),
                 typeof(Mac14Platform),
                 typeof(Mac13Platform),
                 typeof(Mac12Platform),
                 typeof(Mac11Platform),
+                typeof(IOS271Platform),
                 //typeof(IOS27Platform),
                 typeof(IOS265Platform),
                 typeof(IOS261Platform),
@@ -51,6 +55,7 @@ public static class PlatformTypes {
                 typeof(Android71Platform),
                 typeof(Android7Platform),
                 typeof(Android6Platform),
+                typeof(Android5Platform),
                 typeof(Android51Platform),
         ]);
 
@@ -71,7 +76,6 @@ public static class PlatformTypes {
                 typeof(Android12Platform),
                 typeof(Android11Platform),
                 typeof(Android10Platform),
-                //typeof(Android9Platform)
         ]);
 
     public static IEnumerable<object[]> PlatformsWithBrowsersTypes =>
@@ -79,7 +83,10 @@ public static class PlatformTypes {
             [
                 typeof(LinuxPlatform),
                 typeof(Windows11Platform),
+                typeof(Windows8Platform),
+                typeof(Windows81Platform),
                 typeof(Windows10Platform),
+                typeof(Mac27Platform),
                 typeof(Mac26Platform),
                 typeof(Mac15Platform),
                 typeof(Mac14Platform),

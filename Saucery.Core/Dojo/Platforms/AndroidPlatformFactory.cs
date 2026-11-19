@@ -1,4 +1,4 @@
-﻿using Saucery.Core.Dojo.Platforms.Base;
+using Saucery.Core.Dojo.Platforms.Base;
 using Saucery.Core.Dojo.Platforms.ConcreteCreators.Google;
 using Saucery.Core.RestAPI;
 
@@ -23,6 +23,7 @@ public static class AndroidPlatformFactory
         "7.0" => new Android7PlatformCreator(sp).Create(),
         "6.0" => new Android6PlatformCreator(sp).Create(),
         "5.1" => new Android51PlatformCreator(sp).Create(),
+        "5.0" => new Android5PlatformCreator(sp).Create(),
         _ => null
     };
 
@@ -35,7 +36,6 @@ public static class AndroidPlatformFactory
         "12" => new Android12PlatformCreator(sp).Create(),
         "11" => new Android11PlatformCreator(sp).Create(),
         "10" => new Android10PlatformCreator(sp).Create(),
-        "9" => new Android9PlatformCreator(sp).Create(),
         _ => null
     };
 }

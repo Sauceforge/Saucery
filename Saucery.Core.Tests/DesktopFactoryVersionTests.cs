@@ -45,6 +45,8 @@ public static class DesktopDataClass
             new DesktopPlatform(SauceryConstants.PLATFORM_LINUX, SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_VERSION_CURRENT_MAJOR),
             new DesktopPlatform(SauceryConstants.PLATFORM_CHROMIUM_OS, SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_VERSION_CURRENT_MAJOR),
             new DesktopPlatform(SauceryConstants.PLATFORM_LINUX, SauceryConstants.BROWSER_FIREFOX, SauceryConstants.BROWSER_VERSION_CURRENT_MAJOR),
+            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_81, SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_VERSION_CURRENT_MAJOR),
+            new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_8, SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_VERSION_CURRENT_MAJOR),
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_VERSION_CURRENT_MAJOR, SauceryConstants.SCREENRES_1280_1024),
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_CHROME, "99", SauceryConstants.SCREENRES_1280_1024),
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_FIREFOX, "78"),
@@ -53,6 +55,7 @@ public static class DesktopDataClass
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_EDGE, "99"),
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_10, SauceryConstants.BROWSER_IE, "11"),
             new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_11, SauceryConstants.BROWSER_CHROME, "99"),
+            new DesktopPlatform(SauceryConstants.PLATFORM_MAC_27, SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_VERSION_CURRENT_MAJOR),
             new DesktopPlatform(SauceryConstants.PLATFORM_MAC_13, SauceryConstants.BROWSER_SAFARI, "16"),
             new DesktopPlatform(SauceryConstants.PLATFORM_MAC_12, SauceryConstants.BROWSER_CHROME, "99"),
             new DesktopPlatform(SauceryConstants.PLATFORM_MAC_11, SauceryConstants.BROWSER_CHROME, "99")

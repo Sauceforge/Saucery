@@ -1,40 +1,350 @@
 {
   "repositoryRoot": "/home/runner/work/Saucery/Saucery",
   "reportPath": "/home/runner/work/Saucery/Saucery/saucery-functional-platform-coverage-gaps.txt",
-  "generatedUtc": "2026-11-01T13:03:56.405468+00:00",
+  "generatedUtc": "2026-11-19T09:16:04.2865953+00:00",
   "items": [
+    {
+      "discrepancy": {
+        "type": 0,
+        "family": "Android",
+        "kind": 1,
+        "displayName": "Android 5.0",
+        "version": "5.0",
+        "sauceConfigurationCount": 14,
+        "representativeDevices": [
+          "Nexus 4",
+          "Nexus 6",
+          "Nexus 7"
+        ],
+        "evidenceFile": null,
+        "evidence": null,
+        "sauceBrowsers": []
+      },
+      "disposition": 0,
+      "strategy": "sibling-addition",
+      "summary": "Clone the nearest existing Android declaration of the same kind at every Saucery.Core registration site and add Android 5.0 to the tests that cover that sibling.",
+      "plannedChanges": [
+        {
+          "path": "Saucery.Core",
+          "changeType": "Clone",
+          "description": "Model Android 5.0 on Android51Platform (Android 5.1)."
+        },
+        {
+          "path": "Saucery.Core/Dojo/DojoExtensions.cs",
+          "changeType": "Register",
+          "description": "Clone Android51Platform registration for Android5Platform."
+        },
+        {
+          "path": "Saucery.Core/Dojo/Platforms/AndroidPlatformFactory.cs",
+          "changeType": "Register",
+          "description": "Clone Android51Platform registration for Android5Platform."
+        },
+        {
+          "path": "Saucery.Core.Tests*",
+          "changeType": "Add tests",
+          "description": "Add Android 5.0 to the same test lists/rows that cover Android 5.1."
+        }
+      ],
+      "warnings": [
+        "All generated C# is syntax-checked; source changes are retained only after build, tests, and reporter verification pass."
+      ]
+    },
+    {
+      "discrepancy": {
+        "type": 0,
+        "family": "iOS",
+        "kind": 1,
+        "displayName": "iOS 27.1",
+        "version": "27.1",
+        "sauceConfigurationCount": 2,
+        "representativeDevices": [
+          "iPhone Duo"
+        ],
+        "evidenceFile": null,
+        "evidence": null,
+        "sauceBrowsers": []
+      },
+      "disposition": 0,
+      "strategy": "sibling-addition",
+      "summary": "Clone the nearest existing iOS declaration of the same kind at every Saucery.Core registration site and add iOS 27.1 to the tests that cover that sibling.",
+      "plannedChanges": [
+        {
+          "path": "Saucery.Core",
+          "changeType": "Clone",
+          "description": "Model iOS 27.1 on IOS27Platform (iOS 27.0)."
+        },
+        {
+          "path": "Saucery.Core/Dojo/DojoExtensions.cs",
+          "changeType": "Register",
+          "description": "Clone IOS27Platform registration for IOS271Platform."
+        },
+        {
+          "path": "Saucery.Core/Dojo/Platforms/ApplePlatformFactory.cs",
+          "changeType": "Register",
+          "description": "Clone IOS27Platform registration for IOS271Platform."
+        },
+        {
+          "path": "Saucery.Core.Tests*",
+          "changeType": "Add tests",
+          "description": "Add iOS 27.1 to the same test lists/rows that cover iOS 27.0."
+        }
+      ],
+      "warnings": [
+        "All generated C# is syntax-checked; source changes are retained only after build, tests, and reporter verification pass."
+      ]
+    },
+    {
+      "discrepancy": {
+        "type": 0,
+        "family": "macOS",
+        "kind": 0,
+        "displayName": "Mac Golden Gate (27)",
+        "version": "27",
+        "sauceConfigurationCount": 26,
+        "representativeDevices": [
+          "Firefox",
+          "Google Chrome",
+          "Microsoft Edge"
+        ],
+        "evidenceFile": null,
+        "evidence": null,
+        "sauceBrowsers": [
+          "chrome",
+          "firefox",
+          "MicrosoftEdge",
+          "safari"
+        ]
+      },
+      "disposition": 0,
+      "strategy": "sibling-addition",
+      "summary": "Clone the nearest existing macOS declaration of the same kind at every Saucery.Core registration site and add Mac Golden Gate (27) to the tests that cover that sibling.",
+      "plannedChanges": [
+        {
+          "path": "Saucery.Core",
+          "changeType": "Clone",
+          "description": "Model Mac Golden Gate (27) on Mac26Platform (macOS 26)."
+        },
+        {
+          "path": "Saucery.Core/Util/SauceryConstants.cs",
+          "changeType": "Register",
+          "description": "Clone Mac26Platform registration for Mac27Platform."
+        },
+        {
+          "path": "Saucery.Core/Dojo/PlatformConfigurator.cs",
+          "changeType": "Register",
+          "description": "Clone Mac26Platform registration for Mac27Platform."
+        },
+        {
+          "path": "Saucery.Core/Dojo/DojoExtensions.cs",
+          "changeType": "Register",
+          "description": "Clone Mac26Platform registration for Mac27Platform."
+        },
+        {
+          "path": "Saucery.Core/Dojo/Platforms/DesktopPlatformFactory.cs",
+          "changeType": "Register",
+          "description": "Clone Mac26Platform registration for Mac27Platform."
+        },
+        {
+          "path": "Saucery.Core/Dojo/Browsers/BrowserFactory.cs",
+          "changeType": "Register",
+          "description": "Clone Mac26Platform registration for Mac27Platform."
+        },
+        {
+          "path": "Saucery.Core.Tests*",
+          "changeType": "Add tests",
+          "description": "Add Mac Golden Gate (27) to the same test lists/rows that cover macOS 26."
+        }
+      ],
+      "warnings": [
+        "All generated C# is syntax-checked; source changes are retained only after build, tests, and reporter verification pass."
+      ]
+    },
+    {
+      "discrepancy": {
+        "type": 0,
+        "family": "Windows",
+        "kind": 0,
+        "displayName": "Windows 8",
+        "version": "8",
+        "sauceConfigurationCount": 156,
+        "representativeDevices": [
+          "Firefox",
+          "Google Chrome",
+          "Internet Explorer"
+        ],
+        "evidenceFile": null,
+        "evidence": null,
+        "sauceBrowsers": [
+          "chrome",
+          "firefox",
+          "internet explorer"
+        ]
+      },
+      "disposition": 0,
+      "strategy": "sibling-addition",
+      "summary": "Clone the nearest existing Windows declaration of the same kind at every Saucery.Core registration site and add Windows 8 to the tests that cover that sibling.",
+      "plannedChanges": [
+        {
+          "path": "Saucery.Core",
+          "changeType": "Clone",
+          "description": "Model Windows 8 on Windows10Platform (Windows 10)."
+        },
+        {
+          "path": "Saucery.Core/Util/SauceryConstants.cs",
+          "changeType": "Register",
+          "description": "Clone Windows10Platform registration for Windows8Platform."
+        },
+        {
+          "path": "Saucery.Core/Dojo/DojoExtensions.cs",
+          "changeType": "Register",
+          "description": "Clone Windows10Platform registration for Windows8Platform."
+        },
+        {
+          "path": "Saucery.Core/Dojo/Platforms/DesktopPlatformFactory.cs",
+          "changeType": "Register",
+          "description": "Clone Windows10Platform registration for Windows8Platform."
+        },
+        {
+          "path": "Saucery.Core/Dojo/Browsers/BrowserFactory.cs",
+          "changeType": "Register",
+          "description": "Clone Windows10Platform registration for Windows8Platform."
+        },
+        {
+          "path": "Saucery.Core.Tests*",
+          "changeType": "Add tests",
+          "description": "Add Windows 8 to the same test lists/rows that cover Windows 10."
+        }
+      ],
+      "warnings": [
+        "All generated C# is syntax-checked; source changes are retained only after build, tests, and reporter verification pass."
+      ]
+    },
+    {
+      "discrepancy": {
+        "type": 0,
+        "family": "Windows",
+        "kind": 0,
+        "displayName": "Windows 8.1",
+        "version": "8.1",
+        "sauceConfigurationCount": 187,
+        "representativeDevices": [
+          "Firefox",
+          "Google Chrome",
+          "Internet Explorer"
+        ],
+        "evidenceFile": null,
+        "evidence": null,
+        "sauceBrowsers": [
+          "chrome",
+          "firefox",
+          "internet explorer",
+          "MicrosoftEdge"
+        ]
+      },
+      "disposition": 0,
+      "strategy": "sibling-addition",
+      "summary": "Clone the nearest existing Windows declaration of the same kind at every Saucery.Core registration site and add Windows 8.1 to the tests that cover that sibling.",
+      "plannedChanges": [
+        {
+          "path": "Saucery.Core",
+          "changeType": "Clone",
+          "description": "Model Windows 8.1 on Windows10Platform (Windows 10)."
+        },
+        {
+          "path": "Saucery.Core/Util/SauceryConstants.cs",
+          "changeType": "Register",
+          "description": "Clone Windows10Platform registration for Windows81Platform."
+        },
+        {
+          "path": "Saucery.Core/Dojo/DojoExtensions.cs",
+          "changeType": "Register",
+          "description": "Clone Windows10Platform registration for Windows81Platform."
+        },
+        {
+          "path": "Saucery.Core/Dojo/Platforms/DesktopPlatformFactory.cs",
+          "changeType": "Register",
+          "description": "Clone Windows10Platform registration for Windows81Platform."
+        },
+        {
+          "path": "Saucery.Core/Dojo/Browsers/BrowserFactory.cs",
+          "changeType": "Register",
+          "description": "Clone Windows10Platform registration for Windows81Platform."
+        },
+        {
+          "path": "Saucery.Core.Tests*",
+          "changeType": "Add tests",
+          "description": "Add Windows 8.1 to the same test lists/rows that cover Windows 10."
+        }
+      ],
+      "warnings": [
+        "All generated C# is syntax-checked; source changes are retained only after build, tests, and reporter verification pass."
+      ]
+    },
+    {
+      "discrepancy": {
+        "type": 1,
+        "family": "Android",
+        "kind": 2,
+        "displayName": "Android 9.x",
+        "version": "9.x",
+        "sauceConfigurationCount": 0,
+        "representativeDevices": null,
+        "evidenceFile": "Dojo/DojoExtensions.cs",
+        "evidence": "line 196: \u0022Linux 9\u0022 =\u003E platforms.GetPlatform\u003CAndroid9Platform\u003E().FirstOrDefault(),",
+        "sauceBrowsers": null
+      },
+      "disposition": 0,
+      "strategy": "real-device-declaration-removal",
+      "summary": "Remove only the real-device Android 9.x declarations and real-device unit-test data. Android9Platform/Android9PlatformCreator are still used by simulator/emulator declarations and are preserved.",
+      "plannedChanges": [
+        {
+          "path": "Saucery.Core/Dojo/DojoExtensions.cs",
+          "changeType": "Remove real-device declaration",
+          "description": "Remove the major-version real-device mapping for Android 9.x."
+        },
+        {
+          "path": "Saucery.Core/Dojo/Platforms/AndroidPlatformFactory.cs",
+          "changeType": "Remove real-device declaration",
+          "description": "Remove the major-version real-device mapping for Android 9.x."
+        }
+      ],
+      "warnings": [
+        "Real-device cleanup never deletes a ConcreteProduct or PlatformCreator that simulator/emulator declarations still use."
+      ]
+    },
     {
       "discrepancy": {
         "type": 1,
         "family": "iOS",
-        "kind": 1,
-        "displayName": "iOS 26.0",
-        "version": "26.0",
+        "kind": 2,
+        "displayName": "iOS 14.x",
+        "version": "14.x",
         "sauceConfigurationCount": 0,
         "representativeDevices": null,
         "evidenceFile": "Dojo/DojoExtensions.cs",
-        "evidence": "line 209: \u0022iOS 26.0\u0022 =\u003E platforms.GetPlatform\u003CIOS26Platform\u003E().FirstOrDefault(),"
+        "evidence": "line 254: \u0022iOS 14\u0022 =\u003E platforms.GetPlatform\u003CIOS14Platform\u003E().FirstOrDefault(),",
+        "sauceBrowsers": null
       },
       "disposition": 0,
-      "strategy": "exact-obsolete-declaration-removal",
-      "summary": "Remove only the exact iOS 26.0 declarations from BrowserFactory/DojoExtensions and matching unit-test data. Shared major-family product/creator implementations are preserved.",
+      "strategy": "real-device-declaration-removal",
+      "summary": "Remove only the real-device iOS 14.x declarations and real-device unit-test data. IOS14Platform/IOS14PlatformCreator are still used by simulator/emulator declarations and are preserved.",
       "plannedChanges": [
         {
-          "path": "Saucery.Core/Dojo/Browsers/BrowserFactory.cs",
-          "changeType": "Remove exact declaration",
-          "description": "Remove exact iOS 26.0 browser declaration when present."
+          "path": "Saucery.Core/Dojo/DojoExtensions.cs",
+          "changeType": "Remove real-device declaration",
+          "description": "Remove the major-version real-device mapping for iOS 14.x."
         },
         {
-          "path": "Saucery.Core/Dojo/DojoExtensions.cs",
-          "changeType": "Remove exact declaration",
-          "description": "Remove exact iOS 26.0 Dojo declaration when present."
+          "path": "Saucery.Core/Dojo/Platforms/ApplePlatformFactory.cs",
+          "changeType": "Remove real-device declaration",
+          "description": "Remove the major-version real-device mapping for iOS 14.x."
         }
       ],
       "warnings": [
-        "Exact-version cleanup never deletes a shared major-family ConcreteProduct or PlatformCreator."
+        "Real-device cleanup never deletes a ConcreteProduct or PlatformCreator that simulator/emulator declarations still use."
       ]
     }
   ],
-  "autoFixCount": 1,
+  "autoFixCount": 7,
   "manualReviewCount": 0
 }
