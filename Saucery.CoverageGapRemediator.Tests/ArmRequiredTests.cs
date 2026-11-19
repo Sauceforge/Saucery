@@ -1,32 +1,32 @@
-using Xunit;
+using Shouldly;
 
 namespace Saucery.CoverageGapRemediator.Tests;
 
 public sealed class ArmRequiredTests
 {
-    [Theory]
-    [InlineData("Mac", "13", false)]
-    [InlineData("Mac", "14", true)]
-    [InlineData("Mac", "27", true)]
-    [InlineData("IOS", "16.2", false)]
-    [InlineData("IOS", "16.4", true)]
-    [InlineData("IOS", "27.1", true)]
-    [InlineData("IOS", "28", true)]
+    [Test]
+    [Arguments("Mac", "13", false)]
+    [Arguments("Mac", "14", true)]
+    [Arguments("Mac", "27", true)]
+    [Arguments("IOS", "16.2", false)]
+    [Arguments("IOS", "16.4", true)]
+    [Arguments("IOS", "27.1", true)]
+    [Arguments("IOS", "28", true)]
     public void Mac_14_and_later_and_iOS_16_4_and_later_require_arm(string prefix, string version, bool expected)
     {
         var target = new PlatformIdentity(PlatformRequirementKind.MobileExactVersion, "x", prefix, version, version.Replace(".", string.Empty));
 
-        Assert.Equal(expected, AdditionSynthesizer.ArmRequired(target));
+        AdditionSynthesizer.ArmRequired(target).ShouldBe(expected);
     }
 
-    [Theory]
-    [InlineData("Windows", "8.1")]
-    [InlineData("Android", "17.0")]
+    [Test]
+    [Arguments("Windows", "8.1")]
+    [Arguments("Android", "17.0")]
     public void Other_families_have_no_arm_rule(string prefix, string version)
     {
         var target = new PlatformIdentity(PlatformRequirementKind.MobileExactVersion, "x", prefix, version, version.Replace(".", string.Empty));
 
-        Assert.Null(AdditionSynthesizer.ArmRequired(target));
+        AdditionSynthesizer.ArmRequired(target).ShouldBeNull();
     }
 
     private const string ShortMobile =
@@ -61,29 +61,29 @@ public sealed class ArmRequiredTests
         }
         """;
 
-    [Fact]
+    [Test]
     public void Requiring_arm_pads_a_short_mobile_call_to_the_six_argument_overload() =>
-        Assert.Equal(ArmMobile, AdditionSynthesizer.SetArmRequired(ShortMobile, required: true));
+        AdditionSynthesizer.SetArmRequired(ShortMobile, required: true).ShouldBe(ArmMobile);
 
-    [Fact]
+    [Test]
     public void Not_requiring_arm_trims_a_mobile_call_back_to_the_short_overload() =>
-        Assert.Equal(ShortMobile, AdditionSynthesizer.SetArmRequired(ArmMobile, required: false));
+        AdditionSynthesizer.SetArmRequired(ArmMobile, required: false).ShouldBe(ShortMobile);
 
-    [Fact]
+    [Test]
     public void Requiring_arm_appends_it_on_its_own_line_in_a_multi_line_desktop_call() =>
-        Assert.Equal(Normalize(DesktopWithArm), Normalize(AdditionSynthesizer.SetArmRequired(DesktopWithoutArm, required: true)));
+        Normalize(AdditionSynthesizer.SetArmRequired(DesktopWithoutArm, required: true)).ShouldBe(Normalize(DesktopWithArm));
 
-    [Fact]
+    [Test]
     public void Not_requiring_arm_removes_it_from_a_multi_line_desktop_call() =>
-        Assert.Equal(Normalize(DesktopWithoutArm), Normalize(AdditionSynthesizer.SetArmRequired(DesktopWithArm, required: false)));
+        Normalize(AdditionSynthesizer.SetArmRequired(DesktopWithArm, required: false)).ShouldBe(Normalize(DesktopWithoutArm));
 
-    [Theory]
-    [InlineData(ArmMobile, true)]
-    [InlineData(ShortMobile, false)]
-    [InlineData(DesktopWithArm, true)]
-    [InlineData(DesktopWithoutArm, false)]
+    [Test]
+    [Arguments(ArmMobile, true)]
+    [Arguments(ShortMobile, false)]
+    [Arguments(DesktopWithArm, true)]
+    [Arguments(DesktopWithoutArm, false)]
     public void Already_matching_calls_are_unchanged(string source, bool required) =>
-        Assert.Equal(Normalize(source), Normalize(AdditionSynthesizer.SetArmRequired(source, required)));
+        Normalize(AdditionSynthesizer.SetArmRequired(source, required)).ShouldBe(Normalize(source));
 
     // Raw string literals take the source file's line endings, which depend on the checkout
     // (CRLF on Windows with autocrlf); the remediator writes Environment.NewLine.

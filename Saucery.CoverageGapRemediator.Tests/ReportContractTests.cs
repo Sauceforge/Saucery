@@ -1,4 +1,4 @@
-using Xunit;
+using Shouldly;
 using Reporter = Saucery.CoverageGapReporter;
 
 namespace Saucery.CoverageGapRemediator.Tests;
@@ -6,7 +6,7 @@ namespace Saucery.CoverageGapRemediator.Tests;
 /// <summary>The remediator must read back exactly what the reporter writes.</summary>
 public sealed class ReportContractTests
 {
-    [Fact]
+    [Test]
     public async Task Remediator_reads_the_gaps_and_obsolete_candidates_the_reporter_writes()
     {
         var root = Path.Combine(Path.GetTempPath(), "saucery-contract-tests", Guid.NewGuid().ToString("N"));
@@ -33,7 +33,7 @@ public sealed class ReportContractTests
                         _ => null
                     };
                 }
-                """, TestContext.Current.CancellationToken);
+                """);
 
             Reporter.SauceVirtualRow Desktop(string os, string browser) =>
                 new("webdriver", browser, browser, string.Empty, os, "latest", "latest", string.Empty);
@@ -68,24 +68,28 @@ public sealed class ReportContractTests
                 realDeviceWarning: null);
 
             var reportPath = Path.Combine(root, "report.txt");
-            await File.WriteAllTextAsync(reportPath, report, TestContext.Current.CancellationToken);
+            await File.WriteAllTextAsync(reportPath, report);
 
             var discrepancies = await CoverageReportReader.ReadAsync(reportPath);
 
             var missing = discrepancies.Where(d => d.Type == DiscrepancyType.Missing).ToDictionary(d => d.DisplayName);
-            Assert.Equal(["Windows 8", "Windows 8.1", "iOS 27.1"], missing.Keys.Order(StringComparer.Ordinal));
-            Assert.Equal(["chrome", "internet explorer"], missing["Windows 8"].Browsers);
-            Assert.Equal(["chrome", "MicrosoftEdge"], missing["Windows 8.1"].Browsers);
-            Assert.Equal(("Windows", "8.1", PlatformRequirementKind.DesktopPlatform), (missing["Windows 8.1"].Family, missing["Windows 8.1"].Version, missing["Windows 8.1"].Kind));
-            Assert.Equal(("iOS", "27.1", PlatformRequirementKind.MobileExactVersion), (missing["iOS 27.1"].Family, missing["iOS 27.1"].Version, missing["iOS 27.1"].Kind));
-            Assert.Equal(["iPhone Duo"], missing["iOS 27.1"].Devices);
+            missing.Keys.Order(StringComparer.Ordinal).ShouldBe(["Windows 8", "Windows 8.1", "iOS 27.1"]);
+            missing["Windows 8"].Browsers.ShouldBe(["chrome", "internet explorer"]);
+            missing["Windows 8.1"].Browsers.ShouldBe(["chrome", "MicrosoftEdge"]);
+            (missing["Windows 8.1"].Family, missing["Windows 8.1"].Version, missing["Windows 8.1"].Kind)
+                .ShouldBe(("Windows", "8.1", PlatformRequirementKind.DesktopPlatform));
+            (missing["iOS 27.1"].Family, missing["iOS 27.1"].Version, missing["iOS 27.1"].Kind)
+                .ShouldBe(("iOS", "27.1", PlatformRequirementKind.MobileExactVersion));
+            missing["iOS 27.1"].Devices.ShouldBe(["iPhone Duo"]);
 
-            var obsolete = discrepancies.Where(d => d.Type == DiscrepancyType.ObsoleteCandidate)
+            discrepancies.Where(d => d.Type == DiscrepancyType.ObsoleteCandidate)
                 .Select(d => (d.DisplayName, d.Family, d.Kind))
-                .Order();
-            Assert.Equal(
-                [("Android 9.x", "Android", PlatformRequirementKind.MobileMajorWildcard), ("iOS 14.x", "iOS", PlatformRequirementKind.MobileMajorWildcard)],
-                obsolete);
+                .Order()
+                .ShouldBe(
+                [
+                    ("Android 9.x", "Android", PlatformRequirementKind.MobileMajorWildcard),
+                    ("iOS 14.x", "iOS", PlatformRequirementKind.MobileMajorWildcard)
+                ]);
         }
         finally
         {

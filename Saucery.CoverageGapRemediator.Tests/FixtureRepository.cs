@@ -10,17 +10,17 @@ namespace Saucery.CoverageGapRemediator.Tests;
 /// </summary>
 internal sealed class FixtureRepository : IDisposable
 {
-    public const string TUnit = "Saucery.Core.Tests";
-    public const string XUnit = "Saucery.Core.Tests.XUnitv3";
-    public static readonly string[] TestProjects = [TUnit, XUnit];
+    public const string TUnitProject = "Saucery.Core.Tests";
+    public const string XUnitProject = "Saucery.Core.Tests.XUnitv3";
+    public static readonly string[] TestProjects = [TUnitProject, XUnitProject];
 
     public FixtureRepository()
     {
         Root = Path.Combine(Path.GetTempPath(), "saucery-remediator-tests", Guid.NewGuid().ToString("N"));
 
         WriteCore();
-        WriteTests(TUnit, xunit: false);
-        WriteTests(XUnit, xunit: true);
+        WriteTests(TUnitProject, xunit: false);
+        WriteTests(XUnitProject, xunit: true);
 
         Context = new RepositoryContext(Root);
     }

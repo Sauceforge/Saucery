@@ -36,7 +36,7 @@ After synthesis the remediator syntax-checks every generated C# file with Roslyn
 
 ## Tests
 
-`Saucery.CoverageGapRemediator.Tests` runs additions and removals against a miniature Saucery repository on disk containing both Core test projects, and checks that every change lands identically in `Saucery.Core.Tests` and `Saucery.Core.Tests.XUnitv3`. A contract test feeds `Saucery.CoverageGapReporter`'s real report output into the remediator's reader. `Saucery.CoverageGapReporter.Tests` covers how Sauce rows become requirements and how coverage and obsolete candidates are decided. Neither needs Sauce credentials; both run in the coverage workflows before either tool is used.
+Both test projects use TUnit. `Saucery.CoverageGapRemediator.Tests` runs additions and removals against a miniature Saucery repository on disk containing both Core test projects, and checks that every change lands identically in `Saucery.Core.Tests` and `Saucery.Core.Tests.XUnitv3`. A contract test feeds `Saucery.CoverageGapReporter`'s real report output into the remediator's reader. `Saucery.CoverageGapReporter.Tests` covers how Sauce rows become requirements and how coverage and obsolete candidates are decided. Neither needs Sauce credentials; both run in the coverage workflows before either tool is used.
 
 ```powershell
 dotnet run -c Release --project Saucery.CoverageGapReporter.Tests

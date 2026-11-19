@@ -1,4 +1,4 @@
-using Xunit;
+using Shouldly;
 
 namespace Saucery.CoverageGapRemediator.Tests;
 
@@ -55,46 +55,45 @@ public sealed class CoverageReportReaderTests
         ============================================================================================
         """;
 
-    [Fact]
+    [Test]
     public async Task Each_obsolete_entry_keeps_its_own_family()
     {
         // The reader used to scan 8 lines past each header and take the next entry's
         // "Family : iOS", turning Android 9.x into an iOS discrepancy.
         var obsolete = (await Read()).Where(d => d.Type == DiscrepancyType.ObsoleteCandidate).ToArray();
 
-        Assert.Equal(
-            [("Android 9.x", "Android", "9.x"), ("iOS 14.x", "iOS", "14.x")],
-            obsolete.Select(d => (d.DisplayName, d.Family, d.Version)));
-        Assert.All(obsolete, d => Assert.Equal(PlatformRequirementKind.MobileMajorWildcard, d.Kind));
-        Assert.Contains("\"Linux 9\"", obsolete[0].Evidence);
+        obsolete.Select(d => (d.DisplayName, d.Family, d.Version))
+            .ShouldBe([("Android 9.x", "Android", "9.x"), ("iOS 14.x", "iOS", "14.x")]);
+        obsolete.ShouldAllBe(d => d.Kind == PlatformRequirementKind.MobileMajorWildcard);
+        obsolete[0].Evidence.ShouldNotBeNull().ShouldContain("\"Linux 9\"", Case.Sensitive);
     }
 
-    [Fact]
+    [Test]
     public async Task Each_gap_keeps_its_own_devices_and_browsers()
     {
         var gaps = (await Read()).Where(d => d.Type == DiscrepancyType.Missing).ToDictionary(d => d.DisplayName);
 
-        Assert.Equal(["iPhone Duo"], gaps["iOS 27.1"].Devices);
-        Assert.Empty(gaps["iOS 27.1"].Browsers);
-        Assert.Equal(["chrome", "firefox", "internet explorer"], gaps["Windows 8"].Browsers);
-        Assert.Equal(156, gaps["Windows 8"].SauceConfigurationCount);
-        Assert.Equal(["chrome", "firefox", "internet explorer", "MicrosoftEdge"], gaps["Windows 8.1"].Browsers);
-        Assert.Empty(gaps["Windows 8.1"].Devices);
-        Assert.Empty(gaps["Mac Golden Gate (27)"].Browsers);
-        Assert.Equal(["iPhone 17 Pro"], gaps["iOS 28.x"].Devices);
+        gaps["iOS 27.1"].Devices.ShouldBe(["iPhone Duo"]);
+        gaps["iOS 27.1"].Browsers.ShouldBeEmpty();
+        gaps["Windows 8"].Browsers.ShouldBe(["chrome", "firefox", "internet explorer"]);
+        gaps["Windows 8"].SauceConfigurationCount.ShouldBe(156);
+        gaps["Windows 8.1"].Browsers.ShouldBe(["chrome", "firefox", "internet explorer", "MicrosoftEdge"]);
+        gaps["Windows 8.1"].Devices.ShouldBeEmpty();
+        gaps["Mac Golden Gate (27)"].Browsers.ShouldBeEmpty();
+        gaps["iOS 28.x"].Devices.ShouldBe(["iPhone 17 Pro"]);
     }
 
-    [Theory]
-    [InlineData("iOS 27.1", "iOS", "27.1", nameof(PlatformRequirementKind.MobileExactVersion))]
-    [InlineData("iOS 28.x", "iOS", "28.x", nameof(PlatformRequirementKind.MobileMajorWildcard))]
-    [InlineData("Windows 8.1", "Windows", "8.1", nameof(PlatformRequirementKind.DesktopPlatform))]
-    [InlineData("Mac Golden Gate (27)", "macOS", "27", nameof(PlatformRequirementKind.DesktopPlatform))]
+    [Test]
+    [Arguments("iOS 27.1", "iOS", "27.1", nameof(PlatformRequirementKind.MobileExactVersion))]
+    [Arguments("iOS 28.x", "iOS", "28.x", nameof(PlatformRequirementKind.MobileMajorWildcard))]
+    [Arguments("Windows 8.1", "Windows", "8.1", nameof(PlatformRequirementKind.DesktopPlatform))]
+    [Arguments("Mac Golden Gate (27)", "macOS", "27", nameof(PlatformRequirementKind.DesktopPlatform))]
     public async Task Gaps_are_classified_by_family_version_and_kind(
         string displayName, string family, string version, string kindName)
     {
         var gap = (await Read()).Single(d => d.DisplayName == displayName);
 
-        Assert.Equal((family, version, Enum.Parse<PlatformRequirementKind>(kindName)), (gap.Family, gap.Version, gap.Kind));
+        (gap.Family, gap.Version, gap.Kind).ShouldBe((family, version, Enum.Parse<PlatformRequirementKind>(kindName)));
     }
 
     private static async Task<IReadOnlyList<CoverageDiscrepancy>> Read()
@@ -102,7 +101,7 @@ public sealed class CoverageReportReaderTests
         var path = Path.Combine(Path.GetTempPath(), $"saucery-report-{Guid.NewGuid():N}.txt");
         try
         {
-            await File.WriteAllTextAsync(path, Report, TestContext.Current.CancellationToken);
+            await File.WriteAllTextAsync(path, Report);
             return await CoverageReportReader.ReadAsync(path);
         }
         finally

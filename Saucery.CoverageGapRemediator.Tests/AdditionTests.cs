@@ -1,5 +1,5 @@
 using System.Text.RegularExpressions;
-using Xunit;
+using Shouldly;
 using static Saucery.CoverageGapRemediator.Tests.FixtureRepository;
 
 namespace Saucery.CoverageGapRemediator.Tests;
@@ -17,91 +17,94 @@ public sealed class AdditionTests
 
     // ---------------------------------------------------------------- simulators / emulators
 
-    [Fact]
+    [Test]
     public void iOS_simulator_version_is_registered_as_a_simulator_only()
     {
         using var repo = Add("iOS", "27.1");
 
-        Assert.Contains("public sealed class IOS271Platform", repo.Read($"{Products}/Apple/IOS271Platform.cs"));
-        Assert.Contains("new IOS271Platform(Platform)", repo.Read($"{Creators}/Apple/IOS271PlatformCreator.cs"));
-        Assert.Contains("\"iOS 27.1\" => platforms.GetPlatform<IOS271Platform>()", repo.Read(Dojo));
+        repo.Read($"{Products}/Apple/IOS271Platform.cs").ShouldContain("public sealed class IOS271Platform", Case.Sensitive);
+        repo.Read($"{Creators}/Apple/IOS271PlatformCreator.cs").ShouldContain("new IOS271Platform(Platform)", Case.Sensitive);
+        repo.Read(Dojo).ShouldContain("\"iOS 27.1\" => platforms.GetPlatform<IOS271Platform>()", Case.Sensitive);
 
         var factory = repo.Read("Saucery.Core/Dojo/Platforms/ApplePlatformFactory.cs");
-        Assert.Contains("\"27.1\" => new IOS271PlatformCreator(sp).Create(),", factory);
-        Assert.Equal(1, Count(factory, "IOS271PlatformCreator"));
+        factory.ShouldContain("\"27.1\" => new IOS271PlatformCreator(sp).Create(),", Case.Sensitive);
+        Count(factory, "IOS271PlatformCreator").ShouldBe(1);
     }
 
-    [Theory]
-    [InlineData(TUnit)]
-    [InlineData(XUnit)]
+    [Test]
+    [Arguments(TUnitProject)]
+    [Arguments(XUnitProject)]
     public void iOS_simulator_version_gets_simulator_tests_only(string project)
     {
         using var repo = Add("iOS", "27.1");
 
         var types = $"{project}/REST/PlatformTypes.cs";
-        Assert.Contains("typeof(IOS271Platform)", repo.Member(types, "SupportedPlatformTypes"));
-        Assert.DoesNotContain("IOS271Platform", repo.Member(types, "SupportedRealDeviceTypes"));
+        repo.Member(types, "SupportedPlatformTypes").ShouldContain("typeof(IOS271Platform)", Case.Sensitive);
+        repo.Member(types, "SupportedRealDeviceTypes").ShouldNotContain("IOS271Platform", Case.Sensitive);
     }
 
-    [Theory]
-    [InlineData(TUnit)]
-    [InlineData(XUnit)]
+    [Test]
+    [Arguments(TUnitProject)]
+    [Arguments(XUnitProject)]
     public void Simulator_version_list_gains_the_version_only_when_it_already_tests_the_sibling(string project)
     {
         // The list tests 16.2 but stops short of 27.0 (later simulators use other device names).
         using var after164 = Add("iOS", "16.4");
-        Assert.Contains("\"16.0\",\"16.2\",\"16.4\",", after164.Read($"{project}/IOSFactoryVersionTests.cs"));
+        after164.Read($"{project}/IOSFactoryVersionTests.cs").ShouldContain("\"16.0\",\"16.2\",\"16.4\",", Case.Sensitive);
 
         using var after271 = Add("iOS", "27.1");
-        Assert.DoesNotContain("27.1", after271.Read($"{project}/IOSFactoryVersionTests.cs"));
+        after271.Read($"{project}/IOSFactoryVersionTests.cs").ShouldNotContain("27.1", Case.Sensitive);
     }
 
-    [Theory]
-    [InlineData(TUnit)]
-    [InlineData(XUnit)]
+    [Test]
+    [Arguments(TUnitProject)]
+    [Arguments(XUnitProject)]
     public void Android_emulator_version_is_registered_with_a_test_row(string project)
     {
         using var repo = Add("Android", "5.0");
 
-        Assert.True(repo.Exists($"{Products}/Google/Android5Platform.cs"));
-        Assert.Contains("\"Linux 5.0\" => platforms.GetPlatform<Android5Platform>()", repo.Read(Dojo));
-        Assert.Contains("\"5.0\" => new Android5PlatformCreator(sp).Create(),", repo.Read("Saucery.Core/Dojo/Platforms/AndroidPlatformFactory.cs"));
-        Assert.Contains("new AndroidPlatform(\"Google Pixel 3 Emulator\", \"5.0\"", repo.Read($"{project}/AndroidFactoryVersionTests.cs"));
-        Assert.Contains("typeof(Android5Platform)", repo.Member($"{project}/REST/PlatformTypes.cs", "SupportedPlatformTypes"));
+        repo.Exists($"{Products}/Google/Android5Platform.cs").ShouldBeTrue();
+        repo.Read(Dojo).ShouldContain("\"Linux 5.0\" => platforms.GetPlatform<Android5Platform>()", Case.Sensitive);
+        repo.Read("Saucery.Core/Dojo/Platforms/AndroidPlatformFactory.cs")
+            .ShouldContain("\"5.0\" => new Android5PlatformCreator(sp).Create(),", Case.Sensitive);
+        repo.Read($"{project}/AndroidFactoryVersionTests.cs")
+            .ShouldContain("new AndroidPlatform(\"Google Pixel 3 Emulator\", \"5.0\"", Case.Sensitive);
+        repo.Member($"{project}/REST/PlatformTypes.cs", "SupportedPlatformTypes").ShouldContain("typeof(Android5Platform)", Case.Sensitive);
     }
 
     // ---------------------------------------------------------------- real devices
 
-    [Fact]
+    [Test]
     public void Real_device_major_is_registered_as_a_real_device_only()
     {
         using var repo = Add("iOS", "28.x", devices: ["iPhone 17 Pro"]);
 
-        Assert.True(repo.Exists($"{Products}/Apple/IOS28Platform.cs"));
+        repo.Exists($"{Products}/Apple/IOS28Platform.cs").ShouldBeTrue();
         var dojo = repo.Read(Dojo);
-        Assert.Contains("\"iOS 28\" => platforms.GetPlatform<IOS28Platform>()", dojo);
-        Assert.DoesNotContain("\"iOS 28.0\"", dojo);
+        dojo.ShouldContain("\"iOS 28\" => platforms.GetPlatform<IOS28Platform>()", Case.Sensitive);
+        dojo.ShouldNotContain("\"iOS 28.0\"", Case.Sensitive);
 
         var factory = repo.Read("Saucery.Core/Dojo/Platforms/ApplePlatformFactory.cs");
-        Assert.Contains("\"28\" => new IOS28PlatformCreator(sp).Create(),", factory);
-        Assert.DoesNotContain("\"28.0\"", factory);
+        factory.ShouldContain("\"28\" => new IOS28PlatformCreator(sp).Create(),", Case.Sensitive);
+        factory.ShouldNotContain("\"28.0\"", Case.Sensitive);
     }
 
-    [Theory]
-    [InlineData(TUnit)]
-    [InlineData(XUnit)]
+    [Test]
+    [Arguments(TUnitProject)]
+    [Arguments(XUnitProject)]
     public void Real_device_major_gets_real_device_tests_using_a_device_sauce_reports(string project)
     {
         using var repo = Add("iOS", "28.x", devices: ["iPhone 17 Pro"]);
 
         var types = $"{project}/REST/PlatformTypes.cs";
-        Assert.Contains("typeof(IOS28Platform)", repo.Member(types, "SupportedRealDeviceTypes"));
-        Assert.DoesNotContain("IOS28Platform", repo.Member(types, "SupportedPlatformTypes"));
-        Assert.Contains("\"27\", \"28\"", repo.Read($"{project}/RealIOSFactoryVersionTests.cs"));
-        Assert.Contains("new IOSRealDevice(\"iPhone 17 Pro\", \"28\")", repo.Read($"{project}/DataProviders/PlatformDataClass.cs"));
+        repo.Member(types, "SupportedRealDeviceTypes").ShouldContain("typeof(IOS28Platform)", Case.Sensitive);
+        repo.Member(types, "SupportedPlatformTypes").ShouldNotContain("IOS28Platform", Case.Sensitive);
+        repo.Read($"{project}/RealIOSFactoryVersionTests.cs").ShouldContain("\"27\", \"28\"", Case.Sensitive);
+        repo.Read($"{project}/DataProviders/PlatformDataClass.cs")
+            .ShouldContain("new IOSRealDevice(\"iPhone 17 Pro\", \"28\")", Case.Sensitive);
     }
 
-    [Fact]
+    [Test]
     public void Real_device_major_reuses_the_classes_its_simulators_already_have()
     {
         // Re-adding iOS 14 real devices: IOS14Platform already exists for the 14.0 simulator.
@@ -112,40 +115,42 @@ public sealed class AdditionTests
 
         AdditionSynthesizer.Apply(repo.Context, Missing("iOS", "14.x", devices: ["iPhone 12"]), repo.NewChanges());
 
-        Assert.Equal(product, repo.Read($"{Products}/Apple/IOS14Platform.cs"));
-        Assert.Contains("\"iOS 14\" => platforms.GetPlatform<IOS14Platform>()", repo.Read(Dojo));
-        Assert.Equal(1, Count(repo.Read(Dojo), "\"iOS 14.0\""));
+        repo.Read($"{Products}/Apple/IOS14Platform.cs").ShouldBe(product);
+        repo.Read(Dojo).ShouldContain("\"iOS 14\" => platforms.GetPlatform<IOS14Platform>()", Case.Sensitive);
+        Count(repo.Read(Dojo), "\"iOS 14.0\"").ShouldBe(1);
     }
 
     // ---------------------------------------------------------------- desktop
 
-    [Fact]
+    [Test]
     public void Windows_version_gets_only_the_browsers_sauce_offers_on_it()
     {
         using var repo = Add("Windows", "8", browsers: ["chrome", "firefox", "internet explorer"]);
 
         var product = repo.Read($"{Products}/PC/Windows8Platform.cs");
-        Assert.Contains("SauceryConstants.PLATFORM_WINDOWS_8,", product);
-        Assert.Contains("[SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_FIREFOX, SauceryConstants.BROWSER_IE]", product);
-        Assert.DoesNotContain("BROWSER_EDGE", product);
+        product.ShouldContain("SauceryConstants.PLATFORM_WINDOWS_8,", Case.Sensitive);
+        product.ShouldContain("[SauceryConstants.BROWSER_CHROME, SauceryConstants.BROWSER_FIREFOX, SauceryConstants.BROWSER_IE]", Case.Sensitive);
+        product.ShouldNotContain("BROWSER_EDGE", Case.Sensitive);
 
         var browserCreator = repo.Read($"{BrowserCreators}/Windows8BrowserCreator.cs");
-        Assert.Contains("SauceryConstants.BROWSER_IE => new IEBrowser", browserCreator);
-        Assert.DoesNotContain("EdgeBrowser", browserCreator);
+        browserCreator.ShouldContain("SauceryConstants.BROWSER_IE => new IEBrowser", Case.Sensitive);
+        browserCreator.ShouldNotContain("EdgeBrowser", Case.Sensitive);
     }
 
-    [Fact]
+    [Test]
     public void Windows_version_is_registered_everywhere_without_redefining_its_constant()
     {
         using var repo = Add("Windows", "8", browsers: ["chrome", "firefox", "internet explorer"]);
 
-        Assert.Contains("SauceryConstants.PLATFORM_WINDOWS_8 => platforms.GetPlatform<Windows8Platform>()", repo.Read(Dojo));
-        Assert.Contains("SauceryConstants.PLATFORM_WINDOWS_8 => new Windows8PlatformCreator(sp).Create(),", repo.Read("Saucery.Core/Dojo/Platforms/DesktopPlatformFactory.cs"));
-        Assert.Contains("SauceryConstants.PLATFORM_WINDOWS_8 => new Windows8BrowserCreator(sp).Create(SauceryConstants.PLATFORM_WINDOWS_8,", repo.Read("Saucery.Core/Dojo/Browsers/BrowserFactory.cs"));
-        Assert.Equal(1, Count(repo.Read("Saucery.Core/Util/SauceryConstants.cs"), "PLATFORM_WINDOWS_8 ="));
+        repo.Read(Dojo).ShouldContain("SauceryConstants.PLATFORM_WINDOWS_8 => platforms.GetPlatform<Windows8Platform>()", Case.Sensitive);
+        repo.Read("Saucery.Core/Dojo/Platforms/DesktopPlatformFactory.cs")
+            .ShouldContain("SauceryConstants.PLATFORM_WINDOWS_8 => new Windows8PlatformCreator(sp).Create(),", Case.Sensitive);
+        repo.Read("Saucery.Core/Dojo/Browsers/BrowserFactory.cs")
+            .ShouldContain("SauceryConstants.PLATFORM_WINDOWS_8 => new Windows8BrowserCreator(sp).Create(SauceryConstants.PLATFORM_WINDOWS_8,", Case.Sensitive);
+        Count(repo.Read("Saucery.Core/Util/SauceryConstants.cs"), "PLATFORM_WINDOWS_8 =").ShouldBe(1);
     }
 
-    [Fact]
+    [Test]
     public void Desktop_sibling_is_one_that_already_supports_every_browser_sauce_offers()
     {
         // Windows 8 has no Edge; Windows 8.1 does. Cloning 8.1 from the nearer Windows 8 could
@@ -153,71 +158,69 @@ public sealed class AdditionTests
         using var repo = Add("Windows", "8", browsers: ["chrome", "firefox", "internet explorer"]);
         AdditionSynthesizer.Apply(repo.Context, Missing("Windows", "8.1", browsers: ["chrome", "firefox", "internet explorer", "MicrosoftEdge"]), repo.NewChanges());
 
-        var product = repo.Read($"{Products}/PC/Windows81Platform.cs");
-        Assert.Contains("SauceryConstants.BROWSER_EDGE", product);
-        Assert.Contains("EdgeBrowser", repo.Read($"{BrowserCreators}/Windows81BrowserCreator.cs"));
+        repo.Read($"{Products}/PC/Windows81Platform.cs").ShouldContain("SauceryConstants.BROWSER_EDGE", Case.Sensitive);
+        repo.Read($"{BrowserCreators}/Windows81BrowserCreator.cs").ShouldContain("EdgeBrowser", Case.Sensitive);
     }
 
-    [Theory]
-    [InlineData(TUnit)]
-    [InlineData(XUnit)]
+    [Test]
+    [Arguments(TUnitProject)]
+    [Arguments(XUnitProject)]
     public void Desktop_version_gets_platform_and_browser_tests(string project)
     {
         using var repo = Add("Windows", "8", browsers: ["firefox", "internet explorer"]);
 
         var types = $"{project}/REST/PlatformTypes.cs";
-        Assert.Contains("typeof(Windows8Platform)", repo.Member(types, "SupportedPlatformTypes"));
-        Assert.Contains("typeof(Windows8Platform)", repo.Member(types, "PlatformsWithBrowsersTypes"));
-        Assert.DoesNotContain("Windows8Platform", repo.Member(types, "SupportedRealDeviceTypes"));
+        repo.Member(types, "SupportedPlatformTypes").ShouldContain("typeof(Windows8Platform)", Case.Sensitive);
+        repo.Member(types, "PlatformsWithBrowsersTypes").ShouldContain("typeof(Windows8Platform)", Case.Sensitive);
+        repo.Member(types, "SupportedRealDeviceTypes").ShouldNotContain("Windows8Platform", Case.Sensitive);
         // Chrome is not offered here, so the supported row uses the first browser that is.
-        Assert.Contains(
+        repo.Read($"{project}/DesktopFactoryVersionTests.cs").ShouldContain(
             "new DesktopPlatform(SauceryConstants.PLATFORM_WINDOWS_8, SauceryConstants.BROWSER_FIREFOX, SauceryConstants.BROWSER_VERSION_CURRENT_MAJOR)",
-            repo.Read($"{project}/DesktopFactoryVersionTests.cs"));
+            Case.Sensitive);
     }
 
-    [Fact]
+    [Test]
     public void Mac_version_adds_its_constant_and_configurator_entry()
     {
         using var repo = Add("macOS", "27", browsers: ["chrome", "firefox", "MicrosoftEdge", "safari"]);
 
-        Assert.Equal(1, Count(repo.Read("Saucery.Core/Util/SauceryConstants.cs"), "public const string PLATFORM_MAC_27 = \"Mac 27\";"));
-        Assert.Contains("SauceryConstants.PLATFORM_MAC_27,", repo.Read("Saucery.Core/Dojo/PlatformConfigurator.cs"));
-        Assert.Contains("new Mac27BrowserCreator(sp).Create(\"macOS 27\",", repo.Read("Saucery.Core/Dojo/Browsers/BrowserFactory.cs"));
-        Assert.Contains("\"macOS 27\",", repo.Read($"{Products}/PC/Mac27Platform.cs"));
+        Count(repo.Read("Saucery.Core/Util/SauceryConstants.cs"), "public const string PLATFORM_MAC_27 = \"Mac 27\";").ShouldBe(1);
+        repo.Read("Saucery.Core/Dojo/PlatformConfigurator.cs").ShouldContain("SauceryConstants.PLATFORM_MAC_27,", Case.Sensitive);
+        repo.Read("Saucery.Core/Dojo/Browsers/BrowserFactory.cs").ShouldContain("new Mac27BrowserCreator(sp).Create(\"macOS 27\",", Case.Sensitive);
+        repo.Read($"{Products}/PC/Mac27Platform.cs").ShouldContain("\"macOS 27\",", Case.Sensitive);
     }
 
     // ---------------------------------------------------------------- isArmRequired
 
-    [Theory]
-    [InlineData("iOS", "16.4", "Apple/IOS164Platform.cs", true)]   // sibling iOS 16.2 has no ARM
-    [InlineData("iOS", "27.1", "Apple/IOS271Platform.cs", true)]   // sibling iOS 27.0 has ARM
-    [InlineData("macOS", "27", "PC/Mac27Platform.cs", true)]       // sibling Mac 26 has ARM
-    [InlineData("macOS", "13", "PC/Mac13Platform.cs", false)]      // sibling Mac 26 has ARM
-    [InlineData("Android", "5.0", "Google/Android5Platform.cs", false)]
+    [Test]
+    [Arguments("iOS", "16.4", "Apple/IOS164Platform.cs", true)]   // sibling iOS 16.2 has no ARM
+    [Arguments("iOS", "27.1", "Apple/IOS271Platform.cs", true)]   // sibling iOS 27.0 has ARM
+    [Arguments("macOS", "27", "PC/Mac27Platform.cs", true)]       // sibling Mac 26 has ARM
+    [Arguments("macOS", "13", "PC/Mac13Platform.cs", false)]      // sibling Mac 26 has ARM
+    [Arguments("Android", "5.0", "Google/Android5Platform.cs", false)]
     public void Arm_requirement_comes_from_the_new_version_not_the_sibling(string family, string version, string product, bool armRequired)
     {
         using var repo = Add(family, version, browsers: family == "macOS" ? ["chrome", "firefox", "MicrosoftEdge", "safari"] : []);
 
-        var source = repo.Read($"{Products}/{product}");
-        Assert.Equal(armRequired, Regex.IsMatch(source, @",\s*true\s*\)"));
+        Regex.IsMatch(repo.Read($"{Products}/{product}"), @",\s*true\s*\)").ShouldBe(armRequired);
     }
 
     // ---------------------------------------------------------------- sync and idempotency
 
-    [Theory]
-    [InlineData("iOS", "27.1")]
-    [InlineData("iOS", "28.x")]
-    [InlineData("Windows", "8")]
+    [Test]
+    [Arguments("iOS", "27.1")]
+    [Arguments("iOS", "28.x")]
+    [Arguments("Windows", "8")]
     public void Both_test_projects_receive_the_same_tests(string family, string version)
     {
         using var repo = Add(family, version, devices: ["iPhone 17 Pro"], browsers: ["chrome", "firefox", "internet explorer"]);
 
-        Assert.Equal(repo.Read($"{TUnit}/REST/PlatformTypes.cs"), repo.Read($"{XUnit}/REST/PlatformTypes.cs"));
-        Assert.Equal(repo.Read($"{TUnit}/DataProviders/PlatformDataClass.cs"), repo.Read($"{XUnit}/DataProviders/PlatformDataClass.cs"));
-        Assert.Equal(repo.Read($"{TUnit}/IOSFactoryVersionTests.cs"), repo.Read($"{XUnit}/IOSFactoryVersionTests.cs"));
+        repo.Read($"{XUnitProject}/REST/PlatformTypes.cs").ShouldBe(repo.Read($"{TUnitProject}/REST/PlatformTypes.cs"));
+        repo.Read($"{XUnitProject}/DataProviders/PlatformDataClass.cs").ShouldBe(repo.Read($"{TUnitProject}/DataProviders/PlatformDataClass.cs"));
+        repo.Read($"{XUnitProject}/IOSFactoryVersionTests.cs").ShouldBe(repo.Read($"{TUnitProject}/IOSFactoryVersionTests.cs"));
     }
 
-    [Fact]
+    [Test]
     public void Adding_the_same_platform_twice_changes_nothing_the_second_time()
     {
         using var repo = Add("iOS", "16.4");
@@ -226,8 +229,9 @@ public sealed class AdditionTests
 
         AdditionSynthesizer.Apply(repo.Context, Missing("iOS", "16.4"), repo.NewChanges());
 
-        Assert.All(files, f => Assert.Equal(f.Value, File.ReadAllText(f.Key)));
-        Assert.Equal(files.Count, Directory.EnumerateFiles(repo.Root, "*.cs", SearchOption.AllDirectories).Count());
+        foreach (var (path, before) in files)
+            File.ReadAllText(path).ShouldBe(before, $"{path} changed on the second addition");
+        Directory.EnumerateFiles(repo.Root, "*.cs", SearchOption.AllDirectories).Count().ShouldBe(files.Count);
     }
 
     // ---------------------------------------------------------------- helpers

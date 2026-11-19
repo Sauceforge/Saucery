@@ -61,10 +61,32 @@ jobs:
           --configuration ${{ env.CONFIG }}
           --no-restore
 
-      - name: Test Coverage Gap tools
-        run: |
-          dotnet run --project Saucery.CoverageGapReporter.Tests/Saucery.CoverageGapReporter.Tests.csproj --configuration ${{ env.CONFIG }}
-          dotnet run --project Saucery.CoverageGapRemediator.Tests/Saucery.CoverageGapRemediator.Tests.csproj --configuration ${{ env.CONFIG }}
+      - name: Test CoverageGapReporter (TUnit)
+        run: >
+          dotnet run
+          --project Saucery.CoverageGapReporter.Tests/Saucery.CoverageGapReporter.Tests.csproj
+          --configuration ${{ env.CONFIG }}
+          --
+          --report-trx
+          --results-directory "${{ github.workspace }}/TestResults/coverage-gap-tools"
+
+      - name: Test CoverageGapRemediator (TUnit)
+        run: >
+          dotnet run
+          --project Saucery.CoverageGapRemediator.Tests/Saucery.CoverageGapRemediator.Tests.csproj
+          --configuration ${{ env.CONFIG }}
+          --
+          --report-trx
+          --results-directory "${{ github.workspace }}/TestResults/coverage-gap-tools"
+
+      - name: Upload Coverage Gap tool test results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-gap-tool-test-results
+          path: TestResults/coverage-gap-tools
+          if-no-files-found: ignore
+          retention-days: 30
 
       - name: Generate platform coverage report
         run: >
