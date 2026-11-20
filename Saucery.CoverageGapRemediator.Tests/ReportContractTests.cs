@@ -35,7 +35,7 @@ public sealed class ReportContractTests
                 }
                 """);
 
-            Reporter.SauceVirtualRow Desktop(string os, string browser) =>
+            static Reporter.SauceVirtualRow Desktop(string os, string browser) =>
                 new("webdriver", browser, browser, string.Empty, os, "latest", "latest", string.Empty);
 
             var requirements = Reporter.FunctionalPlatformBuilder.Build(

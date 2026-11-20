@@ -284,7 +284,7 @@ internal sealed class FixtureRepository : IDisposable
 
         foreach (var (type, browsers) in new[]
                  {
-                     ("Windows10BrowserCreator", new[] { ("BROWSER_CHROME", "ChromeBrowser"), ("BROWSER_EDGE", "EdgeBrowser"), ("BROWSER_FIREFOX", "FirefoxBrowser"), ("BROWSER_IE", "IEBrowser") }),
+                     ("Windows10BrowserCreator", [("BROWSER_CHROME", "ChromeBrowser"), ("BROWSER_EDGE", "EdgeBrowser"), ("BROWSER_FIREFOX", "FirefoxBrowser"), ("BROWSER_IE", "IEBrowser")]),
                      ("Mac26BrowserCreator", new[] { ("BROWSER_CHROME", "ChromeBrowser"), ("BROWSER_EDGE", "EdgeBrowser"), ("BROWSER_FIREFOX", "FirefoxBrowser"), ("BROWSER_SAFARI", "SafariBrowser") })
                  })
         {

@@ -246,7 +246,9 @@ public sealed class AdditionTests
     private static CoverageDiscrepancy Missing(string family, string version, string[]? devices = null, string[]? browsers = null)
     {
         var kind = family is "iOS" or "Android"
-            ? version.EndsWith(".x", StringComparison.Ordinal) ? PlatformRequirementKind.MobileMajorWildcard : PlatformRequirementKind.MobileExactVersion
+            ? version.EndsWith(".x", StringComparison.Ordinal) 
+                ? PlatformRequirementKind.MobileMajorWildcard 
+                : PlatformRequirementKind.MobileExactVersion
             : PlatformRequirementKind.DesktopPlatform;
 
         return new CoverageDiscrepancy(
