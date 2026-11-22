@@ -132,3 +132,5 @@ target/
 sources.txt
 Saucery-*.jar
 .planning/
+node_modules/
+.nx/
