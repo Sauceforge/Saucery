@@ -1,4 +1,5 @@
 ﻿using Saucery.Core.Dojo.Platforms.Base;
+using Saucery.Core.Dojo.Platforms.ConcreteProducts.ChromiumOS;
 using Saucery.Core.RestAPI;
 
 namespace Saucery.Core.Dojo.Platforms;
@@ -6,7 +7,9 @@ namespace Saucery.Core.Dojo.Platforms;
 public static class PlatformFactory
 {
     public static PlatformBase? CreatePlatform(SupportedPlatform sp) => 
-        sp.IsAndroidPlatform()
+        sp.IsChromiumOSPlatform()
+            ? new ChromiumOSPlatform(sp)
+            : sp.IsAndroidPlatform()
             ? AndroidPlatformFactory.CreatePlatform(sp)
             : sp.IsIOSPlatform()
                 ? ApplePlatformFactory.CreatePlatform(sp)

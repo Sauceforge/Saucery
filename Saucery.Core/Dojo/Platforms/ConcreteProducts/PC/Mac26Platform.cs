@@ -4,7 +4,7 @@ using Saucery.Core.Util;
 
 namespace Saucery.Core.Dojo.Platforms.ConcreteProducts.PC;
 
-//Sequoia
+//Tahoe
 public sealed class Mac26Platform(SupportedPlatform sp) 
     : PlatformBase(sp, 
                    "macOS 26", 

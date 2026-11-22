@@ -216,19 +216,22 @@ public static class SauceryConstants {
     public static readonly string SCREENRES_1280_800 = "1280x800";
     public static readonly string SCREENRES_1280_960 = "1280x960";
     public static readonly string SCREENRES_1280_1024 = "1280x1024";
+    public static readonly string SCREENRES_1366_768 = "1366x768";
     public static readonly string SCREENRES_1376_1032 = "1376x1032";
     public static readonly string SCREENRES_1400_1050 = "1400x1050";
     public static readonly string SCREENRES_1440_900 = "1440x900";
+    public static readonly string SCREENRES_1536_864 = "1536x864";
     public static readonly string SCREENRES_1600_900 = "1600x900";
     public static readonly string SCREENRES_1600_1200 = "1600x1200";
     public static readonly string SCREENRES_1680_1050 = "1680x1050";
     public static readonly string SCREENRES_1920_1080 = "1920x1080";
-    public static readonly string SCREENRES_1920_1200 = "1920x1200";
+    public static readonly string SCREENRES_1920_1200 = "1920x1200";    
     public static readonly string SCREENRES_1920_1440 = "1920x1440";
     public static readonly string SCREENRES_2048_1152 = "2048x1152";
     public static readonly string SCREENRES_2048_1536 = "2048x1536";
     public static readonly string SCREENRES_2360_1770 = "2360x1770";
     public static readonly string SCREENRES_2560_1600 = "2560x1600";
+    public static readonly string SCREENRES_2880_1620 = "2880x1620";
 
     //DEVICE ORIENTATIONS
     public static readonly string DEVICE_ORIENTATION_PORTRAIT = "portrait";

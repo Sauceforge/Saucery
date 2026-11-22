@@ -4,7 +4,7 @@ using Saucery.Core.Util;
 
 namespace Saucery.Core.Dojo.Platforms.ConcreteProducts.PC;
 
-//Sequoia
+//Golden Gate
 public sealed class Mac27Platform(SupportedPlatform sp) 
     : PlatformBase(sp, 
                    "macOS 27", 

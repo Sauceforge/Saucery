@@ -1,4 +1,6 @@
-﻿namespace Saucery.Core.RestAPI;
+﻿using Saucery.Core.Util;
+
+namespace Saucery.Core.RestAPI;
 
 public class SupportedPlatform {
     public List<string>? deprecated_backend_versions { get; set; }
@@ -55,6 +57,10 @@ public class SupportedPlatform {
         int.TryParse(short_version, out _) 
             ? int.Parse(short_version) 
             : 0;
+
+    public bool IsChromiumOSPlatform() =>
+        Os == SauceryConstants.PLATFORM_CHROMIUM_OS &&
+        automation_backend!.Equals("webdriver");
 
     public bool IsIOSPlatform() => 
         automation_backend!.Equals("appium") && 
