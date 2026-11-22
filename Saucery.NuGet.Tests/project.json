@@ -1,0 +1,16 @@
+{
+  "name": "Saucery.NuGet.Tests",
+  "targets": {
+    "ci-nuget-unit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node tools/ci/offline.mjs nuget",
+        "cwd": "{workspaceRoot}"
+      },
+      "dependsOn": [
+        "build"
+      ],
+      "cache": false
+    }
+  }
+}

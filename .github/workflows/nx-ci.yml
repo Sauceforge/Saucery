@@ -1,0 +1,42 @@
+name: Nx affected offline CI
+on:
+  pull_request:
+  push:
+    branches: [master, 'releases/**', 'feat/**', 'feature/**', 'fix/**', 'test/**', 'bug/**']
+  workflow_dispatch:
+permissions: {contents: read, actions: read}
+env: {NX_NO_CLOUD: 'true', NX_DAEMON: 'false'}
+jobs:
+  offline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with: {fetch-depth: 0}
+      - uses: actions/setup-node@v6
+        with: {node-version: '24', cache: npm}
+      - uses: ./.github/actions/setup-dotnet
+      - run: npm ci
+      - run: dotnet restore Saucery.slnx
+      - uses: nrwl/nx-set-shas@v5
+      - name: Build only affected projects
+        run: node tools/ci/nx.mjs affected -t build --configuration release --parallel=4
+      - name: Core xUnit v3 unit verification
+        env:
+          SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+          SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
+        run: node tools/ci/nx.mjs run Saucery.Core.Tests.XUnitv3:ci-unit --skip-nx-cache
+      - name: Verify all template generators
+        run: node tools/ci/nx.mjs run Template.Tests:ci-template --skip-nx-cache
+      - name: Audit tool unit tests
+        run: |
+          node tools/ci/nx.mjs run Saucery.CoverageGapReporter.Tests:ci-tool-test --skip-nx-cache
+          node tools/ci/nx.mjs run Saucery.CoverageGapRemediator.Tests:ci-tool-test --skip-nx-cache
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: nx-offline-test-results
+          path: |
+            **/TestResults/**
+          if-no-files-found: ignore
+      - name: Validate YAML and JSON
+        uses: GrantBirki/json-yaml-validate@v5.0.1

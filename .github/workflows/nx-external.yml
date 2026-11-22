@@ -1,0 +1,58 @@
+name: Nx published-package compatibility
+on:
+  push:
+    branches: [master, 'releases/**', 'feat/**', 'feature/**', 'fix/**', 'test/**', 'bug/**']
+  schedule:
+    - cron: '0 2,8,14,20 * * *'
+  workflow_dispatch:
+    inputs:
+      framework:
+        description: 'Framework (or all)'
+        type: choice
+        options: [all, NUnit, XUnit, XUnit3, TUnit]
+        default: all
+permissions:
+  contents: read
+  actions: read
+env:
+  NX_NO_CLOUD: 'true'
+  NX_DAEMON: 'false'
+  CI_FAMILY: ${{ inputs.framework || 'all' }}
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      has_suites: ${{ steps.plan.outputs.has_suites }}
+    steps:
+      - uses: actions/checkout@v7
+        with: {fetch-depth: 0}
+      - uses: actions/setup-node@v6
+        with: {node-version: '24', cache: npm}
+      - uses: ./.github/actions/setup-dotnet
+      - run: npm ci
+      - run: dotnet restore Saucery.slnx
+      - uses: nrwl/nx-set-shas@v5
+      - id: plan
+        run: node tools/ci/plan.mjs external
+  test:
+    needs: plan
+    if: needs.plan.outputs.has_suites == 'true'
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    runs-on: ubuntu-latest
+    env:
+      SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+      SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
+      SAUCERY_TEST_FRAMEWORK: ${{ matrix.framework }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with: {node-version: '24', cache: npm}
+      - uses: ./.github/actions/setup-dotnet
+      - run: npm ci
+      - run: dotnet restore ${{ matrix.project }}/${{ matrix.project }}.csproj
+      - name: Run the published-package consumer test using its Nx project target
+        run: node tools/ci/nx.mjs run '${{ matrix.project }}:ci-external' --skip-nx-cache

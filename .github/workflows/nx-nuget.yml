@@ -1,0 +1,59 @@
+name: Nx Saucery.NuGet validation and release
+on:
+  push:
+    branches: [master, 'releases/**', 'feat/**', 'feature/**', 'fix/**', 'test/**']
+    paths: ['Saucery.NuGet/**', 'Saucery.NuGet.Tests/**', 'Directory.Packages.props', '.github/workflows/nx-nuget.yml', 'tools/ci/**', 'nx.json']
+  workflow_dispatch:
+permissions: {contents: read}
+env: {NX_NO_CLOUD: 'true', NX_DAEMON: 'false'}
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with: {node-version: '24', cache: npm}
+      - uses: ./.github/actions/setup-dotnet
+      - run: npm ci
+      - run: dotnet restore Saucery.slnx
+      - run: node tools/ci/nx.mjs run Saucery.NuGet:build --configuration release
+      - name: xUnit v3 tests and Cobertura coverage
+        run: node tools/ci/nx.mjs run Saucery.NuGet.Tests:ci-nuget-unit --skip-nx-cache
+      - uses: actions/upload-artifact@v7
+        with:
+          name: nuget-unit-results
+          path: '**/TestResults/**'
+          if-no-files-found: warn
+  release:
+    needs: verify
+    if: github.ref == 'refs/heads/master' && needs.verify.result == 'success'
+    runs-on: ubuntu-latest
+    permissions: {contents: write, id-token: write}
+    environment: nuget-publish
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup-dotnet
+      - uses: ./.github/actions/publish-saucery-package
+        with:
+          project-path: Saucery.NuGet/Saucery.NuGet.csproj
+          package-id: Saucery.NuGet
+          nuget-user: fullcircle
+          configuration: Release
+          publish-mode: local-version-newer
+          tag-prefix: saucery-nuget
+  report:
+    needs: verify
+    if: needs.verify.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
+        with: {name: nuget-unit-results, path: TestResults}
+      - uses: danielpalme/ReportGenerator-GitHub-Action@5.6.0
+        with:
+          reports: 'TestResults/**/*.xml'
+          targetdir: coveragereport
+          reporttypes: HtmlInline;Cobertura
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with: {name: CoverageReport-NuGet, path: coveragereport}

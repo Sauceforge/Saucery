@@ -134,3 +134,8 @@ Saucery-*.jar
 .planning/
 node_modules/
 .nx/
+
+# Nx workspace
+node_modules/
+.nx/
+ci-results/

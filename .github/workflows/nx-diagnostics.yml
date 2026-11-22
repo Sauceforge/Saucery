@@ -1,0 +1,55 @@
+name: Nx manual diagnostic tests
+on:
+  workflow_dispatch:
+    inputs:
+      kind:
+        type: choice
+        required: true
+        options: [unit, tunit-diagnostic]
+permissions: {contents: read}
+env: {NX_NO_CLOUD: 'true', NX_DAEMON: 'false'}
+jobs:
+  unit:
+    if: inputs.kind == 'unit'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with: {node-version: '24', cache: npm}
+      - uses: ./.github/actions/setup-dotnet
+      - run: npm ci
+      - run: dotnet restore Saucery.slnx
+      - run: node tools/ci/nx.mjs run Saucery.Core.Tests.XUnitv3:ci-unit --skip-nx-cache
+      - run: node tools/ci/nx.mjs run Template.Tests:ci-template --skip-nx-cache
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: unit-test-results
+          path: '**/TestResults/*.xml'
+          if-no-files-found: warn
+  tunit:
+    if: inputs.kind == 'tunit-diagnostic'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [Merlin.TUnit, Merlin.TUnit.RealDevices]
+    env:
+      SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+      SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
+      SAUCERY_TEST_FRAMEWORK: TUnit
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with: {node-version: '24', cache: npm}
+      - uses: ./.github/actions/setup-dotnet
+      - run: npm ci
+      - run: dotnet restore '${{ matrix.project }}/${{ matrix.project }}.csproj'
+      - run: node tools/ci/nx.mjs run '${{ matrix.project }}:build' --configuration release
+      - run: dotnet run -c Release --project '${{ matrix.project }}/${{ matrix.project }}.csproj' --no-build -- --results-directory TestResults --log-level Debug --diagnostic
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: tunit-diagnostic-${{ matrix.project }}
+          path: TestResults/**/*.diag
+          if-no-files-found: warn

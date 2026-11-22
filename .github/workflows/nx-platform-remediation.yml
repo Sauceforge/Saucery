@@ -1,0 +1,96 @@
+name: Nx controlled platform remediation
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 2 * * 1'
+  push:
+    paths:
+      - 'Saucery.CoverageGapRemediator/**'
+      - 'Saucery.CoverageGapRemediator.Tests/**'
+      - '.github/workflows/nx-platform-remediation.yml'
+permissions: {contents: write, pull-requests: write}
+env: {NX_NO_CLOUD: 'true', NX_DAEMON: 'false'}
+jobs:
+  remediate:
+    runs-on: ubuntu-latest
+    env:
+      SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+      SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
+    steps:
+      - uses: actions/checkout@v7
+        with: {fetch-depth: 0}
+      - uses: actions/setup-node@v6
+        with: {node-version: '24', cache: npm}
+      - uses: ./.github/actions/setup-dotnet
+      - run: npm ci
+      - run: dotnet restore Saucery.slnx
+      - name: Nx builds the reporter and remediator
+        run: node tools/ci/nx.mjs run-many -t build --projects Saucery.CoverageGapReporter,Saucery.CoverageGapRemediator --configuration release
+      - name: Reporter TUnit tests
+        run: node tools/ci/nx.mjs run Saucery.CoverageGapReporter.Tests:ci-tool-test --skip-nx-cache
+      - name: Remediator TUnit tests
+        run: node tools/ci/nx.mjs run Saucery.CoverageGapRemediator.Tests:ci-tool-test --skip-nx-cache
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: coverage-gap-tool-test-results
+          path: TestResults/coverage-gap-tools
+          if-no-files-found: ignore
+          retention-days: 30
+      - name: Generate platform coverage report
+        run: dotnet run --project Saucery.CoverageGapReporter/Saucery.CoverageGapReporter.csproj -c Release --no-build
+      - name: Show report
+        run: cat saucery-functional-platform-coverage-gaps.txt
+      - name: Apply remediation
+        run: dotnet run --project Saucery.CoverageGapRemediator/Saucery.CoverageGapRemediator.csproj -c Release --no-build -- --apply --allow-obsolete-removal
+      - name: Show generated diff
+        run: git diff --stat && git status --short
+      - name: Gate actionable source changes (exclude the two plan files)
+        id: actionable
+        shell: bash
+        run: |
+          set -euo pipefail
+          changed_files="$(git status --porcelain=v1 --untracked-files=all | cut -c4-)"
+          actionable_files="$(printf '%s\n' "$changed_files" | grep -v -x 'saucery-platform-remediation-plan.json' | grep -v -x 'saucery-platform-remediation-plan.md' || true)"
+          if [[ -n "$actionable_files" ]]; then
+            echo 'changed=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'changed=false' >> "$GITHUB_OUTPUT"
+            echo 'Only plan files changed; no compile, tests, branch or PR'
+          fi
+      - name: Build all 37 projects after source remediation (uncached)
+        if: steps.actionable.outputs.changed == 'true'
+        run: node tools/ci/nx.mjs run-many -t build --all --configuration release --skip-nx-cache
+      - name: xUnit v3 regression coverage
+        if: steps.actionable.outputs.changed == 'true'
+        uses: ./.github/actions/run-xunit3-coverage
+        with:
+          project: Saucery.Core.Tests.XUnitv3/Saucery.Core.Tests.XUnitv3.csproj
+          configuration: Release
+          coverage-format: cobertura
+          coverage-output: coverage.cobertura.xml
+      - name: Create remediation branch
+        if: success() && steps.actionable.outputs.changed == 'true'
+        id: branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          branch="automated/platform-coverage-remediation-$(date -u +%Y%m%d%H%M%S)"
+          git switch -c "$branch"
+          echo "name=$branch" >> "$GITHUB_OUTPUT"
+      - name: Commit validated remediation
+        if: success() && steps.actionable.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Remediate Sauce platform coverage'
+      - name: Push remediation branch
+        if: success() && steps.actionable.outputs.changed == 'true'
+        run: git push --set-upstream origin '${{ steps.branch.outputs.name }}'
+      - name: Open remediation PR
+        if: success() && steps.actionable.outputs.changed == 'true'
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: gh pr create --base '${{ github.event.repository.default_branch }}' --head '${{ steps.branch.outputs.name }}' --title 'Remediate Sauce platform coverage' --body 'Automatically generated and validated platform coverage remediation.'

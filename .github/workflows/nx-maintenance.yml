@@ -1,0 +1,109 @@
+name: Nx repository and Sauce maintenance
+on:
+  schedule:
+    - cron: '0 0,6,12,18 * * *'
+    - cron: '0 2 * * *'
+    - cron: '0 0 1 6 *'
+  workflow_dispatch:
+    inputs:
+      task:
+        type: choice
+        required: true
+        options: [nuget-sync, badge, years, sauce-cleanup]
+permissions: {contents: read}
+concurrency:
+  group: nx-maintenance-${{ github.ref }}
+  cancel-in-progress: false
+env: {NX_NO_CLOUD: 'true', NX_DAEMON: 'false'}
+jobs:
+  nuget-sync:
+    if: (inputs.task == 'nuget-sync' || github.event.schedule == '0 0,6,12,18 * * *') && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    permissions: {contents: write}
+    steps:
+      - uses: actions/checkout@v7
+        with: {fetch-depth: 0, persist-credentials: true}
+      - uses: actions/setup-node@v6
+        with: {node-version: '24', cache: npm}
+      - uses: ./.github/actions/setup-dotnet
+      - run: npm ci
+      - run: dotnet restore Saucery.slnx
+      - run: dotnet tool install --global Saucery.NuGet --version 1.0.20
+      - name: Add .NET global tools to PATH
+        run: echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
+      - name: Execute the original ordered NuGet sync through one policy
+        run: node tools/ci/sync.mjs
+      - name: Commit updated files if changed
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name agray
+          git config user.email agray@users.noreply.github.com
+          git add -A
+          if git diff --cached --quiet; then echo 'No NuGet changes'; exit 0; fi
+          git commit -m 'Automated NuGet package sync'
+          git pull --rebase origin master
+          git push origin HEAD:master
+  badge:
+    if: (inputs.task == 'badge' || github.event.schedule == '0 2 * * *') && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    permissions: {contents: write}
+    steps:
+      - uses: actions/checkout@v7
+        with: {fetch-depth: 0}
+      - uses: actions/setup-node@v6
+        with: {node-version: '24', cache: npm}
+      - uses: ./.github/actions/setup-dotnet
+      - run: npm ci
+      - run: dotnet restore Saucery.Badges/Saucery.Badges.csproj
+      - run: node tools/ci/nx.mjs run Saucery.Badges:build --configuration release
+      - run: dotnet run --project Saucery.Badges/Saucery.Badges.csproj -c Release --no-build
+      - name: Commit badge if changed
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name agray
+          git config user.email agray@users.noreply.github.com
+          git add -A
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Update Totals Badge'
+          git pull --rebase origin master
+          git push origin HEAD:master
+  years:
+    if: (inputs.task == 'years' || github.event.schedule == '0 0 1 6 *') && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    permissions: {contents: write}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Compute full years since June 1 2014 and update README markers
+        shell: bash
+        run: |
+          set -euo pipefail
+          year=$(date -u +%Y)
+          month=$(date -u +%-m)
+          day=$(date -u +%-d)
+          years=$((year-2014))
+          if ((month<6 || (month==6 && day<1))); then years=$((years-1)); fi
+          while IFS= read -r -d '' file; do
+            sed -i -E "s/(<!--YEARS-->).*(<!--ENDYEARS-->)/\1${years}\2/g" "$file"
+          done < <(find . -type f -iname 'README.md' -print0)
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add -A
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "chore: update YEARS markers to $years"
+          git push
+  sauce-cleanup:
+    if: inputs.task == 'sauce-cleanup' || github.event.schedule == '0 2 * * *'
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Remove yesterday's errored Sauce jobs
+        shell: pwsh
+        env:
+          SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+          SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
+        run: |
+          if (!(Test-Path './Delete-AllErroredSauceJobs.ps1')) { throw 'Cleanup script missing' }
+          $from = (Get-Date).AddDays(-1).ToString('yyyy-MM-dd')
+          ./Delete-AllErroredSauceJobs.ps1 -From $from

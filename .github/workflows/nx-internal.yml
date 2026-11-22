@@ -1,0 +1,273 @@
+name: Nx internal integration and guarded release
+on:
+  pull_request:
+  push:
+    branches: [master, 'releases/**', 'feat/**', 'feature/**', 'fix/**', 'test/**', 'bug/**']
+  schedule:
+    - cron: '0 1,7,13,19 * * *'
+    - cron: '0 2,8,14,20 * * *'
+  workflow_dispatch:
+    inputs:
+      framework:
+        description: 'Framework (or all)'
+        type: choice
+        options: [all, NUnit, XUnit, XUnit3, TUnit]
+        default: all
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: nx-internal-${{ github.ref }}
+  cancel-in-progress: false
+env:
+  NX_NO_CLOUD: 'true'
+  NX_DAEMON: 'false'
+  CI_FAMILY: ${{ inputs.framework || 'all' }}
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      projects: ${{ steps.plan.outputs.projects }}
+      requested: ${{ steps.plan.outputs.requested }}
+      has_suites: ${{ steps.plan.outputs.has_suites }}
+    steps:
+      - uses: actions/checkout@v7
+        with: {fetch-depth: 0}
+      - uses: actions/setup-node@v6
+        with: {node-version: '24', cache: npm}
+      - uses: ./.github/actions/setup-dotnet
+      - run: npm ci
+      - run: dotnet restore Saucery.slnx
+      - uses: nrwl/nx-set-shas@v5
+      - id: plan
+        env:
+          GITHUB_SCHEDULE: ${{ github.event.schedule }}
+        run: node tools/ci/plan.mjs internal
+  build:
+    runs-on: ubuntu-latest
+    needs: plan
+    if: needs.plan.outputs.has_suites == 'true'
+    env:
+      SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+      SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with: {node-version: '24', cache: npm}
+      - uses: ./.github/actions/setup-dotnet
+      - run: npm ci
+      - run: dotnet restore Saucery.slnx
+      - name: Build selected suites, unit and templates through Nx
+        shell: bash
+        run: |
+          set -euo pipefail
+          node tools/ci/nx.mjs run-many -t build --projects '${{ needs.plan.outputs.projects }},Saucery.Core.Tests.XUnitv3,Template.Tests' --configuration release --parallel=4
+      - name: Upload build artifacts for distributed verification
+        uses: actions/upload-artifact@v7
+        with:
+          name: nx-internal-build
+          path: |
+            **/bin/Release/**
+            **/obj/**
+          if-no-files-found: error
+          retention-days: 1
+  unit:
+    needs: [plan, build]
+    runs-on: ubuntu-latest
+    if: needs.build.result == 'success'
+    env:
+      SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+      SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with: {node-version: '24', cache: npm}
+      - uses: ./.github/actions/setup-dotnet
+      - run: npm ci
+      - run: dotnet restore Saucery.slnx
+      - uses: actions/download-artifact@v8
+        with: {name: nx-internal-build, path: .}
+      - uses: ./.github/actions/enable-test-report-upload
+      - name: Core offline xUnit v3 unit coverage
+        run: node tools/ci/nx.mjs run Saucery.Core.Tests.XUnitv3:ci-unit --skip-nx-cache
+      - name: Template verification (all frameworks)
+        run: node tools/ci/nx.mjs run Template.Tests:ci-template --skip-nx-cache
+      - name: Publish offline unit coverage
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-core-unit
+          path: '**/TestResults/*.xml'
+          if-no-files-found: warn
+  suite:
+    needs: [plan, build, unit]
+    if: needs.unit.result == 'success' && needs.plan.outputs.has_suites == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    env:
+      SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+      SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
+      SAUCERY_TEST_FRAMEWORK: ${{ matrix.framework }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup-dotnet
+      - uses: actions/download-artifact@v8
+        with: {name: nx-internal-build, path: .}
+      - uses: ./.github/actions/enable-test-report-upload
+      - name: NUnit or xUnit integration with Coverlet
+        id: coverlet
+        if: matrix.runner == 'coverlet'
+        uses: ./.github/actions/run-coverlet-project
+        with:
+          test-project: ${{ matrix.project }}/${{ matrix.project }}.csproj
+          output: ${{ matrix.coverage }}
+          output-format: cobertura
+          excludes: '[${{ matrix.project }}]Tests.*'
+      - name: xUnit v3 integration with MTP coverage
+        id: xunit3
+        if: matrix.runner == 'xunit3'
+        uses: ./.github/actions/run-xunit3-coverage
+        with:
+          project: ${{ matrix.project }}/${{ matrix.project }}.csproj
+          configuration: Release
+          coverage-format: cobertura
+          coverage-output: ${{ matrix.coverage }}
+      - name: TUnit DLL runner with coverage
+        id: tunit
+        if: matrix.runner == 'tunit'
+        uses: ./.github/actions/run-dotnet-dll-coverage
+        with:
+          search-root: ${{ matrix.project }}/bin/Release
+          dll-name: ${{ matrix.project }}.dll
+          runtimeconfig-name: ${{ matrix.project }}.runtimeconfig.json
+          runner-kind: tunit
+          coverage-format: cobertura
+          results-directory: TestResults
+          coverage-output: ${{ github.workspace }}/TestResults/${{ matrix.coverage }}
+      - name: Record suite result
+        if: always()
+        env:
+          SUITE_ID: ${{ matrix.id }}
+          OUTCOME: ${{ (matrix.runner == 'coverlet' && steps.coverlet.outcome) || (matrix.runner == 'xunit3' && steps.xunit3.outcome) || steps.tunit.outcome }}
+        run: node tools/ci/status.mjs "$SUITE_ID" "$OUTCOME"
+      - name: Upload suite result even after test failure
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: suite-status-${{ matrix.project }}
+          path: ci-results/status/*.json
+          if-no-files-found: error
+      - name: Upload suite coverage
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-${{ matrix.project }}
+          path: |
+            TestResults/**/*.xml
+            **/TestResults/**/*.xml
+          if-no-files-found: warn
+  gate:
+    needs: [plan, build, unit, suite]
+    if: always() && needs.plan.result == 'success'
+    runs-on: ubuntu-latest
+    outputs:
+      release_matrix: ${{ steps.gate.outputs.release_matrix }}
+      report_matrix: ${{ steps.gate.outputs.report_matrix }}
+      has_release: ${{ steps.gate.outputs.has_release }}
+      has_report: ${{ steps.gate.outputs.has_report }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Collect completed suite results
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          pattern: suite-status-*
+          merge-multiple: true
+          path: ci-results/downloaded-status
+      - id: gate
+        env:
+          REQUESTED_PACKAGES: ${{ needs.plan.outputs.requested }}
+          UNIT_RESULT: ${{ needs.unit.result }}
+          BUILD_RESULT: ${{ needs.build.result }}
+        run: node tools/ci/gate.mjs
+  release:
+    needs: [gate]
+    if: github.ref == 'refs/heads/master' && needs.gate.outputs.has_release == 'true'
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.gate.outputs.release_matrix) }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    environment: nuget-publish
+    concurrency:
+      group: nuget-${{ matrix.packageId }}
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup-dotnet
+      - name: Publish only the packages passing their entire test gate
+        uses: ./.github/actions/publish-saucery-package
+        with:
+          project-path: ${{ matrix.project }}/${{ matrix.project }}.csproj
+          package-id: ${{ matrix.packageId }}
+          nuget-user: fullcircle
+          configuration: Release
+          publish-mode: local-version-newer
+          tag-prefix: ${{ matrix.tag }}
+  report:
+    needs: [gate]
+    if: needs.gate.outputs.has_report == 'true'
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.gate.outputs.report_matrix) }}
+    runs-on: ubuntu-latest
+    env:
+      CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: coverage-*
+          path: coverage-inputs
+          merge-multiple: true
+      - name: Generate coverage report
+        uses: danielpalme/ReportGenerator-GitHub-Action@5.6.0
+        with:
+          reports: coverage-inputs/**/*.xml
+          targetdir: coveragereport
+          reporttypes: HtmlInline;Cobertura
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: CoverageReport-${{ matrix.project }}
+          path: coveragereport
+      - name: Set up Java for Codacy
+        if: matrix.project == 'Saucery.Core' && env.CODACY_PROJECT_TOKEN != ''
+        uses: actions/setup-java@v6.3.0
+        with: {distribution: oracle, java-version: '21'}
+      - name: Upload Core coverage to Codacy
+        if: matrix.project == 'Saucery.Core' && env.CODACY_PROJECT_TOKEN != ''
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -d '' reports < <(find coverage-inputs -name '*.xml' -print0)
+          (( ${#reports[@]} > 0 ))
+          args=()
+          for f in "${reports[@]}"; do args+=(-r "$f"); done
+          bash <(curl -fsSL https://coverage.codacy.com/get.sh) report -l CSharp "${args[@]}"
+  cleanup:
+    needs: [build, report, release]
+    if: always() && needs.build.result == 'success'
+    runs-on: ubuntu-latest
+    permissions: {actions: write, contents: read}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/delete-run-artifact
+        with:
+          artifact-name: nx-internal-build
+          github-token: ${{ secrets.GITHUB_TOKEN }}

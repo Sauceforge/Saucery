@@ -1,0 +1,23 @@
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "neverConnectToCloud": true,
+  "analytics": false,
+  "defaultBase": "master",
+  "parallel": 4,
+  "plugins": [
+    {
+      "plugin": "@nx/dotnet",
+      "exclude": ["Templates/**/*", "Template.Tests/Snapshots/**/*"]
+    }
+  ],
+  "namedInputs": {
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "sharedGlobals": ["{workspaceRoot}/Directory.Build.props", "{workspaceRoot}/Directory.Build.targets", "{workspaceRoot}/Directory.Packages.props", "{workspaceRoot}/global.json", "{workspaceRoot}/NuGet.Config", "{workspaceRoot}/ci/policy.json", "{workspaceRoot}/.github/workflows/**/*", "{workspaceRoot}/.github/actions/**/*", "{workspaceRoot}/tools/ci/**/*", "{workspaceRoot}/nx.json"]
+  },
+  "targetDefaults": {
+    "build": {"dependsOn": ["^build"], "inputs": ["default"], "cache": true},
+    "ci-unit": {"dependsOn": ["build"], "cache": false},
+    "ci-template": {"dependsOn": ["build"], "cache": false, "inputs": ["default", "{workspaceRoot}/Templates/**/*"]},
+    "ci-external": {"dependsOn": ["build"], "cache": false}
+  }
+}

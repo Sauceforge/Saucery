@@ -1,0 +1,16 @@
+{
+  "name": "Saucery.CoverageGapReporter.Tests",
+  "targets": {
+    "ci-tool-test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node tools/ci/tool.mjs reporter",
+        "cwd": "{workspaceRoot}"
+      },
+      "dependsOn": [
+        "build"
+      ],
+      "cache": false
+    }
+  }
+}

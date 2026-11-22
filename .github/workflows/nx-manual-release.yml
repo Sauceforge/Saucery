@@ -1,0 +1,42 @@
+name: Nx manual package publishing
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        type: choice
+        required: true
+        description: Package previously published by its own manual workflow
+        options: [Saucery.Core, Saucery, Saucery.XUnit, Saucery.XUnit3, Saucery.TUnit, Saucery.NuGet]
+permissions: {contents: read}
+env: {NX_NO_CLOUD: 'true', NX_DAEMON: 'false'}
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      packageId: ${{ steps.details.outputs.packageId }}
+      tag: ${{ steps.details.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v7
+      - id: details
+        env:
+          PROJECT: ${{ inputs.package }}
+        run: node tools/ci/manual-package.mjs
+  release:
+    needs: prepare
+    runs-on: ubuntu-latest
+    environment: nuget-publish
+    permissions: {contents: write, id-token: write}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup-dotnet
+      - name: Publish with existing Trusted Publishing contract
+        uses: ./.github/actions/publish-saucery-package
+        with:
+          project-path: ${{ inputs.package }}/${{ inputs.package }}.csproj
+          package-id: ${{ needs.prepare.outputs.packageId }}
+          configuration: Release
+          nupkg-dir: out
+          nuget-source: https://api.nuget.org/v3/index.json
+          nuget-user: fullcircle
+          publish-mode: local-version-newer
+          tag-prefix: ${{ needs.prepare.outputs.tag }}

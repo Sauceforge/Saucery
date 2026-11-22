@@ -1,0 +1,16 @@
+{
+  "name": "ExternalMerlin.XUnit",
+  "targets": {
+    "ci-external": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node tools/ci/suite.mjs external XUnit virtual",
+        "cwd": "{workspaceRoot}"
+      },
+      "dependsOn": [
+        "build"
+      ],
+      "cache": false
+    }
+  }
+}

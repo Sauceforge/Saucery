@@ -1,0 +1,60 @@
+{
+  "name": "Template.Tests",
+  "targets": {
+    "ci-template": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node tools/ci/offline.mjs template",
+        "cwd": "{workspaceRoot}"
+      },
+      "dependsOn": [
+        "build"
+      ],
+      "cache": false
+    },
+    "ci-template-NUnit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node tools/ci/offline.mjs template NUnit",
+        "cwd": "{workspaceRoot}"
+      },
+      "dependsOn": [
+        "build"
+      ],
+      "cache": false
+    },
+    "ci-template-XUnit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node tools/ci/offline.mjs template XUnit",
+        "cwd": "{workspaceRoot}"
+      },
+      "dependsOn": [
+        "build"
+      ],
+      "cache": false
+    },
+    "ci-template-XUnit3": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node tools/ci/offline.mjs template XUnit3",
+        "cwd": "{workspaceRoot}"
+      },
+      "dependsOn": [
+        "build"
+      ],
+      "cache": false
+    },
+    "ci-template-TUnit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node tools/ci/offline.mjs template TUnit",
+        "cwd": "{workspaceRoot}"
+      },
+      "dependsOn": [
+        "build"
+      ],
+      "cache": false
+    }
+  }
+}

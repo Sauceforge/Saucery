@@ -1,0 +1,16 @@
+{
+  "name": "ExternalMerlin.XUnit3.RealDevices",
+  "targets": {
+    "ci-external": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node tools/ci/suite.mjs external XUnit3 real",
+        "cwd": "{workspaceRoot}"
+      },
+      "dependsOn": [
+        "build"
+      ],
+      "cache": false
+    }
+  }
+}

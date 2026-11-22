@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "branch": "master",
+  "frameworks": {
+    "NUnit": {"project":"Saucery","packageId":"Saucery","tag":"nunit","runner":"coverlet","internal":["Merlin.NUnit","Merlin.NUnit.RealDevices"],"external":["ExternalMerlin.NUnit","ExternalMerlin.NUnit.RealDevices"],"templateCategory":"NUnit"},
+    "XUnit": {"project":"Saucery.XUnit","packageId":"Saucery.XUnit","tag":"xunit","runner":"coverlet","internal":["Merlin.XUnit","Merlin.XUnit.RealDevices"],"external":["ExternalMerlin.XUnit","ExternalMerlin.XUnit.RealDevices"],"templateCategory":"XUnit"},
+    "XUnit3": {"project":"Saucery.XUnit3","packageId":"Saucery.XUnit.v3","tag":"xunit3","runner":"xunit3","internal":["Merlin.XUnit3","Merlin.XUnit3.RealDevices"],"external":["ExternalMerlin.XUnit3","ExternalMerlin.XUnit3.RealDevices"],"templateCategory":"XUnit3"},
+    "TUnit": {"project":"Saucery.TUnit","packageId":"Saucery.TUnit","tag":"tunit","runner":"tunit","internal":["Merlin.TUnit","Merlin.TUnit.RealDevices"],"external":["ExternalMerlin.TUnit","ExternalMerlin.TUnit.RealDevices"],"templateCategory":"TUnit"}
+  },
+  "core":{"project":"Saucery.Core","packageId":"Saucery.Core","tag":"","requires":["NUnit:virtual","NUnit:real","XUnit:virtual","XUnit:real","XUnit3:virtual","XUnit3:real","TUnit:virtual","TUnit:real"]},
+  "nuget":{"project":"Saucery.NuGet","packageId":"Saucery.NuGet","tag":"saucery-nuget","tests":"Saucery.NuGet.Tests"},
+  "manualPackages":["Saucery.Core","Saucery","Saucery.XUnit","Saucery.XUnit3","Saucery.TUnit","Saucery.NuGet"],
+  "syncOrder":[
+    ["--project","Saucery.Core","--bump-own-version"],
+    ["--project","Saucery.TUnit","--sync-with","TUnit"],
+    ["--project","Saucery.XUnit3","--sync-with","xunit.v3"],
+    ["--project","Saucery.XUnit","--sync-with","Saucery.Core"],
+    ["--project","Saucery","--sync-with","NUnit"],
+    ["--project","Saucery.Playwright.NUnit","--sync-with","Saucery.Core"],
+    ["--project","Saucery.NuGet","--bump-own-version"]
+  ]
+}

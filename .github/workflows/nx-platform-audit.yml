@@ -1,0 +1,67 @@
+name: Nx Sauce platform coverage audit
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 2 * * *'
+  push:
+    branches: [master]
+    paths:
+      - 'Saucery.Core/**'
+      - 'Saucery.Core.Tests/**'
+      - 'Saucery.Core.Tests.XUnitv3/**'
+      - 'Saucery.CoverageGapReporter/**'
+      - 'Saucery.CoverageGapReporter.Tests/**'
+      - '.github/workflows/nx-platform-audit.yml'
+      - 'ci/policy.json'
+permissions: {contents: write}
+env: {NX_NO_CLOUD: 'true', NX_DAEMON: 'false'}
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    env:
+      SAUCE_USER_NAME: ${{ secrets.SAUCE_USER_NAME }}
+      SAUCE_API_KEY: ${{ secrets.SAUCE_API_KEY }}
+    steps:
+      - uses: actions/checkout@v7
+        with: {fetch-depth: 0}
+      - uses: actions/setup-node@v6
+        with: {node-version: '24', cache: npm}
+      - uses: ./.github/actions/setup-dotnet
+      - run: npm ci
+      - run: dotnet restore Saucery.slnx
+      - name: Build audit tools through Nx
+        run: node tools/ci/nx.mjs run-many -t build --projects Saucery.CoverageGapReporter,Saucery.CoverageGapRemediator --configuration release
+      - name: Test Reporter (TUnit)
+        run: node tools/ci/nx.mjs run Saucery.CoverageGapReporter.Tests:ci-tool-test --skip-nx-cache
+      - name: Test Remediator (TUnit)
+        run: node tools/ci/nx.mjs run Saucery.CoverageGapRemediator.Tests:ci-tool-test --skip-nx-cache
+      - name: Preserve tool-test TRX artifacts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-gap-tool-test-results
+          path: TestResults/coverage-gap-tools
+          if-no-files-found: ignore
+          retention-days: 30
+      - name: Generate platform coverage report
+        run: |
+          dotnet run --project Saucery.CoverageGapReporter/Saucery.CoverageGapReporter.csproj -c Release --no-build -- --repo-root "$GITHUB_WORKSPACE" --output "$GITHUB_WORKSPACE/saucery-functional-platform-coverage-gaps.txt" --region us-west-1 --include-real true
+      - name: Show audit report
+        run: cat saucery-functional-platform-coverage-gaps.txt
+      - uses: actions/upload-artifact@v7
+        with:
+          name: saucery-functional-platform-coverage-gaps
+          path: saucery-functional-platform-coverage-gaps.txt
+          if-no-files-found: error
+          retention-days: 30
+      - name: Commit README coverage table (master only)
+        if: github.ref == 'refs/heads/master'
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- README.md; then echo 'Coverage table is current'; exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add README.md
+          git commit -m 'docs: update platform coverage audit'
+          git push origin HEAD:master
