@@ -66,12 +66,12 @@ public class SauceryBase
                     var jobs = realDeviceJobs?.entities.FindAll(x => x.name.Equals(_testName));
                     foreach (var job in jobs!)
                     {
-                        _sauceLabsRealDeviceStatusNotifier.NotifyRealDeviceStatus(job.id, isPassed);
+                        await _sauceLabsRealDeviceStatusNotifier.NotifyRealDeviceStatus(job.id, isPassed);
                     }
                 }
                 else
                 {
-                    _sauceLabsEmulatedStatusNotifier.NotifyEmulatedStatus(Driver.SessionId.ToString(), isPassed);
+                    await _sauceLabsEmulatedStatusNotifier.NotifyEmulatedStatus(Driver.SessionId.ToString(), isPassed);
                 }
 
                 Driver.Quit();

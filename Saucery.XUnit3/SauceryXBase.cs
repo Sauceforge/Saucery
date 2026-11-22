@@ -49,10 +49,10 @@ public class SauceryXBase : IClassFixture<BaseFixture>, IDisposable {
                     var realDeviceJobs = await _baseFixture.SauceLabsRealDeviceAcquirer.AcquireRealDeviceJobs();
                     var jobs = realDeviceJobs?.entities.FindAll(x => x.name.Equals(_testName));
                     foreach(var job in jobs!) {
-                        _baseFixture.SauceLabsRealDeviceStatusNotifier.NotifyRealDeviceStatus(job.id, passed);
+                        await _baseFixture.SauceLabsRealDeviceStatusNotifier.NotifyRealDeviceStatus(job.id, passed);
                     }
                 } else {
-                    _baseFixture.SauceLabsEmulatedStatusNotifier.NotifyEmulatedStatus(_baseFixture.Driver.SessionId.ToString(), passed);
+                    await _baseFixture.SauceLabsEmulatedStatusNotifier.NotifyEmulatedStatus(_baseFixture.Driver.SessionId.ToString(), passed);
                 }
 
                 _baseFixture.Driver.Quit();

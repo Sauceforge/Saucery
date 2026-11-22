@@ -8,8 +8,7 @@ using Saucery.Core.Util;
 
 namespace Saucery.XUnit;
 
-public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>
-{
+public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>, IDisposable {
     protected readonly BaseFixture BaseFixture;
     private string? _testName;
     private readonly ITestOutputHelper _outputHelper;
@@ -41,25 +40,23 @@ public class SauceryXBase : XunitContextBase, IClassFixture<BaseFixture>
     }
 
     // Dispose must be synchronous for IDisposable; block on async work instead of async void.
-    public override void Dispose()
+    public async new void Dispose()
     {
         try
         {
             _testName = null;
-            if (BaseFixture.Driver != null)
-            {
+            if(BaseFixture.Driver != null) {
                 var passed = Context.TestException == null;
                 // log the result to SauceLabs
 
                 if(_browserVersion!.IsARealDevice()) {
                     var realDeviceJobs = BaseFixture.SauceLabsRealDeviceAcquirer.AcquireRealDeviceJobs().GetAwaiter().GetResult();
                     var jobs = realDeviceJobs?.entities.FindAll(x => x.name.Equals(_testName));
-                    foreach (var job in jobs!)
-                    {
-                        BaseFixture.SauceLabsRealDeviceStatusNotifier.NotifyRealDeviceStatus(job.id, passed);
+                    foreach(var job in jobs!) {
+                        await BaseFixture.SauceLabsRealDeviceStatusNotifier.NotifyRealDeviceStatus(job.id, passed);
                     }
                 } else {
-                    BaseFixture.SauceLabsEmulatedStatusNotifier.NotifyEmulatedStatus(BaseFixture.Driver.SessionId.ToString(), passed);
+                    await BaseFixture.SauceLabsEmulatedStatusNotifier.NotifyEmulatedStatus(BaseFixture.Driver.SessionId.ToString(), passed);
                 }
 
                 BaseFixture.Driver.Quit();

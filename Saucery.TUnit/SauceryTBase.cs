@@ -46,10 +46,10 @@ public class SauceryTBase : BaseFixture
                     var realDeviceJobs = await SauceLabsRealDeviceAcquirer.AcquireRealDeviceJobs();
                     var jobs = realDeviceJobs?.entities.FindAll(x => x.name.Equals(_testName));
                     foreach (var job in jobs!) {
-                        SauceLabsRealDeviceStatusNotifier.NotifyRealDeviceStatus(job.id, passed);
+                        await SauceLabsRealDeviceStatusNotifier.NotifyRealDeviceStatus(job.id, passed);
                     }
                 } else {
-                    SauceLabsEmulatedStatusNotifier.NotifyEmulatedStatus(Driver.SessionId.ToString(), passed);
+                    await SauceLabsEmulatedStatusNotifier.NotifyEmulatedStatus(Driver.SessionId.ToString(), passed);
                 }
 
                 Driver.Quit();
