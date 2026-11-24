@@ -271,7 +271,7 @@ jobs:
           name: unit-test-results
 
       - name: ReportGenerator
-        uses: danielpalme/ReportGenerator-GitHub-Action@5.6.0
+        uses: danielpalme/ReportGenerator-GitHub-Action@5.6.1
         with:
           reports: ${{ env.UNIT_COVERAGE_FILENAME }}
           targetdir: coveragereport
