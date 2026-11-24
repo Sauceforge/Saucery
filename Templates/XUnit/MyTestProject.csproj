@@ -16,7 +16,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-	  <PackageReference Include="Saucery.XUnit" Version="4.10.31" />
+	  <PackageReference Include="Saucery.XUnit" Version="4.10.32" />
   </ItemGroup>
 
 </Project>

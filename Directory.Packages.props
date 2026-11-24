@@ -28,7 +28,7 @@
     <PackageVersion Include="Saucery" Version="5.0.0" />
     <PackageVersion Include="Saucery.Core" Version="4.10.32" />
     <PackageVersion Include="Saucery.TUnit" Version="1.87.12" />
-    <PackageVersion Include="Saucery.XUnit" Version="4.10.31" />
+    <PackageVersion Include="Saucery.XUnit" Version="4.10.32" />
     <PackageVersion Include="Saucery.XUnit.v3" Version="4.0.3" />
     <PackageVersion Include="Selenium.Support" Version="4.54.0" />
     <PackageVersion Include="Selenium.WebDriver" Version="4.54.0" />
